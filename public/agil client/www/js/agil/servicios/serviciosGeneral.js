@@ -1931,62 +1931,28 @@ angular.module('agil.servicios')
 			} else {
 				if (vacia) {
 					// la altura en pixeles para convertir seria dividirlo entre 96;
-					// var imgAltura;
-					
+					if (usuario.empresa.imagen.length > 100) { 
+						doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); 
+					} //width: 50, height: 50
 
-
-
-					// function getMeta(url, callback) {
-					//     var img = new Image();
-					//     img.src = url;
-					//     img.onload = function() { 
-					//     	return callback(this.width, this.height); 
-					//     }
-					// }
-
-					// // altura 1368
-					// getMeta(usuario.empresa.imagen, function(width, height) { 
-					// 	imgAltura = height / 95;
-					//   	console.log("dimensiones de imagen ===========", width + 'px ' + height + 'px') 
-					//   }
-					// );
-
-
-
-
-					// var img = new Image();
-					// var alturaR = new Array();
-					// img.onload = function() { 
-					// 	// alturaR = this.height; 
-					// 	alturaR.push(this.height)
-					// }
-					// img.src = usuario.empresa.imagen;
-					// console.log("la altura  ", alturaR;
-
-					// // 53a5362f93736b4249b50452dca4d186
-
-					
-					
-
-					
-
-					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //width: 50, height: 50
+					var alturaImagen = usuario.altura_imagen;
+					var yAltura = (alturaImagen <= 5) ? alturaImagen+80 : ((alturaImagen > 6 && alturaImagen <= 52) ? 105 : 105)
 					doc.font('Helvetica-Bold', 8);
-					var longitudCaracteres = usuario.empresa.razon_social.length+30;
-					console.log("el datos longitudddd  ", longitudCaracteres);
-					var yDesc = (longitudCaracteres <= 35) ? 115 : ((longitudCaracteres > 36 && longitudCaracteres <= 52) ? 105 : 105);
-					console.log("el datos yyyyyyyyyyyy ", yDesc);
-					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, yDesc,{width:170});
+					var longitudCaracteres = usuario.empresa.razon_social.length;
+				
+					var yDesc = (longitudCaracteres <= 35) ? yAltura+11  : ((longitudCaracteres > 36 && longitudCaracteres <= 52) ? yAltura+20 : yAltura+20);
+			
+					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, yAltura,{width:170});
 					doc.font('Helvetica', 7);
-					doc.text(venta.sucursal.nombre.toUpperCase(), 60, yDesc + 22);
+					doc.text(venta.sucursal.nombre.toUpperCase(), 60, yDesc);
 					var longitudCaracteres = venta.sucursal.direccion.length;
-					var yDesc = (longitudCaracteres <= 45) ? 129 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc + 6, { width: 200 });
+					var yDesc = (longitudCaracteres <= 45) ? yDesc+9 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc, { width: 200 });
 					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
-					doc.text("TELF.: " + telefono, 60, yDesc + 14);
-					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 21);
+					doc.text("TELF.: " + telefono, 60, yDesc + 9);
+					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 18);
 				}
 				doc.font('Helvetica-Bold', 16);
 				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 100);
@@ -2013,6 +1979,7 @@ angular.module('agil.servicios')
 				doc.text(venta.cliente.nit, 400, 165);
 				if (completa || vacia) {
 					doc.rect(50, 200, 520, 25).stroke();
+					// doc.rect(50, 200, 520, 25).fill('blue').fillColor('white').stroke();
 					//doc.rect(50,225,520,papel[1]-175-225).stroke();
 					var existenDescuentos = VerificarDescuentos(venta.detallesVenta);
 					if (venta.movimiento) {

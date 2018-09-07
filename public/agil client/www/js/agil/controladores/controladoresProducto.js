@@ -280,6 +280,25 @@ angular.module('agil.controladores')
 
 		}
 
+
+	$scope.obtenerDetallesEmpresa = function (idProducto,idAlmacen,fechaInicio,fechaFin,lote) {
+		//$scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote
+		$scope.paginator = Paginator();
+		$scope.paginator.column = "razon_social";
+		$scope.paginator.direccion = "asc";
+		$scope.filtroDetallesProducto = {
+			id_producto: idProducto,
+			id_almacen: idAlmacen,
+			fecha_inicio: fechaInicio,
+			fecha_fin: fechaFin,
+			lote: lote
+		}
+		$scope.paginator.callBack = $scope.filtroProductoKardex;
+		$scope.paginator.getSearch("", $scope.filtroDetallesProducto, null);
+
+
+	}
+	
 		$scope.buscarKardexProducto = function (idProducto, almacen, filtro) {
 			blockUI.start();
 			var fechaInicio = filtro.fechaInicioTexto == "" || filtro.fechaInicioTexto == undefined ? 0 : new Date($scope.convertirFecha(filtro.fechaInicioTexto));
@@ -303,12 +322,24 @@ angular.module('agil.controladores')
 					});
 				})
 			} else {
-				var promesa = ProductoKardex($scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote);
+				$scope.obtenerDetallesEmpresa($scope.idProducto,$scope.idAlmacen,fechaInicio,fechaFin,lote);
+				
+				/*var promesa = ProductoKardex($scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote);
 				promesa.then(function (detMovs) {
 					$scope.generarKardexProducto(detMovs);
 					blockUI.stop();
-				})
+				})*/
 			}
+		}
+
+		$scope.filtroProductoKardex = function(){
+			//blockUI.start();
+			var promesa = ProductoKardex($scope.paginator);
+			promesa.then(function (datos) {
+				$scope.generarKardexProducto(datos.kardex);
+				$scope.paginator.setPages(datos.paginas);
+				blockUI.stop();
+			})
 		}
 
 		$scope.generarKardexProducto = function (detMovs) {

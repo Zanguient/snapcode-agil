@@ -169,7 +169,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				});
 			})
 		});
-	router.route('/productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote')
+	router.route('/productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
 		.get(function (req, res) {
 			var fechaInicial = req.params.fecha_inicio == 0 ? new Date(2016, 1, 0) : new Date(req.params.fecha_inicio);
 			var fechaFinal = req.params.fecha_fin == 0 ? new Date() : new Date(req.params.fecha_fin);
@@ -181,31 +181,92 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			if (req.params.lote != "0") {
 				condicionInventario = {id_producto: req.params.id_producto, lote: req.params.lote }
 			}
-			DetalleMovimiento.findAll({
-				where: { id_producto: req.params.id_producto },
-				include: [{ model: Inventario, as: 'inventario'},
-				{
-					model: Movimiento, as: 'movimiento',
-					where: condicionMovimiento,
-					include: [{
-						model: Compra, as: 'compra', required: false,
-						include: [{ model: Proveedor, as: 'proveedor' }]
-					},
+
+		//	var busquedaQuery = (req.params.texto_busqueda === "0") ? "" : " AND p.nombre like '%" + req.params.texto_busqueda + "%'";
+			if (req.params.items_pagina != 0) {					
+				var limite = {
+					where: { id_producto: req.params.id_producto },
+					offset: (req.params.items_pagina * (req.params.pagina - 1)),
+					limit: req.params.items_pagina,
+					include: [{ model: Inventario, as: 'inventario'},
 					{
-						model: Venta, as: 'venta', required: false,
-						include: [{ model: Cliente, as: 'cliente' }]
-					},
-					{
-						model: Almacen, as: 'almacen', required: false,
-						include: [{ model: Sucursal, as: 'sucursal' }]
-					},
-					{ model: Tipo, as: 'tipo'},
-					{ model: Clase, as: 'clase' }]
+						model: Movimiento, as: 'movimiento',
+						where: condicionMovimiento,
+						include: [{
+							model: Compra, as: 'compra', required: false,
+							include: [{ model: Proveedor, as: 'proveedor' }]
+						},
+						{
+							model: Venta, as: 'venta', required: false,
+							include: [{ model: Cliente, as: 'cliente' }]
+						},
+						{
+							model: Almacen, as: 'almacen', required: false,
+							include: [{ model: Sucursal, as: 'sucursal' }]
+						},
+						{ model: Tipo, as: 'tipo'},
+						{ model: Clase, as: 'clase' }]
+					}
+					],
+					order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
 				}
-				],
-				order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
-			}).then(function (productos) {
-				res.json(productos);
+			}else{
+				var limite = {
+					where: { id_producto: req.params.id_producto },
+					include: [{ model: Inventario, as: 'inventario'},
+					{
+						model: Movimiento, as: 'movimiento',
+						where: condicionMovimiento,
+						include: [{
+							model: Compra, as: 'compra', required: false,
+							include: [{ model: Proveedor, as: 'proveedor' }]
+						},
+						{
+							model: Venta, as: 'venta', required: false,
+							include: [{ model: Cliente, as: 'cliente' }]
+						},
+						{
+							model: Almacen, as: 'almacen', required: false,
+							include: [{ model: Sucursal, as: 'sucursal' }]
+						},
+						{ model: Tipo, as: 'tipo'},
+						{ model: Clase, as: 'clase' }]
+					}
+					],
+					order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
+				}
+			}
+
+			DetalleMovimiento.findAndCountAll({
+				where: { id_producto: req.params.id_producto },
+					include: [{ model: Inventario, as: 'inventario'},
+					{
+						model: Movimiento, as: 'movimiento',
+						where: condicionMovimiento,
+						include: [{
+							model: Compra, as: 'compra', required: false,
+							include: [{ model: Proveedor, as: 'proveedor' }]
+						},
+						{
+							model: Venta, as: 'venta', required: false,
+							include: [{ model: Cliente, as: 'cliente' }]
+						},
+						{
+							model: Almacen, as: 'almacen', required: false,
+							include: [{ model: Sucursal, as: 'sucursal' }]
+						},
+						{ model: Tipo, as: 'tipo'},
+						{ model: Clase, as: 'clase' }]
+					}
+					],
+					order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
+
+			}).then(function(datosCount){
+				DetalleMovimiento.findAll(limite).then(function (productos) {
+					res.json({ kardex: productos, paginas: Math.ceil(datosCount.count / req.params.items_pagina) })
+
+					//res.json(productos);
+				});
 			});
 		});
 

@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
 	.controller('ControladorVentas', function ($scope, $filter, $localStorage, $location, $templateCache, $route, blockUI, $timeout, $window, InventarioPaginador,
-		Venta, Ventas, VentasProductos, detalle, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
+		Venta, Ventas, VentasProductos, detalle,detalleEmpresa, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
 		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto, Paginator,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa, ReporteVentasMensualesDatos,
 		ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, GuardarVentasImportados, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario, ListaServiciosVentas, GuardarListaServiciosVentas,
@@ -11,6 +11,14 @@ angular.module('agil.controladores')
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
 			$scope.usuario.empresa.imagen = imagenEmpresa;
 		});
+		// para sacar la altura de la imagen
+		var img = new Image();
+		img.onload = function() { 
+			// en pulgadas
+			$scope.usuario.altura_imagen = this.height/96;
+		}
+		img.src = $scope.usuario.empresa.imagen;
+		
 		$scope.idModalPago = 'dialog-pago';
 		$scope.idModalCierre = 'dialog-cierre-caja';
 		$scope.idModalWizardCompraEdicion = 'modal-wizard-venta-edicion';
@@ -2784,7 +2792,7 @@ angular.module('agil.controladores')
 				blockUI.start();
 				inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
 				fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
-				$scope.paginator.itemsPerPage = 0;
+				//$scope.paginator.itemsPerPage = 0;
 
 				var reporte = [inicio, fin];
 				var promesa = VentasProductos($scope.paginator);
@@ -3333,13 +3341,8 @@ angular.module('agil.controladores')
 				$scope.mostrarMensaje("Ingrese primero las fechas !");
 			} else {
 
-				//$scope.fechaInicioTexto;
-				//$scope.fechaFinTexto;
-				//var columna = "razon_social";
-				//var direccion = "ASC";
 				$scope.obtenerDetallesEmpresa();
 
-				//$scope.filtroDetalleEmpresa($scope.sucursalesUsuario,$scope.fechaInicioTexto,$scope.fechaFinTexto,$scope.sucursalSelec,$scope.idEmpresa);
 				$scope.abrirReportePorEmpresa();
 			}
 
@@ -3371,6 +3374,97 @@ angular.module('agil.controladores')
 				blockUI.stop();
 			})
 
+		}
+
+		$scope.imprimirSimpleReporteEmpresa = function(id) {
+			blockUI.start();
+			var idEmpresa = 0;
+			idEmpresa = $scope.usuario.id_empresa;
+			inicio = new Date($scope.convertirFecha($scope.fechaInicioTexto));
+			fin = new Date($scope.convertirFecha($scope.fechaFinTexto));
+			var promesa = detalleEmpresa(inicio,fin,idEmpresa,id);
+			promesa.then(function(datos){
+				$scope.detallePorEmpresa = datos;
+
+				var doc = new PDFDocument({ compress: false, margin: 10 });
+				var stream = doc.pipe(blobStream());
+				doc.font('Helvetica', 8);
+				var y = 150, itemsPorPagina = 20, items = 0, pagina = 1;
+				var totalPaginas = Math.ceil($scope.detallePorEmpresa.length / itemsPorPagina);
+				$scope.dibujarCabeceraPDFDetalleEmpresas(doc, datos, pagina, totalPaginas);
+				var indice = 0;
+				for (var i = 0; i < $scope.detallePorEmpresa.length && items <= itemsPorPagina; i++) {
+					columns = [];
+	
+					$scope.producto = $scope.detallePorEmpresa[i];
+					for (let j = 0; j < $scope.producto.detallesVenta.length; j++) {
+						$scope.DetalleVenta = $scope.producto.detallesVenta[j];
+						doc.font('Helvetica');	
+						indice = i + 1;		
+						doc.text(indice,45,y);			
+						doc.text($scope.DetalleVenta.venta.factura,65,y);
+						doc.text($scope.producto.nombre,120,y);
+						doc.text($scope.DetalleVenta.cantidad,465,y);
+						doc.text($scope.DetalleVenta.total,520,y);
+
+
+						y = y + 30;
+						items++;
+	
+						if (items == itemsPorPagina || j + 1 == $scope.detallePorEmpresa.length) {
+							if (j + 1 == $scope.detallePorEmpresa.length) {
+	
+							} else {
+								doc.addPage({ margin: 0, bufferPages: true });
+								y = 150;
+								items = 0;
+								pagina = pagina + 1;
+								$scope.dibujarCabeceraPDFDetalleProductos(doc, datos, pagina, totalPaginas);
+								doc.font('Helvetica', 8);
+							}
+						}
+					}
+
+				}
+				var fechaActual = new Date();
+				var min = fechaActual.getMinutes();
+				if (min < 10) {
+					min = "0" + min;
+				}
+				doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, 750);
+				doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, 750);
+
+				doc.end();
+				stream.on('finish', function () {
+					var fileURL = stream.toBlobURL('application/pdf');
+					window.open(fileURL, '_blank', 'location=no');
+				});
+
+				blockUI.stop();
+			})		
+		}
+
+		$scope.dibujarCabeceraPDFDetalleEmpresas = function (doc, datos, pagina, totalPaginas) {
+			doc.font('Helvetica-Bold', 12);
+			doc.text("VENTAS", 0, 25, { align: "center" });
+			doc.font('Helvetica', 8);
+			doc.text("Desde  " + $scope.fechaInicioTexto, -70, 40, { align: "center" });
+			doc.text("Hasta " + $scope.fechaFinTexto, 70, 40, { align: "center" });
+			doc.font('Helvetica-Bold', 8);
+			doc.text(datos[0].detallesVenta[0].venta.cliente.razon_social, 0, 55, { align: "center" });
+			doc.font('Helvetica-Bold', 8);
+			doc.text("Codigo: " + datos[0].codigo, 45, 65);
+			doc.font('Helvetica-Bold', 8);
+			doc.rect(40, 100, 540, 40).stroke();
+			doc.font('Helvetica-Bold', 8);
+			doc.text("Nº", 45, 110);
+			doc.text("N° Factura", 65, 110);
+			doc.text("Producto", 120, 110);
+			doc.text("Cantidad", 450, 110);
+			doc.text("Monto", 520, 110);
+
+			doc.font('Helvetica', 8);
+			doc.text("Pagina " + pagina + " de " + totalPaginas, 500, 750);
 		}
 
 		$scope.abrirReportePorEmpresa = function () {

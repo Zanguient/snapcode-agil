@@ -308,6 +308,26 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
+	.factory('detalleEmpresas', function ($resource) {
+		return $resource(restServer + "detalleEmpresa/:inicio/:fin/:idEmpresa/:id", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+
+	.factory('detalleEmpresa', ['detalleEmpresas', '$q', function (detalle, $q) {
+		var res = function (inicio, fin,idEmpresa, id) {
+			var delay = $q.defer();
+			detalle.query({ inicio: inicio, fin: fin,idEmpresa:idEmpresa, id: id }, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
+
 	.factory('VentaContado', function ($resource) {
 		return $resource(restServer + "ventas-contado/:idsSucursales/inicio/:inicio/fin/:fin/usuario/:id_usuario/cierre-caja/:id_cierre_caja", null,
 			{

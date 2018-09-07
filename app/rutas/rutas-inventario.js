@@ -88,7 +88,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			if (req.params.sucursal != 0) {
 				condicionSucursal.id = req.params.sucursal;
 			}
-
+			
 			var limite = " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina
 			if (req.params.items_pagina == "0") {
 				limite = "";
@@ -163,7 +163,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ type: sequelize.QueryTypes.SELECT })
 				.then(function (detalleCantidad) {
 					//res.json(detalle);
-					sequelize.query("SELECT cli.razon_social, sum(dv.total) as total FROM agil_cliente as cli INNER JOIN inv_venta as v on v.cliente = cli.id\
+					sequelize.query("SELECT cli.id, cli.razon_social, sum(dv.total) as total FROM agil_cliente as cli INNER JOIN inv_venta as v on v.cliente = cli.id\
 								INNER JOIN inv_detalle_venta as dv on dv.venta = v.id\
 								INNER JOIN agil_almacen AS a ON v.almacen = a.id\
 								INNER JOIN agil_sucursal AS s ON a.sucursal = s.id\
@@ -259,6 +259,21 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 			});
 		});
+
+	router.route('/detalleEmpresa/:inicio/:fin/:idEmpresa/:id')
+		.get(function(req, res){
+			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+			var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+			var condicionCompra = { fecha: { $between: [inicio, fin] } };
+			Producto.findAll({			
+				include: [{model:DetalleVenta, as:'detallesVenta', include:[{model: Venta, as:'venta',where:condicionCompra, include:[{model: Cliente,as:'cliente',where:{id:req.params.id,id_empresa: req.params.idEmpresa}}]},
+					]
+				}]				
+			}).then(function(detalle){
+				res.json(detalle);
+			})
+		});
+
 
 	router.route('/compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario/tipo/:tipo')
 		.get(/*ensureAuthorized,*/function (req, res) {
