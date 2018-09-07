@@ -1935,7 +1935,7 @@ angular.module('agil.servicios')
 					if (usuario.empresa.imagen.length > 100) { 
 						doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); 
 						alturaImagen = usuario.altura_imagen;
-						var yAltura = (alturaImagen <= 5) ? alturaImagen+85 : ((alturaImagen > 6 && alturaImagen <= 52) ? 105 : 105);
+						var yAltura = (alturaImagen <= 4) ? alturaImagen+85 : ((alturaImagen > 6 && alturaImagen <= 52) ? 105 : 105);
 					} //width: 50, height: 50
 
 					
