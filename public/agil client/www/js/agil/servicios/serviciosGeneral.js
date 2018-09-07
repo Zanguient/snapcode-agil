@@ -1931,12 +1931,15 @@ angular.module('agil.servicios')
 			} else {
 				if (vacia) {
 					// la altura en pixeles para convertir seria dividirlo entre 96;
+					var alturaImagen = 80;
 					if (usuario.empresa.imagen.length > 100) { 
 						doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); 
+						alturaImagen = usuario.altura_imagen;
+						var yAltura = (alturaImagen <= 5) ? alturaImagen+82 : ((alturaImagen > 6 && alturaImagen <= 52) ? 105 : 105);
 					} //width: 50, height: 50
 
-					var alturaImagen = usuario.altura_imagen;
-					var yAltura = (alturaImagen <= 5) ? alturaImagen+80 : ((alturaImagen > 6 && alturaImagen <= 52) ? 105 : 105)
+					
+					
 					doc.font('Helvetica-Bold', 8);
 					var longitudCaracteres = usuario.empresa.razon_social.length;
 				
