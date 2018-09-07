@@ -6,7 +6,10 @@
 </div>
 
 <div class="modal-body">
-
+    <div class="form-group">
+        <label for="ciudad">Fecha</label>
+        <input autocomplete="off" ng-model="asignacion.fecha" required name="fecha" id="fecha" ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" >
+      </div>
   <div class="form-group">
     <label for="ciudad">Transportista</label>
     <select required ng-model="asignacion.id_transportista" ng-options="gtm_transportista.id as gtm_transportista.persona.nombre_completo for gtm_transportista in gtm_transportistas|filter:{activo:true}"></select>

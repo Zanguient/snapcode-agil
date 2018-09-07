@@ -363,4 +363,27 @@ angular.module('agil.servicios')
 			'update': { method: 'PUT' }
 		});
 	})
+
+	.factory('ModificarDatosDespachoDetalle', function ($resource) {
+		return $resource(restServer + "actualizar-gtm-detalle-despacho/despacho/:id_despacho", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+
+	.factory('ActualizarDatosDespachoDetalle', ['ModificarDatosDespachoDetalle', '$q', function (ModificarDatosDespachoDetalle, $q) {
+		var res = function (datos) {
+			var delay = $q.defer();
+			ModificarDatosDespachoDetalle.update({
+				id_despacho: datos.id,				
+			},datos, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
+	
 	

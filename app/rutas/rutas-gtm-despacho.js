@@ -9,7 +9,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				promises.push(GtmDespachoDetalle.update({
 					pago_ac: req.body.pago_ac,
 					saldo_pago_ac: req.body.saldo_pago_ac,
-					id_estado:req.body.estado.id
+					id_estado: req.body.estado.id
 				}, {
 						transaction: t,
 						where: {
@@ -749,7 +749,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			var condicionTrabajador = {}
 			var condicionCliente = {}
 			var condicionVendedor = {}
-		
+
 			var condicionDespachoPrincipal = { id_empresa: req.params.id_empresa }
 			if (req.params.inicio != 0) {
 				var inicio = new Date(req.params.inicio); inicio.setHours(4, 0, 0, 0, 0);
@@ -807,7 +807,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 			GtmDespachoDetalle.findAndCountAll({
 				where: condicionDespacho,
 
-				include: [{ model: Clase, as: 'estado' },{ model: GtmDespachoDetalleResivo, as: 'recivos', required: false, include: [{ model: Sucursal, as: 'sucursal', required: false, include: [{ model: Clase, as: 'departamento', required: false }] }, { model: Clase, as: 'tipoPago', required: false }, { model: Clase, as: 'otroBanco', required: false }, { model: Banco, as: 'banco', required: false }] }, {
+				include: [{ model: Clase, as: 'estado' }, { model: GtmDespachoDetalleResivo, as: 'recivos', required: false, include: [{ model: Sucursal, as: 'sucursal', required: false, include: [{ model: Clase, as: 'departamento', required: false }] }, { model: Clase, as: 'tipoPago', required: false }, { model: Clase, as: 'otroBanco', required: false }, { model: Banco, as: 'banco', required: false }] }, {
 					model: GtmDespacho, as: 'despacho',
 					where: condicionDespachoPrincipal,
 					include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
@@ -830,7 +830,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						subQuery: false,
 						offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
 						where: condicionDespacho,
-						include: [{ model: Clase, as: 'estado' },{ model: GtmDespachoDetalleResivo, as: 'recivos', required: false, include: [{ model: Sucursal, as: 'sucursal', required: false, include: [{ model: Clase, as: 'departamento', required: false }] }, { model: Clase, as: 'tipoPago', required: false }, { model: Clase, as: 'otroBanco', required: false }, { model: Banco, as: 'banco', required: false }] }, {
+						include: [{ model: Clase, as: 'estado' }, { model: GtmDespachoDetalleResivo, as: 'recivos', required: false, include: [{ model: Sucursal, as: 'sucursal', required: false, include: [{ model: Clase, as: 'departamento', required: false }] }, { model: Clase, as: 'tipoPago', required: false }, { model: Clase, as: 'otroBanco', required: false }, { model: Banco, as: 'banco', required: false }] }, {
 							model: GtmDespacho, as: 'despacho',
 							where: { id_empresa: req.params.id_empresa },
 							include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
@@ -854,7 +854,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						subQuery: false,
 						offset: (req.params.items_pagina * (req.params.pagina - 1)),
 						where: condicionDespacho,
-						include: [{ model: Clase, as: 'estado' },{ model: GtmDespachoDetalleResivo, as: 'recivos', required: false, include: [{ model: Sucursal, as: 'sucursal', required: false, include: [{ model: Clase, as: 'departamento', required: false }] }, { model: Clase, as: 'tipoPago', required: false }, { model: Clase, as: 'otroBanco', required: false }, { model: Banco, as: 'banco', required: false }] }, {
+						include: [{ model: Clase, as: 'estado' }, { model: GtmDespachoDetalleResivo, as: 'recivos', required: false, include: [{ model: Sucursal, as: 'sucursal', required: false, include: [{ model: Clase, as: 'departamento', required: false }] }, { model: Clase, as: 'tipoPago', required: false }, { model: Clase, as: 'otroBanco', required: false }, { model: Banco, as: 'banco', required: false }] }, {
 							model: GtmDespacho, as: 'despacho',
 							where: { id_empresa: req.params.id_empresa },
 							include: [{ model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionVendedor }] },
@@ -1391,4 +1391,17 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				res.json(vendedores);
 			});
 		})
+	router.route('/actualizar-gtm-detalle-despacho/despacho/:id_despacho')
+		.put(function (req, res) {
+			GtmDespachoDetalle.update({
+				id_transportista: req.body.id_transportista,
+				id_estibaje: req.body.id_estibaje,
+				id_grupo_estibaje: req.body.id_grupo_estibaje
+			}, {
+				where: { id: req.params.id_despacho }
+				}).then(function (actualizado) {
+					res.json({ mensaje: "Actualizado Satisfactoriamente!" })
+				})
+		})
+
 }

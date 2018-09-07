@@ -867,7 +867,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 		.get(function (req, res) {
 			sequelize.query("SELECT MAX(CAST(SUBSTRING(codigo, 3, 5) AS UNSIGNED)) as ultimo_codigo FROM agil_producto where empresa=" + req.params.id_empresa, { type: sequelize.QueryTypes.SELECT })
 				.then(function (dato) {
-					if (dato[0].ultimo_codigo = 99999) {
+					if (dato[0].ultimo_codigo == 99999) {
 						sequelize.query("SELECT MAX(CAST(SUBSTRING(codigo, 3, 6) AS UNSIGNED)) as ultimo_codigo FROM agil_producto where empresa=" + req.params.id_empresa + " and SUBSTRING(codigo,1,2) = 'FC'", { type: sequelize.QueryTypes.SELECT })
 							.then(function (dato2) {
 								if (dato[0].ultimo_codigo < dato2[0].ultimo_codigo) {

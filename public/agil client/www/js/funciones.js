@@ -1,5 +1,5 @@
 function ejecutarScriptDespacho(idModalAsignacionFactura, idModalVentaKardexFactura, idModalAsignacionFacturaKardex, idModalDetalleKardex, IdModalVerificarCuenta,
-	IdModalCobros, IdModalHistorialCobros,idModalConceptoEdicion) {
+	IdModalCobros, IdModalHistorialCobros,idModalConceptoEdicion,idModalAsignacionDespacho) {
 
 	crearPopup(idModalVentaKardexFactura, "80%", 'auto');
 	crearPopup(idModalAsignacionFactura, "auto", 'auto');
@@ -7,10 +7,11 @@ function ejecutarScriptDespacho(idModalAsignacionFactura, idModalVentaKardexFact
 	crearPopup(idModalAsignacionFacturaKardex, "auto", 'auto')
 	crearPopup(IdModalCobros, "50%", 'auto');
 	crearPopup(IdModalHistorialCobros, "50%", 'auto');
-	
+	crearPopup(idModalAsignacionDespacho, "auto", 'auto');
 	crearPopup(IdModalVerificarCuenta, "auto", 'auto');
 	setTimeout(function () {
 		crearPopup(idModalConceptoEdicion, "auto", 'auto');
+		
 	}, 2000);
 	
 }

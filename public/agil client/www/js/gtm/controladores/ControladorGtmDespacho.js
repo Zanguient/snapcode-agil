@@ -2,7 +2,7 @@ angular.module('agil.controladores')
 
     .controller('ControladorGtmDespacho', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
         GtmDespachos, GtmDetalleDespacho, GetGtmDetalleDespachoHijos, ImprimirPdfDespachos, ExportarExelDespachos, ListaDetalleKardexFactura, GtmDetalleDespachoKardex,
-        VerificarUsuarioEmpresa, CrearDespachoResivo, ClasesTipo, ListaBancos, ClasesTipoEmpresa) {
+        VerificarUsuarioEmpresa, CrearDespachoResivo, ClasesTipo, ListaBancos, ClasesTipoEmpresa,ActualizarDatosDespachoDetalle) {
 
         blockUI.start();
 
@@ -16,12 +16,12 @@ angular.module('agil.controladores')
         $scope.IdModalCobros = 'modal-cobros';
         $scope.IdModalHistorialCobros = 'modal-historial-cobros'
         $scope.idModalConceptoEdicion = 'dialog-conceptos';
-
+        $scope.idModalAsignacionDespacho = "gtm-asignacion-despachos";
 
         $scope.$on('$viewContentLoaded', function () {
             resaltarPestaña($location.path().substring(1));
             ejecutarScriptDespacho($scope.idModalAsignacionFactura, $scope.idModalVentaKardexFactura, $scope.idModalAsignacionFacturaKardex, $scope.idModalDetalleKardex,
-                $scope.IdModalVerificarCuenta, $scope.IdModalCobros, $scope.IdModalHistorialCobros, $scope.idModalConceptoEdicion);
+                $scope.IdModalVerificarCuenta, $scope.IdModalCobros, $scope.IdModalHistorialCobros, $scope.idModalConceptoEdicion, $scope.idModalAsignacionDespacho);
             $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
         });
 
@@ -535,44 +535,44 @@ angular.module('agil.controladores')
             } else {
                 doc.text("" + " " + "", 120, y + 100);
             }*/
-          /*  doc.font('Helvetica-Bold',10).text("Fecha: ",500,110);
-            var date = new Date().toLocaleDateString();
-            doc.font('Helvetica',9).text(date,550,110);
-            doc.font('Helvetica-Bold',10).text("Cliente: ",450,140);
-            doc.font('Helvetica',9).text(detalle.despacho.cliente.codigo,500,140);
-            doc.font('Helvetica-Bold',10).text("Cod SAP: ",450,155);
-            doc.font('Helvetica',9).text(detalle.despacho.cliente_razon.codigo_sap,500,155);
-            doc.font('Helvetica-Bold',10).text("Cod Vend: ",450,170);
-            doc.font('Helvetica',9).text(detalle.despacho.cliente.texto2,500,170);
-           
-           
-            var y = 270
-            doc.rect(40, 245, 540, 25).stroke();
-                /*.fill();*/
-            /*doc.font("Helvetica-Bold",10).text("N°",60,255);    
-            doc.font("Helvetica-Bold",10).text("Codigo",100,255);
-            doc.font("Helvetica-Bold",10).text("Detalle",170,255);
-            doc.font("Helvetica-Bold",10).text("Cantidad",330,255);
+        /*  doc.font('Helvetica-Bold',10).text("Fecha: ",500,110);
+          var date = new Date().toLocaleDateString();
+          doc.font('Helvetica',9).text(date,550,110);
+          doc.font('Helvetica-Bold',10).text("Cliente: ",450,140);
+          doc.font('Helvetica',9).text(detalle.despacho.cliente.codigo,500,140);
+          doc.font('Helvetica-Bold',10).text("Cod SAP: ",450,155);
+          doc.font('Helvetica',9).text(detalle.despacho.cliente_razon.codigo_sap,500,155);
+          doc.font('Helvetica-Bold',10).text("Cod Vend: ",450,170);
+          doc.font('Helvetica',9).text(detalle.despacho.cliente.texto2,500,170);
+         
+         
+          var y = 270
+          doc.rect(40, 245, 540, 25).stroke();
+              /*.fill();*/
+        /*doc.font("Helvetica-Bold",10).text("N°",60,255);    
+        doc.font("Helvetica-Bold",10).text("Codigo",100,255);
+        doc.font("Helvetica-Bold",10).text("Detalle",170,255);
+        doc.font("Helvetica-Bold",10).text("Cantidad",330,255);
 
-            doc.font('Helvetica', 8);
-            doc.text(1, 60, y+10);
-            doc.text(detalle.producto.codigo, 100, y+10);
-            doc.text(detalle.producto.nombre.toUpperCase(), 170, y+10);
-            doc.text(detalle.cantidad, 350, y+10);
-           
-            doc.font('Helvetica', 8);          
-            doc.text(detalle.producto.codigo, 100, y+30);
-            doc.text(detalle.producto.nombre.toUpperCase()+" (Despachado)", 170, y+30);
-            doc.text(detalle.cantidad, 350, y+30);
+        doc.font('Helvetica', 8);
+        doc.text(1, 60, y+10);
+        doc.text(detalle.producto.codigo, 100, y+10);
+        doc.text(detalle.producto.nombre.toUpperCase(), 170, y+10);
+        doc.text(detalle.cantidad, 350, y+10);
+       
+        doc.font('Helvetica', 8);          
+        doc.text(detalle.producto.codigo, 100, y+30);
+        doc.text(detalle.producto.nombre.toUpperCase()+" (Despachado)", 170, y+30);
+        doc.text(detalle.cantidad, 350, y+30);
 
 
-            doc.end();
-			stream.on('finish', function () {
-				var fileURL = stream.toBlobURL('application/pdf');
-				window.open(fileURL, '_blank', 'location=no');
-			});
-			blockUI.stop();
-        }*/
+        doc.end();
+        stream.on('finish', function () {
+            var fileURL = stream.toBlobURL('application/pdf');
+            window.open(fileURL, '_blank', 'location=no');
+        });
+        blockUI.stop();
+    }*/
 
         $scope.imprimirFactura = function (gtm_despacho) {
 
@@ -600,8 +600,8 @@ angular.module('agil.controladores')
                             doc.text(gtm_despacho.producto.codigo, 100, y);
                             doc.text(gtm_despacho.producto.nombre.toUpperCase(), 180, y);
                             doc.text(gtm_despacho.cantidad, /*380*/500, y);
-                    //doc.text(gtm_despacho.precio_unitario, 450, y);
-                    //doc.text(gtm_despacho.importe, 520, y);
+                            //doc.text(gtm_despacho.precio_unitario, 450, y);
+                            //doc.text(gtm_despacho.importe, 520, y);
                             /*  doc.rect(40, x + 80 ,540, y - 70).stroke();*/
                             doc.rect(40, y + 10, 540, 0).stroke();
                             doc.rect(40, y - 10, 0, 40).stroke();
@@ -611,13 +611,13 @@ angular.module('agil.controladores')
                             doc.rect(425, y - 35, 0, 65).stroke();
                             doc.rect(/*370*/580, y - 35, 0, 125).stroke();
                             doc.rect(425, y + 50, 0, 40).stroke();
-                        //doc.rect(495, y + 50, 0, 20).stroke();
-                        //doc.rect(580, y + 50, 0, 20).stroke();
+                            //doc.rect(495, y + 50, 0, 20).stroke();
+                            //doc.rect(580, y + 50, 0, 20).stroke();
                             /*  doc.rect(425, y - 35, 0, 105).stroke(); */
-                        //doc.rect(495, y - 35, 0, 85).stroke();
+                            //doc.rect(495, y - 35, 0, 85).stroke();
                             doc.rect(160, y + 50, 420, 0).stroke();
                             doc.rect(/*370*/425, y + 70, 153, 0).stroke();
-                           // doc.rect(495, y + 70, 85, 0).stroke();
+                            // doc.rect(495, y + 70, 85, 0).stroke();
                             doc.rect(/*370*/425, y + 90, 153, 0).stroke();
                             y = y + 20;
                             // doc.text(2, 55, y);
@@ -629,9 +629,9 @@ angular.module('agil.controladores')
                             doc.text(texto, 180, y + a, { width: 180 });
                             doc.text(gtm_despacho.cantidad_despacho, /*380*/500, y);
                             //doc.rect(40, x + 80 ,540, y - 70).stroke();
-                    //doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
-                    //doc.text(gtm_despacho.servicio_transporte, 520, y + 20);
-                    // doc.text(gtm_despacho.importe + gtm_despacho.servicio_transporte, 520, y + 40);
+                            //doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
+                            //doc.text(gtm_despacho.servicio_transporte, 520, y + 20);
+                            // doc.text(gtm_despacho.importe + gtm_despacho.servicio_transporte, 520, y + 40);
                             doc.rect(40, y + 10, 540, 0).stroke();
                             doc.font('Helvetica-Bold', 8);
                             doc.text('Total', x + 250, y + 40)
@@ -664,8 +664,8 @@ angular.module('agil.controladores')
                             doc.text(gtm_despacho.producto.codigo, 100, y);
                             doc.text(gtm_despacho.producto.nombre.toUpperCase(), 180, y);
                             doc.text(gtm_despacho.cantidad, /*380*/500, y);
-                        //doc.text(gtm_despacho.precio_unitario, 450, y);
-                        //doc.text(gtm_despacho.importe, 520, y);
+                            //doc.text(gtm_despacho.precio_unitario, 450, y);
+                            //doc.text(gtm_despacho.importe, 520, y);
                             /*  doc.rect(40, x + 80 ,540, y - 70).stroke();*/
                             doc.rect(40, y + 10, 540, 0).stroke();
                             doc.rect(40, y - 10, 0, 40).stroke();
@@ -673,16 +673,16 @@ angular.module('agil.controladores')
                             doc.rect(80, y - 35, 0, 65).stroke();
                             doc.rect(160, y - 35, 0, 85).stroke();
                             doc.rect(425, y - 35, 0, 65).stroke();
-                    //doc.rect(370, y - 35, 0, 65).stroke();
+                            //doc.rect(370, y - 35, 0, 65).stroke();
                             doc.rect(425, y + 50, 0, 40).stroke();
                             doc.rect(/*370*/580, y + 50, 0, 40).stroke();
 
-                            
-                    //doc.rect(495, y + 50, 0, 20).stroke();
-                    //doc.rect(580, y + 50, 0, 20).stroke();
-                    //doc.rect(495, y + 70, 85, 0).stroke();
+
+                            //doc.rect(495, y + 50, 0, 20).stroke();
+                            //doc.rect(580, y + 50, 0, 20).stroke();
+                            //doc.rect(495, y + 70, 85, 0).stroke();
                             /*  doc.rect(425, y - 35, 0, 105).stroke(); */
-                    //doc.rect(495, y - 35, 0, 85).stroke();
+                            //doc.rect(495, y - 35, 0, 85).stroke();
                             doc.rect(160, y + 50, 420, 0).stroke();
                             doc.rect(/*370*/425, y + 70, /*55*/153, 0).stroke();
                             doc.rect(/*370*/425, y + 90, /*55*/153, 0).stroke();
@@ -697,9 +697,9 @@ angular.module('agil.controladores')
                             doc.text(texto, 180, y + a, { width: 180 });
                             doc.text(gtm_despacho.cantidad_despacho, /*380*/500, y);
                             //doc.rect(40, x + 80 ,540, y - 70).stroke();
-                    //doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
-                    //doc.text(gtm_despacho.servicio_transporte, 520, y + 20);
-                    //doc.text(gtm_despacho.importe + gtm_despacho.servicio_transporte, 520, y + 40);
+                            //doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
+                            //doc.text(gtm_despacho.servicio_transporte, 520, y + 20);
+                            //doc.text(gtm_despacho.importe + gtm_despacho.servicio_transporte, 520, y + 40);
                             doc.rect(40, y + 10, 540, 0).stroke();
                             doc.font('Helvetica-Bold', 8);
                             doc.text('Total', x + 250, y + 40)
@@ -749,8 +749,8 @@ angular.module('agil.controladores')
                     doc.text(gtm_despacho.producto.codigo, 100, y);
                     doc.text(gtm_despacho.producto.nombre.toUpperCase(), 180, y, { width: 180 });
                     doc.text(gtm_despacho.cantidad, /*380*/ 500, y);
-                //doc.text(gtm_despacho.precio_unitario, 450, y);
-                //doc.text(gtm_despacho.importe, 520, y);
+                    //doc.text(gtm_despacho.precio_unitario, 450, y);
+                    //doc.text(gtm_despacho.importe, 520, y);
                     /*  doc.rect(40, x + 80 ,540, y - 70).stroke();*/
                     doc.rect(40, y + 10, 540, 0).stroke();
                     doc.rect(40, y - 10, 0, 40).stroke();
@@ -758,14 +758,14 @@ angular.module('agil.controladores')
                     doc.rect(80, y - 35, 0, 65).stroke();
                     doc.rect(160, y - 35, 0, 85).stroke();
                     doc.rect(425, y - 35, 0, 65).stroke();
-                //doc.rect(370, y - 35, 0, 65).stroke();
+                    //doc.rect(370, y - 35, 0, 65).stroke();
                     doc.rect(425, y + 50, 0, 40).stroke();
                     doc.rect(/*370*/580, y + 50, 0, 40).stroke();
-                //doc.rect(495, y + 50, 0, 20).stroke();
-                //doc.rect(580, y + 50, 0, 20).stroke();
-                //doc.rect(495, y + 70, 85, 0).stroke();
+                    //doc.rect(495, y + 50, 0, 20).stroke();
+                    //doc.rect(580, y + 50, 0, 20).stroke();
+                    //doc.rect(495, y + 70, 85, 0).stroke();
                     /*  doc.rect(425, y - 35, 0, 105).stroke(); */
-                //doc.rect(495, y - 35, 0, 85).stroke();
+                    //doc.rect(495, y - 35, 0, 85).stroke();
                     doc.rect(160, y + 50, 420, 0).stroke();
                     doc.rect(/*370*/425, y + 70, 153, 0).stroke();
                     doc.rect(/*370*/425, y + 90, 153, 0).stroke();
@@ -780,9 +780,9 @@ angular.module('agil.controladores')
                     doc.text(texto, 180, y + a, { width: 180 });
                     doc.text(gtm_despacho.cantidad_despacho, /*380*/ 500, y);
                     //doc.rect(40, x + 80 ,540, y - 70).stroke();
-                //doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
-                //doc.text(gtm_despacho.servicio_transporte, 520, y + 20);
-                //doc.text(gtm_despacho.importe + gtm_despacho.servicio_transporte, 520, y + 40);
+                    //doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
+                    //doc.text(gtm_despacho.servicio_transporte, 520, y + 20);
+                    //doc.text(gtm_despacho.importe + gtm_despacho.servicio_transporte, 520, y + 40);
                     doc.rect(40, y + 10, 540, 0).stroke();
                     doc.font('Helvetica-Bold', 8);
                     doc.text('Total', x + 250, y + 40)
@@ -815,8 +815,8 @@ angular.module('agil.controladores')
                     doc.text(gtm_despacho.producto.codigo, 100, y);
                     doc.text(gtm_despacho.producto.nombre.toUpperCase(), 180, y);
                     doc.text(gtm_despacho.cantidad, /*380*/500, y);
-                //doc.text(gtm_despacho.precio_unitario, 450, y);
-                //doc.text(gtm_despacho.importe, 520, y);
+                    //doc.text(gtm_despacho.precio_unitario, 450, y);
+                    //doc.text(gtm_despacho.importe, 520, y);
                     /*  doc.rect(40, x + 80 ,540, y - 70).stroke();*/
                     doc.rect(40, y + 10, 540, 0).stroke();
                     doc.rect(40, y - 10, 0, 40).stroke();
@@ -824,18 +824,18 @@ angular.module('agil.controladores')
                     doc.rect(80, y - 35, 0, 65).stroke();
                     doc.rect(160, y - 35, 0, 85).stroke();
                     doc.rect(425, y - 35, 0, 65).stroke();
-                //doc.rect(370, y - 35, 0, 65).stroke();
+                    //doc.rect(370, y - 35, 0, 65).stroke();
                     doc.rect(425, y + 50, 0, 40).stroke();
                     doc.rect(/*370*/580, y + 50, 0, 40).stroke();
-                //doc.rect(495, y + 50, 0, 20).stroke();
-                //doc.rect(580, y + 50, 0, 20).stroke();
+                    //doc.rect(495, y + 50, 0, 20).stroke();
+                    //doc.rect(580, y + 50, 0, 20).stroke();
 
                     /*  doc.rect(425, y - 35, 0, 105).stroke(); */
-                //doc.rect(495, y - 35, 0, 85).stroke();
+                    //doc.rect(495, y - 35, 0, 85).stroke();
                     doc.rect(160, y + 50, 420, 0).stroke();
                     doc.rect(/*370*/425, y + 70, 153, 0).stroke();
                     doc.rect(/*370*/425, y + 90, /*55*/153, 0).stroke();
-                //doc.rect(/*495*/425, y + 90, 153, 0).stroke();
+                    //doc.rect(/*495*/425, y + 90, 153, 0).stroke();
                     y = y + 20;
                     // doc.text(2, 55, y);
                     doc.text(gtm_despacho.producto.codigo, 100, y);
@@ -846,9 +846,9 @@ angular.module('agil.controladores')
                     doc.text(texto, 180, y + a, { width: 180 });
                     doc.text(gtm_despacho.cantidad_despacho, /*380*/ 500, y);
                     //doc.rect(40, x + 80 ,540, y - 70).stroke();
-                //doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
-                //doc.text(gtm_despacho.servicio_transporte, 520, y + 20);
-                //doc.text(gtm_despacho.importe + gtm_despacho.servicio_transporte, 520, y + 40);
+                    //doc.text('SERVICIO DE TRANSPORTE', 180, y + 20);
+                    //doc.text(gtm_despacho.servicio_transporte, 520, y + 20);
+                    //doc.text(gtm_despacho.importe + gtm_despacho.servicio_transporte, 520, y + 40);
                     doc.rect(40, y + 10, 540, 0).stroke();
                     doc.font('Helvetica-Bold', 8);
                     doc.text('Total', x + 250, y + 40)
@@ -927,8 +927,8 @@ angular.module('agil.controladores')
 
             doc.text("Detalle", 180, 90 + yCabecera);
             doc.text("Cantidad", /*380*/480, 90 + yCabecera);
-        //doc.text("Precio", 450, 90 + yCabecera);
-        //doc.text("Importe", 520, 90 + yCabecera);
+            //doc.text("Precio", 450, 90 + yCabecera);
+            //doc.text("Importe", 520, 90 + yCabecera);
             doc.text("Clientes:", 40, y + 90);
             doc.text("Destino Mercaderia:", 40, y + 100);
             var texto = gtm_despacho.despacho.destino.destino
@@ -952,7 +952,7 @@ angular.module('agil.controladores')
             doc.text(gtm_despacho.despacho.cliente_razon.nit, 80, y + 120 + a);
             if (gtm_despacho.despacho.cliente.telefono1) doc.text(gtm_despacho.despacho.cliente.telefono1, 240, y + 120 + a);
             doc.text(gtm_despacho.despacho.destino.direccion, 80, y + 130 + a);
-            if(gtm_despacho.despacho.observacion)doc.text(gtm_despacho.despacho.observacion, 100, y + 140 + a);
+            if (gtm_despacho.despacho.observacion) doc.text(gtm_despacho.despacho.observacion, 100, y + 140 + a);
             if (gtm_despacho.despacho.destino !== null && gtm_despacho.despacho.destino !== undefined) {
                 doc.text(texto, 120, y + 100, { width: 320 });
             } else {
@@ -1363,7 +1363,22 @@ angular.module('agil.controladores')
 
 
         }
+        $scope.abrirModificarDespacho = function (despacho) {
+            $scope.gtm_detalle_despacho = despacho
+            $scope.abrirPopup($scope.idModalAsignacionDespacho);
 
+        }
+
+        $scope.cerrarModificarDespacho = function () {
+            $scope.cerrarPopup($scope.idModalAsignacionDespacho);
+        }
+        $scope.actualizarDespacho=function(){
+            var promesa = ActualizarDatosDespachoDetalle($scope.gtm_detalle_despacho)
+            promesa.then(function(dato){
+                $scope.obtenerDespachados()
+                $scope.mostrarMensaje(dato.mensaje)
+            })
+        }
         $scope.$on('$routeChangeStart', function (next, current) {
             $scope.eliminarPopup($scope.idModalAsignacionFactura);
             $scope.eliminarPopup($scope.idModalVentaKardexFactura);
@@ -1373,6 +1388,7 @@ angular.module('agil.controladores')
             $scope.eliminarPopup($scope.IdModalCobros)
             $scope.eliminarPopup($scope.IdModalHistorialCobros)
             $scope.eliminarPopup($scope.idModalConceptoEdicion)
+            $scope.eliminarPopup($scope.idModalAsignacionDespacho)
         });
 
         $scope.inicio();
