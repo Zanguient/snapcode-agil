@@ -1963,8 +1963,8 @@ angular.module('agil.servicios')
 				doc.text(venta.actividad.nombre, 380, 105, { width: 200 });
 
 				if (completa || vacia) {
-					// doc.rect(380, 40, 190, 50).fillAndStroke("#c5daef", "black").fillColor('black').stroke();
-					doc.rect(380, 40, 190, 50).stroke();
+					doc.rect(380, 40, 190, 50).fillAndStroke("#c5daef", "black").fillColor('black').stroke();
+					// doc.rect(380, 40, 190, 50).stroke();
 					doc.text("NIT : ", 390, 50);
 					doc.text("FACTURA No : ", 390, 60);
 					doc.text("AUTORIZACIÓN No : ", 390, 70);
@@ -1973,8 +1973,8 @@ angular.module('agil.servicios')
 				doc.text(venta.factura, 500, 60);
 				doc.text(venta.autorizacion, 500, 70);
 				if (completa || vacia) {
-					doc.rect(50, 160, 520, 40).stroke();
-					// doc.rect(50, 160, 520, 40).fillAndStroke("#c5daef", "black").fillColor('black').stroke();
+					// doc.rect(50, 160, 520, 40).stroke();
+					doc.rect(50, 160, 520, 40).fillAndStroke("#c5daef", "black").fillColor('black').stroke();
 					doc.text("FECHA : ", 60, 165);
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
@@ -1983,8 +1983,8 @@ angular.module('agil.servicios')
 				doc.text(venta.cliente.razon_social, 120, 175);
 				doc.text(venta.cliente.nit, 400, 165);
 				if (completa || vacia) {
-					doc.rect(50, 200, 520, 25).stroke();
-					// doc.rect(50, 200, 520, 25).fillAndStroke("#307ecc", "black").fillColor('white').stroke();
+					// doc.rect(50, 200, 520, 25).stroke();
+					doc.rect(50, 200, 520, 25).fillAndStroke("#307ecc", "black").fillColor('white').stroke();
 					//doc.rect(50,225,520,papel[1]-175-225).stroke();
 					var existenDescuentos = VerificarDescuentos(venta.detallesVenta);
 					if (venta.movimiento) {
@@ -2031,6 +2031,7 @@ angular.module('agil.servicios')
 							doc.text("TOTAL", 520, 210);
 						}
 					}
+					doc.fillColor('black');
 				}
 			}
 
