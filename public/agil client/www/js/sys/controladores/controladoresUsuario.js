@@ -29,7 +29,8 @@ angular.module('agil.controladores')
 		$scope.inicio = function () {
 			$scope.gruposUsuario = []
 			$scope.obtenerEmpresas();
-
+			$scope.verAtrbCC = false
+			$scope.verAtrbVenta = false
 			$scope.obtenerRoles();
 			$scope.obtenerUsuarios();
 			if ($scope.usuarioSesion.empresa) {
@@ -40,19 +41,24 @@ angular.module('agil.controladores')
 			/* var sucursales=($scope.usuarioSesion.empresa)?$scope.usuarioSesion.empresa.sucursales:[];
 			$scope.llenarSucursales(sucursales); */
 			$scope.buscarSucursales($scope.usuarioSesion.id_empresa)
-			
+
 			/* setTimeout(function() {
 				ejecutarScriptsTabla('tabla-usuarios',9);
 			},2000); */
 
 		}
-
-		$scope.verificarModulos=function(){
-			$scope.aplicacionesEmpresa.forEach(function(dato){
-				if(dato.aplicacion.titulo=="CAJA CHICA" ||dato.aplicacion.titulo=="SOLICITUD CAJA CHICA"  ){
-					$scope.verdatosCajaChica=true
-				}else{
-					$scope.verdatosCajaChica=true
+		$scope.verAtrbVentaUsuario = function () {
+			$scope.verAtrbVenta = $scope.verAtrbVenta ? false : true
+		}
+		$scope.verAtrbCCUsuario = function () {
+			$scope.verAtrbCC = $scope.verAtrbCC ? false : true
+		}
+		$scope.verificarModulos = function () {
+			$scope.aplicacionesEmpresa.forEach(function (dato) {
+				if (dato.aplicacion.titulo == "CAJA CHICA" || dato.aplicacion.titulo == "SOLICITUD CAJA CHICA") {
+					$scope.verdatosCajaChica = true
+				} else {
+					$scope.verdatosCajaChica = true
 				}
 			})
 		}
@@ -123,14 +129,14 @@ angular.module('agil.controladores')
 			// $scope.abrirPopup($scope.idModalWizardUsuarioVista);
 		}
 
-		$scope.verificarEmpresa=function(idEmpresa){
-			 var empresa = $scope.empresas.filter(function(dato){
-				
-					return dato.id==idEmpresa
-				
-				
+		$scope.verificarEmpresa = function (idEmpresa) {
+			var empresa = $scope.empresas.filter(function (dato) {
+
+				return dato.id == idEmpresa
+
+
 			})
-			$scope.empresaSeleccionada=empresa[0]
+			$scope.empresaSeleccionada = empresa[0]
 		}
 		$scope.modificarUsuario = function (usuario) {
 

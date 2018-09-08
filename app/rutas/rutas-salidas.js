@@ -70,10 +70,10 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 
 			Inventario.findAll({
 				where: { id_producto: req.params.id_producto, id_almacen: req.params.id_almacen, cantidad: { $gt: 0 }},
-				include: [{model:DetalleCompra,as:'detallesCompra',include:[{model:Compra,as:'compra',where:{fecha:{ $between: [inicio, fin]} }}]},{
+				include: [{model:DetalleCompra,as:'detallesCompra',include:[{model:Compra,as:'compra'}]},{
 					model: DetalleMovimiento, as: "detallesMovimiento",
 					include: [{
-						model: Movimiento, as: 'movimiento',
+						model: Movimiento, as: 'movimiento',where:{fecha:{ $between: [inicio, fin]} },
 						include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: 'MOVING' } },
 						{ model: Clase, as: 'clase' }]
 					}]
