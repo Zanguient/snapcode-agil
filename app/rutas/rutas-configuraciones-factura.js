@@ -52,7 +52,8 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				id_tamano_papel_nota_pedido: req.body.tamanoPapelNotaPedido.id,
 				id_tamano_papel_cierre_caja: req.body.tamanoPapelCierreCaja.id,
 				id_tamano_papel_cotizacion: req.body.tamanoPapelCotizacion.id,
-				id_formato_papel_factura: req.body.formatoPapelFactura.id
+				id_formato_papel_factura: req.body.formatoPapelFactura.id,
+				id_formato_color_factura: req.body.formatoColorFactura.id
 
 			}, {
 					where: { id: req.params.id_configuracion }
@@ -259,7 +260,8 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 			{ model: Clase, as: 'tamanoPapelNotaPedido' },
 			{ model: Clase, as: 'tamanoPapelCierreCaja' },
 			{ model: Clase, as: 'tamanoPapelCotizacion' },
-			{ model: Clase, as: 'formatoPapelFactura' },]
+			{ model: Clase, as: 'formatoPapelFactura' },
+			{ model: Clase, as: 'formatoColorFactura' },]
 		});
 	}
 

@@ -71,6 +71,10 @@ module.exports=function(sequelize,Sequelize){
 		id_formato_papel_factura:{
 			type: Sequelize.INTEGER,
 			field: 'formato_papel_factura' 		
+		},
+		id_formato_color_factura:{
+			type: Sequelize.INTEGER,
+			field: 'formato_color_factura' 		
 		}
 	}, {
 	  freezeTableName: true 

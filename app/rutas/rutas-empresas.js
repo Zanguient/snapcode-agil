@@ -1,5 +1,6 @@
 module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Clase, Tipo, signs3,
-	ConfiguracionVentaVista, ConfiguracionCompraVista, sequelize, EmpresaAplicacion, Aplicacion) {
+	ConfiguracionVentaVista, ConfiguracionCompraVista, sequelize, EmpresaAplicacion, Aplicacion,
+	Usuario) {
 
 	router.route('/empresas')
 
@@ -426,6 +427,17 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				});
 		});
 
+	router.route('/empresa/:id_empresa')
+		.get(function (req,res){
+			Empresa.findAll({
+				include:[{
+					model: Usuario, as:'usuarios', where: {id_empresa: req.params.id_empresa}
+						}]
+			}).then(function(empresa){
+				res.json(empresa);
+			})
+		})
+	
 	router.route('/subgrupos/empresa/:id_empresa')
 		.get(function (req, res) {
 			sequelize.query("SELECT gl_clase.id, gl_clase.nombre, gl_clase.habilitado FROM gl_clase,gl_tipo where gl_tipo.nombre_corto='SUBGRUPOS PRODUCTOS' and gl_clase.tipo=gl_tipo.id and gl_tipo.empresa=" + req.params.id_empresa, { type: sequelize.QueryTypes.SELECT })

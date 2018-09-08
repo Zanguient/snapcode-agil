@@ -1959,7 +1959,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 													{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 													{ model: Clase, as: 'tamanoPapelNotaBaja' },
 													{ model: Clase, as: 'tamanoPapelNotaPedido' },
-													{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+													{ model: Clase, as: 'tamanoPapelCierreCaja' },
+													{ model: Clase, as: 'formatoColorFactura' }]
 												}).then(function (configuracionGeneralFactura) {
 													if (configuracionGeneralFactura.usar) {
 														var promises = [];
@@ -2396,7 +2397,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 				{ model: Clase, as: 'tamanoPapelNotaBaja' },
 				{ model: Clase, as: 'tamanoPapelNotaPedido' },
-				{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+				{ model: Clase, as: 'tamanoPapelCierreCaja' },
+				{ model: Clase, as: 'formatoColorFactura' }]
 			}).then(function (configuracionGeneralFactura) {
 				venta.detallesVentaNoConsolidadas.forEach(function (detalleVentaNoConsolidada, index, array) {
 					//crearDetalleVentaNoConsolidada(ventaCreada.id, detalleVentaNoConsolidada.producto.id, null, detalleVentaNoConsolidada);
@@ -3277,7 +3279,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 					{ model: Clase, as: 'tamanoPapelNotaBaja' },
 					{ model: Clase, as: 'tamanoPapelNotaPedido' },
-					{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+					{ model: Clase, as: 'tamanoPapelCierreCaja' },
+					{ model: Clase, as: 'formatoColorFactura'}]
 				}).then(function (configuracionGeneralFactura) {
 					if (venta.movimiento) {
 						if (venta.movimiento.clase.nombre_corto == Diccionario.EGRE_FACTURACION) {
