@@ -75,6 +75,15 @@ angular.module('agil.controladores')
 		});
 	}
 
+	$scope.obtenerFormatoFacturaColor = function () {
+		blockUI.start();
+		var promesa = ClasesTipo("FORM_IMP_FAC_COL");
+		promesa.then(function (entidad) {
+			$scope.formatosFacturaColor = entidad.clases;
+			blockUI.stop();
+		});
+	}
+
 	$scope.obtenerConfiguracionesFactura=function(){
 		blockUI.start();
 		var promesa=ConfiguracionesFactura($scope.usuario.id_empresa);
@@ -109,6 +118,7 @@ angular.module('agil.controladores')
 		$scope.obtenerSubtitulosFactura();
 		$scope.obtenerPiesFactura();
 		$scope.obtenerFormatoFactura();
+		$scope.obtenerFormatoFacturaColor();
 		setTimeout(function() {
 			ejecutarScriptsTabla('tabla-configuraciones',7);
 			ejecutarScriptsTabla('tabla-configuracion-general',7);

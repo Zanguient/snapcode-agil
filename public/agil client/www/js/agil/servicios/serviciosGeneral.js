@@ -1935,9 +1935,8 @@ angular.module('agil.servicios')
 					if (usuario.empresa.imagen.length > 100) { 
 						doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); 
 						alturaImagen = usuario.altura_imagen;
-						var yAltura = (alturaImagen <= 2) ? alturaImagen+85 : ((alturaImagen > 6 && alturaImagen <= 52) ? 105 : 105);
 					} //width: 50, height: 50
-
+					var yAltura = (alturaImagen <= 1.95) ? alturaImagen+85 : ((alturaImagen > 2 && alturaImagen <= 80) ? 105 : 105);
 					
 					
 					doc.font('Helvetica-Bold', 8);
@@ -1949,13 +1948,13 @@ angular.module('agil.servicios')
 					doc.font('Helvetica', 7);
 					doc.text(venta.sucursal.nombre.toUpperCase(), 60, yDesc);
 					var longitudCaracteres = venta.sucursal.direccion.length;
-					var yDesc = (longitudCaracteres <= 45) ? yDesc+9 : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? 139 : 145);
-					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc, { width: 200 });
+					var yDescDir = (longitudCaracteres <= 35) ? yDesc+9 : ((longitudCaracteres > 36 && longitudCaracteres <= 90) ? yDesc+18 : yDesc+18);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc+9, { width: 200 });
 					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
-					doc.text("TELF.: " + telefono, 60, yDesc + 9);
-					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 18);
+					doc.text("TELF.: " + telefono, 60, yDescDir + 9);
+					doc.text("COCHABAMBA - BOLIVIA", 60, yDescDir + 18);
 				}
 				doc.font('Helvetica-Bold', 16);
 				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 100);
@@ -1963,8 +1962,11 @@ angular.module('agil.servicios')
 				doc.text(venta.actividad.nombre, 380, 105, { width: 200 });
 
 				if (completa || vacia) {
-					doc.rect(380, 40, 190, 50).fillAndStroke("#c5daef", "black").fillColor('black').stroke();
-					// doc.rect(380, 40, 190, 50).stroke();
+					if (venta.configuracion.formatoColorFactura.nombre_corto == "FORM_S_COL") {
+						doc.rect(380, 40, 190, 50).stroke();
+					}else{
+						doc.rect(380, 40, 190, 50).fillAndStroke("#c5daef", "black").fillColor('black').stroke();
+					}
 					doc.text("NIT : ", 390, 50);
 					doc.text("FACTURA No : ", 390, 60);
 					doc.text("AUTORIZACIÓN No : ", 390, 70);
@@ -1973,8 +1975,12 @@ angular.module('agil.servicios')
 				doc.text(venta.factura, 500, 60);
 				doc.text(venta.autorizacion, 500, 70);
 				if (completa || vacia) {
-					// doc.rect(50, 160, 520, 40).stroke();
-					doc.rect(50, 160, 520, 40).fillAndStroke("#c5daef", "black").fillColor('black').stroke();
+					if (venta.configuracion.formatoColorFactura.nombre_corto == "FORM_S_COL") {
+						doc.rect(50, 160, 520, 40).stroke();
+					}else{
+						doc.rect(50, 160, 520, 40).fillAndStroke("#c5daef", "black").fillColor('black').stroke();
+					}
+					
 					doc.text("FECHA : ", 60, 165);
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
@@ -1983,8 +1989,11 @@ angular.module('agil.servicios')
 				doc.text(venta.cliente.razon_social, 120, 175);
 				doc.text(venta.cliente.nit, 400, 165);
 				if (completa || vacia) {
-					// doc.rect(50, 200, 520, 25).stroke();
-					doc.rect(50, 200, 520, 25).fillAndStroke("#307ecc", "black").fillColor('white').stroke();
+					if (venta.configuracion.formatoColorFactura.nombre_corto == "FORM_S_COL") {
+						doc.rect(50, 200, 520, 25).stroke();
+					}else{
+						doc.rect(50, 200, 520, 25).fillAndStroke("#307ecc", "black").fillColor('white').stroke();
+					}
 					//doc.rect(50,225,520,papel[1]-175-225).stroke();
 					var existenDescuentos = VerificarDescuentos(venta.detallesVenta);
 					if (venta.movimiento) {

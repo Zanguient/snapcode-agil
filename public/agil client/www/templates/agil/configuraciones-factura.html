@@ -300,6 +300,13 @@
 								<select required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id" ng-model="configuracion_general.formatoPapelFactura"></select>
 							</div>
 						</div>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Formato Color</label>
+
+							<div class="col-xs-12 col-sm-6">
+								<select required ng-options="formatoFacturaColor as formatoFacturaColor.nombre for formatoFacturaColor in formatosFacturaColor track by formatoFacturaColor.id" ng-model="configuracion_general.formatoColorFactura"></select>
+							</div>
+						</div>
 					</div>
 					<div class="step-pane" data-step="3">
 						<div class="center">
