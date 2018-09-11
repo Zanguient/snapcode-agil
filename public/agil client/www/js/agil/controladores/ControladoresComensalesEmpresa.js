@@ -385,52 +385,52 @@ angular.module('agil.controladores')
                     $scope.alertaMarcaciones = res
                     $scope.alertaMarcaciones.marcacionesFaltantes = []
                     for (let index = 0; index < $scope.alertaMarcaciones.length; index++) {
-//                         var conteoIndex = -1
-//                                     if (reporteGerencias.some(function (dato) {
-//                                         conteoIndex += 1
-//                                         if (dato.gerencia.nombre === res.reporte[index].nombre && dato.fecha.split('T')[0] === res.reporte[index].historial[_index].fecha.split('T')[0]) {
-//                                             return true
-//                                         }
-//                                         return false
-//                                     })) {
-//                                         if (res.reporte[index].historial[_index].comida) {
-//                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
-//                                                 reporteGerencias[conteoIndex].desayuno.cantidad += 1
-//                                                 reporteGerencias[conteoIndex].desayuno.total += res.reporte[index].historial[_index].precio
-//                                             }
-//                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
-//                                                 reporteGerencias[conteoIndex].almuerzo.cantidad += 1
-//                                                 reporteGerencias[conteoIndex].almuerzo.total += res.reporte[index].historial[_index].precio
-//                                             }
-//                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
-//                                                 reporteGerencias[conteoIndex].cena.cantidad += 1
-//                                                 reporteGerencias[conteoIndex].cena.total += res.reporte[index].historial[_index].precio
-//                                             }
-//                                         } else {
-//                                             reporteGerencias[conteoIndex].fuera_horario += 1
-//                                         }
-                                        
-//                                     } else {
-//                                         var chingadera = { cantidad: 0, total: 0 }
-//                                         var combo = { empresaCliente: res.reporte[index].historial[_index].empresaCliente, gerencia: { id: res.reporte[index].id, nombre: res.reporte[index].nombre, codigo: res.reporte[index].codigo, id_cliente: res.reporte[index].id_cliente, id_empresa: res.reporte[index].id_empresa }, fecha: res.reporte[index].historial[_index].fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera), fuera_horario: 0 }
-//                                         if (res.reporte[index].historial[_index].comida) {
-//                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
-//                                                 combo.desayuno.cantidad += 1
-//                                                 combo.desayuno.total += res.reporte[index].historial[_index].precio
-//                                             }
-//                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
-//                                                 combo.almuerzo.cantidad += 1
-//                                                 combo.almuerzo.total += res.reporte[index].historial[_index].precio
-//                                             }
-//                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
-//                                                 combo.cena.cantidad += 1
-//                                                 combo.cena.total += res.reporte[index].historial[_index].precio
-//                                             }
-//                                         } else {
-//                                             combo.observacion = 'Fuera de horario, no se puede contabilizar.'
-//                                         }
-//                                         reporteGerencias.push(combo)
-//                                     }
+                        //                         var conteoIndex = -1
+                        //                                     if (reporteGerencias.some(function (dato) {
+                        //                                         conteoIndex += 1
+                        //                                         if (dato.gerencia.nombre === res.reporte[index].nombre && dato.fecha.split('T')[0] === res.reporte[index].historial[_index].fecha.split('T')[0]) {
+                        //                                             return true
+                        //                                         }
+                        //                                         return false
+                        //                                     })) {
+                        //                                         if (res.reporte[index].historial[_index].comida) {
+                        //                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                        //                                                 reporteGerencias[conteoIndex].desayuno.cantidad += 1
+                        //                                                 reporteGerencias[conteoIndex].desayuno.total += res.reporte[index].historial[_index].precio
+                        //                                             }
+                        //                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                        //                                                 reporteGerencias[conteoIndex].almuerzo.cantidad += 1
+                        //                                                 reporteGerencias[conteoIndex].almuerzo.total += res.reporte[index].historial[_index].precio
+                        //                                             }
+                        //                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                        //                                                 reporteGerencias[conteoIndex].cena.cantidad += 1
+                        //                                                 reporteGerencias[conteoIndex].cena.total += res.reporte[index].historial[_index].precio
+                        //                                             }
+                        //                                         } else {
+                        //                                             reporteGerencias[conteoIndex].fuera_horario += 1
+                        //                                         }
+
+                        //                                     } else {
+                        //                                         var chingadera = { cantidad: 0, total: 0 }
+                        //                                         var combo = { empresaCliente: res.reporte[index].historial[_index].empresaCliente, gerencia: { id: res.reporte[index].id, nombre: res.reporte[index].nombre, codigo: res.reporte[index].codigo, id_cliente: res.reporte[index].id_cliente, id_empresa: res.reporte[index].id_empresa }, fecha: res.reporte[index].historial[_index].fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera), fuera_horario: 0 }
+                        //                                         if (res.reporte[index].historial[_index].comida) {
+                        //                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                        //                                                 combo.desayuno.cantidad += 1
+                        //                                                 combo.desayuno.total += res.reporte[index].historial[_index].precio
+                        //                                             }
+                        //                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                        //                                                 combo.almuerzo.cantidad += 1
+                        //                                                 combo.almuerzo.total += res.reporte[index].historial[_index].precio
+                        //                                             }
+                        //                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                        //                                                 combo.cena.cantidad += 1
+                        //                                                 combo.cena.total += res.reporte[index].historial[_index].precio
+                        //                                             }
+                        //                                         } else {
+                        //                                             combo.observacion = 'Fuera de horario, no se puede contabilizar.'
+                        //                                         }
+                        //                                         reporteGerencias.push(combo)
+                        //                                     }
                     }
                 }
             })
@@ -1169,7 +1169,7 @@ angular.module('agil.controladores')
                     var columns = []
                     columns.push(res.documento[index].tarjeta)
                     columns.push(res.documento[index].comensal.nombre)
-                    columns.push(res.documento[index].fecha.split('T')[0].split('-').reverse().join('/') + ' ' + res.documento[index].fecha.split('T')[1].split('.')[0] )
+                    columns.push(res.documento[index].fecha.split('T')[0].split('-').reverse().join('/') + ' ' + res.documento[index].fecha.split('T')[1].split('.')[0])
                     columns.push(res.documento[index].identificador_equipo)
                     columns.push(res.documento[index].empresaCliente.alias[0].nombre)
                     data.push(columns)
@@ -1262,61 +1262,62 @@ angular.module('agil.controladores')
                             var reportesGerencias = []
                             for (let index = 0; index < res.reporte.length; index++) {
                                 var reporteGerencias = []
-                                for (let _index = 0; _index < res.reporte[index].historial.length; _index++) {
-                                    var conteoIndex = -1
-                                    if (reporteGerencias.some(function (dato) {
-                                        conteoIndex += 1
-                                        if (dato.gerencia.nombre === res.reporte[index].nombre && dato.fecha.split('T')[0] === res.reporte[index].historial[_index].fecha.split('T')[0]) {
-                                            return true
-                                        }
-                                        return false
-                                    })) {
-                                        if (res.reporte[index].historial[_index].comida) {
-                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
-                                                reporteGerencias[conteoIndex].desayuno.cantidad += 1
-                                                reporteGerencias[conteoIndex].desayuno.total += res.reporte[index].historial[_index].precio
+                                if (res.reporte[index].historial.length > 0) {
+                                    for (let _index = 0; _index < res.reporte[index].historial.length; _index++) {
+                                        var conteoIndex = -1
+                                        if (reporteGerencias.some(function (dato) {
+                                            conteoIndex += 1
+                                            if (dato.gerencia.nombre === res.reporte[index].nombre && dato.fecha.split('T')[0] === res.reporte[index].historial[_index].fecha.split('T')[0]) {
+                                                return true
                                             }
-                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
-                                                reporteGerencias[conteoIndex].almuerzo.cantidad += 1
-                                                reporteGerencias[conteoIndex].almuerzo.total += res.reporte[index].historial[_index].precio
+                                            return false
+                                        })) {
+                                            if (res.reporte[index].historial[_index].comida) {
+                                                if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                                                    reporteGerencias[conteoIndex].desayuno.cantidad += 1
+                                                    reporteGerencias[conteoIndex].desayuno.total += res.reporte[index].historial[_index].precio
+                                                }
+                                                if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                                                    reporteGerencias[conteoIndex].almuerzo.cantidad += 1
+                                                    reporteGerencias[conteoIndex].almuerzo.total += res.reporte[index].historial[_index].precio
+                                                }
+                                                if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                                                    reporteGerencias[conteoIndex].cena.cantidad += 1
+                                                    reporteGerencias[conteoIndex].cena.total += res.reporte[index].historial[_index].precio
+                                                }
+                                            } else {
+                                                reporteGerencias[conteoIndex].fuera_horario += 1
                                             }
-                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
-                                                reporteGerencias[conteoIndex].cena.cantidad += 1
-                                                reporteGerencias[conteoIndex].cena.total += res.reporte[index].historial[_index].precio
-                                            }
+
                                         } else {
-                                            reporteGerencias[conteoIndex].fuera_horario += 1
+                                            var chingadera = { cantidad: 0, total: 0 }
+                                            var combo = { empresaCliente: res.reporte[index].historial[_index].empresaCliente, gerencia: { id: res.reporte[index].id, nombre: res.reporte[index].nombre, codigo: res.reporte[index].codigo, id_cliente: res.reporte[index].id_cliente, id_empresa: res.reporte[index].id_empresa }, fecha: res.reporte[index].historial[_index].fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera), fuera_horario: 0 }
+                                            if (res.reporte[index].historial[_index].comida) {
+                                                if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                                                    combo.desayuno.cantidad += 1
+                                                    combo.desayuno.total += res.reporte[index].historial[_index].precio
+                                                }
+                                                if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                                                    combo.almuerzo.cantidad += 1
+                                                    combo.almuerzo.total += res.reporte[index].historial[_index].precio
+                                                }
+                                                if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                                                    combo.cena.cantidad += 1
+                                                    combo.cena.total += res.reporte[index].historial[_index].precio
+                                                }
+                                            } else {
+                                                combo.observacion = 'Fuera de horario, no se puede contabilizar.'
+                                            }
+                                            reporteGerencias.push(combo)
                                         }
-                                        
-                                    } else {
-                                        var chingadera = { cantidad: 0, total: 0 }
-                                        var combo = { empresaCliente: res.reporte[index].historial[_index].empresaCliente, gerencia: { id: res.reporte[index].id, nombre: res.reporte[index].nombre, codigo: res.reporte[index].codigo, id_cliente: res.reporte[index].id_cliente, id_empresa: res.reporte[index].id_empresa }, fecha: res.reporte[index].historial[_index].fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera), fuera_horario: 0 }
-                                        if (res.reporte[index].historial[_index].comida) {
-                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
-                                                combo.desayuno.cantidad += 1
-                                                combo.desayuno.total += res.reporte[index].historial[_index].precio
-                                            }
-                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
-                                                combo.almuerzo.cantidad += 1
-                                                combo.almuerzo.total += res.reporte[index].historial[_index].precio
-                                            }
-                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
-                                                combo.cena.cantidad += 1
-                                                combo.cena.total += res.reporte[index].historial[_index].precio
-                                            }
-                                        } else {
-                                            combo.observacion = 'Fuera de horario, no se puede contabilizar.'
+                                        if (_index === (res.reporte[index].historial.length - 1)) {
+                                            reportesGerencias.push(reporteGerencias)
                                         }
-                                        reporteGerencias.push(combo)
-                                    }
-                                    if (_index === (res.reporte[index].historial.length - 1)) {
-                                        reportesGerencias.push(reporteGerencias)
                                     }
                                 }
-
                             }
                             if (excel) {
-                                for (let _index = 0; _index < reportesGerencias.length - 1; _index++) {
+                                for (let _index = 0; _index < reportesGerencias.length; _index++) {
                                     const repo = reportesGerencias[_index]
                                     // if (excel) {
                                     // (function (i) {
@@ -1329,7 +1330,7 @@ angular.module('agil.controladores')
                                     // }
                                 }
                             } else {
-                                for (let _index = 0; _index < reportesGerencias.length - 1; _index++) {
+                                for (let _index = 0; _index < reportesGerencias.length; _index++) {
                                     // const repo = reportesGerencias[_index]
                                     // if (excel) {
                                     // (function (i) {

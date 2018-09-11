@@ -1207,7 +1207,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             }
             GerenciasClienteEmpresa.findAll({
                 where: condicion,
-                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', require: true, include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: GerenciasClienteEmpresa, as: 'gerencia' }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'], attributes: ['id', 'razon_social'] }] }],///include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: GerenciasClienteEmpresa, as: 'gerencia' }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'] }], where: condicionHistorial }],
+                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', require: false, include: [{ model: horarioComidasClienteEmpresa, as: 'comida', required:false, include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'], attributes: ['id', 'razon_social'] }] }],///include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'] }], where: condicionHistorial }],
                 order: [[{ model: HistorialComidaClienteEmpresa, as: 'historial' }, 'fecha', 'asc']]
             }).then(function (result) {
                 if (result.length > 0) {
@@ -1224,7 +1224,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                 }/// else {
                 HistorialComidaClienteEmpresa.findAll({
                     where: condicionHistorial,
-                    include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: GerenciasClienteEmpresa, as: 'gerencia' }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'] }],
+                    include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'] }],
                     order: [['fecha', 'asc']]
                 }).then(function (resuldato) {
                     if (resuldato) {
