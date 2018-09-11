@@ -20,35 +20,35 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.INTEGER,
       field: 'gerencia'
     },
-    desayuno: {
+    id_comida: {
       type: Sequelize.INTEGER,
-      field: 'desayuno'
+      field: 'comida'
     },
-    almuerzo: {
-      type: Sequelize.INTEGER,
-      field: 'almuerzo'
-    },
-    cena: {
-      type: Sequelize.INTEGER,
-      field: 'cena'
-    },
+    // almuerzo: {
+    //   type: Sequelize.INTEGER,
+    //   field: 'almuerzo'
+    // },
+    // cena: {
+    //   type: Sequelize.INTEGER,
+    //   field: 'cena'
+    // },
     habilitado: {
       type: Sequelize.BOOLEAN,
       field: 'habilitado',
       defaultValue: true
     },
-    observacion_desayuno: {
+    observacion: {
       type: Sequelize.STRING,
-      field: 'observacion_desayuno'
+      field: 'observacion'
     },
-    observacion_almuerzo: {
-      type: Sequelize.STRING,
-      field: 'observacion_almuerzo'
-    },
-    observacion_cena: {
-      type: Sequelize.STRING,
-      field: 'observacion_cena'
-    },
+    // observacion_almuerzo: {
+    //   type: Sequelize.STRING,
+    //   field: 'observacion_almuerzo'
+    // },
+    // observacion_cena: {
+    //   type: Sequelize.STRING,
+    //   field: 'observacion_cena'
+    // },
     eliminado: {
       type: Sequelize.BOOLEAN,
       field: 'eliminado',

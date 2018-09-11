@@ -21,6 +21,10 @@ module.exports = function (sequelize, Sequelize) {
 			field: 'habilitado',
 			defaultValue: true
 		},
+		identificador_equipo: {
+			type: Sequelize.STRING,
+			field: 'identificador_equipo'
+		},
 		eliminado: {
 			type: Sequelize.BOOLEAN,
 			field: 'eliminado',

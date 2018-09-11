@@ -37,6 +37,14 @@ module.exports = function (sequelize, Sequelize) {
             field: 'estado',
             defaultValue: true
         },
+        identificador_equipo: {
+			type: Sequelize.STRING,
+			field: 'identificador_equipo'
+        },
+        documento: {
+			type: Sequelize.STRING,
+			field: 'documento'
+		},
         precio: {
             type: Sequelize.DECIMAL(20,4),
             field: 'precio'
@@ -44,6 +52,10 @@ module.exports = function (sequelize, Sequelize) {
         observacion: {
             type: Sequelize.STRING,
             field: 'observacion'
+        },
+        fecha_texto:{
+            type: Sequelize.STRING,
+            field: 'fecha_texto'
         },
         eliminado: {
             type: Sequelize.BOOLEAN,

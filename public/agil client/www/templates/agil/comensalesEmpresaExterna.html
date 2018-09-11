@@ -82,7 +82,7 @@
                                 <a href="/recursos/EJEMPLO-HISTORIAL-COMENSALES.xlsx" class="red">
                                     <i class="ace-icon fa fa-cloud-download align-top bigger-200"></i>
                                 </a>
-                                <a href="javascript:void(0)" class="blue" ng-click="mostrarMensaje('Sin funcionalidad')">
+                                <a href="javascript:void(0)" class="blue" ng-click="abrirdialogHistorialDocumentos()">
                                     <i class="ace-icon fa fa-file-text-o align-top bigger-300"></i>
                                 </a>
                             </td>
@@ -130,7 +130,7 @@
                                 <button class="btn btn-app btn-danger" type="button" ng-click="generarReportePDF()">PDF
                                     <i class="fa fa-print bigger-100"> </i>
                                 </button>
-                                <button class="btn btn-app btn-success" type="button" ng-click="generarReportePDFEmpresa()">EXCEL
+                                <button class="btn btn-app btn-success" type="button" ng-click="generarReporteEXCEL()">EXCEL
                                     <i class="fa fa-print bigger-100"> </i>
                                 </button>
                                 <a href="javascript:void(0)" ng-click="abrirdialogAlertaMarcaciones()">
@@ -1090,6 +1090,62 @@
                 </div>
 
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="dialog-historial-documentos">
+    <div class="modal-content">
+        <div class="modal-header bg-primary">
+            <button type="button" ng-click="cerrardialogHistorialDocumentos()" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">HISTORIAL DOCUMENTOS</h4>
+        </div>
+        <div class="modal-body">
+            <!-- <div class="table-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="widget-title">Lista de Tipo de Cambio</h4>
+                    </div>
+                </div>
+            </div> -->
+            <div class="table-fixed-header">
+                <table class="table table-striped table-bordered table-hover ">
+                    <thead fix-head class="table-head-color">
+                        <tr>
+                            <th>N°</th>
+                            <th>Fecha</th>
+                            <th>Nombre de archivo</th>
+                            <th>Comida</th>
+                            <!-- <th style="width:5px">Acciones</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="documento in historialesDocumentos">
+                            <td>{{$index+1}}</td>
+                            <td>
+                                {{documento.fecha | date: 'dd/MM/yyyy'}}
+                            </td>
+                            <td>
+                                {{documento.documento}}
+                            </td>
+                            <td>
+                                <a class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="PDF">
+                                    <i class="ace-icon fa fa-print bigger-130"></i>
+                                </a>
+                                
+                                <a class="green tooltip-info" href="javascript:void(0)" uib-tooltip="EXCEL" ng-click="generarHistorialExcel(documento.documento)">
+                                    <i class="ace-icon fa fa-file-excel-o bigger-130"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" ng-click="cerrardialogHistorialDocumentos()">Cerrar</button>
         </div>
     </div>
 </div>

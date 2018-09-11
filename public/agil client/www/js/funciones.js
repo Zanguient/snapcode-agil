@@ -105,7 +105,7 @@ function ejecutarScriptsTransacciones(modalNuevoIngreso, modalNuevoEgreso, modal
 }
 
 function ejecutarScriptsComensales(modalEdicionAlias, modalEdicionGerencias, modalEdicionComensales, modalEdicionComidas, modalEdicionPrecios, dialogClienteEmpresa, busquedaComensalesEmpresa,
-	dialogAlertasMarcaciones) {
+	dialogAlertasMarcaciones, dialogHistorialDocumentos) {
 	crearPopup(modalEdicionAlias, "auto", "auto");
 	crearPopup(modalEdicionGerencias, "auto", "auto");
 	crearPopup(modalEdicionComensales, "auto", "auto");
@@ -114,6 +114,7 @@ function ejecutarScriptsComensales(modalEdicionAlias, modalEdicionGerencias, mod
 	crearPopup(dialogClienteEmpresa, "auto", "auto");
 	crearPopup(busquedaComensalesEmpresa, "auto", "auto");
 	crearPopup(dialogAlertasMarcaciones, "auto", "auto");
+	crearPopup(dialogHistorialDocumentos, "auto", "auto");
 	// aplicarWizardFormulario(idModalWizardDestinoEdicion, idContenedorEdicionDestino);
 }
 

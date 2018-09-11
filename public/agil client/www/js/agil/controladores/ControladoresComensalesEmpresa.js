@@ -3,7 +3,7 @@ angular.module('agil.controladores')
     .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $filter, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias,
         ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel,
         ObtenerHistorial, GuardarEmpresasExcel, GuardarGerenciasExcel, GuardarComidasExcel, GuardarPreciosExcel, Paginator, BusquedaComensales, ObtenerReporteComedor, ObtenerCambioMoneda,
-        ObtenerReporteEmpresa, ObtenerReporteComensal, ObtenerAlertasMarcacion, EditarAlertasMarcacion) {
+        ObtenerReporteEmpresa, ObtenerReporteComensal, ObtenerAlertasMarcacion, EditarAlertasMarcacion, ObtenerHistorialDocumentos, ObtenerDocumento) {
 
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.modalEdicionAlias = 'modalAliasEmpresasCliente'
@@ -14,6 +14,7 @@ angular.module('agil.controladores')
         $scope.dialogClienteEmpresa = 'dialog-cliente-empresa'
         $scope.busquedaComensalesEmpresa = 'dialog-comensales-empresa'
         $scope.dialogAlertasMarcaciones = 'dialog-alerta-marcaciones'
+        $scope.dialogHistorialDocumentos = 'dialog-historial-documentos'
         var redirectProformas;
         $scope.imagenEmpresa;
         $scope.$on('$viewContentLoaded', function () {
@@ -25,7 +26,7 @@ angular.module('agil.controladores')
                 return
             }
             ejecutarScriptsComensales($scope.modalEdicionAlias, $scope.modalEdicionGerencias, $scope.modalEdicionComensales, $scope.modalEdicionComidas, $scope.modalEdicionPrecios,
-                $scope.dialogClienteEmpresa, $scope.busquedaComensalesEmpresa, $scope.dialogAlertasMarcaciones);
+                $scope.dialogClienteEmpresa, $scope.busquedaComensalesEmpresa, $scope.dialogAlertasMarcaciones, $scope.dialogHistorialDocumentos);
             // resaltarPestaña($location.path().substring(1));
             // $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
             // $scope.obtenerColumnasAplicacion()
@@ -41,6 +42,7 @@ angular.module('agil.controladores')
                 $scope.eliminarPopup($scope.dialogClienteEmpresa);
                 $scope.eliminarPopup($scope.busquedaComensalesEmpresa);
                 $scope.eliminarPopup($scope.dialogAlertasMarcaciones);
+                $scope.eliminarPopup($scope.dialogHistorialDocumentos);
             }
         });
 
@@ -84,6 +86,7 @@ angular.module('agil.controladores')
             $scope.listaComidasclienteEmpresa = []
             $scope.listaPrecioComidasclienteEmpresa = []
             $scope.alertaMarcaciones = []
+            $scope.historialesDocumentos = []
             $scope.obtenerClientes()
             $scope.obtenerComidas()
             $scope.obtenerGerencias()
@@ -117,6 +120,20 @@ angular.module('agil.controladores')
 
         $scope.filtrarComensales = function (query) {
             $scope.comensalesProcesados = $filter('filter')($scope.comensalesBusqueda, query);
+        }
+
+        $scope.obtenerHistorialDocumentos = function () {
+            $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true)
+            $scope.paginator.filter = $scope.filtroComensales
+            var prom = ObtenerHistorialDocumentos($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id, $scope.paginator)
+            prom.then(function (res) {
+                $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true, true)
+                if (res.hasErr) {
+                    $scope.mostrarMensaje(res.mensaje)
+                } else {
+                    $scope.historialesDocumentos = res.documentos
+                }
+            })
         }
 
         $scope.obtenerClientes = function () {
@@ -365,6 +382,55 @@ angular.module('agil.controladores')
                     res.mostrarMensaje(res.mensaje)
                 } else {
                     $scope.alertaMarcaciones = res
+                    $scope.alertaMarcaciones.marcacionesFaltantes = []
+                    for (let index = 0; index < $scope.alertaMarcaciones.length; index++) {
+                        var conteoIndex = -1
+                                    if (reporteGerencias.some(function (dato) {
+                                        conteoIndex += 1
+                                        if (dato.gerencia.nombre === res.reporte[index].nombre && dato.fecha.split('T')[0] === res.reporte[index].historial[_index].fecha.split('T')[0]) {
+                                            return true
+                                        }
+                                        return false
+                                    })) {
+                                        if (res.reporte[index].historial[_index].comida) {
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                                                reporteGerencias[conteoIndex].desayuno.cantidad += 1
+                                                reporteGerencias[conteoIndex].desayuno.total += res.reporte[index].historial[_index].precio
+                                            }
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                                                reporteGerencias[conteoIndex].almuerzo.cantidad += 1
+                                                reporteGerencias[conteoIndex].almuerzo.total += res.reporte[index].historial[_index].precio
+                                            }
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                                                reporteGerencias[conteoIndex].cena.cantidad += 1
+                                                reporteGerencias[conteoIndex].cena.total += res.reporte[index].historial[_index].precio
+                                            }
+                                        } else {
+                                            reporteGerencias[conteoIndex].fuera_horario += 1
+                                        }
+                                        
+                                    } else {
+                                        var chingadera = { cantidad: 0, total: 0 }
+                                        var combo = { empresaCliente: res.reporte[index].historial[_index].empresaCliente, gerencia: { id: res.reporte[index].id, nombre: res.reporte[index].nombre, codigo: res.reporte[index].codigo, id_cliente: res.reporte[index].id_cliente, id_empresa: res.reporte[index].id_empresa }, fecha: res.reporte[index].historial[_index].fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera), fuera_horario: 0 }
+                                        if (res.reporte[index].historial[_index].comida) {
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                                                combo.desayuno.cantidad += 1
+                                                combo.desayuno.total += res.reporte[index].historial[_index].precio
+                                            }
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                                                combo.almuerzo.cantidad += 1
+                                                combo.almuerzo.total += res.reporte[index].historial[_index].precio
+                                            }
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                                                combo.cena.cantidad += 1
+                                                combo.cena.total += res.reporte[index].historial[_index].precio
+                                            }
+                                        } else {
+                                            combo.observacion = 'Fuera de horario, no se puede contabilizar.'
+                                        }
+                                        reporteGerencias.push(combo)
+                                    }
+                    }
                 }
             })
         }
@@ -399,9 +465,13 @@ angular.module('agil.controladores')
         }
 
         $scope.subirExcelHistorial = function (event) {
-            blockUI.start();
+            // blockUI.start();
             var files = event.target.files;
             var i, f;
+            if (!files) {
+                blockUI.stop();
+                return
+            }
             for (i = 0, f = files[i]; i != files.length; ++i) {
                 var reader = new FileReader();
                 var name = f.name;
@@ -419,11 +489,12 @@ angular.module('agil.controladores')
                         comensal.fecha_hora = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
                         comensal.lectora = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
                         comensal.alias = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
+                        comensal.documento = name
                         Historial.push(comensal);
                         row++;
                         i++;
                     } while (worksheet['A' + row] != undefined);
-                    blockUI.stop();
+                    // blockUI.stop();
                     angular.element($('fileUpload-Historial').val(null)).triggerHandler('change');
                     // $('fileUpload-Historial').val(null)
                     $scope.guardarHistorialExcel(Historial);
@@ -518,6 +589,7 @@ angular.module('agil.controladores')
                         gerencia.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
                         gerencia.empresaCliente = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
                         gerencia.nombre = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+                        gerencia.lectora = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
                         gerencias.push(gerencia);
                         row++;
                         i++;
@@ -1049,13 +1121,13 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.agregarMarcacion = function(comensal, marca){
+        $scope.agregarMarcacion = function (comensal, marca) {
             var prom = EditarAlertasMarcacion($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, comensal, marca)
             prom.then(function (res) {
                 $scope.mostrarMensaje(res.mensaje)
-                    if (!res.hasErr) {
-                        $scope.obtenerAlertas()
-                    }
+                if (!res.hasErr) {
+                    $scope.obtenerAlertas()
+                }
             }).catch(function (err) {
                 var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
@@ -1083,6 +1155,50 @@ angular.module('agil.controladores')
             $scope.listaPrecioComidasclienteEmpresa[$scope.listaPrecioComidasclienteEmpresa.indexOf(precioComida)].eliminado = true
         }
 
+        $scope.generarHistorialExcel = function (documento) {
+            var prom = ObtenerDocumento($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, documento)
+            prom.then(function (res) {
+                if (res.hasErr) {
+                    $scope.mostrarMensaje(res.mensaje)
+                    return
+                }
+                var cabecera = ['TARJETA', 'EMPLEADO', 'FECHA / HORA', 'lectora', 'NAME']
+                var data = [cabecera]
+                for (let index = 0; index < res.documento.length; index++) {
+                    var columns = []
+                    columns.push(res.documento[index].tarjeta)
+                    columns.push(res.documento[index].comensal.nombre)
+                    columns.push(res.documento[index].fecha.split('T')[0].split('-').reverse().join('/') + ' ' + res.documento[index].fecha.split('T')[1].split('.')[0] )
+                    columns.push(res.documento[index].identificador_equipo)
+                    columns.push(res.documento[index].empresaCliente.alias[0].nombre)
+                    data.push(columns)
+                }
+                var ws_name = "SheetJS";
+                var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+                var wscols = [
+                    { wch: 20 },
+                    { wch: 19 },
+                    { wch: 20 },
+                    { wch: 16 },
+                    { wch: 25 },
+                    { wch: 15 },
+                    { wch: 25 },
+                    { wch: 25 },
+                    { wch: 25 },
+                    { wch: 8 },
+                    { wch: 12 }
+                ];
+                ws['!cols'] = wscols;
+                ws['!rows'] = [{ hpx: 28, level: 3 }];
+                // ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }, { s: { r: 1, c: 4 }, e: { r: 1, c: 4 } }, { s: { r: 3, c: 4 }, e: { r: 3, c: 4 } }, { s: { r: (3 + data.length), c: 0 }, e: { r: (3 + data.length), c: 1 } }]
+                /* add worksheet to workbook */
+                wb.SheetNames.push(ws_name);
+                wb.Sheets[ws_name] = ws;
+                var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+                saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), res.documento[0].documento);
+            })
+        }
+
         $scope.generarReportePDF = function () {
             if (!$scope.filtroComensales.generar) {
                 $scope.mostrarMensaje('Seleccione un tipo de reporte.')
@@ -1099,7 +1215,23 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.reportePDFComedor = function () {
+        $scope.generarReporteEXCEL = function () {
+            if (!$scope.filtroComensales.generar) {
+                $scope.mostrarMensaje('Seleccione un tipo de reporte.')
+                return
+            }
+            if ($scope.filtroComensales.generar === 1) {
+                $scope.reportePDFComedor(true)
+            } else if ($scope.filtroComensales.generar === 2) {
+                $scope.reportePDFEmpresa(true)
+            } else if ($scope.filtroComensales.generar === 3) {
+                $scope.reportePDFComensal(true)
+            } else {
+                $scope.mostrarMensaje('Existe un problema con la identificación del reporte.')
+            }
+        }
+
+        $scope.reportePDFComedor = function (excel) {
             var reporte = [];
             var tipoCambioDollar = 0
             var promesa = ObtenerCambioMoneda(new Date())
@@ -1133,29 +1265,31 @@ angular.module('agil.controladores')
                                     var conteoIndex = -1
                                     if (reporteGerencias.some(function (dato) {
                                         conteoIndex += 1
-                                        if (dato.nombre === res.reporte[index].nombre && dato.fecha === res.reporte[index].historial[_index].fecha.split('T')[0]) {
+                                        if (dato.gerencia.nombre === res.reporte[index].nombre && dato.fecha.split('T')[0] === res.reporte[index].historial[_index].fecha.split('T')[0]) {
                                             return true
                                         }
                                         return false
                                     })) {
-                                        // historial.forEach(function (hist) {
-                                        if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
-                                            reporteGerencias[conteoIndex].desayuno.cantidad += 1
-                                            reporteGerencias[conteoIndex].desayuno.total += res.reporte[index].historial[_index].precio
+                                        if (res.reporte[index].historial[_index].comida) {
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
+                                                reporteGerencias[conteoIndex].desayuno.cantidad += 1
+                                                reporteGerencias[conteoIndex].desayuno.total += res.reporte[index].historial[_index].precio
+                                            }
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
+                                                reporteGerencias[conteoIndex].almuerzo.cantidad += 1
+                                                reporteGerencias[conteoIndex].almuerzo.total += res.reporte[index].historial[_index].precio
+                                            }
+                                            if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
+                                                reporteGerencias[conteoIndex].cena.cantidad += 1
+                                                reporteGerencias[conteoIndex].cena.total += res.reporte[index].historial[_index].precio
+                                            }
+                                        } else {
+                                            reporteGerencias[conteoIndex].fuera_horario += 1
                                         }
-                                        if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
-                                            reporteGerencias[conteoIndex].almuerzo.cantidad += 1
-                                            reporteGerencias[conteoIndex].almuerzo.total += res.reporte[index].historial[_index].precio
-                                        }
-                                        if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
-                                            reporteGerencias[conteoIndex].cena.cantidad += 1
-                                            reporteGerencias[conteoIndex].cena.total += res.reporte[index].historial[_index].precio
-                                        }
-                                        // })
+                                        
                                     } else {
                                         var chingadera = { cantidad: 0, total: 0 }
-                                        var combo = { gerencia: { id: res.reporte[index].id, nombre: res.reporte[index].nombre, codigo: res.reporte[index].codigo, id_cliente: res.reporte[index].id_cliente, id_empresa: res.reporte[index].id_empresa }, fecha: res.reporte[index].historial[_index].fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera) }
-                                        // res.reporte[index].historial[_index].forEach(function (hist) {
+                                        var combo = { empresaCliente: res.reporte[index].historial[_index].empresaCliente, gerencia: { id: res.reporte[index].id, nombre: res.reporte[index].nombre, codigo: res.reporte[index].codigo, id_cliente: res.reporte[index].id_cliente, id_empresa: res.reporte[index].id_empresa }, fecha: res.reporte[index].historial[_index].fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera), fuera_horario: 0 }
                                         if (res.reporte[index].historial[_index].comida) {
                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
                                                 combo.desayuno.cantidad += 1
@@ -1172,15 +1306,40 @@ angular.module('agil.controladores')
                                         } else {
                                             combo.observacion = 'Fuera de horario, no se puede contabilizar.'
                                         }
-
-                                        // })
                                         reporteGerencias.push(combo)
                                     }
+                                    if (_index === (res.reporte[index].historial.length - 1)) {
+                                        reportesGerencias.push(reporteGerencias)
+                                    }
                                 }
-                                reportesGerencias.push(reporteGerencias)
+
                             }
-                            for (let _index = 0; _index < reportesGerencias.length; _index++) {
-                                $scope.imprimirReporteComedor(reportesGerencias[0], reportesGerencias[0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
+                            if (excel) {
+                                for (let _index = 0; _index < reportesGerencias.length - 1; _index++) {
+                                    const repo = reportesGerencias[_index]
+                                    // if (excel) {
+                                    // (function (i) {
+                                    $scope.imprimirReporteComedorExcel(repo, repo[0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
+                                    // }, _index)//reportesGerencias[_index], reportesGerencias[_index][0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
+                                    // $scope.imprimirReporteComedorExcel(reportesGerencias[_index], reportesGerencias[_index][0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)                                        
+                                    // },)
+                                    // } else {
+                                    //     $scope.imprimirReporteComedor(reportesGerencias[_index], reportesGerencias[_index][0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
+                                    // }
+                                }
+                            } else {
+                                for (let _index = 0; _index < reportesGerencias.length - 1; _index++) {
+                                    // const repo = reportesGerencias[_index]
+                                    // if (excel) {
+                                    // (function (i) {
+                                    // $scope.imprimirReporteComedorExcel(repo, repo[0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar) 
+                                    // }, _index)//reportesGerencias[_index], reportesGerencias[_index][0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
+                                    // $scope.imprimirReporteComedorExcel(reportesGerencias[_index], reportesGerencias[_index][0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)                                        
+                                    // },)
+                                    // } else {
+                                    $scope.imprimirReporteComedor(reportesGerencias[_index], reportesGerencias[_index][0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
+
+                                }
                             }
                             blockUI.stop();
                         })
@@ -1193,7 +1352,7 @@ angular.module('agil.controladores')
             })
         }
 
-        $scope.reportePDFEmpresa = function () {
+        $scope.reportePDFEmpresa = function (excel) {
             var reporte = [];
             var tipoCambioDollar = 0
             var promesa = ObtenerCambioMoneda(new Date())
@@ -1244,7 +1403,11 @@ angular.module('agil.controladores')
                                 })
 
                             })
-                            $scope.imprimirReporteEmpresa(res.reporte, null, cabecera, comidasEmpresa, tipoCambioDollar)
+                            if (excel) {
+                                $scope.imprimirReporteEmpresaEXCEL(res.reporte, null, cabecera, comidasEmpresa, tipoCambioDollar)
+                            } else {
+                                $scope.imprimirReporteEmpresa(res.reporte, null, cabecera, comidasEmpresa, tipoCambioDollar)
+                            }
                             blockUI.stop();
                         })
                     })
@@ -1256,7 +1419,7 @@ angular.module('agil.controladores')
             })
         }
 
-        $scope.reportePDFComensal = function () {
+        $scope.reportePDFComensal = function (excel) {
             var reporte = [];
             var tipoCambioDollar = 0
             var promesa = ObtenerCambioMoneda(new Date())
@@ -1274,7 +1437,7 @@ angular.module('agil.controladores')
                         comidasEmpresa.forEach(function (comida) {
                             cabecera.push(comida.nombre.toUpperCase())
                         })
-                        cabecera.unshift('Empleado'.toUpperCase())
+                        cabecera.unshift('FECHA'.toUpperCase())
                         cabecera.push('Total general'.toUpperCase())
                         var promHistorial = ObtenerReporteComensal($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, $scope.paginator)
                         promHistorial.then(function (res) {
@@ -1287,7 +1450,6 @@ angular.module('agil.controladores')
                             for (let index = 0; index < res.reporte.length; index++) {
                                 var reporteFechasPorComensal = []
                                 for (let _index = 0; _index < res.reporte[index].historial.length; _index++) {
-                                    // var historialFecha = { fecha: res.reporte[index].historial[_index].fecha, desayuno: 0, almuerzo: 0, cena: 0, fueraHorario: 0 }
                                     var conteoIndex = -1
                                     if (reporteFechasPorComensal.some(function (dato) {
                                         conteoIndex += 1
@@ -1309,12 +1471,8 @@ angular.module('agil.controladores')
                                         } else {
                                             reporteFechasPorComensal[conteoIndex].fueraHorario += 1
                                         }
-                                        // reporteFechasPorComensal.push(historialFecha)
                                     } else {
-                                        var historialFecha = { fecha: res.reporte[index].historial[_index].fecha, desayuno: 0, almuerzo: 0, cena: 0, fueraHorario: 0 }
-                                        // var chingadera = { cantidad: 0, total: 0 }
-                                        // var combo = { gerencia: { id: res.reporte[index].id, nombre: res.reporte[index].nombre, codigo: res.reporte[index].codigo, id_cliente: res.reporte[index].id_cliente, id_empresa: res.reporte[index].id_empresa }, fecha: res.reporte[index].historial[_index].fecha.split('T')[0], desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera) }
-                                        // res.reporte[index].historial[_index].forEach(function (hist) {
+                                        var historialFecha = { fecha: res.reporte[index].historial[_index].fecha, desayuno: 0, almuerzo: 0, cena: 0, fueraHorario: 0, empresaCliente: res.reporte[index].historial[_index].empresaCliente }
                                         if (res.reporte[index].historial[_index].comida) {
                                             if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
                                                 historialFecha.desayuno += 1
@@ -1330,25 +1488,16 @@ angular.module('agil.controladores')
                                         }
                                         reporteFechasPorComensal.push(historialFecha)
                                     }
-                                    // if (res.reporte[index].historial[_index].comida) {
-                                    //     if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'desayuno') {
-                                    //         historialFecha.desayuno += 1
-                                    //     }
-                                    //     if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'almuerzo') {
-                                    //         historialFecha.almuerzo += 1
-                                    //     }
-                                    //     if (res.reporte[index].historial[_index].comida.nombre.toLowerCase() === 'cena') {
-                                    //         historialFecha.cena += 1
-                                    //     }
-                                    // } else {
-                                    //     historialFecha.fueraHorario += 1
-                                    // }
-                                    // reporteFechasPorComensal.push(historialFecha)
                                 }
                                 res.reporte[index].reporte = reporteFechasPorComensal
                             }
                             for (let _index = 0; _index < res.reporte.length; _index++) {
-                                $scope.imprimirReporteComensal(res.reporte[_index], null, cabecera, comidasEmpresa, tipoCambioDollar)
+                                if (excel) {
+                                    $scope.imprimirReporteComensalEXCEL(res.reporte[_index], null, cabecera, comidasEmpresa, tipoCambioDollar)
+                                } else {
+                                    $scope.imprimirReporteComensal(res.reporte[_index], null, cabecera, comidasEmpresa, tipoCambioDollar)
+                                }
+
                             }
                             blockUI.stop();
                         })
@@ -1361,8 +1510,295 @@ angular.module('agil.controladores')
             })
         }
 
-        $scope.generarReporteEXCEL = function () {
-            $scope.mostrarMensaje('Sin funcionalidad')
+        $scope.imprimirReporteComedorExcel = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
+            var reporte = reporte
+            var gerencia = gerencia
+            var cabecera = cabecera
+            var comidasEmpresa = comidasEmpresa
+            var dollar = dollar
+            var data = [[""], [""], [("REPORTES DE COMEDOR " + gerencia.nombre.toUpperCase() + ' ' + reporte[0].empresaCliente.razon_social.toUpperCase())], [""], cabecera]
+            var total_desayunos = 0;
+            var total_almuerzos = 0;
+            var total_cenas = 0;
+            for (let i = 0; i < reporte.length; i++) {
+                var columns = []
+                columns.push(reporte[i].fecha)
+                if (reporte[i].desayuno.cantidad > 0) {
+                    columns.push(reporte[i].desayuno.cantidad)
+                    total_desayunos += reporte[i].desayuno.cantidad
+                } else {
+                    columns.push("")
+                }
+                if (reporte[i].almuerzo.cantidad > 0) {
+                    columns.push(reporte[i].almuerzo.cantidad)
+                    total_almuerzos += reporte[i].almuerzo.cantidad
+                } else {
+                    columns.push("")
+                }
+                if (reporte[i].cena.cantidad > 0) {
+                    columns.push(reporte[i].cena.cantidad)
+                    total_cenas += reporte[i].cena.cantidad
+                } else {
+                    columns.push("")
+                }
+                if (reporte[i].observacion) {
+                    columns.push(reporte[i].observacion)
+                }
+                data.push(columns)
+            }
+            data.push([""])
+            var columns = ["TOTAL ==>", total_desayunos, total_almuerzos, total_cenas]
+            data.push(columns)
+            columns = ["TOTAL $us. ==>", (total_desayunos * dollar), (total_almuerzos * dollar), (total_cenas * dollar)]
+            data.push(columns)
+            columns = ["TOTAL General $us. ==>", "", ((total_desayunos * dollar) + (total_almuerzos * dollar) + (total_cenas * dollar))]
+            data.push(columns)
+            var ws_name = "SheetJS";
+            var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+            var wscols = [
+                { wch: 20 },
+                { wch: 19 },
+                { wch: 20 },
+                { wch: 16 },
+                { wch: 25 },
+                { wch: 15 },
+                { wch: 25 },
+                { wch: 25 },
+                { wch: 25 },
+                { wch: 8 },
+                { wch: 12 }
+            ];
+            ws['!cols'] = wscols;
+            ws['!rows'] = [{ hpx: 28, level: 3 }];
+            ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }, { s: { r: 1, c: 4 }, e: { r: 1, c: 4 } }, { s: { r: 3, c: 4 }, e: { r: 3, c: 4 } }, { s: { r: (3 + data.length), c: 0 }, e: { r: (3 + data.length), c: 1 } }]
+            /* add worksheet to workbook */
+            wb.SheetNames.push(ws_name);
+            wb.Sheets[ws_name] = ws;
+            var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE GERENCIA " + gerencia.nombre.toUpperCase() + ".xlsx");
+            blockUI.stop();
+        }
+
+        $scope.imprimirReporteEmpresaEXCEL = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
+            var reporte = reporte
+            var gerencia = gerencia
+            var cabecera = cabecera
+            var comidasEmpresa = comidasEmpresa
+            var dollar = dollar
+            var data = [["Reporte EMPRESA VS PERIODO"], ["EMPRESA", reporte[0].historial[0].empresaCliente.razon_social], ["GERENCIA", ""], ["PERIODO", reporte.fecha], cabecera]
+            var total_general_desayuno = 0
+            var total_general_almuerzo = 0
+            var total_general_cena = 0
+            var total_totales = 0
+            var total_desayunos = 0;
+            var total_almuerzos = 0;
+            var total_cenas = 0;
+            for (let i = 0; i < reporte.length; i++) {
+                var total_comensal = 0
+                total_general_desayuno += reporte[i].desayuno.cantidad
+                total_general_almuerzo += reporte[i].almuerzo.cantidad
+                total_general_cena += reporte[i].cena.cantidad
+                total_comensal = reporte[i].desayuno.cantidad + reporte[i].almuerzo.cantidad + reporte[i].cena.cantidad
+                total_desayunos += reporte[i].desayuno.cantidad
+                total_almuerzos += reporte[i].almuerzo.cantidad
+                total_cenas += reporte[i].cena.cantidad
+                var columns = []
+                columns.push(reporte[i].nombre)
+                columns.push(reporte[i].desayuno.cantidad)
+                columns.push(reporte[i].almuerzo.cantidad)
+                columns.push(reporte[i].cena.cantidad)
+                total_totales += total_comensal
+                columns.push(total_comensal)
+                data.push(columns)
+            }
+            var columns = ["TOTAL General", total_general_desayuno, total_general_almuerzo, total_general_cena, (total_general_desayuno + total_general_almuerzo + total_general_cena)]
+            data.push(columns)
+            var ws_name = "SheetJS";
+            var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+            var wscols = [
+                { wch: 20 },
+                { wch: 19 },
+                { wch: 20 },
+                { wch: 16 },
+                { wch: 25 },
+                { wch: 15 },
+                { wch: 25 },
+                { wch: 25 },
+                { wch: 25 },
+                { wch: 8 },
+                { wch: 12 }
+            ];
+            ws['!cols'] = wscols;
+            ws['!rows'] = [{ hpx: 28, level: 3 }];
+            ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }, { s: { r: 1, c: 4 }, e: { r: 1, c: 4 } }, { s: { r: 3, c: 4 }, e: { r: 3, c: 4 } }, { s: { r: (3 + data.length), c: 0 }, e: { r: (3 + data.length), c: 1 } }]
+            /* add worksheet to workbook */
+            wb.SheetNames.push(ws_name);
+            wb.Sheets[ws_name] = ws;
+            var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE EMPRESA " + reporte[0].historial[0].empresaCliente.razon_social.toUpperCase() + ".xlsx");
+            blockUI.stop();
+        }
+
+        $scope.imprimirReporteComensalEXCEL = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
+            let reporte = reporte
+            let gerencia = gerencia
+            let cabecera = cabecera
+            let comidasEmpresa = comidasEmpresa
+            let dollar = dollar
+            let data = [["REPORTE POR PERSONA"], ["EMPLEADO", reporte.nombre], ["EMPRESA", reporte.reporte[0].empresaCliente.razon_social], ["GERENCIA", ""], ["PERIODO", reporte.fecha], cabecera]
+            let total_general_desayuno = 0
+            let total_general_almuerzo = 0
+            let total_general_cena = 0
+            let total_desayunos = 0;
+            let total_almuerzos = 0;
+            let total_cenas = 0;
+            for (let i = 0; i < reporte.reporte.length; i++) {
+                let total_comensal = 0
+                total_general_desayuno += reporte.reporte[i].desayuno
+                total_general_almuerzo += reporte.reporte[i].almuerzo
+                total_general_cena += reporte.reporte[i].cena
+                total_comensal = reporte.reporte[i].desayuno + reporte.reporte[i].almuerzo + reporte.reporte[i].cena
+                total_desayunos += reporte.reporte[i].desayuno
+                total_almuerzos += reporte.reporte[i].almuerzo
+                total_cenas += reporte.reporte[i].cena
+                let columns = []
+
+                columns.push(reporte.reporte[i].fecha.split('T')[0])
+                columns.push(reporte.reporte[i].desayuno)
+                columns.push(reporte.reporte[i].almuerzo)
+                columns.push(reporte.reporte[i].cena)
+                // columns.push(reporte.reporte[i].observacion)
+                columns.push(total_comensal)
+                // if (reporte[i].desayuno.cantidad > 0) {
+                //     // doc.text(reporte[i].fecha, cubeX + 9, y + 7);
+                //     // doc.text(reporte[i].desayuno.cantidad, cubeX + 95 + 9, y + 7)
+                //     columns.push(reporte[i].desayuno.cantidad)
+                //     total_desayunos += reporte[i].desayuno.cantidad
+                // }else{
+                //     columns.push("")
+                // }
+                // if (reporte[i].almuerzo.cantidad > 0) {
+                //     columns.push(reporte[i].almuerzo.cantidad)
+                //     total_almuerzos += reporte[i].almuerzo.cantidad
+                // }else{
+                //     columns.push("")
+                // }
+                // if (reporte[i].cena.cantidad > 0) {
+                //     columns.push(reporte[i].cena.cantidad)
+                //     total_cenas += reporte[i].cena.cantidad
+                // }else{
+                //     columns.push("")
+                // }
+                // if (reporte[i].observacion) {
+                //     columns.push(reporte[i].observacion)
+                // }
+                data.push(columns)
+            }
+            // data.push([""])
+            let columns = ["TOTAL General", total_general_desayuno, total_general_almuerzo, total_general_cena, (total_general_desayuno + total_general_almuerzo + total_general_cena)]
+            // data.push(columns)
+            // columns = [total_general_desayuno]
+            // data.push(columns)
+            // columns = [total_general_almuerzo]
+            // data.push(columns)
+            // columns = [total_general_cena]
+            data.push(columns)
+            let ws_name = "SheetJS";
+            let wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+            let wscols = [
+                { wch: 20 },
+                { wch: 19 },
+                { wch: 20 },
+                { wch: 16 },
+                { wch: 25 },
+                { wch: 15 },
+                { wch: 25 },
+                { wch: 25 },
+                { wch: 25 },
+                { wch: 8 },
+                { wch: 12 }
+            ];
+            ws['!cols'] = wscols;
+            ws['!rows'] = [{ hpx: 28, level: 3 }];
+            ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }, { s: { r: 1, c: 4 }, e: { r: 1, c: 4 } }, { s: { r: 3, c: 4 }, e: { r: 3, c: 4 } }, { s: { r: (3 + data.length), c: 0 }, e: { r: (3 + data.length), c: 1 } }]
+            /* add worksheet to workbook */
+            wb.SheetNames.push(ws_name);
+            wb.Sheets[ws_name] = ws;
+            let wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE COMENSAL " + reporte.nombre.toUpperCase() + ".xlsx");
+            blockUI.stop();
+            // var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
+            // var stream = doc.pipe(blobStream());
+            // var y = 150
+            // var itemsPorPagina = 10
+            // var items = 0
+            // var xSeparacion = 0
+            // var pagina = 1
+            // var cubeX = 70
+            // var totalPaginas = Math.ceil(1 / itemsPorPagina);
+            // $scope.cabeceraReporteComensal(doc, pagina, totalPaginas, reporte, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+            // var total_general_desayuno = 0
+            // var total_general_almuerzo = 0
+            // var total_general_cena = 0
+            // var total_desayunos = 0
+            // var total_almuerzos = 0
+            // var total_cenas = 0
+            // for (let i = 0; i < reporte.reporte.length; i++) {
+            //     var total_comensal = 0
+            //     doc.font('Helvetica', 8);
+
+            //     // cabecera.forEach(function (dato) {
+            //     //     doc.rect(cubeX + xSeparacion, y, 80, 20).stroke()
+            //     //     xSeparacion += 80
+            //     // })
+            //     total_general_desayuno += reporte.reporte[i].desayuno
+            //     total_general_almuerzo += reporte.reporte[i].almuerzo
+            //     total_general_cena += reporte.reporte[i].cena
+            //     total_comensal = reporte.reporte[i].desayuno + reporte.reporte[i].almuerzo + reporte.reporte[i].cena
+            //     total_desayunos += reporte.reporte[i].desayuno
+            //     total_almuerzos += reporte.reporte[i].almuerzo
+            //     total_cenas += reporte.reporte[i].cena
+            //     xSeparacion = 0
+            //     var fecha
+            //     doc.font('Helvetica', 8).fill('black')
+            //     doc.text($scope.formatoFechaPDF(reporte.reporte[i].fecha), cubeX + 8, y + 7);
+            //     doc.text(reporte.reporte[i].desayuno, cubeX + 80 + 95 + 9, y + 7)
+            //     doc.text(reporte.reporte[i].almuerzo, cubeX + 80 + 175 + 9, y + 7)
+            //     doc.text(reporte.reporte[i].cena, cubeX + 80 + 255 + 9, y + 7)
+            //     doc.text(total_comensal, cubeX + 80 + 335 + 9, y + 7)
+
+            //     doc.rect(cubeX, y + 3, 150, 20).stroke()
+            //     doc.rect(cubeX + 150, y + 3, 80, 20).stroke()
+            //     doc.rect(cubeX + 230, y + 3, 80, 20).stroke()
+            //     doc.rect(cubeX + 310, y + 3, 80, 20).stroke()
+            //     doc.rect(cubeX + 390, y + 3, 110, 20).stroke()
+            //     y = y + 20;
+            //     items++;
+            //     if (items > itemsPorPagina || (y > 700)) {
+            //         doc.addPage({ size: [612, 792], margin: 10 });
+            //         y = 115 + 80;
+            //         items = 0;
+            //         pagina = pagina + 1;
+            //         $scope.cabeceraReporteComensal(doc, pagina, totalPaginas, reporte, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+            //     }
+            // }
+            // doc.text("Total general", cubeX + 6, y + 7);
+            // doc.text(total_general_desayuno, cubeX + 80 + 95 + 9, y + 7)
+            // doc.text(total_general_almuerzo, cubeX + 80 + 175 + 9, y + 7)
+            // doc.text(total_general_cena, cubeX + 80 + 255 + 9, y + 7)
+            // doc.text((total_general_desayuno + total_general_almuerzo + total_general_cena), cubeX + 80 + 335 + 9, y + 7)
+            // doc.rect(cubeX, y + 3, 150, 20).stroke()
+            // doc.rect(cubeX + 150, y + 3, 80, 20).stroke()
+            // doc.rect(cubeX + 230, y + 3, 80, 20).stroke()
+            // doc.rect(cubeX + 310, y + 3, 80, 20).stroke()
+            // doc.rect(cubeX + 390, y + 3, 110, 20).stroke()
+            // y = y + 20;
+
+            // doc.end();
+            // stream.on('finish', function () {
+            //     var fileURL = stream.toBlobURL('application/pdf');
+            //     window.open(fileURL, '_blank', 'location=no');
+            // });
         }
 
         $scope.imprimirReporteComedor = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
@@ -1412,7 +1848,7 @@ angular.module('agil.controladores')
                     y = 115 + 80;
                     items = 0;
                     pagina = pagina + 1;
-                    $scope.cabeceraReporteComedor(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+                    $scope.cabeceraReporteComedor(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, reporte[i].gerencia ? reporte[i].gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
                 }
             }
             doc.rect(cubeX, y, 80, 20).stroke()
@@ -1466,6 +1902,8 @@ angular.module('agil.controladores')
             var literal = ConvertirALiteral((precio_total_desayunos + precio_total_almuerzos + precio_total_cenas).toFixed(2))
             literal = literal.split('BOLIVIANOS')[0]
             doc.text('Son: ' + literal + ' Dólares Americanos', cubeX + 15 + 9, y + 7 + 130)
+            // doc.rect(cubeX + 130, y + 460, 110, 0).stroke()
+            // doc.text('Encargado', cubeX + 146 + 10, y + 455)
             doc.end();
 
             stream.on('finish', function () {
@@ -1638,14 +2076,15 @@ angular.module('agil.controladores')
             // doc.rect(40, 40, 40, 40).fillAndStroke("silver", "#000");
             doc.font('Helvetica-Bold', 12)
                 .fill('black')
-            doc.text("REPORTES DE COMEDOR " + comedor + ' ' + empresa, 150, 80, { width: 300, align: "center" });
+            doc.text("REPORTES DE COMEDOR " + comedor.toUpperCase() + ' ' + empresa.toUpperCase(), 150, 80, { width: 300, align: "center" });
             doc.font('Helvetica-Bold', 8);
             cabecera.forEach(function (dato) {
                 doc.rect(cubeX + xSeparacion, y, 80, 20).stroke()
                 doc.text(dato, cubeX + xSeparacion + 9, y + 7);
                 xSeparacion += 80
             })
-
+            doc.rect(cubeX + 130, y + 460, 130, 0).stroke()
+            doc.text('Encargado', cubeX + 146 + 26, y + 490)
             doc.font('Helvetica', 8);
             if ($scope.imagenEmpresa) {
                 doc.image($scope.imagenEmpresa, 40, 30, { fit: [100, 100] });
@@ -1833,6 +2272,18 @@ angular.module('agil.controladores')
             $scope.activeModal = 0
             $scope.alertaMarcaciones = []
             $scope.cerrarPopup($scope.dialogAlertasMarcaciones);
+        }
+
+        $scope.abrirdialogHistorialDocumentos = function () {
+            $scope.activeModal = 0
+            $scope.obtenerHistorialDocumentos()
+            $scope.abrirPopup($scope.dialogHistorialDocumentos);
+        }
+
+        $scope.cerrardialogHistorialDocumentos = function () {
+            $scope.activeModal = 0
+            $scope.historialesDocumentos = []
+            $scope.cerrarPopup($scope.dialogHistorialDocumentos);
         }
         $scope.inicio()
     });

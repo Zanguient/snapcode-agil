@@ -252,6 +252,7 @@ angular.module('agil.controladores')
 			$scope.cerrarPopup($scope.idModalWizardProductoEdicion);
 		}
 		$scope.cerrarPopPupKardex = function () {
+			$scope.obtenerProductos()
 			$scope.cerrarPopup($scope.idModalWizardProductoKardex);
 			$scope.search.inventario.lote = "";
 		}
@@ -276,6 +277,7 @@ angular.module('agil.controladores')
 				$scope.obtenerAlmacenes($scope.imp.sucursal.id);
 				$scope.imp.almacen = $scope.almacenes.length == 1 ? $scope.almacenes[0] : null;
 			}
+			$("#modal-wizard-producto-kardex").dialog({ closeOnEscape: false });
 			$scope.abrirPopup($scope.idModalWizardProductoKardex);
 
 		}

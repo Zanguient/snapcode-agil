@@ -6,7 +6,7 @@ angular.module('agil.controladores')
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
         ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
         ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa, ActualizarDotacionRopa,
-        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa,ClasesEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa, GuardarImportacionFichaEmpleados, GuardarImportacionRolTurnoEmpleados) {
+        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ClasesEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa, GuardarImportacionFichaEmpleados, GuardarImportacionRolTurnoEmpleados) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -1112,7 +1112,11 @@ angular.module('agil.controladores')
         }
         $scope.abrirDialogTipoBaja = function (tiposAusenciasMedicas) {
             $scope.clase = {}
-            $scope.tiposAusencia = tiposAusenciasMedicas.ausencias
+            if (tiposAusenciasMedicas.ausencias) {
+                $scope.tiposAusencia = tiposAusenciasMedicas.ausencias
+            } else {
+                $scope.tipoAusencia = []
+            }
             $scope.abrirPopup($scope.idModalTipoBaja);
         }
         $scope.cerrarDialogTipoBaja = function () {
@@ -2173,13 +2177,13 @@ angular.module('agil.controladores')
                         ficha.estado_civil = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
                         ficha.nacionalidad = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
                         ficha.departamento = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? worksheet['H' + row].v.toString() : null;
-                        ficha.provincia = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ?worksheet['I' + row].v.toString() : null;
-                        ficha.localidad = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ?  $scope.fecha_excel_angular(worksheet['J' + row].v.toString()) : null;
+                        ficha.provincia = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? worksheet['I' + row].v.toString() : null;
+                        ficha.localidad = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? $scope.fecha_excel_angular(worksheet['J' + row].v.toString()) : null;
                         ficha.tipo_personal = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? worksheet['K' + row].v.toString() : null;
                         ficha.carga_horario = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? worksheet['L' + row].v.toString() : null;
                         ficha.area = worksheet['M' + row] != undefined && worksheet['M' + row] != "" ? worksheet['M' + row].v.toString() : null;
                         ficha.ubicacion = worksheet['N' + row] != undefined && worksheet['N' + row] != "" ? worksheet['N' + row].v.toString() : null;
-                        ficha.lugar_seguro= worksheet['O' + row] != undefined && worksheet['O' + row] != "" ? worksheet['O' + row].v.toString() : null;
+                        ficha.lugar_seguro = worksheet['O' + row] != undefined && worksheet['O' + row] != "" ? worksheet['O' + row].v.toString() : null;
                         ficha.nua_cua = worksheet['P' + row] != undefined && worksheet['P' + row] != "" ? worksheet['P' + row].v.toString() : null;
                         ficha.afp_aporte = worksheet['Q' + row] != undefined && worksheet['Q' + row] != "" ? worksheet['Q' + row].v.toString() : null;
                         ficha.lugar_afp = worksheet['R' + row] != undefined && worksheet['R' + row] != "" ? worksheet['R' + row].v.toString() : null;
@@ -2188,7 +2192,7 @@ angular.module('agil.controladores')
                         ficha.observacion1 = worksheet['U' + row] != undefined && worksheet['U' + row] != "" ? worksheet['U' + row].v.toString() : null;
                         ficha.seguro2 = worksheet['V' + row] != undefined && worksheet['V' + row] != "" ? worksheet['V' + row].v.toString() : null;
                         ficha.monto2 = worksheet['W' + row] != undefined && worksheet['W' + row] != "" ? parseFloat(worksheet['W' + row].v.toString()) : null;
-                        ficha.observacion2= worksheet['X' + row] != undefined && worksheet['X' + row] != "" ? worksheet['X' + row].v.toString() : null;
+                        ficha.observacion2 = worksheet['X' + row] != undefined && worksheet['X' + row] != "" ? worksheet['X' + row].v.toString() : null;
                         fichas.push(ficha);
 
                         row++;
@@ -2203,8 +2207,8 @@ angular.module('agil.controladores')
                     var arregloArega = []
                     var arregloUbicacion = []
                     var arregloEstadoCivil = []
-                    var arregloOtrosSeguros1=[]
-                    var arregloOtrosSeguros2=[]
+                    var arregloOtrosSeguros1 = []
+                    var arregloOtrosSeguros2 = []
                     fichas.forEach(function (ficha, index, array) {
                         var bandera = false
                         if (arregloAporteAfp.length > 0) {
@@ -2428,7 +2432,7 @@ angular.module('agil.controladores')
                 arregloLugarSeguroSalud,
                 arregloTipoPersona,
                 arregloCargaHorario,
-                 arregloArega,
+                arregloArega,
                 arregloUbicacion,
                 arregloEstadoCivil,
                 arregloOtrosSeguros1,
@@ -3381,7 +3385,7 @@ angular.module('agil.controladores')
         }
         $scope.buscarRopaTrabajo = function () {
             var nombre_corto = 'ROPA DE TRABAJO-G';
-            var promesa = ClasesEmpresa(nombre_corto,$scope.usuario.id_empresa);
+            var promesa = ClasesEmpresa(nombre_corto, $scope.usuario.id_empresa);
             promesa.then(function (entidades) {
                 $scope.ropasDeTrabajo = entidades;
             });

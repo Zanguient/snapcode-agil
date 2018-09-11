@@ -65,11 +65,18 @@ angular.module('agil.servicios')
     })
 
     .factory('AlertaMarcacion', function ($resource) {
-        return $resource(restServer + "alertas/marcaciones/:id_empresa/:id_usuario/:id_cliente");
+        return $resource(restServer + "alertas/marcaciones/:id_empresa/:id_usuario/:id_cliente/:mes/:anio");
     })
 
     .factory('AgregarMarcacion', function ($resource) {
         return $resource(restServer + "agregar/marcaciones/:id_empresa/:id_usuario/:id_cliente/:comensal/:marcacion");
+    })
+
+    .factory('HistorialDocumentos', function ($resource) {
+        return $resource(restServer + "cliente/documentos/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado/:pagina/:items_pagina");
+    })
+    .factory('Documentos', function ($resource) {
+        return $resource(restServer + "obtener/documentos/historial/:id_empresa/:id_usuario/:id_cliente/:documento");
     })
 
     .factory('GuardarAlias', ['Alias', '$q', function (Alias, $q) {
@@ -426,9 +433,9 @@ angular.module('agil.servicios')
     }])
 
     .factory('ObtenerAlertasMarcacion', ['AlertaMarcacion', '$q', function (AlertaMarcacion, $q) {
-        var res = function (idEmpresa, usuario, cliente) {
+        var res = function (idEmpresa, usuario, cliente, filtro) {
             var delay = $q.defer();
-            AlertaMarcacion.query({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente }, function (entidades) {
+            AlertaMarcacion.query({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente, mes: 0, anio: 0 }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -442,6 +449,52 @@ angular.module('agil.servicios')
         var res = function (idEmpresa, usuario, cliente, comensal, marcacion) {
             var delay = $q.defer();
             AgregarMarcacion.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente, comensal: comensal.id, marcacion: marcacion }, comensal, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('ObtenerHistorialDocumentos', ['HistorialDocumentos', '$q', function (HistorialDocumentos, $q) {
+        var res = function (idEmpresa, usuario, cliente, filtro) {
+            var delay = $q.defer(); filtro.filter.mes
+            HistorialDocumentos.get({
+                id_empresa: idEmpresa,
+                id_usuario: usuario,
+                id_cliente: cliente,
+                desde: filtro.filter.desde ? filtro.filter.desde !== "" ? (filtro.filter.mes || filtro.filter.anio) ? 0 : filtro.filter.desde : 0 : 0,
+                hasta: filtro.filter.hasta ? filtro.filter.hasta !== "" ? (filtro.filter.mes || filtro.filter.anio) ? 0 : filtro.filter.hasta : 0 : 0,
+                mes: filtro.filter.mes ? (filtro.filter.desde || filtro.filter.hasta) ? 0 : filtro.filter.mes.id : 0,
+                anio: filtro.filter.anio ? (filtro.filter.desde || filtro.filter.hasta) ? 0 : filtro.filter.anio.id : 0,
+                empresaCliente: filtro.filter.empresaCliente ? filtro.filter.empresaCliente.id ? filtro.filter.empresaCliente.id : 0 : 0,
+                gerencia: filtro.filter.gerencia ? filtro.filter.gerencia : 0,
+                comensal: filtro.filter.comensal ? filtro.filter.comensal.id ? filtro.filter.comensal.id : 0 : 0,
+                comida: filtro.filter.comida ? filtro.filter.comida: 0,
+                estado: filtro.filter.estado ? filtro.filter.estado !== "" ? filtro.filter.estado : 0 : 0,
+                pagina: filtro.currentPage,
+                items_pagina: filtro.itemsPerPage
+            }, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+
+    .factory('ObtenerDocumento', ['Documentos', '$q', function (Documentos, $q) {
+        var res = function (idEmpresa, usuario, cliente, documento) {
+            var delay = $q.defer();
+            Documentos.get({
+                id_empresa: idEmpresa,
+                id_usuario: usuario,
+                id_cliente: cliente,
+                documento: documento
+            }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
