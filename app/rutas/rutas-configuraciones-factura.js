@@ -8,24 +8,67 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 	router.route('/configuraciones-factura/:id_configuracion')
 		.put(function (req, res) {
 			ConfiguracionFactura.update({
-				id_impresion_factura: req.body.impresionFactura.id,
-				id_tipo_facturacion: req.body.tipoFacturacion.id,
-				id_tamano_papel_factura: req.body.tamanoPapelFactura.id,
-				id_titulo_factura: req.body.tituloFactura.id,
-				id_subtitulo_factura: req.body.subtituloFactura.id,
-				id_pie_factura: req.body.pieFactura.id,
-				usar_pf: req.body.usar_pf,
-				imprimir_al_guardar: req.body.imprimir_al_guardar,
-				id_tamano_papel_nota_venta: req.body.tamanoPapelNotaVenta.id,
-				id_tamano_papel_nota_traspaso: req.body.tamanoPapelNotaTraspaso.id,
-				id_tamano_papel_nota_baja: req.body.tamanoPapelNotaBaja.id,
-				id_tamano_papel_nota_pedido: req.body.tamanoPapelNotaPedido.id,
-				id_tamano_papel_cierre_caja: req.body.tamanoPapelCierreCaja.id,
-				id_tamano_papel_cotizacion: req.body.tamanoPapelCotizacion.id
+				id_impresion_factura: req.body.configuracionFactura.impresionFactura.id,
+				id_tipo_facturacion: req.body.configuracionFactura.tipoFacturacion.id,
+				id_tamano_papel_factura: req.body.configuracionFactura.tamanoPapelFactura.id,
+				id_titulo_factura: req.body.configuracionFactura.tituloFactura.id,
+				id_subtitulo_factura: req.body.configuracionFactura.subtituloFactura.id,
+				id_pie_factura: req.body.configuracionFactura.pieFactura.id,
+				usar_pf: req.body.configuracionFactura.usar_pf,
+				imprimir_al_guardar: req.body.configuracionFactura.imprimir_al_guardar,
+				id_tamano_papel_nota_venta: req.body.configuracionFactura.tamanoPapelNotaVenta.id,
+				id_tamano_papel_nota_traspaso: req.body.configuracionFactura.tamanoPapelNotaTraspaso.id,
+				id_tamano_papel_nota_baja: req.body.configuracionFactura.tamanoPapelNotaBaja.id,
+				id_tamano_papel_nota_pedido: req.body.configuracionFactura.tamanoPapelNotaPedido.id,
+				id_tamano_papel_cierre_caja: req.body.configuracionFactura.tamanoPapelCierreCaja.id,
+				id_tamano_papel_cotizacion: req.body.configuracionFactura.tamanoPapelCotizacion.id,
+				id_formato_papel_factura: req.body.configuracionFactura.formatoPapelFactura.id,
+				id_formato_color_factura: req.body.configuracionFactura.formatoColorFactura.id,
+				id_formato_papel_factura_servicio: req.body.configuracionFactura.formatoPapelFacturaServicio.id,
+				id_formato_color_factura_servicio: req.body.configuracionFactura.formatoColorFacturaServicio.id,
+				id_tamano_papel_factura_servicio: req.body.configuracionFactura.tamanoPapelFacturaServicio.id,
+				id_tamano_papel_despacho: req.body.configuracionFactura.tamanoPapelDespacho.id,
+				id_tamano_papel_farmacia: req.body.configuracionFactura.tamanoPapelFarmacia.id,
+				id_tamano_papel_ropa_trabajo: req.body.configuracionFactura.tamanoPapelRopaTrabajo.id,
+				id_tamano_papel_caja_chica_ingreso: req.body.configuracionFactura.tamanoPapelCajaChicaIngreso.id,
+				id_tamano_papel_caja_chica_egreso: req.body.configuracionFactura.tamanoPapelCajaChicaEgreso.id,
+				nota_factura_bien: req.body.configuracionFactura.nota_factura_bien,
+				nota_factura_servicio: req.body.configuracionFactura.nota_factura_servicio,
+				color_cabecera_factura: req.body.configuracionFactura.color_cabecera_factura,
+				color_detalle_factura: req.body.configuracionFactura.color_detalle_factura,
+				color_cabecera_factura_servicio: req.body.configuracionFactura.color_cabecera_factura_servicio,
+				color_detalle_factura_servicio: req.body.configuracionFactura.color_detalle_factura_servicio,
 			}, {
 					where: { id: req.params.id_configuracion }
 				}).then(function (score) {
-					res.json({ mensaje: "¡Configuracion de Factura actualizado correctamente!" });
+					Sucursal.update({						
+						nota_venta_correlativo: req.body.nota_venta_correlativo,
+						nota_traspaso_correlativo: req.body.nota_traspaso_correlativo,
+						nota_baja_correlativo: req.body.nota_baja_correlativo,
+						pedido_correlativo: req.body.pedido_correlativo,
+						nota_recibo_correlativo: req.body.nota_recibo_correlativo,						
+						cotizacion_correlativo: req.body.cotizacion_correlativo,
+						pre_factura_correlativo: req.body.pre_factura_correlativo,
+						despacho_correlativo: req.body.despacho_correlativo,
+						despacho_recivo_correlativo: req.body.despacho_recivo_correlativo,
+						ropa_trabajo_correlativo: req.body.ropa_trabajo_correlativo,
+						comprobante_ingreso_correlativo: req.body.comprobante_ingreso_correlativo,
+						comprobante_egreso_correlativo: req.body.comprobante_egreso_correlativo,
+						comprobante_traspaso_correlativo: req.body.comprobante_traspaso_correlativo,
+						comprobante_caja_chica_correlativo: req.body.comprobante_caja_chica_correlativo,
+						reiniciar_comprobante_ingreso_correlativo: req.body.reiniciar_comprobante_ingreso_correlativo,
+						reiniciar_comprobante_egreso_correlativo: req.body.reiniciar_comprobante_egreso_correlativo,
+						reiniciar_comprobante_traspaso_correlativo: req.body.reiniciar_comprobante_traspaso_correlativo,
+						reiniciar_comprobante_caja_chica_correlativo: req.body.reiniciar_comprobante_caja_chica_correlativo,
+						caja_chica_ingreso_correlativo: req.body.caja_chica_ingreso_correlativo,
+						caja_chica_egreso_correlativo: req.body.caja_chica_egreso_correlativo
+					}, {
+							where: {
+								id: req.body.id
+							}
+						}).then(function (sucursalActualizada) {
+							res.json({ mensaje: "¡Configuracion de Factura actualizado correctamente!" });
+						});
 				});
 		});
 
@@ -53,7 +96,21 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				id_tamano_papel_cierre_caja: req.body.tamanoPapelCierreCaja.id,
 				id_tamano_papel_cotizacion: req.body.tamanoPapelCotizacion.id,
 				id_formato_papel_factura: req.body.formatoPapelFactura.id,
-				id_formato_color_factura: req.body.formatoColorFactura.id
+				id_formato_color_factura: req.body.formatoColorFactura.id,
+				id_formato_papel_factura_servicio: req.body.formatoPapelFacturaServicio.id,
+				id_formato_color_factura_servicio: req.body.formatoColorFacturaServicio.id,
+				id_tamano_papel_factura_servicio: req.body.tamanoPapelFacturaServicio.id,
+				id_tamano_papel_despacho: req.body.tamanoPapelDespacho.id,
+				id_tamano_papel_farmacia: req.body.tamanoPapelFarmacia.id,
+				id_tamano_papel_ropa_trabajo: req.body.tamanoPapelRopaTrabajo.id,
+				id_tamano_papel_caja_chica_ingreso: req.body.tamanoPapelCajaChicaIngreso.id,
+				id_tamano_papel_caja_chica_egreso: req.body.tamanoPapelCajaChicaEgreso.id,
+				nota_factura_bien: req.body.nota_factura_bien,
+				nota_factura_servicio: req.body.nota_factura_servicio,
+				color_cabecera_factura: req.body.color_cabecera_factura,
+				color_detalle_factura: req.body.color_detalle_factura,
+				color_cabecera_factura_servicio: req.body.color_cabecera_factura_servicio,
+				color_detalle_factura_servicio: req.body.color_detalle_factura_servicio,
 
 			}, {
 					where: { id: req.params.id_configuracion }
@@ -74,11 +131,22 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				{ model: Clase, as: 'subtituloFactura' },
 				{ model: Clase, as: 'pieFactura' },
 				{ model: Clase, as: 'tamanoPapelNotaVenta' },
+				{ model: Clase, as: 'tamanoPapelFacturaServicio' },
+				{ model: Clase, as: 'formatoPapelFactura' },
+				{ model: Clase, as: 'formatoColorFactura' },
 				{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 				{ model: Clase, as: 'tamanoPapelNotaBaja' },
 				{ model: Clase, as: 'tamanoPapelNotaPedido' },
 				{ model: Clase, as: 'tamanoPapelCierreCaja' },
-				{ model: Clase, as: 'tamanoPapelCotizacion' }]
+				{ model: Clase, as: 'tamanoPapelCotizacion' },
+				{ model: Clase, as: 'tamanoPapelDespacho' },
+				{ model: Clase, as: 'tamanoPapelFarmacia' },
+				{ model: Clase, as: 'tamanoPapelRopaTrabajo' },
+				{ model: Clase, as: 'tamanoPapelCajaChicaIngreso' },
+				{ model: Clase, as: 'tamanoPapelCajaChicaEgreso' },
+				{ model: Clase, as: 'formatoPapelFacturaServicio' },
+				{ model: Clase, as: 'formatoColorFacturaServicio' }]
+
 			}]
 		});
 	}
@@ -124,33 +192,51 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 								where: { nombre_corto: "DERCREFIS" }
 							}).then(function (subtituloFactura) {
 								Clase.find({
-									where: { nombre_corto: "L453" }
-								}).then(function (pieFactura) {
-									sucursales.forEach(function (sucursal, index, array) {
-										ConfiguracionFactura.create({
-											id_sucursal: sucursal.id,
-											id_impresion_factura: impresionFactura.id,
-											id_tipo_facturacion: tipoFactura.id,
-											id_tamano_papel_factura: tipoPapelFactura.id,
-											id_titulo_factura: tituloFactura.id,
-											id_subtitulo_factura: subtituloFactura.id,
-											id_pie_factura: pieFactura.id,
-											maximo_items: 5,
-											usar_pf: false,
-											imprimir_al_guardar: true,
-											id_tamano_papel_nota_venta: tipoPapelFactura.id,
-											id_tamano_papel_nota_traspaso: tipoPapelFactura.id,
-											id_tamano_papel_nota_baja: tipoPapelFactura.id,
-											id_tamano_papel_nota_pedido: tipoPapelFactura.id,
-											id_tamano_papel_cierre_caja: tipoPapelFactura.id,
-											id_tamano_papel_cotizacion: tipoPapelFactura.id,
-											
-										}).then(function (score) {
-											if (index === (array.length - 1)) {
-												obtenerConfiguracionesFacturaEmpresa(req, res, false);
-											}
-										});
-									});
+									where: { nombre_corto: "FORM_C_MAR" }
+								}).then(function (formatoPapelImpresion) {
+									Clase.find({
+										where: { nombre_corto: "FORM_S_COL" }
+									}).then(function (formatoColorImpresion) {
+										Clase.find({
+											where: { nombre_corto: "L453" }
+										}).then(function (pieFactura) {
+											sucursales.forEach(function (sucursal, index, array) {
+												ConfiguracionFactura.create({
+													id_sucursal: sucursal.id,
+													id_impresion_factura: impresionFactura.id,
+													id_tipo_facturacion: tipoFactura.id,
+													id_tamano_papel_factura: tipoPapelFactura.id,
+													id_titulo_factura: tituloFactura.id,
+													id_subtitulo_factura: subtituloFactura.id,
+													id_pie_factura: pieFactura.id,
+													maximo_items: 5,
+													usar_pf: false,
+													imprimir_al_guardar: true,
+													id_tamano_papel_nota_venta: tipoPapelFactura.id,
+													id_tamano_papel_nota_traspaso: tipoPapelFactura.id,
+													id_tamano_papel_nota_baja: tipoPapelFactura.id,
+													id_tamano_papel_nota_pedido: tipoPapelFactura.id,
+													id_tamano_papel_cierre_caja: tipoPapelFactura.id,
+													id_tamano_papel_cotizacion: tipoPapelFactura.id,
+													id_formato_papel_factura: formatoPapelImpresion.id,
+													id_formato_color_factura: formatoColorImpresion.id,
+													id_formato_papel_factura_servicio: formatoPapelImpresion.id,
+													id_formato_color_factura_servicio: formatoColorImpresion.id,
+													id_tamano_papel_factura_servicio: tipoPapelFactura.id,
+													id_tamano_papel_despacho: tipoPapelFactura.id,
+													id_tamano_papel_farmacia: tipoPapelFactura.id,
+													id_tamano_papel_ropa_trabajo: tipoPapelFactura.id,
+													id_tamano_papel_caja_chica_ingreso: tipoPapelFactura.id,
+													id_tamano_papel_caja_chica_egreso: tipoPapelFactura.id,
+
+												}).then(function (score) {
+													if (index === (array.length - 1)) {
+														obtenerConfiguracionesFacturaEmpresa(req, res, false);
+													}
+												});
+											});
+										})
+									})
 								})
 							})
 						})
@@ -182,30 +268,47 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 								where: { nombre_corto: "DERCREFIS" }
 							}).then(function (subtituloFactura) {
 								Clase.find({
-									where: { nombre_corto: "L453" }
-								}).then(function (pieFactura) {
-									sucursales.forEach(function (sucursal, index, array) {
-										ConfiguracionFactura.create({
-											id_sucursal: sucursal.id,
-											id_impresion_factura: impresionFactura.id,
-											id_tipo_facturacion: tipoFactura.id,
-											id_tamano_papel_factura: tipoPapelFactura.id,
-											id_titulo_factura: tituloFactura.id,
-											id_subtitulo_factura: subtituloFactura.id,
-											id_pie_factura: pieFactura.id,
-											maximo_items: 5,
-											usar_pf: false,
-											imprimir_al_guardar: true,
-											id_tamano_papel_nota_venta: tipoPapelFactura.id,
-											id_tamano_papel_nota_traspaso: tipoPapelFactura.id,
-											id_tamano_papel_nota_baja: tipoPapelFactura.id,
-											id_tamano_papel_nota_pedido: tipoPapelFactura.id,
-											id_tamano_papel_cierre_caja: tipoPapelFactura.id,
-											id_tamano_papel_cotizacion: tipoPapelFactura.id
-										}).then(function (score) {
-											if (index === (array.length - 1)) {
-												obtenerConfiguracionesFacturaEmpresa(req, res, false);
-											}
+									where: { nombre_corto: "FORM_C_MAR" }
+								}).then(function (formatoPapelImpresion) {
+									Clase.find({
+										where: { nombre_corto: "FORM_S_COL" }
+									}).then(function (formatoColorImpresion) {
+										Clase.find({
+											where: { nombre_corto: "L453" }
+										}).then(function (pieFactura) {
+											sucursales.forEach(function (sucursal, index, array) {
+												ConfiguracionFactura.create({
+													id_sucursal: sucursal.id,
+													id_impresion_factura: impresionFactura.id,
+													id_tipo_facturacion: tipoFactura.id,
+													id_tamano_papel_factura: tipoPapelFactura.id,
+													id_formato_papel_factura: formatoPapelImpresion.id,
+													id_formato_color_factura: formatoColorImpresion.id,
+													id_formato_papel_factura_servicio: formatoPapelImpresion.id,
+													id_formato_color_factura_servicio: formatoColorImpresion.id,
+													id_titulo_factura: tituloFactura.id,
+													id_subtitulo_factura: subtituloFactura.id,
+													id_pie_factura: pieFactura.id,
+													maximo_items: 5,
+													usar_pf: false,
+													imprimir_al_guardar: true,
+													id_tamano_papel_nota_venta: tipoPapelFactura.id,
+													id_tamano_papel_nota_traspaso: tipoPapelFactura.id,
+													id_tamano_papel_nota_baja: tipoPapelFactura.id,
+													id_tamano_papel_nota_pedido: tipoPapelFactura.id,
+													id_tamano_papel_cierre_caja: tipoPapelFactura.id,
+													id_tamano_papel_cotizacion: tipoPapelFactura.id,
+													id_tamano_papel_despacho: tipoPapelFactura.id,
+													id_tamano_papel_farmacia: tipoPapelFactura.id,
+													id_tamano_papel_ropa_trabajo: tipoPapelFactura.id,
+													id_tamano_papel_caja_chica_ingreso: tipoPapelFactura.id,
+													id_tamano_papel_caja_chica_egreso: tipoPapelFactura.id,
+												}).then(function (score) {
+													if (index === (array.length - 1)) {
+														obtenerConfiguracionesFacturaEmpresa(req, res, false);
+													}
+												});
+											});
 										});
 									});
 								})
@@ -255,13 +358,21 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 			{ model: Clase, as: 'subtituloFactura' },
 			{ model: Clase, as: 'pieFactura' },
 			{ model: Clase, as: 'tamanoPapelNotaVenta' },
+			{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 			{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 			{ model: Clase, as: 'tamanoPapelNotaBaja' },
 			{ model: Clase, as: 'tamanoPapelNotaPedido' },
 			{ model: Clase, as: 'tamanoPapelCierreCaja' },
 			{ model: Clase, as: 'tamanoPapelCotizacion' },
+			{ model: Clase, as: 'tamanoPapelDespacho' },
+			{ model: Clase, as: 'tamanoPapelFarmacia' },
+			{ model: Clase, as: 'tamanoPapelRopaTrabajo' },
+			{ model: Clase, as: 'tamanoPapelCajaChicaIngreso' },
+			{ model: Clase, as: 'tamanoPapelCajaChicaEgreso' },
 			{ model: Clase, as: 'formatoPapelFactura' },
-			{ model: Clase, as: 'formatoColorFactura' },]
+			{ model: Clase, as: 'formatoColorFactura' },
+			{ model: Clase, as: 'formatoPapelFacturaServicio' },
+			{ model: Clase, as: 'formatoColorFacturaServicio' }]
 		});
 	}
 
@@ -283,32 +394,44 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 						}).then(function (subtituloFactura) {
 							Clase.find({
 								where: { nombre_corto: "FORM_C_MAR" }
-							}).then(function (formatoPapelImpresion){
+							}).then(function (formatoPapelImpresion) {
 								Clase.find({
-									where: { nombre_corto: "L453" }
-								}).then(function (pieFactura) {
-									ConfiguracionGeneralFactura.create({
-										id_empresa: req.params.id_empresa,
-										id_impresion_factura: impresionFactura.id,
-										id_tipo_facturacion: tipoFactura.id,
-										id_tamano_papel_factura: tipoPapelFactura.id,
-										id_titulo_factura: tituloFactura.id,
-										id_formato_papel_factura: formatoPapelImpresion.id,
-										id_subtitulo_factura: subtituloFactura.id,
-										id_pie_factura: pieFactura.id,
-										maximo_items: 5,
-										usar_pf: false,
-										imprimir_al_guardar: true,
-										id_tamano_papel_nota_venta: tipoPapelFactura.id,
-										id_tamano_papel_nota_traspaso: tipoPapelFactura.id,
-										id_tamano_papel_nota_baja: tipoPapelFactura.id,
-										id_tamano_papel_nota_pedido: tipoPapelFactura.id,
-										id_tamano_papel_cierre_caja: tipoPapelFactura.id,
-										id_tamano_papel_cotizacion: tipoPapelFactura.id
-
-									}).then(function (score) {
-										obtenerConfiguracionGeneralFacturaEmpresa(req, res);
-									});
+									where: { nombre_corto: "FORM_S_COL" }
+								}).then(function (formatoColorImpresion) {
+									Clase.find({
+										where: { nombre_corto: "L453" }
+									}).then(function (pieFactura) {
+										ConfiguracionGeneralFactura.create({
+											id_empresa: req.params.id_empresa,
+											id_impresion_factura: impresionFactura.id,
+											id_tipo_facturacion: tipoFactura.id,
+											id_tamano_papel_factura: tipoPapelFactura.id,
+											id_titulo_factura: tituloFactura.id,
+											id_formato_papel_factura: formatoPapelImpresion.id,
+											id_formato_color_factura: formatoColorImpresion.id,
+											id_formato_papel_factura_servicio: formatoPapelImpresion.id,
+											id_formato_color_factura_servicio: formatoColorImpresion.id,
+											id_subtitulo_factura: subtituloFactura.id,
+											id_pie_factura: pieFactura.id,
+											maximo_items: 5,
+											usar_pf: false,
+											imprimir_al_guardar: true,
+											id_tamano_papel_nota_venta: tipoPapelFactura.id,
+											id_tamano_papel_nota_traspaso: tipoPapelFactura.id,
+											id_tamano_papel_nota_baja: tipoPapelFactura.id,
+											id_tamano_papel_nota_pedido: tipoPapelFactura.id,
+											id_tamano_papel_cierre_caja: tipoPapelFactura.id,
+											id_tamano_papel_cotizacion: tipoPapelFactura.id,
+											id_tamano_papel_factura_servicio: tipoPapelFactura.id,
+											id_tamano_papel_despacho: tipoPapelFactura.id,
+											id_tamano_papel_farmacia: tipoPapelFactura.id,
+											id_tamano_papel_ropa_trabajo: tipoPapelFactura.id,
+											id_tamano_papel_caja_chica_ingreso: tipoPapelFactura.id,
+											id_tamano_papel_caja_chica_egreso: tipoPapelFactura.id,
+										}).then(function (score) {
+											obtenerConfiguracionGeneralFacturaEmpresa(req, res);
+										});
+									})
 								})
 							})
 						})
@@ -329,11 +452,22 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				{ model: Clase, as: 'subtituloFactura' },
 				{ model: Clase, as: 'pieFactura' },
 				{ model: Clase, as: 'tamanoPapelNotaVenta' },
+				{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 				{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 				{ model: Clase, as: 'tamanoPapelNotaBaja' },
 				{ model: Clase, as: 'tamanoPapelNotaPedido' },
 				{ model: Clase, as: 'tamanoPapelCierreCaja' },
-				{ model: Clase, as: 'tamanoPapelCotizacion' }]
+				{ model: Clase, as: 'tamanoPapelCotizacion' },
+				{ model: Clase, as: 'tamanoPapelDespacho' },
+				{ model: Clase, as: 'tamanoPapelFarmacia' },
+				{ model: Clase, as: 'tamanoPapelRopaTrabajo' },
+				{ model: Clase, as: 'tamanoPapelCajaChicaIngreso' },
+				{ model: Clase, as: 'tamanoPapelCajaChicaEgreso' },
+				{ model: Clase, as: 'formatoPapelFactura' },
+				{ model: Clase, as: 'formatoColorFactura' },
+				{ model: Clase, as: 'formatoPapelFacturaServicio' },
+				{ model: Clase, as: 'formatoColorFacturaServicio' }]
+
 			}).then(function (configuracion) {
 				if (configuracion.usar) {
 					res.json(configuracion);
@@ -347,11 +481,21 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 						{ model: Clase, as: 'subtituloFactura' },
 						{ model: Clase, as: 'pieFactura' },
 						{ model: Clase, as: 'tamanoPapelNotaVenta' },
+						{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 						{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 						{ model: Clase, as: 'tamanoPapelNotaBaja' },
 						{ model: Clase, as: 'tamanoPapelNotaPedido' },
 						{ model: Clase, as: 'tamanoPapelCierreCaja' },
-						{ model: Clase, as: 'tamanoPapelCotizacion' }]
+						{ model: Clase, as: 'tamanoPapelCotizacion' },
+						{ model: Clase, as: 'tamanoPapelDespacho' },
+						{ model: Clase, as: 'tamanoPapelFarmacia' },
+						{ model: Clase, as: 'tamanoPapelRopaTrabajo' },
+						{ model: Clase, as: 'tamanoPapelCajaChicaIngreso' },
+						{ model: Clase, as: 'tamanoPapelCajaChicaEgreso' },
+						{ model: Clase, as: 'formatoPapelFactura' },
+						{ model: Clase, as: 'formatoColorFactura' },
+						{ model: Clase, as: 'formatoPapelFacturaServicio' },
+						{ model: Clase, as: 'formatoColorFacturaServicio' }]
 					}).then(function (configuracionEspecifica) {
 						res.json(configuracionEspecifica);
 					});

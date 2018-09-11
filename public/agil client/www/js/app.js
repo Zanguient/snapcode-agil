@@ -1,7 +1,7 @@
 angular.module('agil', ['ngRoute', 'agil.controladores',
     'agil.servicios', 'agil.directivas', 'agil.filtros', 'checklist-model',
     'blockUI', 'ngStorage', 'ui.bootstrap', 'ngCordova', 'uiGmapgoogle-maps', 'isteven-multi-select',
-    'chart.js', 'btford.socket-io','ngMessages'])
+    'chart.js', 'btford.socket-io','ngMessages','colorpicker'])
 
     .config(function ($routeProvider, uiGmapGoogleMapApiProvider, $httpProvider, ChartJsProvider) {
 

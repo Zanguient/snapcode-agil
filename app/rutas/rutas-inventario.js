@@ -88,7 +88,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			if (req.params.sucursal != 0) {
 				condicionSucursal.id = req.params.sucursal;
 			}
-			
+
 			var limite = " LIMIT " + (req.params.items_pagina * (req.params.pagina - 1)) + "," + req.params.items_pagina
 			if (req.params.items_pagina == "0") {
 				limite = "";
@@ -261,15 +261,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		});
 
 	router.route('/detalleEmpresa/:inicio/:fin/:idEmpresa/:id')
-		.get(function(req, res){
+		.get(function (req, res) {
 			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 			var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
 			var condicionCompra = { fecha: { $between: [inicio, fin] } };
-			Producto.findAll({			
-				include: [{model:DetalleVenta, as:'detallesVenta', include:[{model: Venta, as:'venta',where:condicionCompra, include:[{model: Cliente,as:'cliente',where:{id:req.params.id,id_empresa: req.params.idEmpresa}}]},
+			Producto.findAll({
+				include: [{
+					model: DetalleVenta, as: 'detallesVenta', include: [{ model: Venta, as: 'venta', where: condicionCompra, include: [{ model: Cliente, as: 'cliente', where: { id: req.params.id, id_empresa: req.params.idEmpresa } }] },
 					]
-				}]				
-			}).then(function(detalle){
+				}]
+			}).then(function (detalle) {
 				res.json(detalle);
 			})
 		});
@@ -1703,10 +1704,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'tituloFactura' },
 						{ model: Clase, as: 'subtituloFactura' },
 						{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+						{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 						{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 						{ model: Clase, as: 'tamanoPapelNotaBaja' },
 						{ model: Clase, as: 'tamanoPapelNotaPedido' },
-						{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+						{ model: Clase, as: 'tamanoPapelCierreCaja' },
+						{ model: Clase, as: 'formatoPapelFactura' },
+						{ model: Clase, as: 'formatoColorFactura' },
+						{ model: Clase, as: 'formatoPapelFacturaServicio' },
+						{ model: Clase, as: 'formatoColorFacturaServicio' }]
 					}).then(function (configuracionGeneralFactura) {
 						if (configuracionGeneralFactura.usar) {
 							var promises = [];
@@ -1727,10 +1734,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								{ model: Clase, as: 'tituloFactura' },
 								{ model: Clase, as: 'subtituloFactura' },
 								{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+								{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 								{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 								{ model: Clase, as: 'tamanoPapelNotaBaja' },
 								{ model: Clase, as: 'tamanoPapelNotaPedido' },
-								{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+								{ model: Clase, as: 'tamanoPapelCierreCaja' },
+								{ model: Clase, as: 'formatoPapelFactura' },
+								{ model: Clase, as: 'formatoColorFactura' },
+								{ model: Clase, as: 'formatoPapelFacturaServicio' },
+								{ model: Clase, as: 'formatoColorFacturaServicio' }]
 							}).then(function (configuracionFactura) {
 								var promises = [];
 								venta.configuracion = configuracionFactura;
@@ -1956,11 +1969,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 													{ model: Clase, as: 'tituloFactura' },
 													{ model: Clase, as: 'subtituloFactura' },
 													{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+													{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 													{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 													{ model: Clase, as: 'tamanoPapelNotaBaja' },
 													{ model: Clase, as: 'tamanoPapelNotaPedido' },
 													{ model: Clase, as: 'tamanoPapelCierreCaja' },
-													{ model: Clase, as: 'formatoColorFactura' }]
+													{ model: Clase, as: 'formatoPapelFactura' },
+													{ model: Clase, as: 'formatoColorFactura' },
+													{ model: Clase, as: 'formatoPapelFacturaServicio' },
+													{ model: Clase, as: 'formatoColorFacturaServicio' }]
 												}).then(function (configuracionGeneralFactura) {
 													if (configuracionGeneralFactura.usar) {
 														var promises = [];
@@ -1981,10 +1999,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 															{ model: Clase, as: 'tituloFactura' },
 															{ model: Clase, as: 'subtituloFactura' },
 															{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+															{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 															{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 															{ model: Clase, as: 'tamanoPapelNotaBaja' },
 															{ model: Clase, as: 'tamanoPapelNotaPedido' },
-															{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+															{ model: Clase, as: 'tamanoPapelCierreCaja' },
+															{ model: Clase, as: 'formatoPapelFactura' },
+															{ model: Clase, as: 'formatoColorFactura' },
+															{ model: Clase, as: 'formatoPapelFacturaServicio' },
+															{ model: Clase, as: 'formatoColorFacturaServicio' }]
 														}).then(function (configuracionFactura) {
 															var promises = [];
 															venta.configuracion = configuracionFactura;
@@ -2051,10 +2075,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																{ model: Clase, as: 'tituloFactura' },
 																{ model: Clase, as: 'subtituloFactura' },
 																{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+																{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 																{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 																{ model: Clase, as: 'tamanoPapelNotaBaja' },
 																{ model: Clase, as: 'tamanoPapelNotaPedido' },
-																{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+																{ model: Clase, as: 'tamanoPapelCierreCaja' },
+																{ model: Clase, as: 'formatoPapelFactura' },
+																{ model: Clase, as: 'formatoColorFactura' },
+																{ model: Clase, as: 'formatoPapelFacturaServicio' },
+																{ model: Clase, as: 'formatoColorFacturaServicio' }]
 															}).then(function (configuracionGeneralFactura) {
 																if (configuracionGeneralFactura.usar) {
 																	var promises = [];
@@ -2076,10 +2106,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																		{ model: Clase, as: 'tituloFactura' },
 																		{ model: Clase, as: 'subtituloFactura' },
 																		{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+																		{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 																		{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 																		{ model: Clase, as: 'tamanoPapelNotaBaja' },
 																		{ model: Clase, as: 'tamanoPapelNotaPedido' },
-																		{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+																		{ model: Clase, as: 'tamanoPapelCierreCaja' },
+																		{ model: Clase, as: 'formatoPapelFactura' },
+																		{ model: Clase, as: 'formatoColorFactura' },
+																		{ model: Clase, as: 'formatoPapelFacturaServicio' },
+																		{ model: Clase, as: 'formatoColorFacturaServicio' }]
 																	}).then(function (configuracionFactura) {
 																		var promises = [];
 																		venta.configuracion = configuracionFactura;
@@ -2138,10 +2174,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ model: Clase, as: 'tituloFactura' },
 				{ model: Clase, as: 'subtituloFactura' },
 				{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+				{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 				{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 				{ model: Clase, as: 'tamanoPapelNotaBaja' },
 				{ model: Clase, as: 'tamanoPapelNotaPedido' },
-				{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+				{ model: Clase, as: 'tamanoPapelCierreCaja' },
+				{ model: Clase, as: 'formatoPapelFactura' },
+				{ model: Clase, as: 'formatoColorFactura' },
+				{ model: Clase, as: 'formatoPapelFacturaServicio' },
+				{ model: Clase, as: 'formatoColorFacturaServicio' }]
 			}).then(function (configuracionGeneralFactura) {
 
 				if (configuracionGeneralFactura.usar) {
@@ -2163,21 +2205,39 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'tituloFactura' },
 						{ model: Clase, as: 'subtituloFactura' },
 						{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+						{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 						{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 						{ model: Clase, as: 'tamanoPapelNotaBaja' },
 						{ model: Clase, as: 'tamanoPapelNotaPedido' },
-						{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+						{ model: Clase, as: 'tamanoPapelCierreCaja' },
+						{ model: Clase, as: 'formatoPapelFactura' },
+						{ model: Clase, as: 'formatoColorFactura' },
+						{ model: Clase, as: 'formatoPapelFacturaServicio' },
+						{ model: Clase, as: 'formatoColorFacturaServicio' }]
 					}).then(function (configuracionFactura) {
 						var promises = [];
 						venta.configuracion = configuracionFactura;
 						venta.detallesVenta.forEach(function (detalleVenta, index, array) {
-							promises.push(actualizarDetalleVenta(movimientoCreado, venta, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.total, index, array, res, venta, t, sucursal));
+							promises.push(actualizarDetalleVenta(movimientoCreado, venta, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.total, index, array, res, venta, t, sucursal, empresaEncontrada));
 						});
 						return Promise.all(promises)
+					}).catch(function (err) {
+						return new Promise(function (fulfill, reject) {
+							reject(err);
+						});
 					});
 				}
+			}).catch(function (err) {
+				return new Promise(function (fulfill, reject) {
+					reject(err);
+				});
 			}));
 			return Promise.all(promisesVenta);
+		}).catch(function (err) {
+			return new Promise(function (fulfill, reject) {
+				reject(err);
+			});
 		});
 	}
 	function actualizarDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, precio_unitario, importe, total, index, array, res, venta, t, sucursal, empresaEncontrada) {
@@ -2188,17 +2248,17 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					id_inventario: detalleVenta.id_inventario,
 					id_movimiento: venta.movimientoActual.id,
 					id_producto: detalleVenta.producto ? detalleVenta.producto.id : null
-				}, transaccion: t
+				}, transaction: t
 			}).then(function (detalleMovimientoEliminado) {
 				return DetalleVenta.destroy({
 					where: {
 						id: detalleVenta.id
-					}, transaccion: t
+					}, transaction: t
 				}).then(function (detalleCompraEliminado) {
 					return Inventario.find({
 						where: {
 							id: detalleVenta.id_inventario
-						}, transaccion: t
+						}, transaction: t
 					}).then(function (inventarioEncontrado) {
 						inventarioEncontrado.cantidad += detalleVenta.cantidad
 						return Inventario.update(
@@ -2207,11 +2267,27 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							}, {
 								where: {
 									id: detalleVenta.id_inventario
-								}, transaccion: t
+								}, transaction: t
 							}).then(function (InventarioActualizado) {
 
+							}).catch(function (err) {
+								return new Promise(function (fulfill, reject) {
+									reject(err);
+								});
 							});
+					}).catch(function (err) {
+						return new Promise(function (fulfill, reject) {
+							reject(err);
+						});
 					});
+				}).catch(function (err) {
+					return new Promise(function (fulfill, reject) {
+						reject(err);
+					});
+				});
+			}).catch(function (err) {
+				return new Promise(function (fulfill, reject) {
+					reject(err);
 				});
 			});
 		} else if (detalleVenta.id) {
@@ -2325,6 +2401,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						return Promise.all(promises);
 					}
 				}
+			}).catch(function (err) {
+				return new Promise(function (fulfill, reject) {
+					reject(err);
+				});
 			});
 		}
 	}
@@ -2394,11 +2474,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ model: Clase, as: 'tituloFactura' },
 				{ model: Clase, as: 'subtituloFactura' },
 				{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+				{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 				{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 				{ model: Clase, as: 'tamanoPapelNotaBaja' },
 				{ model: Clase, as: 'tamanoPapelNotaPedido' },
 				{ model: Clase, as: 'tamanoPapelCierreCaja' },
-				{ model: Clase, as: 'formatoColorFactura' }]
+				{ model: Clase, as: 'formatoPapelFactura' },
+				{ model: Clase, as: 'formatoColorFactura' },
+				{ model: Clase, as: 'formatoPapelFacturaServicio' },
+				{ model: Clase, as: 'formatoColorFacturaServicio' }]
 			}).then(function (configuracionGeneralFactura) {
 				venta.detallesVentaNoConsolidadas.forEach(function (detalleVentaNoConsolidada, index, array) {
 					//crearDetalleVentaNoConsolidada(ventaCreada.id, detalleVentaNoConsolidada.producto.id, null, detalleVentaNoConsolidada);
@@ -2422,10 +2507,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'tituloFactura' },
 						{ model: Clase, as: 'subtituloFactura' },
 						{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+						{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 						{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 						{ model: Clase, as: 'tamanoPapelNotaBaja' },
 						{ model: Clase, as: 'tamanoPapelNotaPedido' },
-						{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+						{ model: Clase, as: 'tamanoPapelCierreCaja' },
+						{ model: Clase, as: 'formatoPapelFactura' },
+						{ model: Clase, as: 'formatoColorFactura' },
+						{ model: Clase, as: 'formatoPapelFacturaServicio' },
+						{ model: Clase, as: 'formatoColorFacturaServicio' }]
 					}).then(function (configuracionFactura) {
 						var promises = [];
 						venta.configuracion = configuracionFactura;
@@ -2538,6 +2629,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				return new Promise(function (fulfill, reject) {
 					reject(err);
 				});
+			});
+		}).catch(function (err) {
+			return new Promise(function (fulfill, reject) {
+				reject(err);
 			});
 		});
 	}
@@ -2789,6 +2884,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					});
 					//}
 				}
+			}).catch(function (err) {
+				return new Promise(function (fulfill, reject) {
+					reject(err);
+				});
 			})
 		} else {
 			if (producto.activar_inventario) {
@@ -3029,6 +3128,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						return ActualizarVenta(venta, res, venta.cliente.id, venta.movimientoActual, null, false, venta.sucursal, t, empresaEncontrada);
 						//SI ES BAJA
 					}
+				}).catch(function (err) {
+					return new Promise(function (fulfill, reject) {
+						reject(err);
+					});
 				});
 			}).then(function (result) {
 				console.log(result);
@@ -3183,7 +3286,28 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				where: condicionVenta,
 				include: [{
 					model: DetalleVenta, as: 'detallesVenta',
-					include: [{ model: Producto, as: 'producto' }]
+					include: [{
+						model: Producto, as: 'producto', include: [
+							{ model: Clase, as: 'tipoProducto' },
+							{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+							{
+								model: ProductoBase, as: 'productosBase', required: false,
+								include: [{
+									model: Producto, as: 'productoBase', required: false,
+									include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+									{ model: Clase, as: 'tipoProducto' },
+									{
+										model: ProductoBase, as: 'productosBase', required: false,
+										include: [{
+											model: Producto, as: 'productoBase', required: false,
+											include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+											{ model: Clase, as: 'tipoProducto' }]
+										}]
+									}]
+								}]
+							}
+						]
+					}]
 				},
 				{ model: Clase, as: 'tipoPago' },
 				{ model: Clase, as: 'actividad' },
@@ -3191,7 +3315,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ model: Cliente, as: 'cliente', where: condicionCliente, required: clienteRequerido },
 				{
 					model: Movimiento, as: 'movimiento',
-					include: [{ model: Clase, as: 'clase', where: condicionTransaccion }]
+					include: [{model:DetalleMovimiento,as:'detallesMovimiento'},{ model: Clase, as: 'clase', where: condicionTransaccion }]
 				},
 				{
 					model: Almacen, as: 'almacen',
@@ -3276,11 +3400,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					{ model: Clase, as: 'subtituloFactura' },
 					{ model: Clase, as: 'pieFactura' },
 					{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+					{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 					{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 					{ model: Clase, as: 'tamanoPapelNotaBaja' },
 					{ model: Clase, as: 'tamanoPapelNotaPedido' },
 					{ model: Clase, as: 'tamanoPapelCierreCaja' },
-					{ model: Clase, as: 'formatoColorFactura'}]
+					{ model: Clase, as: 'formatoPapelFactura' },
+					{ model: Clase, as: 'formatoColorFactura' },
+					{ model: Clase, as: 'formatoPapelFacturaServicio' },
+					{ model: Clase, as: 'formatoColorFacturaServicio' }]
 				}).then(function (configuracionGeneralFactura) {
 					if (venta.movimiento) {
 						if (venta.movimiento.clase.nombre_corto == Diccionario.EGRE_FACTURACION) {
@@ -3309,10 +3438,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										{ model: Clase, as: 'tituloFactura' },
 										{ model: Clase, as: 'subtituloFactura' },
 										{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+										{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 										{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 										{ model: Clase, as: 'tamanoPapelNotaBaja' },
 										{ model: Clase, as: 'tamanoPapelNotaPedido' },
-										{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+										{ model: Clase, as: 'tamanoPapelCierreCaja' },
+										{ model: Clase, as: 'formatoPapelFactura' },
+										{ model: Clase, as: 'formatoColorFactura' },
+										{ model: Clase, as: 'formatoPapelFacturaServicio' },
+										{ model: Clase, as: 'formatoColorFacturaServicio' }]
 									}).then(function (configuracionFactura) {
 										res.json({
 											venta: venta,
@@ -3339,7 +3474,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									{ model: Clase, as: 'tipoFacturacion' },
 									{ model: Clase, as: 'tamanoPapelFactura' },
 									{ model: Clase, as: 'tituloFactura' },
-									{ model: Clase, as: 'subtituloFactura' }]
+									{ model: Clase, as: 'subtituloFactura' },
+									{ model: Clase, as: 'tamanoPapelNotaVenta' }]
 								}).then(function (configuracionFactura) {
 									res.json({
 										venta: venta,
@@ -3376,10 +3512,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									{ model: Clase, as: 'tituloFactura' },
 									{ model: Clase, as: 'subtituloFactura' },
 									{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+									{ model: Clase, as: 'tamanoPapelFacturaServicio' },
 									{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
 									{ model: Clase, as: 'tamanoPapelNotaBaja' },
 									{ model: Clase, as: 'tamanoPapelNotaPedido' },
-									{ model: Clase, as: 'tamanoPapelCierreCaja' }]
+									{ model: Clase, as: 'tamanoPapelCierreCaja' },
+									{ model: Clase, as: 'formatoPapelFactura' },
+									{ model: Clase, as: 'formatoColorFactura' },
+									{ model: Clase, as: 'formatoPapelFacturaServicio' },
+									{ model: Clase, as: 'formatoColorFacturaServicio' }]
 								}).then(function (configuracionFactura) {
 									res.json({
 										venta: venta,
@@ -3546,7 +3688,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					{ model: Clase, as: 'tamanoPapelFactura' },
 					{ model: Clase, as: 'tituloFactura' },
 					{ model: Clase, as: 'subtituloFactura' },
-					{ model: Clase, as: 'pieFactura' }]
+					{ model: Clase, as: 'pieFactura' },
+					{ model: Clase, as: 'tamanoPapelNotaVenta' },]
 				}).then(function (configuracionGeneralFactura) {
 					if (configuracionGeneralFactura.usar) {
 						res.json({ compra: compra, configuracion: configuracionGeneralFactura, sucursal: compra.sucursal, numero_literal: compra.numero_literal });
@@ -3560,7 +3703,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							{ model: Clase, as: 'tamanoPapelFactura' },
 							{ model: Clase, as: 'tituloFactura' },
 							{ model: Clase, as: 'subtituloFactura' },
-							{ model: Clase, as: 'pieFactura' }]
+							{ model: Clase, as: 'pieFactura' },
+							{ model: Clase, as: 'tamanoPapelNotaVenta' },]
 						}).then(function (configuracionFactura) {
 							res.json({
 								compra: compra,
@@ -4088,37 +4232,34 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			});
 		})
 	}
-	router.route('/eliminar-detalle-venta/movimiento/:id_movimiento')
-		.put(function (req, res) {
-			var detalleVenta=req.body.detalleVenta
-			sequelize.transaction(function (t) {
-				return DetalleMovimiento.destroy({
-					where: {
-						id_inventario: detalleVenta.id_inventario,
-						id_movimiento: req.params.id_movimiento,
-						id_producto: detalleVenta.producto ? detalleVenta.producto.id : null
-					}, transaccion: t
-				}).then(function (detalleMovimientoEliminado) {
-					return DetalleVenta.destroy({
+	function eliminarDetalleVentaBase(req, res, detalleVenta, t,venta) {
+		var promises = []
+		detalleVenta.producto.productosBase.forEach(function (productoBase) {
+			for (var i = 0; i < venta.movimientoActual.detallesMovimiento.length; i++) {
+				var element = venta.movimientoActual.detallesMovimiento[i];
+				if(element.id_producto==productoBase.id_producto_base && element.cantidad==parseInt(productoBase.formulacion)){
+					promises.push(DetalleMovimiento.destroy({
 						where: {
-							id: detalleVenta.id
-						}, transaccion: t
-					}).then(function (detalleCompraEliminado) {
+							id_inventario: element.id_inventario,
+							id_movimiento: element.id_movimiento,
+							id_producto: productoBase.id_producto_base
+						}, transaction: t
+					}).then(function (detalleMovimientoEliminado) {
 						return Inventario.find({
 							where: {
-								id: detalleVenta.id_inventario
-							}, transaccion: t
+								id: element.id_inventario
+							}, transaction: t
 						}).then(function (inventarioEncontrado) {
-							inventarioEncontrado.cantidad += detalleVenta.cantidad
+							inventarioEncontrado.cantidad += element.cantidad
 							return Inventario.update(
 								{
 									cantidad: inventarioEncontrado.cantidad
 								}, {
 									where: {
-										id: detalleVenta.id_inventario
-									}, transaccion: t
+										id: element.id_inventario
+									}, transaction: t
 								}).then(function (InventarioActualizado) {
-
+		
 								}).catch(function (err) {
 									return new Promise(function (fulfill, reject) {
 										reject(err);
@@ -4133,12 +4274,76 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						return new Promise(function (fulfill, reject) {
 							reject(err);
 						});
+					}));
+				}
+				
+			}
+			
+		})
+		return Promise.all(promises);
+	}
+	router.route('/eliminar-detalle-venta/movimiento/:id_movimiento')
+		.put(function (req, res) {
+			var detalleVenta = req.body.detalleVenta
+			var venta = req.body.venta
+			sequelize.transaction(function (t) {
+				if (detalleVenta.producto.tipoProducto.nombre_corto == "PFINAL") {
+					return DetalleVenta.destroy({
+						where: {
+							id: detalleVenta.id
+						}, transaction: t
+					}).then(function (detalleCompraEliminado) {
+						return eliminarDetalleVentaBase(req, res, detalleVenta, t,venta)
+					})
+				} else {
+					return DetalleMovimiento.destroy({
+						where: {
+							id_inventario: detalleVenta.id_inventario,
+							id_movimiento: parseInt(req.params.id_movimiento),
+							id_producto: detalleVenta.producto.id
+						}, transaction: t
+					}).then(function (detalleMovimientoEliminado) {
+						return DetalleVenta.destroy({
+							where: {
+								id: detalleVenta.id
+							}, transaction: t
+						}).then(function (detalleCompraEliminado) {
+							return Inventario.find({
+								where: {
+									id: detalleVenta.id_inventario
+								}, transaction: t
+							}).then(function (inventarioEncontrado) {
+								inventarioEncontrado.cantidad += detalleVenta.cantidad
+								return Inventario.update(
+									{
+										cantidad: inventarioEncontrado.cantidad
+									}, {
+										where: {
+											id: detalleVenta.id_inventario
+										}, transaction: t
+									}).then(function (InventarioActualizado) {
+
+									}).catch(function (err) {
+										return new Promise(function (fulfill, reject) {
+											reject(err);
+										});
+									});
+							}).catch(function (err) {
+								return new Promise(function (fulfill, reject) {
+									reject(err);
+								});
+							});
+						}).catch(function (err) {
+							return new Promise(function (fulfill, reject) {
+								reject(err);
+							});
+						});
+					}).catch(function (err) {
+						return new Promise(function (fulfill, reject) {
+							reject(err);
+						});
 					});
-				}).catch(function (err) {
-					return new Promise(function (fulfill, reject) {
-						reject(err);
-					});
-				});
+				}
 			}).then(function name(result) {
 				res.json({ mensaje: "detalle venta eliminado!" })
 			}).catch(function (err) {

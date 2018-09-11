@@ -705,7 +705,7 @@ angular.module('agil.controladores')
 			if (detalleVenta.id) {
 				$scope.CancelacionVentaEdicion = true
 
-				var promesa = EliminarDetalleVentaEdicion(detalleVenta, $scope.venta.movimientoActual.id)
+				var promesa = EliminarDetalleVentaEdicion(detalleVenta, $scope.venta.movimientoActual.id,$scope.venta)
 				promesa.then(function (dato) {
 					if (dato.hasError == true) {
 					} else {
@@ -1728,21 +1728,21 @@ angular.module('agil.controladores')
 				var fecha = new Date(ventaConsultada.fecha);
 				ventaConsultada.fechaTexto = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
 
-				if ($scope.formatosFactura) {
-					if (ventaConsultada.movimiento) {
-						ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false, $scope.formatosFactura);
-					} else {
-						ImprimirSalida(ventaConsultada.movimientoServicio.nombre_corto, ventaConsultada, false, $scope.usuario, false, $scope.formatosFactura);
-					}
-
-				} else {
+				/* if ($scope.formatosFactura) { */
 					if (ventaConsultada.movimiento) {
 						ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false);
 					} else {
 						ImprimirSalida(ventaConsultada.movimientoServicio.nombre_corto, ventaConsultada, false, $scope.usuario, false);
 					}
 
-				}
+				/* } else {
+					if (ventaConsultada.movimiento) {
+						ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false);
+					} else {
+						ImprimirSalida(ventaConsultada.movimientoServicio.nombre_corto, ventaConsultada, false, $scope.usuario, false);
+					}
+
+				} */
 
 			});
 		}
@@ -1834,13 +1834,13 @@ angular.module('agil.controladores')
 
 		$scope.imprimirConVencimiento = function () {
 			$scope.impresion.res.con_vencimiento = true;
-			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario, false, $scope.formatosFactura);
+			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario, false);
 			$scope.cerrarPopup($scope.idModalImpresionVencimiento);
 		}
 
 		$scope.imprimirSinVencimiento = function () {
 			$scope.impresion.res.con_vencimiento = false;
-			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario, false, $scope.formatosFactura);
+			ImprimirSalida($scope.impresion.movimiento, $scope.impresion.res, $scope.impresion.al_guardar, $scope.impresion.usuario, false);
 			$scope.cerrarPopup($scope.idModalImpresionVencimiento);
 		}
 
@@ -2297,13 +2297,10 @@ angular.module('agil.controladores')
 							$scope.abrirPopupPanel(venta.sucursal, venta.almacen, venta.actividad, venta.tipoPago, venta.movimiento);
 
 						} else {
-							if ($scope.formatosFactura) {
+							
 								//ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false, $scope.formatosFactura);
-								ImprimirSalida(movimiento, res, true, $scope.usuario, llevar, $scope.formatosFactura);
-							} else {
-								//ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false);
 								ImprimirSalida(movimiento, res, true, $scope.usuario, llevar);
-							}
+							
 
 
 							$scope.mostrarMensaje('Venta registrada exitosamente!');

@@ -450,6 +450,16 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_cierre_caja', as: 'tamanoPapelCierreCaja' });
 	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_cotizacion', as: 'tamanoPapelCotizacion' });
 	//ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_factura', as: 'formatoPapelFactura' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_despacho', as: 'tamanoPapelDespacho' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_farmacia', as: 'tamanoPapelFarmacia' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_ropa_trabajo', as: 'tamanoPapelRopaTrabajo' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_caja_chica_ingreso', as: 'tamanoPapelCajaChicaIngreso' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_caja_chica_egreso', as: 'tamanoPapelCajaChicaEgreso' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_factura_servicio', as: 'tamanoPapelFacturaServicio' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_factura', as: 'formatoPapelFactura' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_factura', as: 'formatoColorFactura' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_factura_servicio', as: 'formatoPapelFacturaServicio' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_factura_servicio', as: 'formatoColorFacturaServicio' });
 
 	ConfiguracionGeneralFactura.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_impresion_factura', as: 'impresionFactura' });
@@ -458,14 +468,22 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_titulo_factura', as: 'tituloFactura' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_subtitulo_factura', as: 'subtituloFactura' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_pie_factura', as: 'pieFactura' });
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_factura_servicio', as: 'tamanoPapelFacturaServicio' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_nota_venta', as: 'tamanoPapelNotaVenta' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_nota_traspaso', as: 'tamanoPapelNotaTraspaso' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_nota_baja', as: 'tamanoPapelNotaBaja' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_nota_pedido', as: 'tamanoPapelNotaPedido' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_cierre_caja', as: 'tamanoPapelCierreCaja' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_cotizacion', as: 'tamanoPapelCotizacion' });
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_despacho', as: 'tamanoPapelDespacho' });
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_farmacia', as: 'tamanoPapelFarmacia' });
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_ropa_trabajo', as: 'tamanoPapelRopaTrabajo' });
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_caja_chica_ingreso', as: 'tamanoPapelCajaChicaIngreso' });
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tamano_papel_caja_chica_egreso', as: 'tamanoPapelCajaChicaEgreso' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_factura', as: 'formatoPapelFactura' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_factura', as: 'formatoColorFactura' });
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_factura_servicio', as: 'formatoPapelFacturaServicio' });
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_factura_servicio', as: 'formatoColorFacturaServicio' });
 
 	ConfiguracionGeneralApp.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
 	ConfiguracionGeneralApp.belongsTo(Clase, { foreignKey: 'id_tipo_venta', as: 'tipoVenta' });
@@ -1123,7 +1141,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Usuario.hasMany(SolicitudCajaChica, { foreignKey: 'id_autorizador', as: 'solicitudesCajasChicas' })
 	SolicitudCajaChica.belongsTo(Usuario, { foreignKey: 'id_verificador', as: 'verificador' })
 	Usuario.hasMany(SolicitudCajaChica, { foreignKey: 'id_verificador', as: 'solicitudesCajasChicas' })
-	
+
 
 	// COMENSALES
 	GerenciasClienteEmpresa.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'empresaCliente' })
@@ -1156,7 +1174,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	PrecioComidasClienteEmpresa.belongsTo(horarioComidasClienteEmpresa, { foreignKey: 'id_comida', as: 'comida' })
 	ComensalesClienteEmpresa.hasMany(ComensalesMarcacionesClienteEmpresa, { foreignKey: 'id_comensal', as: 'marcaciones' })
 	ComensalesMarcacionesClienteEmpresa.belongsTo(ComensalesClienteEmpresa, { foreignKey: 'id_comensal', as: 'comensal' })
-	
+
 
 	ServicioVenta.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' })
 	Empresa.hasMany(ServicioVenta, { foreignKey: 'id_empresa', as: 'serviciosVenta' })

@@ -830,27 +830,24 @@ angular.module('agil.servicios')
 	}])
 	//fin factory para nuevos comprobantes
 
-	.factory('ImprimirSalida', ['Diccionario', 'ImprimirFactura', 'ImprimirProforma', 'ImprimirNotaBaja', 'ImprimirNotaTraspaso', 'IdsFormatoImpresion', 'ImprimirServicio',
-		function (Diccionario, ImprimirFactura, ImprimirProforma, ImprimirNotaBaja, ImprimirNotaTraspaso, IdsFormatoImpresion, ImprimirServicio) {
+	.factory('ImprimirSalida', ['Diccionario', 'ImprimirFactura', 'ImprimirProforma', 'ImprimirNotaBaja', 'ImprimirNotaTraspaso', 'ImprimirServicio',
+		function (Diccionario, ImprimirFactura, ImprimirProforma, ImprimirNotaBaja, ImprimirNotaTraspaso, ImprimirServicio) {
 			var res = function (movimiento, salida, esAccionGuardar, usuario, llevar) {
-				var prom = IdsFormatoImpresion()
-				var formatos
-				prom.then(function (res) {
-					formatos = res.clases
-					if (movimiento == Diccionario.EGRE_FACTURACION) {
-						ImprimirFactura(salida, esAccionGuardar, usuario, formatos);
-					} else if (movimiento == Diccionario.EGRE_PROFORMA) {
-						ImprimirProforma(salida, esAccionGuardar, usuario, llevar);
-					}
-					else if (movimiento == Diccionario.EGRE_BAJA) {
-						ImprimirNotaBaja(salida, usuario);
-					}
-					else if (movimiento == Diccionario.EGRE_TRASPASO) {
-						ImprimirNotaTraspaso(salida, usuario);
-					} else if (movimiento == Diccionario.EGRE_SERVICIO) {
-						ImprimirServicio(salida, esAccionGuardar, usuario, formatos);
-					}
-				})
+
+				if (movimiento == Diccionario.EGRE_FACTURACION) {
+					ImprimirFactura(salida, esAccionGuardar, usuario);
+				} else if (movimiento == Diccionario.EGRE_PROFORMA) {
+					ImprimirProforma(salida, esAccionGuardar, usuario, llevar);
+				}
+				else if (movimiento == Diccionario.EGRE_BAJA) {
+					ImprimirNotaBaja(salida, usuario);
+				}
+				else if (movimiento == Diccionario.EGRE_TRASPASO) {
+					ImprimirNotaTraspaso(salida, usuario);
+				} else if (movimiento == Diccionario.EGRE_SERVICIO) {
+					ImprimirServicio(salida, esAccionGuardar, usuario);
+				}
+
 			};
 			return res;
 		}])
@@ -860,6 +857,11 @@ angular.module('agil.servicios')
 		function (Diccionario, ImprimirFacturaCartaOficio, ImprimirFacturaCartaOficioSinFormato, ImprimirPedido, ImprimirFacturaRollo, $timeout) {
 			var res = function (salida, esAccionGuardar, usuario, idFormatoImpresion) {
 				var papel, doc, stream;
+				salida.configuracion.formatoColor = salida.configuracion.formatoColorFactura
+				salida.configuracion.formatoPapel = salida.configuracion.formatoPapelFactura
+				salida.configuracion.color1=salida.configuracion.color_cabecera_factura
+				salida.configuracion.color2=salida.configuracion.color_detalle_factura
+				salida.configuracion.nota=salida.configuracion.nota_factura_bien
 				if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 					papel = [612, 936];
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
@@ -875,18 +877,18 @@ angular.module('agil.servicios')
 						//var formatoConMargen = idFormatoImpresion.filter(elem => id)
 						//var formatoSinMargen = $filter('id')(idFormatoImpresion,'FORMATO SIN MARGEN');
 						//var idConf = idFormatoImpresion[0].id; 
-						if (idFormatoImpresion[0].nombre_corto === 'FORM_C_MAR') {
+						/* if (idFormatoImpresion[0].nombre_corto === 'FORM_C_MAR') {
 							var idConFormato = idFormatoImpresion[0].id;
 						}
 						if (idFormatoImpresion[1].nombre_corto === 'FORM_S_MAR') {
 							var idSinFormato = idFormatoImpresion[1].id;
-						}
+						} */
 
-						if (salida.configuracion.id_formato_papel_factura === idConFormato) {
-							ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
-						} else if (salida.configuracion.id_formato_papel_factura === idSinFormato) {
+						/* if (salida.configuracion.id_formato_papel_factura === idConFormato) { */
+						ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
+						/* } else if (salida.configuracion.id_formato_papel_factura === idSinFormato) {
 							ImprimirFacturaCartaOficioSinFormato(salida, papel, true, false, false, usuario);
-						}
+						} */
 
 					} else if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
 						ImprimirFacturaCartaOficio(salida, papel, false, true, false, usuario);
@@ -946,9 +948,14 @@ angular.module('agil.servicios')
 	//imprimir servicio
 	.factory('ImprimirServicio', ['Diccionario', 'ImprimirFacturaCartaOficio', 'ImprimirFacturaCartaOficioSinFormato', 'ImprimirPedido', 'ImprimirFacturaRollo', '$timeout',
 		function (Diccionario, ImprimirFacturaCartaOficio, ImprimirFacturaCartaOficioSinFormato, ImprimirPedido, ImprimirFacturaRollo, $timeout) {
-			var res = function (salida, esAccionGuardar, usuario, idFormatoImpresion) {
+			var res = function (salida, esAccionGuardar, usuario) {
 				var papel, doc, stream;
-				if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
+				salida.configuracion.formatoColor = salida.configuracion.formatoColorFacturaServicio
+				salida.configuracion.formatoPapel = salida.configuracion.formatoPapelFacturaServicio
+				salida.configuracion.color1=salida.configuracion.color_cabecera_factura_servicio
+				salida.configuracion.color2=salida.configuracion.color_detalle_factura_servicio
+				salida.configuracion.nota=salida.configuracion.nota_factura_servicio
+				if (salida.configuracion.tamanoPapelFacturaServicio.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 					papel = [612, 936];
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
 						ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
@@ -957,31 +964,31 @@ angular.module('agil.servicios')
 					} else if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_SEMICOMPLETA) {
 						ImprimirFacturaCartaOficio(salida, papel, false, false, true), usuario;
 					}
-				} else if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
+				} else if (salida.configuracion.tamanoPapelFacturaServicio.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
 					papel = [612, 792];
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
 						//var formatoConMargen = idFormatoImpresion.filter(elem => id)
 						//var formatoSinMargen = $filter('id')(idFormatoImpresion,'FORMATO SIN MARGEN');
 						//var idConf = idFormatoImpresion[0].id; 
-						if (idFormatoImpresion[0].nombre_corto === 'FORM_C_MAR') {
+						/* if (idFormatoImpresion[0].nombre_corto === 'FORM_C_MAR') {
 							var idConFormato = idFormatoImpresion[0].id;
 						}
 						if (idFormatoImpresion[1].nombre_corto === 'FORM_S_MAR') {
 							var idSinFormato = idFormatoImpresion[1].id;
 						}
 
-						if (salida.configuracion.id_formato_papel_factura === idConFormato) {
-							ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
-						} else if (salida.configuracion.id_formato_papel_factura === idSinFormato) {
+						if (salida.configuracion.id_formato_papel_factura === idConFormato) { */
+						ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
+						/* } else if (salida.configuracion.id_formato_papel_factura === idSinFormato) {
 							ImprimirFacturaCartaOficioSinFormato(salida, papel, true, false, false, usuario);
-						}
+						} */
 
 					} else if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
 						ImprimirFacturaCartaOficio(salida, papel, false, true, false, usuario);
 					} else if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_SEMICOMPLETA) {
 						ImprimirFacturaCartaOficio(salida, papel, false, false, true, usuario);
 					}
-				} else if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
+				} else if (salida.configuracion.tamanoPapelFacturaServicio.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
 					papel = [612, 468];
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
 						ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
@@ -990,7 +997,7 @@ angular.module('agil.servicios')
 					} else if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_SEMICOMPLETA) {
 						ImprimirFacturaCartaOficio(salida, papel, false, false, true, usuario);
 					}
-				} else if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
+				} else if (salida.configuracion.tamanoPapelFacturaServicio.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
 					var alto;
 					if (salida.detallesVenta.length <= 2) {
 						alto = 610;
@@ -1073,7 +1080,9 @@ angular.module('agil.servicios')
 							//doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
 							doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
 							if (completa || vacia) {
-								doc.rect(50, y - 15, 520, 30).stroke();
+								if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+									doc.rect(50, y - 15, 520, 30).stroke();
+								}
 							}
 						} else if (venta.detallesVenta[i].servicio) {
 							venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento);
@@ -1096,7 +1105,9 @@ angular.module('agil.servicios')
 							// doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
 							doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
 							if (completa || vacia) {
-								doc.rect(50, y - 15, 520, 30).stroke();
+								if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+									doc.rect(50, y - 15, 520, 30).stroke();
+								}
 							}
 						}
 						y = y + 30;
@@ -1196,7 +1207,9 @@ angular.module('agil.servicios')
 									//doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
 									doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
 									if (completa || vacia) {
-										doc.rect(50, y - 15, 520, 30).stroke();
+										if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+											doc.rect(50, y - 15, 520, 30).stroke();
+										}
 									}
 								} else {
 									var longitudCaracteres = venta.detallesVenta[i].observaciones.length;
@@ -1206,7 +1219,9 @@ angular.module('agil.servicios')
 									//doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : "0.00"), 490, y);
 									doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
 									if (completa || vacia) {
-										doc.rect(50, y - 15, 520, 30).stroke();
+										if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+											doc.rect(50, y - 15, 520, 30).stroke();
+										}
 									}
 								}
 							} else {
@@ -1237,7 +1252,9 @@ angular.module('agil.servicios')
 							}
 						}
 						if (completa || vacia) {
-							doc.rect(50, y - 15, 520, 30).stroke();
+							if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+								doc.rect(50, y - 15, 520, 30).stroke();
+							}
 						}
 						y = y + 30;
 						items++;
@@ -1277,6 +1294,7 @@ angular.module('agil.servicios')
 					var qrImage = canvas.toDataURL('image/png');
 					doc.image(qrImage, 470, y + 20, { width: 70, height: 70 });
 					if (completa || vacia) {
+						doc.text(venta.configuracion.nota, 50, papel[1] -80);
 						doc.text(venta.pieFactura !== undefined && venta.pieFactura !== null ? venta.pieFactura.nombre : "", 50, papel[1] - 60);
 						doc.text("\"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAIS. EL USO ILICITO DE ESTA SERA SANCIONADO DE ACUERDO A LEY\"", 50, papel[1] - 40);
 					}
@@ -1587,7 +1605,7 @@ angular.module('agil.servicios')
 								if (existenDescuentos) {
 									var longitudCaracteres = venta.detallesVenta[i].observaciones.length;
 									var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
-									doc.text(venta.detallesVenta[i].observaciones , 55, yDesc, { width: 300 });
+									doc.text(venta.detallesVenta[i].observaciones, 55, yDesc, { width: 300 });
 									//doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 300, y);
 									doc.text(venta.detallesVenta[i].importe.toFixed(2), 335, y);
 									doc.text(venta.detallesVenta[i].descuento.toFixed(2), 385, y);
@@ -1862,9 +1880,9 @@ angular.module('agil.servicios')
 				if (vacia) {
 					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [70, 70] }); } //width: 50, height: 50
 					doc.font('Helvetica-Bold', 8);
-					var longitudCaracteres = usuario.empresa.razon_social.length+30;
+					var longitudCaracteres = usuario.empresa.razon_social.length + 30;
 					var yDesc = (longitudCaracteres <= 35) ? 105 : ((longitudCaracteres > 36 && longitudCaracteres <= 72) ? 95 : 85);
-					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, yDesc,{width:170});
+					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, yDesc, { width: 170 });
 					doc.font('Helvetica', 7);
 					doc.text(venta.sucursal.nombre.toUpperCase(), 60, 113);
 					var longitudCaracteres = venta.sucursal.direccion.length;
@@ -1882,7 +1900,9 @@ angular.module('agil.servicios')
 
 
 				if (completa || vacia) {
-					doc.rect(380, 40, 190, 50).stroke();
+					if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+						doc.rect(380, 40, 190, 50).stroke();
+					}
 					doc.text("NIT : ", 390, 50);
 					doc.text("NOTA No : ", 390, 60);
 
@@ -1932,24 +1952,24 @@ angular.module('agil.servicios')
 				if (vacia) {
 					// la altura en pixeles para convertir seria dividirlo entre 96;
 					var alturaImagen = 80;
-					if (usuario.empresa.imagen.length > 100) { 
-						doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); 
+					if (usuario.empresa.imagen.length > 100) {
+						doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] });
 						alturaImagen = usuario.altura_imagen;
 					} //width: 50, height: 50
-					var yAltura = (alturaImagen <= 1.95) ? alturaImagen+85 : ((alturaImagen > 2 && alturaImagen <= 80) ? 105 : 105);
-					
-					
+					var yAltura = (alturaImagen <= 1.95) ? alturaImagen + 85 : ((alturaImagen > 2 && alturaImagen <= 80) ? 105 : 105);
+
+
 					doc.font('Helvetica-Bold', 8);
 					var longitudCaracteres = usuario.empresa.razon_social.length;
-				
-					var yDesc = (longitudCaracteres <= 35) ? yAltura+11  : ((longitudCaracteres > 36 && longitudCaracteres <= 52) ? yAltura+20 : yAltura+20);
-			
-					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, yAltura,{width:170});
+
+					var yDesc = (longitudCaracteres <= 35) ? yAltura + 11 : ((longitudCaracteres > 36 && longitudCaracteres <= 52) ? yAltura + 20 : yAltura + 20);
+
+					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, yAltura, { width: 170 });
 					doc.font('Helvetica', 7);
 					doc.text(venta.sucursal.nombre.toUpperCase(), 60, yDesc);
 					var longitudCaracteres = venta.sucursal.direccion.length;
-					var yDescDir = (longitudCaracteres <= 35) ? yDesc+9 : ((longitudCaracteres > 36 && longitudCaracteres <= 90) ? yDesc+18 : yDesc+18);
-					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc+9, { width: 200 });
+					var yDescDir = (longitudCaracteres <= 35) ? yDesc + 9 : ((longitudCaracteres > 36 && longitudCaracteres <= 90) ? yDesc + 18 : yDesc + 18);
+					doc.text(venta.sucursal.direccion.toUpperCase(), 60, yDesc + 9, { width: 200 });
 					var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
@@ -1962,10 +1982,13 @@ angular.module('agil.servicios')
 				doc.text(venta.actividad.nombre, 380, 105, { width: 200 });
 
 				if (completa || vacia) {
-					if (venta.configuracion.formatoColorFactura.nombre_corto == "FORM_S_COL") {
-						doc.rect(380, 40, 190, 50).stroke();
-					}else{
-						doc.rect(380, 40, 190, 50).fillAndStroke("#c5daef", "black").fillColor('black').stroke();
+					if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+						if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
+							doc.rect(380, 40, 190, 50).stroke();
+						} else {
+							
+							doc.rect(380, 40, 190, 50).fillAndStroke(venta.configuracion.color1, "black").fillColor('black').stroke();
+						}
 					}
 					doc.text("NIT : ", 390, 50);
 					doc.text("FACTURA No : ", 390, 60);
@@ -1975,12 +1998,13 @@ angular.module('agil.servicios')
 				doc.text(venta.factura, 500, 60);
 				doc.text(venta.autorizacion, 500, 70);
 				if (completa || vacia) {
-					if (venta.configuracion.formatoColorFactura.nombre_corto == "FORM_S_COL") {
-						doc.rect(50, 160, 520, 40).stroke();
-					}else{
-						doc.rect(50, 160, 520, 40).fillAndStroke("#c5daef", "black").fillColor('black').stroke();
+					if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+						if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
+							doc.rect(50, 160, 520, 40).stroke();
+						} else {
+							doc.rect(50, 160, 520, 40).fillAndStroke(venta.configuracion.color1, "black").fillColor('black').stroke();
+						}
 					}
-					
 					doc.text("FECHA : ", 60, 165);
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
@@ -1989,10 +2013,12 @@ angular.module('agil.servicios')
 				doc.text(venta.cliente.razon_social, 120, 175);
 				doc.text(venta.cliente.nit, 400, 165);
 				if (completa || vacia) {
-					if (venta.configuracion.formatoColorFactura.nombre_corto == "FORM_S_COL") {
-						doc.rect(50, 200, 520, 25).stroke();
-					}else{
-						doc.rect(50, 200, 520, 25).fillAndStroke("#307ecc", "black").fillColor('white').stroke();
+					if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+						if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
+							doc.rect(50, 200, 520, 25).stroke();
+						} else {
+							doc.rect(50, 200, 520, 25).fillAndStroke(venta.configuracion.color2, "black").fillColor('white').stroke();
+						}
 					}
 					//doc.rect(50,225,520,papel[1]-175-225).stroke();
 					var existenDescuentos = VerificarDescuentos(venta.detallesVenta);

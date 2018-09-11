@@ -571,9 +571,9 @@ function ejecutarScriptsEstadoResultadosNoContable(idPopupGastos) {
 }
 
 function ejecutarScriptsConfiguracionFactura(idPopupEdicion, idContenedorEdicion, idPopupEdicionGeneral, idContenedorEdicionGeneral) {
-	crearPopup(idPopupEdicion, "60%", 550);
+	crearPopup(idPopupEdicion, "60%", "auto");
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
-	crearPopup(idPopupEdicionGeneral, "60%", 550);
+	crearPopup(idPopupEdicionGeneral, "60%", "auto");
 	aplicarWizardFormulario(idPopupEdicionGeneral, idContenedorEdicionGeneral);
 }
 

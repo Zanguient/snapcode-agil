@@ -1,11 +1,11 @@
 <div class="row">
 	<div class="col-xs-12">
-		<h3 class="header smaller lighter blue">CONFIGURACIÓN DE FACTURAS</h3>
+		<h3 class="header smaller lighter blue">CONFIGURACIÓN DE FACTURAS Y OTROS DOCUMENTOS</h3>
 		<div class="clearfix">
 			<div class="pull-right tableTools-container"></div>
 		</div>
 		<div class="table-header">
-			Configuración General de Facturas
+			Configuración General de Facturas Y otros documentos
 		</div>
 
 		<!-- div.table-responsive -->
@@ -67,7 +67,8 @@
 
 									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
 										<li>
-											<a href="javascript:void(0)" ng-click="modificarConfiguracionGeneralFactura(configuracion_general)" class="tooltip-success" data-rel="tooltip" title="Edit">
+											<a href="javascript:void(0)" ng-click="modificarConfiguracionGeneralFactura(configuracion_general)" class="tooltip-success"
+											 data-rel="tooltip" title="Edit">
 												<span class="green">
 													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
 												</span>
@@ -81,10 +82,10 @@
 				</tbody>
 			</table>
 		</div>
-		
-		
+
+
 		<div class="table-header">
-			Lista de Configuraciones de Facturas por Sucursal
+			Lista de Configuraciones de Facturas y otros documentos por Sucursal
 		</div>
 
 		<!-- div.table-responsive -->
@@ -141,7 +142,8 @@
 
 									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
 										<li>
-											<a href="javascript:void(0)" ng-click="modificarConfiguracionSucursal(sucursal)" class="tooltip-success" data-rel="tooltip" title="Edit">
+											<a href="javascript:void(0)" ng-click="modificarConfiguracionSucursal(sucursal)" class="tooltip-success" data-rel="tooltip"
+											 title="Edit">
 												<span class="green">
 													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
 												</span>
@@ -158,21 +160,24 @@
 	</div>
 </div>
 
-<div id="modal-wizard-configuracion-general-edicion" class="modal wizard-posicion">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<form ng-submit="guardarConfiguracionGeneral(configuracion_general)">
+<div id="modal-wizard-configuracion-general-edicion" class="modal">
+	<div class="modal-content">
+		<form ng-submit="guardarConfiguracionGeneral(configuracion_general)">
 			<div id="modal-wizard-container-configuracion-general-edicion">
 				<div class="modal-header">
 					<ul class="steps">
 						<li data-step="1" class="active">
 							<span class="step">1</span>
-							<span class="title">Configuración General</span>
+							<span class="title">Configuración Factura</span>
 						</li>
 						<li data-step="2">
 							<span class="step">2</span>
-							<span class="title">Configuración General</span>
+							<span class="title">Otras configuraciones</span>
 						</li>
+						<!-- <li data-step="3">
+							<span class="step">3</span>
+							<span class="title">Contable</span>
+						</li> -->
 						<li data-step="3">
 							<span class="step">3</span>
 							<span class="title">Finalizar</span>
@@ -181,60 +186,150 @@
 				</div>
 
 				<div class="modal-body step-content">
+
 					<div class="step-pane active" data-step="1">
-						
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Impresión</label>
-
-							<div class="col-sm-9">
-								<select ng-options="impresionFactura as impresionFactura.nombre for impresionFactura in impresionesFactura track by impresionFactura.id" ng-model="configuracion_general.impresionFactura"></select>
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">¿Configuración General?</label>
 							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo Facturación</label>
-
-							<div class="col-xs-12 col-sm-9">
-								<select ng-options="tipoFacturacion as tipoFacturacion.nombre for tipoFacturacion in tiposFacturacion track by tipoFacturacion.id" ng-model="configuracion_general.tipoFacturacion"></select>
-							</div>
-						</div>
-						
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tamaño Papel</label>
-
-							<div class="col-xs-12 col-sm-9">
-								<select ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="configuracion_general.tamanoPapelFactura"></select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Título</label>
-
-							<div class="col-xs-12 col-sm-9">
-								<select ng-options="tituloFactura as tituloFactura.nombre for tituloFactura in titulosFactura track by tituloFactura.id" ng-model="configuracion_general.tituloFactura"></select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Subtítulo</label>
-
-							<div class="col-xs-12 col-sm-9">
-								<select ng-options="subtituloFactura as subtituloFactura.nombre for subtituloFactura in subTitulosFactura track by subtituloFactura.id" ng-model="configuracion_general.subtituloFactura"></select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Usar?</label>
-
-							<div class="col-xs-3">
+							<div class="col-md-6">
 								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.usar"/>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.usar" />
+									<span class="lbl check-descuento"></span>
+								</label>
+
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">Impresión</label>
+							</div>
+							<div class="col-md-6">
+								<select ng-options="impresionFactura as impresionFactura.nombre for impresionFactura in impresionesFactura track by impresionFactura.id"
+								 ng-model="configuracion_general.impresionFactura"></select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">Tipo Facturación</label>
+							</div>
+							<div class="col-md-6">
+								<select ng-options="tipoFacturacion as tipoFacturacion.nombre for tipoFacturacion in tiposFacturacion track by tipoFacturacion.id"
+								 ng-model="configuracion_general.tipoFacturacion"></select>
+							</div>
+						</div>
+						<!-- <div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">Tamaño Papel</label>
+							</div>
+							<div class="col-md-6">
+								<select ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+								 ng-model="configuracion_general.tamanoPapelFactura"></select>
+							</div>
+						</div> -->
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">Título</label>
+							</div>
+							<div class="col-md-6">
+								<select ng-options="tituloFactura as tituloFactura.nombre for tituloFactura in titulosFactura track by tituloFactura.id"
+								 ng-model="configuracion_general.tituloFactura"></select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">Subtítulo</label>
+							</div>
+							<div class="col-md-6">
+								<select ng-options="subtituloFactura as subtituloFactura.nombre for subtituloFactura in subTitulosFactura track by subtituloFactura.id"
+								 ng-model="configuracion_general.subtituloFactura"></select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">¿Usar PF?</label>
+							</div>
+							<div class="col-md-6">
+								<label>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.usar_pf"
+									/>
 									<span class="lbl check-descuento"></span>
 								</label>
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">¿Imprimir al guardar?</label>
+							</div>
+							<div class="col-md-6">
+								<label>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.imprimir_al_guardar"
+									/>
+									<span class="lbl check-descuento"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+					<!-- <div class="form-group">
+							<label class="control-label inline">¿Configuración General?
+
+
+								<label>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.usar" />
+									<span class="lbl check-descuento"></span>
+								</label>
+
+							</label>
+						</div> -->
+					<!-- <div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Impresión</label>
+
+							<div class="col-sm-9">
+								<select ng-options="impresionFactura as impresionFactura.nombre for impresionFactura in impresionesFactura track by impresionFactura.id"
+								 ng-model="configuracion_general.impresionFactura"></select>
+							</div>
+						</div> -->
+					<!-- <div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo Facturación</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select ng-options="tipoFacturacion as tipoFacturacion.nombre for tipoFacturacion in tiposFacturacion track by tipoFacturacion.id"
+								 ng-model="configuracion_general.tipoFacturacion"></select>
+							</div>
+						</div>
+ -->
+					<!-- 	<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tamaño Papel</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+								 ng-model="configuracion_general.tamanoPapelFactura"></select>
+							</div>
+						</div> -->
+					<!-- 	<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Título</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select ng-options="tituloFactura as tituloFactura.nombre for tituloFactura in titulosFactura track by tituloFactura.id"
+								 ng-model="configuracion_general.tituloFactura"></select>
+							</div>
+						</div> -->
+					<!-- <div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Subtítulo</label>
+
+							<div class="col-xs-12 col-sm-9">
+								<select ng-options="subtituloFactura as subtituloFactura.nombre for subtituloFactura in subTitulosFactura track by subtituloFactura.id"
+								 ng-model="configuracion_general.subtituloFactura"></select>
+							</div>
+						</div> -->
+
+					<!-- <div class="form-group">
 							<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Usar PF?</label>
 
 							<div class="col-xs-3">
 								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.usar_pf"/>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.usar_pf"
+									/>
 									<span class="lbl check-descuento"></span>
 								</label>
 							</div>
@@ -244,14 +339,14 @@
 
 							<div class="col-xs-3">
 								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.imprimir_al_guardar"/>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.imprimir_al_guardar"
+									/>
 									<span class="lbl check-descuento"></span>
 								</label>
-							</div>
-						</div>
-					</div>
+							</div> -->
+
 					<div class="step-pane" data-step="2">
-						<div class="form-group">
+						<!-- <div class="form-group">
 							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Venta</label>
 
 							<div class="col-sm-6">
@@ -300,20 +395,304 @@
 								<select required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id" ng-model="configuracion_general.formatoPapelFactura"></select>
 							</div>
 						</div>
-						<div class="form-group">
+<div class="form-group">
 							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Formato Color</label>
 
 							<div class="col-xs-12 col-sm-6">
 								<select required ng-options="formatoFacturaColor as formatoFacturaColor.nombre for formatoFacturaColor in formatosFacturaColor track by formatoFacturaColor.id" ng-model="configuracion_general.formatoColorFactura"></select>
 							</div>
-						</div>
+						</div> -->
+						<table class="table">
+							<thead>
+								<tr>
+									<th><b>DOCUMENTO</b></th>
+									<th><b>TAMAÑO</b></th>
+									<th><b>FORMATO IMPRESIÓN</b></th>
+									<th><b>FORMATO COLOR</b></th>
+									<th><b>COLORES IMP</b></th>
+									<th><b>NOTA</b></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<h5>Fact. Bienes</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelFactura" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td>
+										<select class="form-control" required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id"
+										 ng-model="configuracion_general.formatoPapelFactura"><option value="0">SELECCIONAR TIPO IMP.</option></select>
+									</td>
+									<td>
+										<select required class="form-control" ng-options="formatoFacturaColor as formatoFacturaColor.nombre for formatoFacturaColor in formatosFacturaColor track by formatoFacturaColor.id"
+										 ng-model="configuracion_general.formatoColorFactura">
+											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
+									</td>
+									<td>
+										<p>Cabezera Tabla</p>
+										<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_factura" color-picker-fixed-position="true"color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_factura}" />
+										<p>Datos Detalle Tabla</p>
+										<input color-picker class="form-control" color-picker-model="configuracion_general.color_detalle_factura" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_factura}" />
+									</td>
+									<td>
+										<input type="text" class="form-control" placeholder="NOTA" ng-model="configuracion_general.nota_factura_bien">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Fact. Servicios</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelFacturaServicio" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td>
+										<select class="form-control" required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id"
+										 ng-model="configuracion_general.formatoPapelFacturaServicio"><option value="0">SELECCIONAR TIPO IMP.</option></select>
+									</td>
+									<td>
+										<select required class="form-control" ng-options="formatoFacturaColor as formatoFacturaColor.nombre for formatoFacturaColor in formatosFacturaColor track by formatoFacturaColor.id"
+										 ng-model="configuracion_general.formatoColorFacturaServicio">
+											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
+									</td>
+									<td><p>Cabezera Tabla</p>
+											<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_factura_servicio" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_factura_servicio}" />
+											<p>Datos Detalle Tabla</p>
+											<input color-picker  class="form-control"color-picker-model="configuracion_general.color_detalle_factura_servicio" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_factura_servicio}" />
+									</td>
+									<td>
+											<input type="text" class="form-control" placeholder="NOTA" ng-model="configuracion_general.nota_factura_servicio">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Nota Venta (Proforma)</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelNotaVenta" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td>
+
+									</td>
+									<td>
+
+									</td>
+									<td>
+
+									</td>
+									<td>
+
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Nota Traspaso</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelNotaTraspaso" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Nota Baja</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelNotaBaja" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Nota Pedido</h5>
+									</td>
+									<td>
+										<!-- <select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelNotaPedido" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select> -->
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Cierre Caja</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelCierreCaja" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Cotizacion</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelCotizacion" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Despachos</h5>
+									</td>
+									<td>
+										<!-- <select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelDespacho" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select> -->CARTA
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Farmacia</h5>
+									</td>
+									<td>
+									<!-- 	<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelFarmacia" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select> -->ROLLO
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Ropa Trabajo</h5>
+									</td>
+									<td>
+										<!-- <select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelRopaTrabajo" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select> -->CARTA
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Caja Chica Ing.</h5>
+									</td>
+									<td>
+										<!-- <select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelCajaChicaIngreso" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select> -->CARTA
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Caja Chica Egr.</h5>
+									</td>
+									<td>
+										<!-- <select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="configuracion_general.tamanoPapelCajaChicaEgreso" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select> -->CARTA
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
+
 					<div class="step-pane" data-step="3">
 						<div class="center">
 							<h4 class="blue">Finalización</h4>
 						</div>
 					</div>
-				
 				</div>
 			</div>
 
@@ -333,15 +712,15 @@
 					Cancelar
 				</button>
 			</div>
-			</form>
-		</div>
+		</form>
 	</div>
+
 </div>
 
-<div id="modal-wizard-configuracion-edicion" class="modal wizard-posicion">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<form ng-submit="guardarConfiguracion(sucursal)">
+<div id="modal-wizard-configuracion-edicion" class="modal">
+
+	<div class="modal-content">
+		<form ng-submit="guardarConfiguracion(sucursal)">
 			<div id="modal-wizard-container-configuracion-edicion">
 				<div class="modal-header">
 					<ul class="steps">
@@ -355,6 +734,10 @@
 						</li>
 						<li data-step="3">
 							<span class="step">3</span>
+							<span class="title">Contable</span>
+						</li>
+						<li data-step="4">
+							<span class="step">3</span>
 							<span class="title">Finalizar</span>
 						</li>
 					</ul>
@@ -362,113 +745,582 @@
 
 				<div class="modal-body step-content">
 					<div class="step-pane active" data-step="1">
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Impresión</label>
+						<!-- <div class="form-group">
+								<label class="control-label col-xs-12 col-sm-3 no-padding-right">Impresión</label>
 
-							<div class="col-sm-9">
-								<select ng-options="impresionFactura as impresionFactura.nombre for impresionFactura in impresionesFactura track by impresionFactura.id" ng-model="sucursal.configuracionFactura.impresionFactura"></select>
+								<div class="col-sm-9">
+									<select ng-options="impresionFactura as impresionFactura.nombre for impresionFactura in impresionesFactura track by impresionFactura.id"
+									 ng-model="sucursal.configuracionFactura.impresionFactura"></select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo Facturación</label>
+
+								<div class="col-xs-12 col-sm-9">
+									<select ng-options="tipoFacturacion as tipoFacturacion.nombre for tipoFacturacion in tiposFacturacion track by tipoFacturacion.id"
+									 ng-model="sucursal.configuracionFactura.tipoFacturacion"></select>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tamaño Papel</label>
+
+								<div class="col-xs-12 col-sm-9">
+									<select ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+									 ng-model="sucursal.configuracionFactura.tamanoPapelFactura"></select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-3 no-padding-right">Título</label>
+
+								<div class="col-xs-12 col-sm-9">
+									<select ng-options="tituloFactura as tituloFactura.nombre for tituloFactura in titulosFactura track by tituloFactura.id"
+									 ng-model="sucursal.configuracionFactura.tituloFactura"></select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-3 no-padding-right">Subtítulo</label>
+
+								<div class="col-xs-12 col-sm-9">
+									<select ng-options="subtituloFactura as subtituloFactura.nombre for subtituloFactura in subTitulosFactura track by subtituloFactura.id"
+									 ng-model="sucursal.configuracionFactura.subtituloFactura"></select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Usar PF?</label>
+
+								<div class="col-xs-3">
+									<label>
+										<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="sucursal.configuracionFactura.usar_pf"
+										/>
+										<span class="lbl check-descuento"></span>
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Imprimir al guardar?</label>
+
+								<div class="col-xs-3">
+									<label>
+										<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="sucursal.configuracionFactura.imprimir_al_guardar"
+										/>
+										<span class="lbl check-descuento"></span>
+									</label>
+								</div>
+							</div> -->
+
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">Impresión</label>
+							</div>
+							<div class="col-md-6">
+								<select ng-options="impresionFactura as impresionFactura.nombre for impresionFactura in impresionesFactura track by impresionFactura.id"
+								 ng-model="sucursal.configuracionFactura.impresionFactura"></select>
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo Facturación</label>
-
-							<div class="col-xs-12 col-sm-9">
-								<select ng-options="tipoFacturacion as tipoFacturacion.nombre for tipoFacturacion in tiposFacturacion track by tipoFacturacion.id" ng-model="sucursal.configuracionFactura.tipoFacturacion"></select>
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">Tipo Facturación</label>
+							</div>
+							<div class="col-md-6">
+								<select ng-options="tipoFacturacion as tipoFacturacion.nombre for tipoFacturacion in tiposFacturacion track by tipoFacturacion.id"
+								 ng-model="sucursal.configuracionFactura.tipoFacturacion"></select>
 							</div>
 						</div>
-						
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tamaño Papel</label>
-
-							<div class="col-xs-12 col-sm-9">
-								<select ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelFactura"></select>
+						<!-- <div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">Tamaño Papel</label>
+							</div>
+							<div class="col-md-6">
+								<select ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+								 ng-model="sucursal.configuracionFactura.tamanoPapelFactura"></select>
+							</div>
+						</div> -->
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">Título</label>
+							</div>
+							<div class="col-md-6">
+								<select ng-options="tituloFactura as tituloFactura.nombre for tituloFactura in titulosFactura track by tituloFactura.id"
+								 ng-model="sucursal.configuracionFactura.tituloFactura"></select>
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Título</label>
-
-							<div class="col-xs-12 col-sm-9">
-								<select ng-options="tituloFactura as tituloFactura.nombre for tituloFactura in titulosFactura track by tituloFactura.id" ng-model="sucursal.configuracionFactura.tituloFactura"></select>
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">Subtítulo</label>
+							</div>
+							<div class="col-md-6">
+								<select ng-options="subtituloFactura as subtituloFactura.nombre for subtituloFactura in subTitulosFactura track by subtituloFactura.id"
+								 ng-model="sucursal.configuracionFactura.subtituloFactura"></select>
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Subtítulo</label>
-
-							<div class="col-xs-12 col-sm-9">
-								<select ng-options="subtituloFactura as subtituloFactura.nombre for subtituloFactura in subTitulosFactura track by subtituloFactura.id" ng-model="sucursal.configuracionFactura.subtituloFactura"></select>
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">¿Usar PF?</label>
 							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Usar PF?</label>
-
-							<div class="col-xs-3">
+							<div class="col-md-6">
 								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="sucursal.configuracionFactura.usar_pf"/>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="sucursal.configuracionFactura.usar_pf"
+									/>
 									<span class="lbl check-descuento"></span>
 								</label>
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-3 no-padding-right">¿Imprimir al guardar?</label>
-
-							<div class="col-xs-3">
+						<div class="row">
+							<div class="col-md-4">
+								<label class="control-label inline">¿Imprimir al guardar?</label>
+							</div>
+							<div class="col-md-6">
 								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="sucursal.configuracionFactura.imprimir_al_guardar"/>
+									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="sucursal.configuracionFactura.imprimir_al_guardar"
+									/>
 									<span class="lbl check-descuento"></span>
 								</label>
 							</div>
 						</div>
 					</div>
 					<div class="step-pane" data-step="2">
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Venta</label>
+						<table class="table table-bordered ">
+							<thead>
+								<tr>
+									<th><b>DOCUMENTO</b></th>
+									<th><b>TAMAÑO</b></th>
+									<th><b>CORRELATIVO</b></th>
+									<th><b>FORMATO IMPRESIÓN</b></th>
+									<th><b>FORMATO COLOR</b></th>
+									<th><b>COLORES IMP</b></th>
+									<th><b>NOTA</b></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<h5>Fact. Bienes</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelFactura" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td>
+										<!-- <input type="number" class="form-control"> -->
+									</td>
+									<td>
+										<select class="form-control" required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id"
+										 ng-model="sucursal.configuracionFactura.formatoPapelFactura"><option value="0">SELECCIONAR TIPO IMP.</option></select>
+									</td>
+									<td>
+										<select required class="form-control" ng-options="formatoFacturaColor as formatoFacturaColor.nombre for formatoFacturaColor in formatosFacturaColor track by formatoFacturaColor.id"
+										 ng-model="configuracion_general.formatoColorFactura">
+											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
+									</td>
+									<td>
+											<p>Cabezera Tabla</p>
+											<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_cabecera_factura" color-picker-fixed-position="true"color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_cabecera_factura}" />
+											<p>Datos Detalle Tabla</p>
+											<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_detalle_factura" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_detalle_factura}" />
+									</td>
+									<td>
+										<input type="text" class="form-control" placeholder="NOTA" ng-model="sucursal.configuracionFactura.nota_factura_bien">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Fact. Servicios</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelFacturaServicio" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td>
+										<!-- <input type="number" class="form-control"> -->
+									</td>
+									<td>
+										<select class="form-control" required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id"
+										 ng-model="sucursal.configuracionFactura.formatoPapelFacturaServicio"><option value="0">SELECCIONAR TIPO
+												IMP.</option></select>
+									</td>
+									<td>
+										<select required class="form-control" ng-options="formatoFacturaColor as formatoFacturaColor.nombre for formatoFacturaColor in formatosFacturaColor track by formatoFacturaColor.id"
+										 ng-model="sucursal.configuracionFactura.formatoColorFacturaServicio">
+											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
+									</td>
+									<td>
+											<p>Cabezera Tabla</p>
+											<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_cabecera_factura_servicio" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_cabecera_factura_servicio}" />
+											<p>Datos Detalle Tabla</p>
+											<input color-picker  class="form-control"color-picker-model="sucursal.configuracionFactura.color_detalle_factura_servicio" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_detalle_factura_servicio}" />
+									</td>
+									<td>
+											<input type="text" class="form-control" placeholder="NOTA" ng-model="sucursal.configuracionFactura.nota_factura_servicio">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Nota Venta (Proforma)</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelNotaVenta" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td><input type="number" class="form-control" ng-model="sucursal.nota_venta_correlativo" required></td>
+									<td>
 
-							<div class="col-sm-6">
-								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelNotaVenta"></select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Traspaso</label>
+									</td>
+									<td>
 
-							<div class="col-xs-12 col-sm-6">
-								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelNotaTraspaso"></select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Baja</label>
+									</td>
+									<td>
 
-							<div class="col-xs-12 col-sm-6">
-								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelNotaBaja"></select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Pedido</label>
+									</td>
+									<td>
 
-							<div class="col-xs-12 col-sm-6">
-								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelNotaPedido"></select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Cierre Caja</label>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Nota Traspaso</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelNotaTraspaso" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td><input type="number" class="form-control" ng-model="sucursal.nota_traspaso_correlativo" required></td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Nota Baja</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelNotaBaja" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td><input type="number" class="form-control" ng-model="sucursal.nota_baja_correlativo" required></td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr ng-if="usuario.empresa.usar_pedidos">
+									<td>
+										<h5>Nota Pedido</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelNotaPedido" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td><input type="number" class="form-control" ng-model="sucursal.pedido_correlativo" required></td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Cierre Caja</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelCierreCaja" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td></td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Cotizacion</h5>
+									</td>
+									<td>
+										<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelCotizacion" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select>
+									</td>
+									<td><input type="number" class="form-control" ng-model="sucursal.cotizacion_correlativo" required></td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Despachos</h5>
+									</td>
+									<td>
+										<!-- <select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelDespacho" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select> -->CARTA
+									</td>
+									<td><input type="number" class="form-control" ng-model="sucursal.despacho_correlativo" required></td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Farmacia</h5>
+									</td>
+									<td>
+										<!-- <select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelFarmacia" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select> -->ROLLO
+									</td>
+									<td><input type="number" class="form-control" ng-model="sucursal.nota_venta_farmacia_correlativo" required></td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Ropa Trabajo</h5>
+									</td>
+									<td>
+										<!-- <select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelRopaTrabajo" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select> -->CARTA
+									</td>
+									<td><input type="number" class="form-control" ng-model="sucursal.ropa_trabajo_correlativo" required></td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Caja Chica Ing.</h5>
+									</td>
+									<td>
+										<!-- <select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelCajaChicaIngreso" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select> -->CARTA
+									</td>
+									<td><input type="number" class="form-control" ng-model="sucursal.caja_chica_ingreso_correlativo" required></td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Caja Chica Egr.</h5>
+									</td>
+									<td>
+										<!-- <select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+										 ng-model="sucursal.configuracionFactura.tamanoPapelCajaChicaEgreso" class="form-control"><option value="0">SELECCIONAR
+												TAMAÑO
+											</option></select> -->CARTA
+									</td>
+									<td><input type="number" class="form-control" ng-model="sucursal.caja_chica_egreso_correlativo" required></td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+									<td>
+									</td>
+								</tr>
+							</tbody>
+						</table>
 
-							<div class="col-xs-12 col-sm-6">
-								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelCierreCaja"></select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Cotizacion</label>
+						<!-- <div class="form-group">
+								<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Venta</label>
 
-							<div class="col-xs-12 col-sm-6">
-								<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id" ng-model="sucursal.configuracionFactura.tamanoPapelCotizacion"></select>
+								<div class="col-sm-6">
+									<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+									 ng-model="sucursal.configuracionFactura.tamanoPapelNotaVenta"></select>
+								</div>
 							</div>
-						</div>
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Traspaso</label>
+
+								<div class="col-xs-12 col-sm-6">
+									<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+									 ng-model="sucursal.configuracionFactura.tamanoPapelNotaTraspaso"></select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Baja</label>
+
+								<div class="col-xs-12 col-sm-6">
+									<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+									 ng-model="sucursal.configuracionFactura.tamanoPapelNotaBaja"></select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Nota Pedido</label>
+
+								<div class="col-xs-12 col-sm-6">
+									<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+									 ng-model="sucursal.configuracionFactura.tamanoPapelNotaPedido"></select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Cierre Caja</label>
+
+								<div class="col-xs-12 col-sm-6">
+									<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+									 ng-model="sucursal.configuracionFactura.tamanoPapelCierreCaja"></select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-6 no-padding-right">Tamaño Papel Cotizacion</label>
+
+								<div class="col-xs-12 col-sm-6">
+									<select required ng-options="tamanoPapelFactura as tamanoPapelFactura.nombre for tamanoPapelFactura in tamanosPapelFactura track by tamanoPapelFactura.id"
+									 ng-model="sucursal.configuracionFactura.tamanoPapelCotizacion"></select>
+								</div>
+							</div> -->
 					</div>
 					<div class="step-pane" data-step="3">
+
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-6 control-label no-padding-right" for="comprobante_ingreso_correlativo">Número Correlativo Comprobante
+									Ingreso
+								</label>
+
+								<div class="col-sm-3">
+									<input required type="number" id="comprobante_ingreso_correlativo" ng-model="sucursal.comprobante_ingreso_correlativo" placeholder="Correlativo comprobante ingreso"
+									 class="form-control" />
+								</div>
+								<div class="col-xs-1 col-sm-1">
+									Reiniciar
+								</div>
+								<div class="col-xs-2 col-sm-2">
+									<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="sucursal.reiniciar_comprobante_ingreso_correlativo"
+									/>
+									<span class="lbl check-descuento"></span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-6 control-label no-padding-right" for="comprobante_egreso_correlativo">Número Correlativo Comprobante
+									Egreso
+								</label>
+
+								<div class="col-sm-3">
+									<input required type="number" id="comprobante_egreso_correlativo" ng-model="sucursal.comprobante_egreso_correlativo" placeholder="Correlativo comprobante egreso"
+									 class="form-control" />
+								</div>
+								<div class="col-xs-1 col-sm-1">
+									Reiniciar
+								</div>
+								<div class="col-xs-2 col-sm-2">
+									<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="sucursal.reiniciar_comprobante_egreso_correlativo" />
+									<span class="lbl check-descuento"></span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-6 control-label no-padding-right" for="comprobante_traspaso_correlativo">Número Correlativo
+									Comprobante Traspaso</label>
+
+								<div class="col-sm-3">
+									<input required type="number" id="comprobante_traspaso_correlativo" ng-model="sucursal.comprobante_traspaso_correlativo"
+									 placeholder="Correlativo comprobante traspaso" class="form-control" />
+								</div>
+								<div class="col-xs-1 col-sm-1">
+									Reiniciar
+								</div>
+								<div class="col-xs-2 col-sm-2">
+									<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="sucursal.reiniciar_comprobante_traspaso_correlativo"
+									/>
+									<span class="lbl check-descuento"></span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="row">
+								<label class="col-sm-6 control-label no-padding-right" for="comprobante_caja_chica_correlativo">Número Correlativo
+									Comprobante Caja Chica</label>
+
+								<div class="col-sm-3">
+									<input required type="number" id="comprobante_caja_chica_correlativo" ng-model="sucursal.comprobante_caja_chica_correlativo"
+									 placeholder="Correlativo comprobante caja chica" class="form-control" />
+								</div>
+								<div class="col-xs-1 col-sm-1">
+									Reiniciar
+								</div>
+								<div class="col-xs-2 col-sm-2">
+									<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="sucursal.reiniciar_comprobante_caja_chica_correlativo"
+									/>
+									<span class="lbl check-descuento"></span>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<div class="step-pane" data-step="4">
 						<div class="center">
 							<h4 class="blue">Finalización</h4>
 						</div>
 					</div>
-				
+
 				</div>
 			</div>
 
@@ -488,7 +1340,7 @@
 					Cancelar
 				</button>
 			</div>
-			</form>
-		</div>
+		</form>
+
 	</div>
 </div>

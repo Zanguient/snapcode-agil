@@ -709,45 +709,45 @@ angular.module('agil.controladores')
 				cotizacionConsultada.fechaTexto = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
 				var papel;
 
-				console.log('impresion papel carta')
+				/* console.log('impresion papel carta')
 				papel = [612, 792];
 				itemsPorPagina = 10;
-				$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina, datos.numero_literal);
-				// if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
-				// 	console.log('impresion papel oficio')
-				// 	papel = [612, 792];
-				// 	itemsPorPagina = 30;
-				// 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina);
-				// } else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
-				// 	console.log('impresion papel carta')
-				// 	papel = [612, 792];
-				// 	itemsPorPagina = 20;
-				// 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina);
-				// } else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
-				// 	console.log('impresion papel medio oficio')
-				// 	papel = [612, 468];
-				// 	itemsPorPagina = 12;
-				// 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina);
-				// }
-				// else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
-				// 	console.log('impresion papel rollo')
-				// 	var alto;
-				// 	if (cotizacionConsultada.detallesCotizacion.length <= 2) {
-				// 		console.log('impresion papel rollo detalle <= 2')
-				// 		alto = 610;
-				// 	} else {
-				// 		console.log('impresion papel rollo detalle > 2')
-				// 		alto = 610 + (20 * (cotizacionConsultada.detallesCotizacion.length - 2))
-				// 	}
-				// 	console.log('impresion papel rollo alto: ' + alto)
-				// 	papel = [306, alto];
-				// 	// itemsPorPagina = 10;
-				// 	$scope.imprimirCotizacionRollo(papel, cotizacionConsultada);
-				// } else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_CUARTOCARTA) {
-				// 	papel = [306, 396];
-				// 	itemsPorPagina = 8;
-				// 	$scope.imprimirCotizacionCuartoCarta(papel, cotizacionConsultada, itemsPorPagina);
-				// }
+				$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina, datos.numero_literal); */
+				 if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
+					console.log('impresion papel oficio')
+					papel = [612, 936];
+				 	itemsPorPagina = 30;
+				 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina);
+				 } else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
+				 	console.log('impresion papel carta')
+				 	papel = [612, 792];
+				 	itemsPorPagina = 20;
+				 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina);
+				 } else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
+				 	console.log('impresion papel medio oficio')
+				 	papel = [612, 468];
+				 	itemsPorPagina = 12;
+				 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina);
+				 }
+				else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
+				 	console.log('impresion papel rollo')
+				 	var alto;
+				 	if (cotizacionConsultada.detallesCotizacion.length <= 2) {
+				 		console.log('impresion papel rollo detalle <= 2')
+				 		alto = 610;
+				 	} else {
+				 		console.log('impresion papel rollo detalle > 2')
+				 		alto = 610 + (20 * (cotizacionConsultada.detallesCotizacion.length - 2))
+				 	}
+				 	console.log('impresion papel rollo alto: ' + alto)
+				 	papel = [306, alto];
+				 	 itemsPorPagina = 10;
+					$scope.imprimirCotizacionRollo(papel, cotizacionConsultada);
+				 } else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_CUARTOCARTA) {
+				 	papel = [306, 396];
+					itemsPorPagina = 8;
+				 	$scope.imprimirCotizacionCuartoCarta(papel, cotizacionConsultada, itemsPorPagina);
+				 }
 			});
 		}
 

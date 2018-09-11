@@ -634,9 +634,9 @@ angular.module('agil.servicios')
 			});
 	})
 	.factory('EliminarDetalleVentaEdicion', ['EliminarDetalleVentaEdicionVenta', '$q', function (EliminarDetalleVentaEdicionVenta, $q) {
-		var res = function (detalleVenta,idMov) {
+		var res = function (detalleVenta,idMov,venta) {
 			var delay = $q.defer();
-			EliminarDetalleVentaEdicionVenta.update({id_movimiento:idMov},{detalleVenta:detalleVenta}, function (entidad) {
+			EliminarDetalleVentaEdicionVenta.update({id_movimiento:idMov},{detalleVenta:detalleVenta,venta:venta}, function (entidad) {
 				delay.resolve(entidad);
 			}, function (error) {
 					delay.reject(error);
