@@ -522,9 +522,30 @@ angular.module('agil.controladores')
 					cantidadTotal += (producto.inventarios[i].cantidad);
 				}
 				for (var j = 0; j < $scope.venta.detallesVenta.length; j++) {
-					if ($scope.venta.detallesVenta[j].producto.id == producto.id && !$scope.venta.detallesVenta[j].id) {
-						cantidadTotal = cantidadTotal - $scope.venta.detallesVenta[j].cantidad;
+					if($scope.venta.detallesVenta[j].producto.tipoProducto.nombre_corto==$scope.diccionario.TIPO_PRODUCTO_FINAL || $scope.venta.detallesVenta[j].producto.tipoProducto.nombre_corto==$scope.diccionario.TIPO_PRODUCTO_INTER){
+						for (let x = 0; x < $scope.venta.detallesVenta[j].producto.productosBase.length; x++) {
+							var productoBase = $scope.venta.detallesVenta[j].producto.productosBase[x];
+							if(productoBase.productoBase.tipoProducto.nombre_corto==$scope.diccionario.TIPO_PRODUCTO_INTER){
+								for (let z = 0; z < productoBase.productoBase.productosBase.length; z++) {
+									var productoBase2 = productoBase.productoBase.productosBase[z];
+									if (productoBase2.productoBase.id == producto.id && !$scope.venta.detallesVenta[j].id) {
+										cantidadTotal = cantidadTotal - parseInt(productoBase2.formulacion);
+									}
+								}
+							}else{
+								if (productoBase.productoBase.id == producto.id && !$scope.venta.detallesVenta[j].id) {
+									cantidadTotal = cantidadTotal - parseInt(productoBase.formulacion);
+								}
+							}
+							
+						}
+
+					}else{
+						if ($scope.venta.detallesVenta[j].producto.id == producto.id && !$scope.venta.detallesVenta[j].id) {
+							cantidadTotal = cantidadTotal - $scope.venta.detallesVenta[j].cantidad;
+						}
 					}
+					
 				}
 			} else {
 				cantidadTotal = 500000;

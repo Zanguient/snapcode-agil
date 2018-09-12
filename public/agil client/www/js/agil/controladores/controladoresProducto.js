@@ -77,7 +77,6 @@ angular.module('agil.controladores')
 				if (datos.length == 0) {
 					$scope.mostrarMensaje('No existen datos')
 					blockUI.stop()
-					z
 				} else {
 					for (var i = 0; i < datos.length; i++) {
 						datos[i] = $scope.generarKardexProductoReporte(datos[i])

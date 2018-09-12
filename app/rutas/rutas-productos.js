@@ -117,33 +117,40 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			if (req.params.grupo != 0) {
 				condicion = { id_grupo: req.params.grupo, id_empresa: req.params.id_empresa, codigo: { $not: null } }
 			}
+
+			var fechaInicial =  new Date(2016, 1, 0) ;
+			var fechaFinal =  new Date() ;
+			var condicionMovimiento={id_almacen: req.params.id_almacen}
+			condicionMovimiento.fecha = { $between: [fechaInicial, fechaFinal] }
+			
+			
 			Producto.findAll({
 				where: condicion,
 				include: [{ model: Empresa, as: 'empresa' },
 				{
 					model: DetalleMovimiento, as: "detallesMovimiento",
-					include: [{ model: Inventario, as: 'inventario' },
+
+					include: [{ model: Inventario, as: 'inventario'},
 					{
 						model: Movimiento, as: 'movimiento',
-						where: {
-							id_almacen: req.params.id_almacen
-						},
-						order: [["id", "asc"]],
+						where: condicionMovimiento,
 						include: [{
-							model: Compra, as: 'compra',
+							model: Compra, as: 'compra', required: false,
 							include: [{ model: Proveedor, as: 'proveedor' }]
 						},
 						{
-							model: Venta, as: 'venta',
+							model: Venta, as: 'venta', required: false,
 							include: [{ model: Cliente, as: 'cliente' }]
 						},
 						{
-							model: Almacen, as: 'almacen',
+							model: Almacen, as: 'almacen', required: false,
 							include: [{ model: Sucursal, as: 'sucursal' }]
 						},
-						{ model: Tipo, as: 'tipo' },
+						{ model: Tipo, as: 'tipo'},
 						{ model: Clase, as: 'clase' }]
-					}]
+					}
+					],
+					order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
 				}],
 
 				order: [['id', 'ASC']]

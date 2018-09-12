@@ -17,7 +17,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
 	RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
 	EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica, CierreCajaChica,
-	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa) {
+	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal) {
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lenguaje', as: 'lenguaje' });
@@ -371,6 +371,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Inventario.hasMany(DetalleMovimiento, { foreignKey: 'id_inventario', as: 'detallesMovimiento' });
 	Inventario.hasMany(DetalleCompra, { foreignKey: 'id_inventario', as: 'detallesCompra' });
 	Inventario.hasMany(DetalleVenta, { foreignKey: 'id_inventario', as: 'detallesVenta' });
+	
 
 
 	Movimiento.belongsTo(Almacen, { foreignKey: 'id_almacen', as: 'almacen' });
@@ -394,6 +395,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	DetalleMovimiento.belongsTo(Movimiento, { foreignKey: 'id_movimiento', as: 'movimiento' });
 	DetalleMovimiento.belongsTo(Producto, { foreignKey: 'id_producto', as: 'producto' });
 	DetalleMovimiento.belongsTo(Inventario, { foreignKey: 'id_inventario', as: 'inventario' });
+	DetalleMovimiento.hasMany(DetalleVentaProductoFinal, { foreignKey: 'id_detalle_movimiento', as: 'detallesVentaProductoFinal' });
 
 	DetalleCompra.belongsTo(Compra, { foreignKey: 'id_compra', as: 'compra' });
 	DetalleCompra.belongsTo(Producto, { foreignKey: 'id_producto', as: 'producto' });
@@ -435,6 +437,10 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	DetalleVenta.belongsTo(Venta, { foreignKey: 'id_venta', as: 'venta' });
 	DetalleVenta.belongsTo(Producto, { foreignKey: 'id_producto', as: 'producto' });
 	DetalleVenta.belongsTo(Inventario, { foreignKey: 'id_inventario', as: 'inventario' });
+	DetalleVenta.hasMany(DetalleVentaProductoFinal, { foreignKey: 'id_detalle_venta', as: 'detallesVentaProductoFinal' });
+	
+	DetalleVentaProductoFinal.belongsTo(DetalleVenta, { foreignKey: 'id_detalle_venta', as: 'detalleVenta' });
+	DetalleVentaProductoFinal.belongsTo(DetalleMovimiento, { foreignKey: 'id_detalle_movimiento', as: 'detalleMovimiento' });
 
 	ConfiguracionFactura.belongsTo(Sucursal, { foreignKey: 'id_sucursal', as: 'sucursal' });
 	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_impresion_factura', as: 'impresionFactura' });

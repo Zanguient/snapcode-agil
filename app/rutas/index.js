@@ -115,6 +115,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var DetalleCompra = require('../modelos/INV/detalle-compra')(sequelize, Sequelize);
 	var Venta = require('../modelos/INV/venta')(sequelize, Sequelize);
 	var DetalleVenta = require('../modelos/INV/detalle-venta')(sequelize, Sequelize);
+	var DetalleVentaProductoFinal = require('../modelos/INV/detalle-venta-producto-final')(sequelize, Sequelize);
 	var PagoVenta = require('../modelos/INV/pago-venta')(sequelize, Sequelize);
 	var PagoCompra = require('../modelos/INV/pago-compra')(sequelize, Sequelize);
 	var DetalleVentaNoConsolidada = require('../modelos/INV/detalle-venta-no-consolidada')(sequelize, Sequelize);
@@ -211,7 +212,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
 		RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
 		EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica, CierreCajaChica,
-		AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa,ServicioVenta, ComensalesMarcacionesClienteEmpresa);
+		AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa,ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal);
 	require('../sockets/pantallas.js')(io, socket);
 	//*****ROUTES*****
 	//SYS
@@ -263,7 +264,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-inventario')(router, ensureAuthorized, forEach, Compra, DetalleCompra, Almacen, Sucursal, Empresa, sequelize, Sequelize,
 		Tipo, Clase, Proveedor, Producto, Movimiento, DetalleMovimiento, Inventario, Venta, DetalleVenta,
 		Cliente, CodigoControl, NumeroLiteral, Diccionario, SucursalActividadDosificacion, Dosificacion,
-		ConfiguracionGeneralFactura, ConfiguracionFactura, PagoVenta, PagoCompra, Usuario, DetalleVentaNoConsolidada, ClienteCuenta, ContabilidadCuenta, ProveedorCuenta, UsuarioGrupos, Pedido, DetallesPedido, ProductoBase, ServicioVenta);
+		ConfiguracionGeneralFactura, ConfiguracionFactura, PagoVenta, PagoCompra, Usuario, DetalleVentaNoConsolidada, ClienteCuenta, ContabilidadCuenta, ProveedorCuenta, UsuarioGrupos, Pedido, DetallesPedido, ProductoBase, ServicioVenta,DetalleVentaProductoFinal);
 	require('./rutas-salidas')(router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto, Usuario,
 		DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, VentaReprogramacionPago, UsuarioGrupos, ProductoBase);
 
