@@ -457,8 +457,6 @@ angular.module('agil.controladores')
 			}
 			//TOTAL
 			
-
-
 			doc.font('Helvetica-Bold', 8);
 			doc.text("TOTAL", 470, yCuerpo);
 			
@@ -467,7 +465,12 @@ angular.module('agil.controladores')
 
 			doc.text("SON : " + numero_literal, 55, yCuerpo);
 			doc.rect(50, yCuerpo-15, 520, 30).stroke();
-
+			if (items > itemsPorPagina-2) {
+				doc.addPage({ size: papel, margin: 10 });
+				yCuerpo = 20;
+			}
+			
+			
 			doc.rect(50, yCuerpo + 40, 420, 25).stroke();
 			doc.font('Helvetica', 8);
 			doc.text("Plazo de cotizacion: "+cotizacion.plazo, 55, yCuerpo+50);
