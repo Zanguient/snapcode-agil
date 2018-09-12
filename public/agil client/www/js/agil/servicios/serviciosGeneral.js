@@ -2013,12 +2013,12 @@ angular.module('agil.servicios')
 				doc.text(venta.cliente.razon_social, 120, 175);
 				doc.text(venta.cliente.nit, 400, 165);
 				if (completa || vacia) {
-					if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+					/* if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') { */
 						if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
 							doc.rect(50, 200, 520, 25).stroke();
 						} else {
 							doc.rect(50, 200, 520, 25).fillAndStroke(venta.configuracion.color2, "black").fillColor('white').stroke();
-						}
+					/* 	} */
 					}
 					//doc.rect(50,225,520,papel[1]-175-225).stroke();
 					var existenDescuentos = VerificarDescuentos(venta.detallesVenta);
