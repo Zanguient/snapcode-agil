@@ -716,17 +716,17 @@ angular.module('agil.controladores')
 				 if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 					console.log('impresion papel oficio')
 					papel = [612, 936];
-				 	itemsPorPagina = 30;
+				 	itemsPorPagina = 20;
 				 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina);
 				 } else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
 				 	console.log('impresion papel carta')
 				 	papel = [612, 792];
-				 	itemsPorPagina = 20;
+				 	itemsPorPagina = 15;
 				 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina);
 				 } else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
 				 	console.log('impresion papel medio oficio')
 				 	papel = [612, 468];
-				 	itemsPorPagina = 12;
+				 	itemsPorPagina = 5;
 				 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina);
 				 }
 				else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {

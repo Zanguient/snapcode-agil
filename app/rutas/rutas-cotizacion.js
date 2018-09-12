@@ -32,7 +32,7 @@ module.exports = function (router,sequelize,Sequelize, Cotizacion, DetalleCotiza
 				importe: req.body.importe,
 				id_usuario: req.body.id_usuario,
 				id_sucursal: req.body.id_sucursal,
-				id_cliente: req.body.id_cliente
+				id_cliente: req.body.cliente.id
 			}, {
 					where: {
 						id: req.params.id
