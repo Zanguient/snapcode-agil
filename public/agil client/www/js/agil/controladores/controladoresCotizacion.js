@@ -465,7 +465,7 @@ angular.module('agil.controladores')
 
 			doc.text("SON : " + numero_literal, 55, yCuerpo);
 			doc.rect(50, yCuerpo-15, 520, 30).stroke();
-			if (items > itemsPorPagina-2) {
+			if (items > itemsPorPagina-6) {
 				doc.addPage({ size: papel, margin: 10 });
 				yCuerpo = 20;
 			}
