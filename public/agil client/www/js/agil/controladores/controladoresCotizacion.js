@@ -467,7 +467,10 @@ angular.module('agil.controladores')
 			doc.rect(50, yCuerpo-15, 520, 30).stroke();
 			if (items > itemsPorPagina-6) {
 				doc.addPage({ size: papel, margin: 10 });
-				yCuerpo = 20;
+				yCuerpo = 240;
+				items = 0;
+				pagina = pagina + 1;
+				$scope.dibujarCabeceraImpresionCotizacion(doc, cotizacion, pagina, totalPaginas, existenDescuentos, yCuerpo - 20);
 			}
 			
 			
@@ -720,17 +723,17 @@ angular.module('agil.controladores')
 					console.log('impresion papel oficio')
 					papel = [612, 936];
 				 	itemsPorPagina = 20;
-				 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina);
+				 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina, datos.numero_literal);
 				 } else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
 				 	console.log('impresion papel carta')
 				 	papel = [612, 792];
 				 	itemsPorPagina = 15;
-				 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina);
+				 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina, datos.numero_literal);
 				 } else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
 				 	console.log('impresion papel medio oficio')
 				 	papel = [612, 468];
 				 	itemsPorPagina = 5;
-				 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina);
+				 	$scope.imprimirCotizacionCartaOficio(papel, cotizacionConsultada, itemsPorPagina, datos.numero_literal);
 				 }
 				else if (cotizacionConsultada.configuracion.tamanoPapelCotizacion.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
 				 	console.log('impresion papel rollo')
