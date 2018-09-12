@@ -1892,7 +1892,7 @@ angular.module('agil.servicios')
 						(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 						(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
 					doc.text("TELF.: " + telefono, 60, yDesc);
-					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 8);
+					doc.text("COCHABAMBA - BOLIVIA", 60, yDesc + 6);
 				}
 				doc.font('Helvetica-Bold', 16);
 				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 100);
@@ -1998,13 +1998,13 @@ angular.module('agil.servicios')
 				doc.text(venta.factura, 500, 60);
 				doc.text(venta.autorizacion, 500, 70);
 				if (completa || vacia) {
-					if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+					/* if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') { */
 						if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
 							doc.rect(50, 160, 520, 40).stroke();
 						} else {
 							doc.rect(50, 160, 520, 40).fillAndStroke(venta.configuracion.color1, "black").fillColor('black').stroke();
 						}
-					}
+					/* } */
 					doc.text("FECHA : ", 60, 165);
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
