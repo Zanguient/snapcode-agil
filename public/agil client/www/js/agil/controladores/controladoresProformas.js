@@ -139,20 +139,22 @@ angular.module('agil.controladores')
         }
 
         $scope.editar = function (proforma, ver) {
-            var dfecha = new Date(proforma.fecha_factura)
-            if (proforma.fecha_factura !== null && proforma.fecha_factura !== undefined) {
-                if (Object.prototype.toString.call(dfecha) === "[object Date]") {
-                    // it is a date
-                    if (isNaN(dfecha.getTime())) {  // d.valueOf() could also work
-                        // date is not valid
-                        $scope.mostrarMensaje('Hay un problema con la fecha de la factura. Se bloqueará la edición de esta proforma.')
-                        return
-                    }
-                    else {
-                        // date is valid
-                        if (!ver) {
-                            $scope.mostrarMensaje('Esta proforma no se puede editar, ya fué facturada.')
-                            return  
+            if (proforma.fecha_factura) {
+                var dfecha = new Date(proforma.fecha_factura)
+                if (proforma.fecha_factura !== null && proforma.fecha_factura !== undefined) {
+                    if (Object.prototype.toString.call(dfecha) === "[object Date]") {
+                        // it is a date
+                        if (isNaN(dfecha.getTime())) {  // d.valueOf() could also work
+                            // date is not valid
+                            $scope.mostrarMensaje('Hay un problema con la fecha de la factura. Se bloqueará la edición de esta proforma.')
+                            return
+                        }
+                        else {
+                            // date is valid
+                            if (!ver) {
+                                $scope.mostrarMensaje('Esta proforma no se puede editar, ya fué facturada.')
+                                return
+                            }
                         }
                     }
                 }
@@ -660,18 +662,19 @@ angular.module('agil.controladores')
         }
 
         $scope.establecerservicio = function (servico, modal) {
+            var servicio = Object.assign({}, servico)
             if ($scope.detalleProforma) {
                 if ($scope.detalleProforma.servicio) {
-                    $scope.detalleProforma.id_servicio = servico.id
-                    $scope.detalleProforma.servicio = servico
-                    $scope.detalleProforma.precio_unitario = servico.precio
-                    $scope.detalleProforma.actividad_id = servico.actividad.id
-                    $scope.detalleProforma.actividad = servico.actividad
+                    $scope.detalleProforma.id_servicio = servicio.id
+                    $scope.detalleProforma.servicio = servicio
+                    $scope.detalleProforma.precio_unitario = servicio.precio
+                    $scope.detalleProforma.actividad_id = servicio.actividad.id
+                    $scope.detalleProforma.actividad = servicio.actividad
                 } else {
-                    $scope.detalleProforma = { id_servicio: servico.id, cantidad: 1, servicio: servico, precio_unitario: servico.precio, actividad_id: servico.actividad.id, actividad: servico.actividad }
+                    $scope.detalleProforma = { id_servicio: servicio.id, cantidad: 1, servicio: servicio, precio_unitario: servicio.precio, actividad_id: servicio.actividad.id, actividad: servicio.actividad }
                 }
             } else {
-                $scope.detalleProforma = { id_servicio: servico.id, cantidad: 1, servicio: servico, precio_unitario: servico.precio, actividad_id: servico.actividad.id, actividad: servico.actividad }
+                $scope.detalleProforma = { id_servicio: servicio.id, cantidad: 1, servicio: servicio, precio_unitario: servicio.precio, actividad_id: servicio.actividad.id, actividad: servicio.actividad }
             }
 
 
