@@ -676,8 +676,6 @@ angular.module('agil.controladores')
             } else {
                 $scope.detalleProforma = { id_servicio: servicio.id, cantidad: 1, servicio: servicio, precio_unitario: servicio.precio, actividad_id: servicio.actividad.id, actividad: servicio.actividad }
             }
-
-
             $scope.detalleProforma.importe = $scope.detalleProforma.precio_unitario * $scope.detalleProforma.cantidad
             if ($scope.moneda !== undefined) {
                 if ($scope.moneda.dolar !== null && $scope.moneda.dolar !== "--") {
@@ -691,7 +689,6 @@ angular.module('agil.controladores')
                 $scope.cerrarBusquedaServiciosProforma()
             }
         }
-
         $scope.calcularImporte = function (sus) {
             if (sus === undefined) {
                 $scope.detalleProforma.importe = $scope.detalleProforma.precio_unitario * $scope.detalleProforma.cantidad

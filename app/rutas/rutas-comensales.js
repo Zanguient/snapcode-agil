@@ -206,7 +206,8 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                     fecha: historial.fecha,
                     id_gerencia: historial.gerencia ? historial.gerencia.id : null,
                     id_comida: historial.comida.id,
-                    observacion: historial.observacion
+                    observacion: historial.observacion,
+                    habilitado: historial.habilitado
                     // desayuno: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "desayuno" ? 1 : 0 : 0 : 0,
                     // almuerzo: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "almuerzo" ? 1 : 0 : 0 : 0,
                     // cena: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "cena" ? 1 : 0 : 0 : 0,
@@ -228,47 +229,11 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                 fecha: historial.fecha,
                 id_gerencia: historial.gerencia ? historial.gerencia.id : null,
                 id_comida: historial.comida.id,
-                observacion: historial.observacion
+                observacion: historial.observacion,
+                habilitado: historial.habilitado !== undefined ? historial.habilitado : true
             },
                 { transaction: t }
             )
-            // .spread(function (Marcacion, created) {
-            //     if (!created) {
-            //         return new Promise(function (fullfil, reject) {
-            //             fullfil(Marcacion)
-            //         })
-            //     } else {
-            //         return ComensalesMarcacionesClienteEmpresa.update({
-            //             id_empresa: empresa,
-            //             id_cliente: historial.alias.id_cliente,
-            //             id_comensal: historial.comensal.id,
-            //             fecha: historial.fecha,
-            //             id_gerencia: historial.gerencia ? historial.gerencia.id : null,
-            //             comida: historial.comida.id,
-            //             observacion: historial.observacion
-            //             // id_empresa: empresa,
-            //             // id_cliente: historial.alias.id_cliente,
-            //             // id_comensal: historial.comensal.id,
-            //             // fecha: historial.fecha,
-            //             // id_gerencia: historial.gerencia ? historial.gerencia.id : null,
-            //             // desayuno: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "desayuno" ? 1 : 0 : 0 : 0,
-            //             // almuerzo: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "almuerzo" ? 1 : 0 : 0 : 0,
-            //             // cena: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "cena" ? 1 : 0 : 0 : 0,
-            //         }, { where: { fecha: historial.fecha, id_comensal: historial.comensal.id }, transaction: t }).then(function (historialActualizado) {
-            //             return new Promise(function (fullfil, reject) {
-            //                 fullfil({ historial: historial, actualizado: historialActualizado })
-            //             })
-            //         }).catch(function (err) {
-            //             return new Promise(function (fullfil, reject) {
-            //                 reject({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
-            //             })
-            //         })
-            //     }
-            // }).catch(function (err) {
-            //     return new Promise(function (fullfil, reject) {
-            //         reject({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
-            //     })
-            // })
         }
     }
     function verificarDatosHistorialExcel(historial, empresa, t, i) {
@@ -1207,7 +1172,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             }
             GerenciasClienteEmpresa.findAll({
                 where: condicion,
-                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', require: false, include: [{ model: horarioComidasClienteEmpresa, as: 'comida', required:false, include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'], attributes: ['id', 'razon_social'] }] }],///include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'] }], where: condicionHistorial }],
+                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', require: false, include: [{ model: horarioComidasClienteEmpresa, as: 'comida', required: false, include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'], attributes: ['id', 'razon_social'] }] }],///include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'] }], where: condicionHistorial }],
                 order: [[{ model: HistorialComidaClienteEmpresa, as: 'historial' }, 'fecha', 'asc']]
             }).then(function (result) {
                 if (result.length > 0) {
@@ -1410,17 +1375,12 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             //     })
             ComensalesClienteEmpresa.findAll({
                 where: condicion,
-                include:[{model:ComensalesMarcacionesClienteEmpresa, as: 'marcaciones'}],
-                groupBy: ['marcaciones.fecha']
+                include: [{ model: ComensalesMarcacionesClienteEmpresa, as: 'marcaciones' }]
             }).then(function (alertas) {
-                res.json(alertas)
+                res.json({ alertas: alertas })
             }).catch(function (err) {
                 res.json({ mensaje: err.stack, hasErr: true })
             })
-
-
-
-
             // ComensalesMarcacionesClienteEmpresa.findAll({
             //     where: condicion,
             //     include: [{ model: ComensalesClienteEmpresa, as: 'comensal' }],
@@ -1435,7 +1395,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             res.json({ mensaje: 'sin funcionalidad' })
         })
 
-    router.route('/agregar/marcaciones/:id_empresa/:id_usuario/:id_cliente/:comensal/:marcacion')
+    router.route('/agregar/marcaciones/:id_empresa/:id_usuario/:id_cliente/:comensal')
         .post(function (req, res) {
             var condicion = { id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente, comensal: req.params.comensal, id: req.body.id }
             if (req.params.marcacion == "1") {
@@ -1447,21 +1407,25 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             if (req.params.marcacion == "3") {
                 req.body.cena = 1
             }
-            ComensalesMarcacionesClienteEmpresa.update({
-                desayuno: req.body.desayuno,
-                almuerzo: req.body.almuerzo,
-                cena: req.body.almuerzo,
-            }, {
-                    where: { id: req.body.id }
-                }).then(function (marcacionActualizada) {
-                    if (marcacionActualizada[0]) {
-                        res.json({ mensaje: 'Actualizado correctamente' })
-                    } else {
-                        res.json({ mensaje: 'No se pudo actualizar.', hasErr: true })
-                    }
-                }).catch(function (err) {
-                    res.json({ mensaje: err.stack, hasErr: true })
-                })
+            var historial = {alias:{id_cliente: req.body.comida.empresaCliente.id}, comensal: req.body.comensal, fecha: (req.body.fecha.split('/').reverse().join('-') + 'T' + req.body.comida.inicio + '.000Z'), gerencia:req.body.gerencia, comida: req.body.comida, habilitado: req.body.habilitado}
+            sequelize.transaction(function (t) {
+                return crearMarcacion(historial, req.params.id_empresa, t, 0)
+                // id_empresa: empresa,
+                // id_cliente: historial.alias.id_cliente,
+                // id_comensal: historial.comensal.id,
+                // fecha: historial.fecha,
+                // id_gerencia: historial.gerencia ? historial.gerencia.id : null,
+                // id_comida: historial.comida.id,
+                // observacion: historial.observacion
+            }).then(function (marcacionActualizada) {
+                if (marcacionActualizada) {
+                    res.json({ mensaje: 'Actualizado correctamente', marcacion: marcacionActualizada })
+                } else {
+                    res.json({ mensaje: 'No se pudo actualizar.', hasErr: true })
+                }
+            }).catch(function (err) {
+                res.json({ mensaje: err.stack, hasErr: true })
+            })
         })
         .put(function (req, res) {
             res.json({ mensaje: 'sin funcionalidad' })

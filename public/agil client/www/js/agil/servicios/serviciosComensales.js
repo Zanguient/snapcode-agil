@@ -69,7 +69,7 @@ angular.module('agil.servicios')
     })
 
     .factory('AgregarMarcacion', function ($resource) {
-        return $resource(restServer + "agregar/marcaciones/:id_empresa/:id_usuario/:id_cliente/:comensal/:marcacion");
+        return $resource(restServer + "agregar/marcaciones/:id_empresa/:id_usuario/:id_cliente/:comensal");
     })
 
     .factory('HistorialDocumentos', function ($resource) {
@@ -435,7 +435,7 @@ angular.module('agil.servicios')
     .factory('ObtenerAlertasMarcacion', ['AlertaMarcacion', '$q', function (AlertaMarcacion, $q) {
         var res = function (idEmpresa, usuario, cliente, filtro) {
             var delay = $q.defer();
-            AlertaMarcacion.query({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente, mes: 0, anio: 0 }, function (entidades) {
+            AlertaMarcacion.get({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente, mes: 0, anio: 0 }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -448,7 +448,7 @@ angular.module('agil.servicios')
     .factory('EditarAlertasMarcacion', ['AgregarMarcacion', '$q', function (AgregarMarcacion, $q) {
         var res = function (idEmpresa, usuario, cliente, comensal, marcacion) {
             var delay = $q.defer();
-            AgregarMarcacion.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente, comensal: comensal.id, marcacion: marcacion }, comensal, function (entidades) {
+            AgregarMarcacion.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente, comensal: comensal.comensal.id }, comensal, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

@@ -371,7 +371,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Inventario.hasMany(DetalleMovimiento, { foreignKey: 'id_inventario', as: 'detallesMovimiento' });
 	Inventario.hasMany(DetalleCompra, { foreignKey: 'id_inventario', as: 'detallesCompra' });
 	Inventario.hasMany(DetalleVenta, { foreignKey: 'id_inventario', as: 'detallesVenta' });
-	
+
 
 
 	Movimiento.belongsTo(Almacen, { foreignKey: 'id_almacen', as: 'almacen' });
@@ -438,7 +438,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	DetalleVenta.belongsTo(Producto, { foreignKey: 'id_producto', as: 'producto' });
 	DetalleVenta.belongsTo(Inventario, { foreignKey: 'id_inventario', as: 'inventario' });
 	DetalleVenta.hasMany(DetalleVentaProductoFinal, { foreignKey: 'id_detalle_venta', as: 'detallesVentaProductoFinal' });
-	
+
 	DetalleVentaProductoFinal.belongsTo(DetalleVenta, { foreignKey: 'id_detalle_venta', as: 'detalleVenta' });
 	DetalleVentaProductoFinal.belongsTo(DetalleMovimiento, { foreignKey: 'id_detalle_movimiento', as: 'detalleMovimiento' });
 
@@ -1147,7 +1147,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Usuario.hasMany(SolicitudCajaChica, { foreignKey: 'id_autorizador', as: 'solicitudesCajasChicas' })
 	SolicitudCajaChica.belongsTo(Usuario, { foreignKey: 'id_verificador', as: 'verificador' })
 	Usuario.hasMany(SolicitudCajaChica, { foreignKey: 'id_verificador', as: 'solicitudesCajasChicas' })
-
+	
 
 	// COMENSALES
 	GerenciasClienteEmpresa.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'empresaCliente' })
@@ -1180,7 +1180,9 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	PrecioComidasClienteEmpresa.belongsTo(horarioComidasClienteEmpresa, { foreignKey: 'id_comida', as: 'comida' })
 	ComensalesClienteEmpresa.hasMany(ComensalesMarcacionesClienteEmpresa, { foreignKey: 'id_comensal', as: 'marcaciones' })
 	ComensalesMarcacionesClienteEmpresa.belongsTo(ComensalesClienteEmpresa, { foreignKey: 'id_comensal', as: 'comensal' })
-
+	ComensalesMarcacionesClienteEmpresa.belongsTo(horarioComidasClienteEmpresa, {foreignKey: 'id_comida', as: 'marcaciones'})
+	horarioComidasClienteEmpresa.hasMany(ComensalesMarcacionesClienteEmpresa, {foreignKey: 'id_comida', as: 'comida'})
+	
 
 	ServicioVenta.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' })
 	Empresa.hasMany(ServicioVenta, { foreignKey: 'id_empresa', as: 'serviciosVenta' })

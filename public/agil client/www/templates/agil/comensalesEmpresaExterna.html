@@ -1133,7 +1133,7 @@
                                 <a class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="PDF">
                                     <i class="ace-icon fa fa-print bigger-130"></i>
                                 </a>
-                                
+
                                 <a class="green tooltip-info" href="javascript:void(0)" uib-tooltip="EXCEL" ng-click="generarHistorialExcel(documento.documento)">
                                     <i class="ace-icon fa fa-file-excel-o bigger-130"></i>
                                 </a>
@@ -1211,31 +1211,19 @@
                                 {{comensal.comensal.nombre}}
                             </td>
                             <td>
-                                {{comensal.fecha | date: 'dd/MM/yyyy'}}
+                                {{comensal.fecha}}
                             </td>
                             <td>
-                                <div ng-if="!comensal.desayuno">
-                                    Desayuno <a class="green tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 1)" uib-tooltip="Marcar">
-                                            <i class="glyphicon glyphicon-ok bigger-130"></i>
-                                        </a>
-                                </div>
-                                <div ng-if="!comensal.almuerzo">
-                                    Almuerzo <a class="green tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 2)" uib-tooltip="Marcar">
-                                            <i class="glyphicon glyphicon-ok bigger-130"></i>
-                                        </a>
-                                </div>
-                                <div ng-if="!comensal.cena">
-                                    Cena <a class="green tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 3)" uib-tooltip="Marcar">
-                                            <i class="glyphicon glyphicon-ok bigger-130"></i>
-                                        </a>
-                                </div>
+                                {{comensal.comida.nombre}}
                             </td>
                             <td>
-                                <a class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Editar">
+                                <a ng-if="comensal.habilitado === undefined" class="green tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 1)" uib-tooltip="Marcar">
+                                    <i class="glyphicon glyphicon-ok bigger-130"></i>
+                                </a>
+                                <a ng-if="(comensal.habilitado || comensal.habilitado === false)" class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Editar">
                                     <i class="ace-icon fa fa-refresh bigger-130"></i>
                                 </a>
-                                
-                                <a class="red tooltip-info" href="javascript:void(0)" uib-tooltip="Cancelar">
+                                <a ng-if="comensal.habilitado === undefined" class="red tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 2)" uib-tooltip="Cancelar">
                                     <i class="ace-icon fa fa-times-circle bigger-130"></i>
                                 </a>
                             </td>
@@ -1245,6 +1233,7 @@
             </div>
         </div>
         <div class="modal-footer">
+                <button type="button" class="btn btn-primary" ng-click="reportePDFAlertasMarcaciones()">Imprimir</button>
             <button type="button" class="btn btn-danger" ng-click="cerrardialogAlertaMarcaciones()">Cerrar</button>
         </div>
     </div>
