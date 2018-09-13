@@ -231,7 +231,7 @@ module.exports = function (router,sequelize,Sequelize, Cotizacion, DetalleCotiza
 							{ model: Clase, as: 'formatoColorFacturaServicio' }]
 						}).then(function (configuracionGeneralFactura) {
 							if (configuracionGeneralFactura.usar) {
-								cotizacionCreada.configuracion = configuracionFactura
+								cotizacionCreada.configuracion = ConfiguracionFactura
 								return new Promise(function (fulfill, reject) {
 									fulfill(cotizacionCreada);
 								});
