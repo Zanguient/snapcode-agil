@@ -15,16 +15,16 @@ angular.module('agil.controladores')
         $scope.busquedaComensalesEmpresa = 'dialog-comensales-empresa'
         $scope.dialogAlertasMarcaciones = 'dialog-alerta-marcaciones'
         $scope.dialogHistorialDocumentos = 'dialog-historial-documentos'
-        var redirectProformas;
+        // var redirectProformas;
         $scope.imagenEmpresa;
         $scope.$on('$viewContentLoaded', function () {
-            if (redirectProformas) {
-                $timeout(function () {
-                    $location.path('/proformas')
-                    // blockUI.stop()
-                }, 5000)
-                return
-            }
+            // if (redirectProformas) {
+            //     $timeout(function () {
+            //         $location.path('/proformas')
+            //         // blockUI.stop()
+            //     }, 5000)
+            //     return
+            // }
             ejecutarScriptsComensales($scope.modalEdicionAlias, $scope.modalEdicionGerencias, $scope.modalEdicionComensales, $scope.modalEdicionComidas, $scope.modalEdicionPrecios,
                 $scope.dialogClienteEmpresa, $scope.busquedaComensalesEmpresa, $scope.dialogAlertasMarcaciones, $scope.dialogHistorialDocumentos);
             // resaltarPestaña($location.path().substring(1));
@@ -33,17 +33,17 @@ angular.module('agil.controladores')
         });
 
         $scope.$on('$routeChangeStart', function (next, current) {
-            if (!redirectProformas) {
-                $scope.eliminarPopup($scope.modalEdicionAlias);
-                $scope.eliminarPopup($scope.modalEdicionGerencias);
-                $scope.eliminarPopup($scope.modalEdicionComensales);
-                $scope.eliminarPopup($scope.modalEdicionComidas);
-                $scope.eliminarPopup($scope.modalEdicionPrecios);
-                $scope.eliminarPopup($scope.dialogClienteEmpresa);
-                $scope.eliminarPopup($scope.busquedaComensalesEmpresa);
-                $scope.eliminarPopup($scope.dialogAlertasMarcaciones);
-                $scope.eliminarPopup($scope.dialogHistorialDocumentos);
-            }
+            // if (!redirectProformas) {
+            $scope.eliminarPopup($scope.modalEdicionAlias);
+            $scope.eliminarPopup($scope.modalEdicionGerencias);
+            $scope.eliminarPopup($scope.modalEdicionComensales);
+            $scope.eliminarPopup($scope.modalEdicionComidas);
+            $scope.eliminarPopup($scope.modalEdicionPrecios);
+            $scope.eliminarPopup($scope.dialogClienteEmpresa);
+            $scope.eliminarPopup($scope.busquedaComensalesEmpresa);
+            $scope.eliminarPopup($scope.dialogAlertasMarcaciones);
+            $scope.eliminarPopup($scope.dialogHistorialDocumentos);
+            // }
         });
 
         convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
@@ -62,36 +62,27 @@ angular.module('agil.controladores')
         })
 
         $scope.inicio = function () {
-            blockUI.start()
+            // blockUI.start()
             $scope.activeModal = 0
-            if ($scope.empresaExternaSeleccionada) {
-                if (!$scope.empresaExternaSeleccionada.id) {
-                    redirectProformas = true
-                    return
-                } else {
-                    redirectProformas = false
-                    blockUI.stop()
-                }
-            } else {
-                redirectProformas = true
-                return
-            }
-            var empresa = Object.assign({}, $scope.empresaExternaSeleccionada)
-            $scope.filtroComensales = { desde: "", hasta: "", empresaCliente: empresa, id_usuario: "", id_cliente: "", mes: "", anio: "", gerencia: "", comida: "", comensal: "" }
-            $scope.reportes = [{ id: 1, nombre: 'Reporte Comedor' }, { id: 2, nombre: 'Empresa' }, { id: 3, nombre: 'Por comensal' }]
-            $scope.obtenerPaginador()
-            $scope.listaAliasclientesEmpresa = []
-            $scope.listaComensalesclienteEmpresa = []
-            $scope.listaGerenciasClienteEmpresa = []
-            $scope.listaComidasclienteEmpresa = []
-            $scope.listaPrecioComidasclienteEmpresa = []
-            $scope.alertaMarcaciones = []
-            $scope.historialesDocumentos = []
             $scope.obtenerClientes()
-            $scope.obtenerComidas()
-            $scope.obtenerGerencias()
-            $scope.obtenerHistoriales()
-            $scope.obtenerComensales()
+            if ($scope.empresaExternaSeleccionada) {
+                var empresa = Object.assign({}, $scope.empresaExternaSeleccionada)
+                $scope.filtroComensales = { desde: "", hasta: "", empresaCliente: empresa, id_usuario: "", id_cliente: "", mes: "", anio: "", gerencia: "", comida: "", comensal: "" }
+                $scope.reportes = [{ id: 1, nombre: 'Reporte Comedor' }, { id: 2, nombre: 'Empresa' }, { id: 3, nombre: 'Por comensal' }]
+                $scope.obtenerPaginador()
+                $scope.listaAliasclientesEmpresa = []
+                $scope.listaComensalesclienteEmpresa = []
+                $scope.listaGerenciasClienteEmpresa = []
+                $scope.listaComidasclienteEmpresa = []
+                $scope.listaPrecioComidasclienteEmpresa = []
+                $scope.alertaMarcaciones = []
+                $scope.historialesDocumentos = []
+                $scope.obtenerComidas()
+                $scope.obtenerGerencias()
+                $scope.obtenerHistoriales()
+                $scope.obtenerComensales()
+            }
+            blockUI.stop()
         }
 
         $scope.PopoverConfiguracionComensales = {
@@ -123,6 +114,7 @@ angular.module('agil.controladores')
         }
 
         $scope.obtenerHistorialDocumentos = function () {
+            blockUI.start()
             $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true)
             $scope.paginator.filter = $scope.filtroComensales
             var prom = ObtenerHistorialDocumentos($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id, $scope.paginator)
@@ -133,17 +125,24 @@ angular.module('agil.controladores')
                 } else {
                     $scope.historialesDocumentos = res.documentos
                 }
+                blockUI.stop()
+            }).catch(function (err) {
+                blockUI.stop()
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
             })
         }
 
         $scope.obtenerClientes = function () {
+            blockUI.start()
             var prom = Clientes($scope.usuario.id_empresa);
             prom.then(function (cls) {
                 $scope.clientes = cls
                 $scope.clientesProcesados = cls
+                blockUI.stop()
             }).catch(function (err) {
                 blockUI.stop()
-                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
             })
         }
@@ -153,6 +152,10 @@ angular.module('agil.controladores')
                 case 0:
                     if (!$scope.filtroComensales) {
                         $scope.filtroComensales = {}
+                    }
+                    if (!$scope.empresaExternaSeleccionada) {
+                        $scope.empresaExternaSeleccionada = Object.assign({}, cliente)
+                        $scope.inicio()
                     }
                     $scope.filtroComensales.empresaCliente = Object.assign({}, cliente)
                     break;
@@ -208,6 +211,10 @@ angular.module('agil.controladores')
                     if (!$scope.filtroComensales) {
                         $scope.filtroComensales = {}
                     }
+                    if (!$scope.empresaExternaSeleccionada) {
+                        $scope.empresaExternaSeleccionada = Object.assign({}, cliente)
+                        $scope.inicio()
+                    }
                     $scope.filtroComensales.empresaCliente = Object.assign({}, cliente)
                     break;
                 case 1:
@@ -261,7 +268,7 @@ angular.module('agil.controladores')
                 }
                 blockUI.stop()
             }).catch(function (err) {
-                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
@@ -283,7 +290,7 @@ angular.module('agil.controladores')
                 }
                 blockUI.stop()
             }).catch(function (err) {
-                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
@@ -307,7 +314,7 @@ angular.module('agil.controladores')
                 }
                 blockUI.stop()
             }).catch(function (err) {
-                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
@@ -329,7 +336,7 @@ angular.module('agil.controladores')
                 }
                 blockUI.stop()
             }).catch(function (err) {
-                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
@@ -351,13 +358,14 @@ angular.module('agil.controladores')
                 }
                 blockUI.stop()
             }).catch(function (err) {
-                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
         }
 
         $scope.obtenerHistoriales = function (filtrar) {
+            blockUI.start()
             $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true)
             $scope.paginator.filter = $scope.filtroComensales
             var prom = ObtenerHistorial($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id, $scope.paginator)
@@ -373,6 +381,11 @@ angular.module('agil.controladores')
                     })
                     $scope.paginator.setPages(res.paginas)
                 }
+                blockUI.stop()
+            }).catch(function (err) {
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
+                blockUI.stop()
             })
         }
 
@@ -508,6 +521,11 @@ angular.module('agil.controladores')
                     $scope.alertaMarcaciones = marcasFaltantes
                     blockUI.stop()
                 }
+                blockUI.stop()
+            }).catch(function (err) {
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
+                blockUI.stop()
             })
         }
 
@@ -774,7 +792,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(res.mensajes)
                     }
                 }).catch(function (err) {
-                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -798,7 +816,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(res.mensajes)
                     }
                 }).catch(function (err) {
-                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -855,7 +873,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(res.mensajes)
                     }
                 }).catch(function (err) {
-                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -879,7 +897,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(res.mensajes)
                     }
                 }).catch(function (err) {
-                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -903,7 +921,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(res.mensajes)
                     }
                 }).catch(function (err) {
-                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -927,7 +945,7 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(res.mensajes)
                     }
                 }).catch(function (err) {
-                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -953,7 +971,7 @@ angular.module('agil.controladores')
                         $scope.obtenerAliasEmpresa()
                     }
                 }).catch(function (err) {
-                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -1018,7 +1036,7 @@ angular.module('agil.controladores')
                         $scope.obtenerGerencias()
                     }
                 }).catch(function (err) {
-                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -1061,7 +1079,7 @@ angular.module('agil.controladores')
                         $scope.obtenerComensales()
                     }
                 }).catch(function (err) {
-                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -1127,7 +1145,7 @@ angular.module('agil.controladores')
                         $scope.obtenerComidas()
                     }
                 }).catch(function (err) {
-                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -1170,7 +1188,7 @@ angular.module('agil.controladores')
                         $scope.obtenerPrecioComidas()
                     }
                 }).catch(function (err) {
-                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -1212,7 +1230,7 @@ angular.module('agil.controladores')
                     // $scope.obtenerAlertas()
                 }
             }).catch(function (err) {
-                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
@@ -1413,7 +1431,7 @@ angular.module('agil.controladores')
                     })
                 })
             }).catch(function (err) {
-                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
@@ -1480,7 +1498,7 @@ angular.module('agil.controladores')
                     })
                 })
             }).catch(function (err) {
-                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
@@ -1530,7 +1548,7 @@ angular.module('agil.controladores')
                         }
                     }
                 }).catch(function (err) {
-                    var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.stack !== undefined && err.stack !== null) ? err.stack : 'Se perdió la conexión.'
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.stack !== undefined && err.stack !== null) ? err.stack : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
                 })
@@ -1630,7 +1648,7 @@ angular.module('agil.controladores')
                     })
                 })
             }).catch(function (err) {
-                var msg = (err.data !== undefined && err.data !== null) ? err.data : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                 $scope.mostrarMensaje(msg)
                 blockUI.stop()
             })
@@ -1650,10 +1668,10 @@ angular.module('agil.controladores')
             $scope.cabeceraReporteAlertasMarcacionesLista(doc, $scope.usuario.empresa.razon_social, periodo, pagina, totalPaginas, );
             for (let i = 0; i < reporte.length; i++) {
                 doc.text((i + 1), 70, y + 5);
-                doc.text(reporte[i].comensal.nombre, 120, y +5);
-                doc.text(reporte[i].fecha, 320, y+5);
-                doc.text(reporte[i].comida.nombre, 400, y+5);
-                doc.text(reporte[i].habilitado === true ? 'Marcado' : reporte[i].habilitado === false ? 'Descartado' : 'Pendiente', 500, y+5);
+                doc.text(reporte[i].comensal.nombre, 120, y + 5);
+                doc.text(reporte[i].fecha, 320, y + 5);
+                doc.text(reporte[i].comida.nombre, 400, y + 5);
+                doc.text(reporte[i].habilitado === true ? 'Marcado' : reporte[i].habilitado === false ? 'Descartado' : 'Pendiente', 500, y + 5);
                 doc.rect(60, y, 500, 20).stroke()
                 // doc.text((i + 1), 60, y);
                 // doc.rect(60, y, 400, 20).stroke()
@@ -1672,10 +1690,10 @@ angular.module('agil.controladores')
             }
             y += 20
             doc.end();
-                stream.on('finish', function () {
-                    var fileURL = stream.toBlobURL('application/pdf');
-                    window.open(fileURL, '_blank', 'location=no');
-                });
+            stream.on('finish', function () {
+                var fileURL = stream.toBlobURL('application/pdf');
+                window.open(fileURL, '_blank', 'location=no');
+            });
         }
 
         $scope.imprimirAlertaMarcacionesMatriz = function (reporte, gerencia, cabecera, comidasEmpresa) {

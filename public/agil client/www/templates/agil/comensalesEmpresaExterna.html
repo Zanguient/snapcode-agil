@@ -1,5 +1,15 @@
 <div class="row">
-    <div class="col-xs-12">
+    <div ng-if="!empresaExternaSeleccionada">
+        <h2>Seleccione empresa</h2>
+        <input ng-keypress="interceptarTecla($event,'clienteEmpresa',true)" autocomplete="off" data-validate="validate()" type="text"
+                ng-model="filtroComensales.empresaCliente" placeholder="Ingrese la Razon Social" uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
+                typeahead-wait-ms="1500" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="2"
+                typeahead-on-select="establecerCliente($item, $model, $label, $event)" value="{{empresaExternaSeleccionada.razon_social}}">
+            <button tabindex="-1" type="button" ng-click="abrirdialogClientesComensales()" class="btn btn-info btn-sm">
+                <i class="ace-icon fa fa-search-plus bigger-110"></i>
+            </button>
+    </div>
+    <div class="col-xs-12" ng-if="empresaExternaSeleccionada">
         <h3 class="header lighter blue">Comensales
             <b>{{empresaExternaSeleccionada.razon_social}}</b>
         </h3>
@@ -1217,13 +1227,15 @@
                                 {{comensal.comida.nombre}}
                             </td>
                             <td>
-                                <a ng-if="comensal.habilitado === undefined" class="green tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 1)" uib-tooltip="Marcar">
+                                <a ng-if="comensal.habilitado === undefined" class="green tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 1)"
+                                    uib-tooltip="Marcar">
                                     <i class="glyphicon glyphicon-ok bigger-130"></i>
                                 </a>
                                 <a ng-if="(comensal.habilitado || comensal.habilitado === false)" class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Editar">
                                     <i class="ace-icon fa fa-refresh bigger-130"></i>
                                 </a>
-                                <a ng-if="comensal.habilitado === undefined" class="red tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 2)" uib-tooltip="Cancelar">
+                                <a ng-if="comensal.habilitado === undefined" class="red tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 2)"
+                                    uib-tooltip="Cancelar">
                                     <i class="ace-icon fa fa-times-circle bigger-130"></i>
                                 </a>
                             </td>
@@ -1233,7 +1245,7 @@
             </div>
         </div>
         <div class="modal-footer">
-                <button type="button" class="btn btn-primary" ng-click="reportePDFAlertasMarcaciones()">Imprimir</button>
+            <button type="button" class="btn btn-primary" ng-click="reportePDFAlertasMarcaciones()">Imprimir</button>
             <button type="button" class="btn btn-danger" ng-click="cerrardialogAlertaMarcaciones()">Cerrar</button>
         </div>
     </div>
