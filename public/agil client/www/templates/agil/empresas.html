@@ -560,45 +560,52 @@
 
 						<div class="col-xs-6">
 							<label>
-								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_edicion_venta"
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_edicion_venta" />
+								<span class="lbl check-descuento"></span>
+							</label>
+						</div>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Ventas de Servicios?</label>
+
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_venta_servicio" />
+								<span class="lbl check-descuento"></span>
+							</label>
+						</div>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Facturación masiva?</label>
+
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_facturacion_masiva"
 								/>
 								<span class="lbl check-descuento"></span>
 							</label>
 						</div>
 					</div>
 					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Ventas de Servicios?</label>
-	
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_venta_servicio"
-									/>
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
-						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Facturación masiva?</label>
-	
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_facturacion_masiva"
-									/>
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
-						</div>
-						<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
-							<label class="control-label col-xs-6 no-padding-right">¿Usar Cotizaciones?</label>
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Cotizaciones?</label>
 
-							<div class="col-xs-6">
-								<label>
-									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_cotizacion"
-									/>
-									<span class="lbl check-descuento"></span>
-								</label>
-							</div>
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="empresa.usar_cotizacion" />
+								<span class="lbl check-descuento"></span>
+							</label>
 						</div>
+					</div>
+					<div class="form-group" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.USUARIO_SUPERADMIN">
+						<label class="control-label col-xs-6 no-padding-right">¿Usar Tipos de Precios?</label>
+
+						<div class="col-xs-6">
+							<label>
+								<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"  ng-model="empresa.usar_tipo_precio" />
+								<span class="lbl check-descuento"></span>
+							</label>
+						</div>
+					</div>
 					<!-- </div> -->
 				</div>
 				<div class="step-pane" data-step="3" ng-if="esNuevo">
@@ -852,7 +859,8 @@
 
 <div id="dialog-eliminar-empresa" title="¿Eliminación de Empresa?">
 	<p>
-		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar la Empresa seleccionada?</p>
+		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar la Empresa
+		seleccionada?</p>
 	<button type="button" class="btn btn-danger" ng-click="eliminarEmpresa(empresa)">Si</button>
 	<button type="button" class="btn btn-success" ng-click="cerrarConfirmacionEliminacion()">No</button>
 </div>

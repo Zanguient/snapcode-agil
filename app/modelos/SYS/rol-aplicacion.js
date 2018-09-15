@@ -535,6 +535,31 @@ module.exports = function (sequelize, Sequelize) {
 		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=163,rol=3,aplicacion=34,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
 
 		});
+
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=164,rol=2,aplicacion=58,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=165,rol=3,aplicacion=58,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=166,rol=2,aplicacion=59,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=167,rol=3,aplicacion=59,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=168,rol=2,aplicacion=60,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=169,rol=3,aplicacion=60,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=170,rol=2,aplicacion=61,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
+		sequelize.query("INSERT IGNORE INTO sys_rol_aplicacion SET id=171,rol=3,aplicacion=61,puede_ver=1,puede_crear=1,puede_modificar=1,puede_eliminar=1,createdAt = NOW(),updatedAt = NOW();").spread(function (results, metadata) {
+
+		});
 	});
 
 	return RolAplicacion;

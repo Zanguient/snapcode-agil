@@ -148,6 +148,10 @@ module.exports = function (sequelize, Sequelize) {
 		usar_cotizacion:{
 			type: Sequelize.BOOLEAN,
 			field: 'usar_cotizacion'
+		},
+		usar_tipo_precio:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_tipo_precio'
 		}
 	}, {
 			freezeTableName: true

@@ -331,9 +331,13 @@
 								<div class="row">
 									<label class="col-sm-3 control-label no-padding-right" for="razon_social">Razón Social</label>
 
-									<div class="col-sm-9">
-										<input required type="text" id="razon_social" ng-model="cliente.razon_social" placeholder="Razón Social" class="col-xs-10 col-sm-5"
+									<div class="col-sm-4">
+										<input required type="text" id="razon_social" ng-model="cliente.razon_social" placeholder="Razón Social" class="form-control"
 										/>
+									</div>
+									<div class="col-sm-5" ng-if="usuario.empresa.usar_tipo_precio">
+											<select name="tipoprecio" id="tipoprecio" class="form-control" ng-options="tipoPrecio as tipoPrecio.nombre for tipoPrecio in tiposPrecios.clases | filter:{habilitado:true} track by tipoPrecio.id"
+											ng-model="cliente.tipoPrecioVenta"></select>
 									</div>
 								</div>
 							</div>

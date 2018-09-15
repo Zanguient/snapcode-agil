@@ -189,6 +189,18 @@ module.exports=function(sequelize,Sequelize){
 		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 57,titulo = 'SOLICITUD CAJA CHICA',atributo_clase='fa-outdent',url='solicitud-caja-chica',createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
 		  //console.log(metadata+" rows affected in sys_application");
 		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 58,titulo = 'ESTADO DE EVOLUCION DE PATRIMONIO NETO',atributo_clase='fa-file-text',url='estado-evolucion-patrimonio',padre=53,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  //console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 59,titulo = 'BALANCE DE COMPROBANCIÓN DE SUMAS Y SALDOS',atributo_clase='fa-file-text',url='balance-comprobacion-suma-saldo',padre=53,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  //console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 60,titulo = 'COMPROBANTES DE DIARIO',atributo_clase='fa-file-text',url='comprobante-diario',padre=53,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  //console.log(metadata+" rows affected in sys_application");
+		});
+		sequelize.query("INSERT IGNORE INTO sys_aplicacion SET id = 61,titulo = 'ESTADO DE RESULTADO',atributo_clase='fa-file-text',url='estado-resultado',padre=53,createdAt = NOW(),updatedAt = NOW();").spread(function(results, metadata) {
+		  //console.log(metadata+" rows affected in sys_application");
+		});
 	});
 	
 	return Aplicacion;

@@ -41,7 +41,8 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				usar_edicion_venta:req.body.usar_edicion_venta,
 				usar_venta_servicio:req.body.usar_venta_servicio,
 				usar_facturacion_masiva:req.body.usar_facturacion_masiva,
-				usar_cotizacion:req.body.usar_cotizacion
+				usar_cotizacion:req.body.usar_cotizacion,
+				usar_tipo_precio:req.body.usar_tipo_precio
 			}).then(function (empresaCreada) {
 				Sucursal.create({
 					id_empresa: empresaCreada.id,
@@ -247,7 +248,8 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				usar_edicion_venta:req.body.usar_edicion_venta,
 				usar_venta_servicio:req.body.usar_venta_servicio,
 				usar_facturacion_masiva:req.body.usar_facturacion_masiva,
-				usar_cotizacion:req.body.usar_cotizacion
+				usar_cotizacion:req.body.usar_cotizacion,
+				usar_tipo_precio:req.body.usar_tipo_precio
 			}, {
 					where: {
 						id: req.params.id_empresa

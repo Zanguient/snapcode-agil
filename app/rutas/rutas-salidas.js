@@ -1,5 +1,5 @@
 module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto,
-	Usuario, DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, VentaReprogramacionPago, UsuarioGrupos, ProductoBase) {
+	Usuario, DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, VentaReprogramacionPago, UsuarioGrupos, ProductoBase,ProductoTipoPrecio) {
 
 	router.route('/productos/empresa/:id_empresa/texto/:texto')
 		.get(function (req, res) {
@@ -37,7 +37,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						{ codigo_fabrica: { $like: '%' + req.params.texto + '%' } },
 						{ descripcion: { $like: '%' + req.params.texto + '%' } }]
 					},
-					include: [
+					include: [{ model: ProductoTipoPrecio, as: 'tiposPrecio',include: [{ model: Clase, as: 'tipoPrecio' }] },
 						{ model: Clase, as: 'tipoProducto' },
 						{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
 						{

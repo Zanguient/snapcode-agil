@@ -108,6 +108,11 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'bloquear_limite_credito'
 		},
+		
+		id_tipo_precio_venta: {
+			type: Sequelize.INTEGER,
+			field: 'tipo_precio_venta'
+		},
 	}, {
 			freezeTableName: true
 		});

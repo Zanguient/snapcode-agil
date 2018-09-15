@@ -861,7 +861,7 @@ angular.module('agil.servicios')
 				salida.configuracion.formatoPapel = salida.configuracion.formatoPapelFactura
 				salida.configuracion.color1=salida.configuracion.color_cabecera_factura
 				salida.configuracion.color2=salida.configuracion.color_detalle_factura
-				salida.configuracion.nota=salida.configuracion.nota_factura_bien
+				salida.configuracion.nota=salida.configuracion.nota_factura_bien?salida.configuracion.nota_factura_bien:""
 				if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 					papel = [612, 936];
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
@@ -954,7 +954,7 @@ angular.module('agil.servicios')
 				salida.configuracion.formatoPapel = salida.configuracion.formatoPapelFacturaServicio
 				salida.configuracion.color1=salida.configuracion.color_cabecera_factura_servicio
 				salida.configuracion.color2=salida.configuracion.color_detalle_factura_servicio
-				salida.configuracion.nota=salida.configuracion.nota_factura_servicio
+				salida.configuracion.nota=salida.configuracion.nota_factura_servicio?salida.configuracion.nota_factura_servicio:""
 				if (salida.configuracion.tamanoPapelFacturaServicio.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 					papel = [612, 936];
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {

@@ -32,7 +32,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 						linea_credito: req.body.linea_credito,
 						plazo_credito: req.body.plazo_credito,
 						usar_limite_credito: req.body.usar_limite_credito,
-						bloquear_limite_credito: req.body.bloquear_limite_credito
+						bloquear_limite_credito: req.body.bloquear_limite_credito,
+						id_tipo_precio_venta:req.body.tipoPrecioVenta.id
 					}, {
 							where: {
 								id: cliente.id
@@ -97,7 +98,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 								linea_credito: req.body.linea_credito,
 								plazo_credito: req.body.plazo_credito,
 								usar_limite_credito: req.body.usar_limite_credito,
-								bloquear_limite_credito: req.body.bloquear_limite_credito
+								bloquear_limite_credito: req.body.bloquear_limite_credito,
+								id_tipo_precio_venta:req.body.tipoPrecioVenta.id
 							}).then(function (clienteCreado) {
 								var numero = parseInt(numero_correlativo) + 1
 								var nombre_corto = numero + "-" + maximo
@@ -299,7 +301,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 							texto1: cliente.texto1,
 							texto2: cliente.texto2,
 							latitud: cliente.latitud,
-							longitud: cliente.longitud
+							longitud: cliente.longitud,
+							id_tipo_precio_venta:cliente.tipoPrecioVenta?cliente.tipoPrecioVenta.id:null
 						}, {
 								where: {
 									id: clienteEncontrado.id
@@ -332,7 +335,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 							texto1: cliente.texto1,
 							texto2: cliente.texto2,
 							latitud: cliente.latitud,
-							longitud: cliente.longitud
+							longitud: cliente.longitud,
+							id_tipo_precio_venta:cliente.tipoPrecioVenta?cliente.tipoPrecioVenta.id:null
 						}).then(function (clienteCreado) {
 							crearRutaCliente(cliente.ruta1, clienteCreado.id);
 							crearRutaCliente(cliente.ruta2, clienteCreado.id);
@@ -477,8 +481,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 				linea_credito: req.body.linea_credito,
 				plazo_credito: req.body.plazo_credito,
 				usar_limite_credito: req.body.usar_limite_credito,
-				bloquear_limite_credito: req.body.bloquear_limite_credito
-
+				bloquear_limite_credito: req.body.bloquear_limite_credito,
+				id_tipo_precio_venta:req.body.tipoPrecioVenta.id
 			}, {
 					where: {
 						id: req.params.id_cliente
@@ -555,7 +559,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 				where: {
 					id: req.params.id_cliente
 				},
-				include: [{ model: ClienteRazon, as: 'clientes_razon' },
+				
+				include: [{ model: Clase, as: 'tipoPrecioVenta' },{ model: ClienteRazon, as: 'clientes_razon' },
 				{ model: GtmClienteDestino, as: 'cliente_destinos', include: [{ model: GtmDestino, as: 'destino' }] }]
 			}).then(function (cliente) {
 				res.json(cliente);
@@ -574,7 +579,9 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 			Cliente.findAll({
 				where: {
 					$and: { id_empresa: req.params.id_empresa, $or: orCondition }
-				}
+				},
+				include:[{ model: Clase, as: 'tipoPrecioVenta' }]
+				
 			}).then(function (clientes) {
 				res.json(clientes);
 			});
@@ -634,7 +641,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 					Cliente.findAll({
 						offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
 						where: condicionCliente,
-						include: [{ model: Empresa, as: 'empresa' },
+						include: [{ model: Clase, as: 'tipoPrecioVenta' },{ model: Empresa, as: 'empresa' },
 						{
 							model: ClienteRazon, as: 'clientes_razon'
 						},
@@ -655,7 +662,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 				}).then(function (data) {
 					Cliente.findAll({
 						where: condicionCliente,
-						include: [{ model: Empresa, as: 'empresa' },
+						include: [{ model: Empresa, as: 'empresa' },{ model: Clase, as: 'tipoPrecioVenta' },
 						{
 							model: ClienteRazon, as: 'clientes_razon'
 						},

@@ -353,7 +353,7 @@
 	</div>
 </div>
 
-<div id="modal-wizard-venta-edicion" class="modal wizard-posicion" >
+<div id="modal-wizard-venta-edicion" class="modal wizard-posicion">
 	<div class="row">
 		<div class="col-sm-4">
 			<label class="col-md-3 pull-right">
@@ -375,7 +375,8 @@
 								<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
 								CERRAR
 							</button>
-							<button id="" type="button" class="btn btn-success pull-right" ng-if="usuario.empresa.usar_cotizacion" ng-click="abrirPopupCotizaciones()" style="margin-right: -95px;">
+							<button id="" type="button" class="btn btn-success pull-right" ng-if="usuario.empresa.usar_cotizacion" ng-click="abrirPopupCotizaciones()"
+							 style="margin-right: -95px;">
 								<i class="ace-icon fa fa-file-text bigger-125"></i>
 							</button>
 						</p>
@@ -666,6 +667,7 @@
 									</th>
 									<th>
 										<label>P.U. (Bs/u)</label>
+										<P class="red" ng-if="venta.cliente.id && venta.cliente.tipoPrecioVenta">{{venta.cliente.tipoPrecioVenta.nombre}}</P>
 									</th>
 									<th>
 										<label>CANT. (u)</label>
@@ -700,24 +702,24 @@
 										<span class="red" ng-if="!detalleVenta.producto.activar_inventario">Inventario Desactivado</span>
 									</td>
 									<td ng-if="venta.id">
-											<input ng-if="usuario.usar_lector_de_barra" ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto" required
-											 ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..."
-											 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProductoLectorBarra($viewValue)"
-											 typeahead-wait-ms="100" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
-											 typeahead-on-select="establecerProductoEdicionVenta($item, $model, $label, $event)">
-	
-											<input ng-if="!usuario.usar_lector_de_barra" autocomplete="off" ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto"
-											 required ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..."
-											 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
-											 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-select-on-exact="true"
-											 typeahead-min-length="3" typeahead-on-select="establecerProductoEdicionVenta($item, $model, $label, $event)">
-	
-											<div class="space-6"></div>
-											<button ng-disabled="!venta.almacen" id="mostrar_inv" type="button" ng-click="abrirPopupInventario()" class="btn btn-info btn-sm">
-												<i class="ace-icon fa fa-search-plus bigger-110"></i>
-											</button>
-											<span class="red" ng-if="!detalleVenta.producto.activar_inventario">Inventario Desactivado</span>
-										</td>
+										<input ng-if="usuario.usar_lector_de_barra" ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto" required
+										 ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..."
+										 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProductoLectorBarra($viewValue)"
+										 typeahead-wait-ms="100" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
+										 typeahead-on-select="establecerProductoEdicionVenta($item, $model, $label, $event)">
+
+										<input ng-if="!usuario.usar_lector_de_barra" autocomplete="off" ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto"
+										 required ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..."
+										 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
+										 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-select-on-exact="true"
+										 typeahead-min-length="3" typeahead-on-select="establecerProductoEdicionVenta($item, $model, $label, $event)">
+
+										<div class="space-6"></div>
+										<button ng-disabled="!venta.almacen" id="mostrar_inv" type="button" ng-click="abrirPopupInventario()" class="btn btn-info btn-sm">
+											<i class="ace-icon fa fa-search-plus bigger-110"></i>
+										</button>
+										<span class="red" ng-if="!detalleVenta.producto.activar_inventario">Inventario Desactivado</span>
+									</td>
 									<td>
 										{{detalleVenta.producto.codigo}}
 									</td>
@@ -747,12 +749,24 @@
 											<div id="Precio" class="col-sm-12">
 												{{detalleVenta.precio_unitario}}
 											</div>
+
 										</div>
 										<div clas="row">
 											<div class="col-sm-12">
-												<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarPrecio()">
+												<a class="green"  href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarPrecio()">
 													<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
 												</a>
+
+
+												<a href="javascript:void(0)" ng-if="venta.cliente.id && venta.cliente.tipoPrecioVenta&& usuario.empresa.usar_tipo_precio" class="green" popover-placement="right"
+												 uib-popover-template="dynamicPopoverPrecios.templateUrl" popover-trigger="outsideClick: outsideClick" popover-title="Precios">
+													<i class="ace-icon fa fa-exclamation-circle bigger-130"></i>
+												</a>
+												<script type="text/ng-template"id="preciosTemplate.html">                                           
+														<div  class="form-group">                                              
+														  <p ng-repeat="precio in detalleVenta.producto.tiposPrecio"><b>{{precio.tipoPrecio.nombre}}: {{precio.precio_unitario}}</p>
+														</div>                                           
+													</script>
 											</div>
 										</div>
 
@@ -763,17 +777,20 @@
 										 uib-tooltip="Último precio de compra">{{precio_inventario}}</span>
 									</td>
 									<td ng-if="editar_precio">
-										<form ng-submit="establecerPrecio()">
+										<form name="edit" id="edit" ng-submit="establecerPrecio()">
 											<div class="row">
 												<div class="col-sm-12">
-													<input required name="precio_unitario" step="0.001" min="{{detalleVenta.producto.rango_negativo?detalleVenta.producto.rango_negativo:0}}"
-													 max="{{detalleVenta.producto.rango_positivo?detalleVenta.producto.rango_positivo:10000000}}" required class="col-xs-12"
+													<input ng-if="!venta.cliente.tipoPrecioVenta" required name="precio_unitario" step="0.001" min="{{detalleVenta.producto.rango_negativo?detalleVenta.producto.rango_negativo:0}}"
+													 max="{{detalleVenta.producto.rango_positivo?detalleVenta.producto.rango_positivo:10000000}}" class="col-xs-12"
+													 ng-change="calcularImporte()" ng-model="detalleVenta.precio_unitario" type="number" />
+													 <input ng-if="venta.cliente.tipoPrecioVenta" required name="precio_unitario" step="0.001" min="{{tipoPrecioProducto.rango_negativo?tipoPrecioProducto.rango_negativo:0}}"
+													 max="{{tipoPrecioProducto.rango_positivo?tipoPrecioProducto.rango_positivo:10000000}}" class="col-xs-12"
 													 ng-change="calcularImporte()" ng-model="detalleVenta.precio_unitario" type="number" />
 												</div>
 											</div>
 											<div class="row">
 												<div class="col-sm-12">
-													<button class="blue" type "submit">
+													<button class="blue" type="submit">
 														<i class="ace-icon fa fa-check-square-o bigger-130"></i>
 													</button>
 												</div>
@@ -1281,8 +1298,8 @@
 											<i class="ace-icon fa fa-trash-o bigger-130"></i>
 										</a>
 										<a ng-if="detalleVenta.id" class="red" href="javascript:void(0)" ng-click="eliminarDetalleVentaEdicion(detalleVenta)">
-												<i class="ace-icon fa fa-trash-o bigger-130"></i>
-											</a>
+											<i class="ace-icon fa fa-trash-o bigger-130"></i>
+										</a>
 									</td>
 								</tr>
 								<tr>
@@ -1885,8 +1902,8 @@
 			<p>
 				<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Ingrese los datos para el cierre
 				de caja?</p>
-			<p<label>Saldo inicial en caja</label>
-			</p<label>
+			<label>Saldo inicial en caja</label>
+			
 		</div>
 		<div class="col sm 12" align="center">
 			<input required ng-model="cierre.saldo_inicial" min="0" max="venta.saldo" type="number" step="0.001">
@@ -2444,12 +2461,12 @@
 					<td>{{producto.grupo}}</td>
 					<td>{{producto.subgrupo}}</td>
 					<td>
-						<button  ng-if="!venta.id" type="button" ng-click="establecerProducto(producto)" class="btn btn-success btn-sm">
+						<button ng-if="!venta.id" type="button" ng-click="establecerProducto(producto)" class="btn btn-success btn-sm">
 							<i class="ace-icon fa fa-check icon-only"></i>
 						</button>
-						<button  ng-if="venta.id" type="button" ng-click="establecerProductoEdicionVenta(producto)" class="btn btn-success btn-sm">
-								<i class="ace-icon fa fa-check icon-only"></i>
-							</button>
+						<button ng-if="venta.id" type="button" ng-click="establecerProductoEdicionVenta(producto)" class="btn btn-success btn-sm">
+							<i class="ace-icon fa fa-check icon-only"></i>
+						</button>
 						<!--<button type="button" ng-click="verDetalleInventario(producto)" class="btn btn-info btn-sm">
 							<i class="ace-icon fa fa-search-plus icon-only"></i>
 						</button>-->
@@ -3032,9 +3049,9 @@
 					</div>
 					<div class="col-md-6">
 						<p>FECHA</p>
-						<input required ng-update-hidden name="fechaSerImp"class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" ng-model="venta.fecha"
-						 placeholder="Ingrese la fecha" autocomplete="off" />
-						 <p class="red" ng-show="formimpvent.fechaSerImp.$touched && formimpvent.fechaSerImp.$invalid">Este campo es requerido.</p>
+						<input required ng-update-hidden name="fechaSerImp" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
+						 ng-model="venta.fecha" placeholder="Ingrese la fecha" autocomplete="off" />
+						<p class="red" ng-show="formimpvent.fechaSerImp.$touched && formimpvent.fechaSerImp.$invalid">Este campo es requerido.</p>
 					</div>
 				</div>
 				<div class="space-6"></div>
@@ -3049,7 +3066,7 @@
 						<p ng-if="dosificacionesExpiradas" style="color: orangered">Las Actividades con dosificaciones expiradas no se muestran</p>
 					</div>
 					<div class="col-md-6">
-							<div class="space-6"></div>
+						<div class="space-6"></div>
 						<div class="btn btn-link pull-right">
 							<a href="/recursos/EJEMPLO-DATOS-VENTAS-SERVICIOS.xlsx" class="pull-right">
 								<span class="blue">
@@ -3059,7 +3076,7 @@
 						</div>
 						<div class="fileUpload btn btn-link pull-right" ng-click="verificarCamposForimImpServ(formimpvent)" uib-tooltip="Importación">
 							<img height="50" width="50" src="img/subir-comprobante.png">
-							<input ng-disabled="formimpvent.$invalid"  class="upload" type="file" custom-on-file-change="subirExcelVentasServicios" />&nbsp&nbsp
+							<input ng-disabled="formimpvent.$invalid" class="upload" type="file" custom-on-file-change="subirExcelVentasServicios" />&nbsp&nbsp
 						</div>
 					</div>
 				</div>
@@ -3076,8 +3093,8 @@
 <!-- cotizaciones -->
 <div id="dialog-cotizaciones-venta">
 	<div class="table-header text-center">
-            Cotizaciones
-    </div>
+		Cotizaciones
+	</div>
 	<div class="row">
 		<form name="formularioBusquedaInventario" novalidate>
 			<div class="col-xs-10">
@@ -3085,7 +3102,8 @@
 				</div>
 			</div>
 			<div class="col-xs-2">
-				<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="cerrarPopupCotizaciones(idModalInventario)" class="btn btn-danger button-close">
+				<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="cerrarPopupCotizaciones(idModalInventario)"
+				 class="btn btn-danger button-close">
 					<i class="ace-icon fa fa-close align-top bigger-125"></i>
 				</button>
 			</div>
@@ -3113,7 +3131,7 @@
 							<span id="descripcionp" class="sort ace-icon fa fa-sort icon-only"></span>
 						</a>
 					</th>
-					
+
 					<th>Acciones</th>
 				</tr>
 			</thead>
@@ -3149,107 +3167,109 @@
 
 <div id="dialog-detalle-cotizaciones">
 	<div class="table-header text-center" style="background-color: #ffb752!important;">
-            Detalle Cotizacion
-    </div>
-	
-		<div class="row">
-            
-           <div class="col-xs-10">
-				<h5 class="blue titulo-pre-requisito ng-binding">
-            	{{cotizacion.cliente.razon_social}}
-	            </h5>
-	            <h5 class="blue titulo-pre-requisito ng-binding">
-	            	COTIZACION {{cotizacion.numero_documento}}
-	            </h5>
-	            <h5 class="blue titulo-pre-requisito ng-binding">
-	            	FECHA {{cotizacion.fecha | date:"dd/MM/yyyy"}}
-	            </h5>
-			</div>
-			<div class="col-xs-2">
-				<button  type="button" ng-if="editCoticacion" ng-disabled="isCheckedCotizacion(cotizacion)" ng-click="agregarVentaCotizacion(cotizacion)" class="btn btn-primary button-close">
-					<i class="ace-icon fa fa-check align-top bigger-125"></i>
-				</button>
-				<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="cerrarPopupDetalleCotizaciones(idModalInventario)" class="btn btn-danger button-close">
-					<i class="ace-icon fa fa-close align-top bigger-125"></i>
-				</button>
-			</div>
-        </div>
-		<div class="modal-body no-padding">
+		Detalle Cotizacion
+	</div>
 
-			<table id="" class="table table-striped table-bordered table-hover no-margin-bottom no-border-top">
-				<thead>
-					<tr>
-						<th class="center">
-							#
-						</th>
-						<th>
-							Codigo
-						</th>
-						<th>
-							Producto
-						</th>
-						<th>
-							Cantidad Solicitada
-						</th>
-						<th>
-							Cantidad Disponible
-						</th>
-						<th>
-							Cantidad a entregar
-						</th>
-						<th>
-							Faltante
-						</th>
-						<th>
-							Precio
-						</th>
-						<th>
-							Total
-						</th>
-						
-						<th style="width: 12%;">Acciones</th>
-					</tr>
-				</thead>
+	<div class="row">
 
-				<tbody>
-					<tr ng-repeat="c in cotizacion.detallesCotizacion">
-						<td class="center">
-							{{$index+1}}
-						</td>
-						<td>{{c.producto.codigo}}</td>
-						<td>{{c.producto.nombre}}</td>
-						<td>{{c.cantidad}}</td>
-						<td>{{c.disponible}}</td>
-						<td>{{c.entregar}}</td>
-						<td>{{c.faltante}}</td>
-						<td>{{c.precio_unitario}}</td>
-						<td>{{c.total}}</td>
-						<td >
-							<div class="hidden-sm hidden-xs btn-group" ng-if="c.entregar > 0 && editCoticacion ">
-								<button class="btn btn-xs " ng-class="c.aceptar ? 'btn-success' : 'btn-warning'" ng-click="aceptarDetalleCotizacion(c)">
-									<i class="ace-icon fa fa-check bigger-120"></i>
-								</button>
-								<button class="btn btn-xs btn-danger" ng-if="c.aceptar" ng-click="cancelarDetalleCotizacion(c)">
-									<i class="ace-icon fa fa-close bigger-120"></i>
-								</button>
-								<button class="btn btn-xs btn-info" ng-click="editarDetalleCotizacion(c)">
-									<i class="ace-icon fa fa-pencil bigger-120"></i>
-								</button>
-
-								
-							</div>
-
-							<span class="label label-danger" ng-if="c.entregar <= 0 ">
-								<i class="ace-icon fa fa-exclamation-triangle bigger-120"></i>
-								No tiene cantidad disponible
-							</span>
-
-							
-						</td>
-					</tr>
-				</tbody>
-			</table>
+		<div class="col-xs-10">
+			<h5 class="blue titulo-pre-requisito ng-binding">
+				{{cotizacion.cliente.razon_social}}
+			</h5>
+			<h5 class="blue titulo-pre-requisito ng-binding">
+				COTIZACION {{cotizacion.numero_documento}}
+			</h5>
+			<h5 class="blue titulo-pre-requisito ng-binding">
+				FECHA {{cotizacion.fecha | date:"dd/MM/yyyy"}}
+			</h5>
 		</div>
+		<div class="col-xs-2">
+			<button type="button" ng-if="editCoticacion" ng-disabled="isCheckedCotizacion(cotizacion)" ng-click="agregarVentaCotizacion(cotizacion)"
+			 class="btn btn-primary button-close">
+				<i class="ace-icon fa fa-check align-top bigger-125"></i>
+			</button>
+			<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="cerrarPopupDetalleCotizaciones(idModalInventario)"
+			 class="btn btn-danger button-close">
+				<i class="ace-icon fa fa-close align-top bigger-125"></i>
+			</button>
+		</div>
+	</div>
+	<div class="modal-body no-padding">
+
+		<table id="" class="table table-striped table-bordered table-hover no-margin-bottom no-border-top">
+			<thead>
+				<tr>
+					<th class="center">
+						#
+					</th>
+					<th>
+						Codigo
+					</th>
+					<th>
+						Producto
+					</th>
+					<th>
+						Cantidad Solicitada
+					</th>
+					<th>
+						Cantidad Disponible
+					</th>
+					<th>
+						Cantidad a entregar
+					</th>
+					<th>
+						Faltante
+					</th>
+					<th>
+						Precio
+					</th>
+					<th>
+						Total
+					</th>
+
+					<th style="width: 12%;">Acciones</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr ng-repeat="c in cotizacion.detallesCotizacion">
+					<td class="center">
+						{{$index+1}}
+					</td>
+					<td>{{c.producto.codigo}}</td>
+					<td>{{c.producto.nombre}}</td>
+					<td>{{c.cantidad}}</td>
+					<td>{{c.disponible}}</td>
+					<td>{{c.entregar}}</td>
+					<td>{{c.faltante}}</td>
+					<td>{{c.precio_unitario}}</td>
+					<td>{{c.total}}</td>
+					<td>
+						<div class="hidden-sm hidden-xs btn-group" ng-if="c.entregar > 0 && editCoticacion ">
+							<button class="btn btn-xs " ng-class="c.aceptar ? 'btn-success' : 'btn-warning'" ng-click="aceptarDetalleCotizacion(c)">
+								<i class="ace-icon fa fa-check bigger-120"></i>
+							</button>
+							<button class="btn btn-xs btn-danger" ng-if="c.aceptar" ng-click="cancelarDetalleCotizacion(c)">
+								<i class="ace-icon fa fa-close bigger-120"></i>
+							</button>
+							<button class="btn btn-xs btn-info" ng-click="editarDetalleCotizacion(c)">
+								<i class="ace-icon fa fa-pencil bigger-120"></i>
+							</button>
+
+
+						</div>
+
+						<span class="label label-danger" ng-if="c.entregar <= 0 ">
+							<i class="ace-icon fa fa-exclamation-triangle bigger-120"></i>
+							No tiene cantidad disponible
+						</span>
+
+
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>
 
 <div id="dialog-cotizacione-editar" title="Editar precio">

@@ -14,7 +14,7 @@ angular.module('agil.controladores')
 			$scope.obtenerEmpresas();
 			$scope.obtenerClientes();
 			$scope.obtenerDestinos();
-
+			$scope.obtenerTiposPrecio()
 			/*setTimeout(function() {
 				ejecutarScriptsTabla('tabla-clientes',10);
 			},2000);*/
@@ -642,6 +642,12 @@ angular.module('agil.controladores')
 						cliente.fecha2 = worksheet['M' + row] != undefined && worksheet['M' + row] != "" ? new Date($scope.convertirFecha(worksheet['M' + row].v.toString())) : null;
 						cliente.texto1 = worksheet['N' + row] != undefined && worksheet['N' + row] != "" ? worksheet['N' + row].v.toString() : null;
 						cliente.texto2 = worksheet['O' + row] != undefined && worksheet['O' + row] != "" ? worksheet['O' + row].v.toString() : null;
+						cliente.tipoPrecioVenta = worksheet['P' + row] != undefined && worksheet['P' + row] != "" ? worksheet['P' + row].v.toString() : null;
+						if (cliente.tipoPrecioVenta != null) {
+							cliente.tipoPrecioVenta = $scope.tiposPrecios.clases.find(function (tipo) {
+								return cliente.tipoPrecioVenta.toUpperCase() === tipo.nombre									
+							})
+						}
 						clientes.push(cliente);
 						row++;
 						i++;
@@ -798,6 +804,14 @@ angular.module('agil.controladores')
 					$scope.mostrarMensaje(dato.message)
 				}
 			})
+		}
+		$scope.obtenerTiposPrecio = function () {
+			blockUI.start();
+			var promesa = ClasesTipoEmpresa("T_PAGO_PRODUCTO", $scope.usuario.id_empresa);
+			promesa.then(function (entidad) {
+				$scope.tiposPrecios = entidad
+				blockUI.stop();
+			});
 		}
 		$scope.$on('$routeChangeStart', function (next, current) {
 			$scope.eliminarPopup('modal-wizard-cliente');

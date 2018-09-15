@@ -1,6 +1,6 @@
 module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto,
 	Usuario, DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, ProductoBase, sequelize,
-	ContabilidadCuenta, UsuarioGrupos, ActivosFijos, ActivosFijosValores) {
+	ContabilidadCuenta, UsuarioGrupos, ActivosFijos, ActivosFijosValores, ProductoTipoPrecio) {
 
 	router.route('/productos')
 		.post(function (req, res) {
@@ -653,6 +653,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				include: [{ model: Empresa, as: 'empresa' },
 				{ model: Clase, as: 'tipoProducto' },
 				{ model: Clase, as: 'grupo' },
+				{ model: ProductoTipoPrecio, as: 'tiposPrecio',include: [{ model: Clase, as: 'tipoPrecio' }] },
 				{ model: Clase, as: 'subgrupo' },
 				{
 					model: Almacen, as: 'almacenErp',
@@ -674,7 +675,40 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 		}, {
 				where: { id: productoCreado.id }
 			}).then(function (affecteedRows) {
-				res.json({ producto: productoCreado, url: imagen, signedRequest: signedRequest, image_name: 'producto-' + productoCreado.id + '.jpg' });
+				if (req.body.tiposPrecio.length > 0) {
+					req.body.tiposPrecio.forEach(function(tipoP,index,array){
+						if(tipoP.id){
+							ProductoTipoPrecio.update({
+								id_producto:productoCreado.id,
+								id_tipo_precio:tipoP.tipoPrecio.id,
+								precio_unitario:tipoP.precio_unitario,
+								rango_positivo:tipoP.rango_positivo,
+								rango_negativo:tipoP.rango_negativo,
+								eliminado:tipoP.eliminado},{where:{id:tipoP.id}
+							}).then(function(actualizado){
+								if(index===(array.length-1)){
+									res.json({ producto: productoCreado, url: imagen, signedRequest: signedRequest, image_name: 'producto-' + productoCreado.id + '.jpg' });
+								}
+							})
+						}else{
+							ProductoTipoPrecio.create({
+								id_producto:productoCreado.id,
+								id_tipo_precio:tipoP.tipoPrecio.id,
+								precio_unitario:tipoP.precio_unitario,
+								rango_positivo:tipoP.rango_positivo,
+								rango_negativo:tipoP.rango_negativo,
+								eliminado:false
+							}).then(function(creado){
+								if(index===(array.length-1)){
+									res.json({ producto: productoCreado, url: imagen, signedRequest: signedRequest, image_name: 'producto-' + productoCreado.id + '.jpg' });
+								}
+							})
+						}
+						
+					})
+				} else {
+					res.json({ producto: productoCreado, url: imagen, signedRequest: signedRequest, image_name: 'producto-' + productoCreado.id + '.jpg' });
+				}
 			});
 	}
 
@@ -736,6 +770,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				Producto.findAll({
 					where: { id_empresa: req.params.id_empresa, publicar_panel: true, id_grupo: { $in: gruposUsuario } },
 					include: [
+						{ model: ProductoTipoPrecio, as: 'tiposPrecio',include: [{ model: Clase, as: 'tipoPrecio' }] },
 						{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
 						{ model: Clase, as: 'tipoProducto' },
 						{

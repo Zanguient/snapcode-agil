@@ -4,7 +4,7 @@ angular.module('agil.controladores')
 		$route, blockUI, Producto, Productos, ProductosPaginador, ProductosEmpresa,
 		ClasesTipo, Clases, ProductoKardex, ProductosEmpresaCreacion, DatoCodigoSiguienteProductoEmpresa, ListaProductosEmpresa,
 		Paginator, ListaCuentasComprobanteContabilidad, DatosProducto, CatalogoProductos,
-		ListaGruposProductoEmpresa,FieldViewer, ListaSubGruposProductoEmpresa, ListaGruposProductoUsuario, ReporteProductosKardex, ProductosEmpresaCreacionFormulacion) {
+		ListaGruposProductoEmpresa, Tipos, ClasesTipoEmpresa,FieldViewer, ListaSubGruposProductoEmpresa, ListaGruposProductoUsuario, ReporteProductosKardex, ProductosEmpresaCreacionFormulacion) {
 		blockUI.start();
 		$scope.idModalWizardProductoKardex = 'modal-wizard-producto-kardex';
 		$scope.idModalWizardProductoEdicion = 'modal-wizard-producto-edicion';
@@ -14,7 +14,8 @@ angular.module('agil.controladores')
 		$scope.idModalContenedorProductoVista = 'modal-wizard-container-producto-vista';
 		$scope.idModalContenedorProductoKardex = 'modal-wizard-container-producto-kardex';
 		$scope.idImagenProducto = 'imagen-producto';
-		$scope.idModalReporteProductosKardex = "dialog-reporte-productos-kardex"
+		$scope.idModalReporteProductosKardex = "dialog-reporte-productos-kardex";
+		$scope.idModalConceptoEdicion = 'dialog-conceptos';
 		$scope.usuario = JSON.parse($localStorage.usuario);
 
 		$scope.inicio = function () {
@@ -23,32 +24,33 @@ angular.module('agil.controladores')
 			$scope.obtenerSucursales();
 			$scope.obtenerGruposProductosEmpresaUsuario();
 			$scope.obtenerSubGruposProductosEmpresa();
-			
+			$scope.obtenerTiposPrecio();
+
 			$scope.usarValuado = true
 		}
 		$scope.obtenerColumnasAplicacion = function () {
-            $scope.fieldViewer = FieldViewer({
-                crear: true,
-                id_empresa: $scope.usuario.id_empresa,
-                configuracion: {
-                    publicado_panel: { value: "¿Publicado Panel?", show: true },
-                    inventario_activado: { value: "¿Inventario Activado?", show: true },
-                    codigo: { value: "Código", show: true },
-                    nombre: { value: "Nombre", show: true },
-                    imagen: { value: "Imagen", show: true },
-                    unidad_medida: { value: "Unidad de Medida", show: true },
-                    precio_unitario: { value: "Precio Unitario", show: true },
-                    inventario_minimo: { value: "Inventario Mínimo", show: true },
+			$scope.fieldViewer = FieldViewer({
+				crear: true,
+				id_empresa: $scope.usuario.id_empresa,
+				configuracion: {
+					publicado_panel: { value: "¿Publicado Panel?", show: true },
+					inventario_activado: { value: "¿Inventario Activado?", show: true },
+					codigo: { value: "Código", show: true },
+					nombre: { value: "Nombre", show: true },
+					imagen: { value: "Imagen", show: true },
+					unidad_medida: { value: "Unidad de Medida", show: true },
+					precio_unitario: { value: "Precio Unitario", show: true },
+					inventario_minimo: { value: "Inventario Mínimo", show: true },
 					descripcion_uno: { value: "Descripcion", show: true },
 					carac_esp_uno: { value: "Carac. Esp. 1", show: true },
 					carac_esp_dos: { value: "Carac. Esp. 2", show: true },
 					grupo: { value: "Grupo", show: true },
 					subgrupo: { value: "Subgrupo", show: true },
 					tipo_producto: { value: "Tipo Producto", show: true }
-                }
-            }, $scope.aplicacion.aplicacion.id);
-            $scope.fieldViewer.updateObject();
-        }
+				}
+			}, $scope.aplicacion.aplicacion.id);
+			$scope.fieldViewer.updateObject();
+		}
 		$scope.obtenerGruposProductosEmpresaUsuario = function () {
 			blockUI.start()
 			var promesa = ListaGruposProductoUsuario($scope.usuario.id_empresa, $scope.usuario.id);
@@ -197,20 +199,22 @@ angular.module('agil.controladores')
 				$scope.idModalContenedorProductoVista,
 				$scope.idModalContenedorProductoKardex,
 				$scope.idImagenProducto,
-				$scope.idModalReporteProductosKardex);
+				$scope.idModalReporteProductosKardex,
+				$scope.idModalConceptoEdicion);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			$scope.obtenerColumnasAplicacion()
 			blockUI.stop();
 		});
 
 		$scope.crearNuevoProducto = function () {
+			$scope.tipoDePrecio = {eliminado:false}
 			$scope.steps = [{ cabeza: "cabeza-datos-producto", cuerpo: "cuerpo-datos-producto" },
 			{ cabeza: "cabeza-datos-adicionales", cuerpo: "cuerpo-datos-adicionales" },
 			{ cabeza: "cabeza-tipo-producto", cuerpo: "cuerpo-tipo-producto" }]
 			var promesa = DatoCodigoSiguienteProductoEmpresa($scope.usuario.id_empresa);
 			promesa.then(function (dato) {
 				$scope.ultimo_codigo = "FC" + dato.ultimo_codigo;
-				$scope.producto = new Producto({ productosBase: [], id_empresa: $scope.usuario.id_empresa, imagen: './img/icon-producto-default.png' });
+				$scope.producto = new Producto({ tiposPrecio: [], productosBase: [], id_empresa: $scope.usuario.id_empresa, imagen: './img/icon-producto-default.png' });
 				if (!$scope.usuario.empresa.usar_consumos) {
 					$scope.producto.tipoProducto = $.grep($scope.tipoProductos, function (e) { return e.nombre_corto == $scope.diccionario.TIPO_PRODUCTO_BASE; })[0];
 				}
@@ -282,24 +286,24 @@ angular.module('agil.controladores')
 		}
 
 
-	$scope.obtenerDetallesEmpresa = function (idProducto,idAlmacen,fechaInicio,fechaFin,lote) {
-		//$scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote
-		$scope.paginator = Paginator();
-		$scope.paginator.column = "razon_social";
-		$scope.paginator.direccion = "asc";
-		$scope.filtroDetallesProducto = {
-			id_producto: idProducto,
-			id_almacen: idAlmacen,
-			fecha_inicio: fechaInicio,
-			fecha_fin: fechaFin,
-			lote: lote
+		$scope.obtenerDetallesEmpresa = function (idProducto, idAlmacen, fechaInicio, fechaFin, lote) {
+			//$scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote
+			$scope.paginator = Paginator();
+			$scope.paginator.column = "razon_social";
+			$scope.paginator.direccion = "asc";
+			$scope.filtroDetallesProducto = {
+				id_producto: idProducto,
+				id_almacen: idAlmacen,
+				fecha_inicio: fechaInicio,
+				fecha_fin: fechaFin,
+				lote: lote
+			}
+			$scope.paginator.callBack = $scope.filtroProductoKardex;
+			$scope.paginator.getSearch("", $scope.filtroDetallesProducto, null);
+
+
 		}
-		$scope.paginator.callBack = $scope.filtroProductoKardex;
-		$scope.paginator.getSearch("", $scope.filtroDetallesProducto, null);
 
-
-	}
-	
 		$scope.buscarKardexProducto = function (idProducto, almacen, filtro) {
 			blockUI.start();
 			var fechaInicio = filtro.fechaInicioTexto == "" || filtro.fechaInicioTexto == undefined ? 0 : new Date($scope.convertirFecha(filtro.fechaInicioTexto));
@@ -323,8 +327,8 @@ angular.module('agil.controladores')
 					});
 				})
 			} else {
-				$scope.obtenerDetallesEmpresa($scope.idProducto,$scope.idAlmacen,fechaInicio,fechaFin,lote);
-				
+				$scope.obtenerDetallesEmpresa($scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote);
+
 				/*var promesa = ProductoKardex($scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote);
 				promesa.then(function (detMovs) {
 					$scope.generarKardexProducto(detMovs);
@@ -333,7 +337,7 @@ angular.module('agil.controladores')
 			}
 		}
 
-		$scope.filtroProductoKardex = function(){
+		$scope.filtroProductoKardex = function () {
 			//blockUI.start();
 			var promesa = ProductoKardex($scope.paginator);
 			promesa.then(function (datos) {
@@ -361,14 +365,14 @@ angular.module('agil.controladores')
 							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.compra.factura;
 							if (dato.detallesMovimiento[i].inventario != null) {
 								dato.detallesMovimiento[i].lote = dato.detallesMovimiento[i].inventario.lote
-							}else{
+							} else {
 								dato.detallesMovimiento[i].lote = ""
 							}
 						} else {
 							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
 							if (dato.detallesMovimiento[i].inventario != null) {
 								dato.detallesMovimiento[i].lote = dato.detallesMovimiento[i].inventario.lote
-							}else{
+							} else {
 								dato.detallesMovimiento[i].lote = ""
 							}
 						}
@@ -379,14 +383,14 @@ angular.module('agil.controladores')
 							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre + " Nro. " + dato.detallesMovimiento[i].movimiento.compra.factura;
 							if (dato.detallesMovimiento[i].inventario != null) {
 								dato.detallesMovimiento[i].lote = dato.detallesMovimiento[i].inventario.lote
-							}else{
+							} else {
 								dato.detallesMovimiento[i].lote = ""
 							}
 						} else {
 							dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre;
 							if (dato.detallesMovimiento[i].inventario != null) {
 								dato.detallesMovimiento[i].lote = dato.detallesMovimiento[i].inventario.lote
-							}else{
+							} else {
 								dato.detallesMovimiento[i].lote = ""
 							}
 						}
@@ -397,10 +401,10 @@ angular.module('agil.controladores')
 								dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i - 1].saldoFisico + dato.detallesMovimiento[i].cantidad;
 								dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i - 1].saldoValuado + (dato.detallesMovimiento[i].cantidad * dato.detallesMovimiento[i].costo_unitario)) * 100) / 100;
 								dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
-								
+
 								if (dato.detallesMovimiento[i].inventario != null) {
 									dato.detallesMovimiento[i].lote = dato.detallesMovimiento[i].inventario.lote
-								}else{
+								} else {
 									dato.detallesMovimiento[i].lote = ""
 								}
 							} else {
@@ -409,7 +413,7 @@ angular.module('agil.controladores')
 								dato.detallesMovimiento[i].tipo = dato.detallesMovimiento[i].movimiento.clase.nombre
 								if (dato.detallesMovimiento[i].inventario != null) {
 									dato.detallesMovimiento[i].lote = dato.detallesMovimiento[i].inventario.lote
-								}else{
+								} else {
 									dato.detallesMovimiento[i].lote = ""
 								}
 							}
@@ -439,9 +443,9 @@ angular.module('agil.controladores')
 						}
 
 					}
-			
-				dato.detallesMovimiento[i].saldoV = dato.detallesMovimiento[i].saldoValuado.toFixed(2);
-					} else {
+
+					dato.detallesMovimiento[i].saldoV = dato.detallesMovimiento[i].saldoValuado.toFixed(2);
+				} else {
 					console.log(dato.detallesMovimiento[i])
 				}
 			}
@@ -631,7 +635,7 @@ angular.module('agil.controladores')
 				doc.text("Sucursal : " + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.nombre, 475, 100);
 				doc.text("Almacen : " + kardexproduto.detallesMovimiento[0].movimiento.almacen.nombre, 475, 110);
 				doc.font('Helvetica-Bold', 11).fillColor('red');
-				doc.text("Codigo : " + kardexproduto.codigo, 475, 120);				
+				doc.text("Codigo : " + kardexproduto.codigo, 475, 120);
 				doc.font('Helvetica', 8).fillColor('black');
 				doc.text(kardexproduto.nombre, 120, 100);
 				doc.text(kardexproduto.descripcion, 120, 120);
@@ -671,7 +675,7 @@ angular.module('agil.controladores')
 				doc.text("Sucursal : " + kardexproduto.detallesMovimiento[0].movimiento.almacen.sucursal.nombre, 475, 100);
 				doc.text("Almacen : " + kardexproduto.detallesMovimiento[0].movimiento.almacen.nombre, 475, 110);
 				doc.font('Helvetica-Bold', 11).fillColor('red');;
-				doc.text("Codigo : " + kardexproduto.codigo, 475, 120);				
+				doc.text("Codigo : " + kardexproduto.codigo, 475, 120);
 				doc.font('Helvetica', 8).fillColor('black');;
 				doc.text(kardexproduto.nombre, 120, 100);
 				doc.text(kardexproduto.descripcion, 120, 120);
@@ -695,14 +699,14 @@ angular.module('agil.controladores')
 			doc.text("fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min, 475, 750);
 		}
 
-		$scope.generarExcelKardexProducto = function (kardexproduto, valuado){
+		$scope.generarExcelKardexProducto = function (kardexproduto, valuado) {
 			var detalleMovimiento = kardexproduto.detallesMovimiento;
 			blockUI.start()
-			var cabecera = ["Codigo","Producto","Fecha","Detalle","Ingreso","Salida","Lote","Fecha Vencimiento"];
+			var cabecera = ["Codigo", "Producto", "Fecha", "Detalle", "Ingreso", "Salida", "Lote", "Fecha Vencimiento"];
 			var data = [];
 			data.push(cabecera);
-			
-		
+
+
 			for (var i = 0; i < kardexproduto.detallesMovimiento.length; i++) {
 				var column = [];
 				column.push(kardexproduto.codigo);
@@ -711,47 +715,47 @@ angular.module('agil.controladores')
 					//column.push(kardexproduto.detallesMovimiento[i].movimiento.venta.fecha);
 					var fecha = new Date(kardexproduto.detallesMovimiento[i].movimiento.fecha);
 
-					column.push(fecha.getDate() + "/" + (fecha.getMonth() + 1)  + "/" + fecha.getFullYear());
-				}else{
+					column.push(fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear());
+				} else {
 					column.push(" ")
 				}
 
 				if (kardexproduto.detallesMovimiento[i].movimiento.venta) {
 					if (kardexproduto.detallesMovimiento[i].movimiento.venta.cliente) {
-						column.push(kardexproduto.detallesMovimiento[i].tipo+" "+kardexproduto.detallesMovimiento[i].movimiento.venta.cliente.razon_social);	
-					}else{
+						column.push(kardexproduto.detallesMovimiento[i].tipo + " " + kardexproduto.detallesMovimiento[i].movimiento.venta.cliente.razon_social);
+					} else {
 						column.push(kardexproduto.detallesMovimiento[i].tipo);
 					}
-				}else if (!kardexproduto.detallesMovimiento[i].movimiento.venta) {
+				} else if (!kardexproduto.detallesMovimiento[i].movimiento.venta) {
 					column.push(kardexproduto.detallesMovimiento[i].tipo);
-				}else{
+				} else {
 					column.push(" ")
 				}
 
 				if (kardexproduto.detallesMovimiento[i].movimiento.id_tipo != 7) {
-					if(kardexproduto.detallesMovimiento[i].cantidad){
+					if (kardexproduto.detallesMovimiento[i].cantidad) {
 						column.push(kardexproduto.detallesMovimiento[i].cantidad);
-					}else{
+					} else {
 						column.push(" ");
 					}
-					
-				}else{
+
+				} else {
 					column.push(" ")
 				}
 				if (kardexproduto.detallesMovimiento[i].movimiento.id_tipo != 6) {
-					if(kardexproduto.detallesMovimiento[i].cantidad){
+					if (kardexproduto.detallesMovimiento[i].cantidad) {
 						column.push(kardexproduto.detallesMovimiento[i].cantidad);
-					}else{
+					} else {
 						column.push(" ");
 					}
-					
-				}else{
+
+				} else {
 					column.push(" ")
 				}
 				if (kardexproduto.detallesMovimiento[i].inventario != null) {
 					column.push(kardexproduto.detallesMovimiento[i].inventario.lote);
 					column.push(kardexproduto.detallesMovimiento[i].inventario.fecha_vencimiento);
-				}else{
+				} else {
 					column.push(kardexproduto.detallesMovimiento[i].lote);
 					column.push(" ")
 				}
@@ -763,7 +767,7 @@ angular.module('agil.controladores')
 				// }	
 
 				data.push(column);
-			} 
+			}
 			var ws_name = "SheetJS";
 			var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
 			/* add worksheet to workbook */
@@ -1251,12 +1255,83 @@ angular.module('agil.controladores')
 			}
 		}
 
+		$scope.abrirDialogConceptoEdicion = function (tipo) {
+			$scope.tipo_edicion = tipo;
+			$scope.clase = {};
+			$scope.abrirPopup($scope.idModalConceptoEdicion);
+		}
+		$scope.cerrarDialogConceptoEdicion = function () {
+			$scope.cerrarPopup($scope.idModalConceptoEdicion);
+		}
+
+		$scope.agregarConceptoEdicion = function (clase) {
+			if (clase.nombre && clase.nombre_corto) {
+				if ($scope.tipo_edicion.clases.indexOf(clase) == -1) {
+					$scope.tipo_edicion.clases.push(clase);
+				}
+				$scope.clase = {}
+			}
+		}
+		$scope.modificarConceptoEdicion = function (clase) {
+			$scope.clase = clase;
+		}
+		$scope.removerConceptoEdicion = function (clase) {
+			clase.eliminado = true;
+		}
+
+		$scope.guardarConceptoEdicion = function (tipo) {
+			blockUI.start();
+			Tipos.update({ id_tipo: tipo.id }, tipo, function (res) {
+				var promesa = ClasesTipo(tipo.nombre_corto);
+				promesa.then(function (entidad) {
+					tipo = entidad
+					blockUI.stop();
+					$scope.cerrarDialogConceptoEdicion();
+					$scope.mostrarMensaje('Guardado Exitosamente!');
+				});
+			});
+		}
+		$scope.obtenerTiposPrecio = function () {
+			blockUI.start();
+			var promesa = ClasesTipoEmpresa("T_PAGO_PRODUCTO", $scope.usuario.id_empresa);
+			promesa.then(function (entidad) {
+				$scope.tiposPrecios = entidad
+				blockUI.stop();
+			});
+		}
+		$scope.agregarTipoPrecio = function (tipoProducto, form) {
+			if (tipoProducto.tipoPrecio && tipoProducto.precio_unitario) {
+				form.tipoprecio.$invalid=false
+				form.PrecioProductoTipo.$invalid=false
+				if (tipoProducto.edit) {
+					$scope.tipoDePrecio = {eliminado:false}
+				} else {
+					$scope.producto.tiposPrecio.push(tipoProducto)
+					$scope.tipoDePrecio = {eliminado:false}
+				}
+			} else {
+				form.tipoprecio.$invalid=true
+				form.PrecioProductoTipo.$invalid=true
+			}
+		}
+		$scope.editarTipoPrecioProducto = function (tipo) {
+			$scope.tipoDePrecio = tipo
+			$scope.tipoDePrecio.edit = true
+		}
+		$scope.eliminarTipoPrecioProducto = function (tipo,index) {
+			if(tipo.id){
+				tipo.eliminado=true
+			}else{
+				$scope.producto.tiposPrecio.splice(index,1)
+			}
+		}
 		$scope.$on('$routeChangeStart', function (next, current) {
 			$scope.eliminarPopup($scope.idModalWizardProductoEdicion);
 			$scope.eliminarPopup($scope.idModalWizardProductoVista);
 			$scope.eliminarPopup($scope.idModalEliminarProducto);
 			$scope.eliminarPopup($scope.idModalWizardProductoKardex);
 			$scope.eliminarPopup($scope.idModalReporteProductosKardex);
+			$scope.eliminarPopup($scope.idModalConceptoEdicion);
 		});
 
 		$scope.inicio();

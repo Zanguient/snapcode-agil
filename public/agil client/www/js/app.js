@@ -258,6 +258,14 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
                 controller:'controladorComensalesEmpresa',
                 templateUrl:'templates/agil/comensalesEmpresaExterna.html'
             })
+            .when('/balance-comprobacion-suma-saldo', {
+                controller:'ControladorBalaceComprobacionSumaSaldo',
+                templateUrl:'templates/estadosFinancierosAgil/balanceComprobacionSumaSaldo.html'
+            })
+            .when('/estado-resultado', {
+                controller:'ControladorEstadoResultados',
+                templateUrl:'templates/estadosFinancierosAgil/estadoRultado-EEFF.html'
+            })
         .otherwise({
           redirectTo:'/'
         });

@@ -1,0 +1,42 @@
+<div class="conteiner">
+    <h3 class="header smaller lighter blue">BALANCE DE COMPROBACION DE SUMAS Y SALDOS</h3>
+    <div>
+        <div class="widget-main">
+            <div class="form-inline">
+                <label class="inline">
+                    <span class="lbl"> PERIODO</span>
+                </label>
+                <select required class="form-control" id="mes" name="mes" ng-model="reporte.mes" >
+                    <option value="1-ENERO">ENERO</option>
+                    <option value="2-FEBRERO">FEBRERO</option>
+                    <option value="3-MARZO">MARZO</option>
+                    <option value="4-ABRIL">ABRIL</option>
+                    <option value="5-MAYO">MAYO</option>
+                    <option value="6-JUNIO">JUNIO</option>
+                    <option value="7-JULIO">JULIO</option>
+                    <option value="8-AGOSTO">AGOSTO</option>
+                    <option value="9-SEPTIEMBRE">SEPTIEMBRE</option>
+                    <option value="10-OCTUBRE">OCTUBRE</option>
+                    <option value="11-NOVIEMBRE">NOVIEMBRE</option>
+                    <option value="12-DICIEMBRE">DICIEMBRE</option>
+                </select>&nbsp
+                <select class="form-control" required id="gestion" name="gestion" 
+                    ng-options="gestion.nombre_corto as gestion.nombre for gestion in gestiones track by gestion.id" 
+                    ng-model="reporte.gestion">
+                </select>&nbsp
+                
+            </div>
+            <div class="space-6"></div>
+            <div class="form-inline">
+                <button  class="btn btn-app btn-danger btn-xs" ng-click="generarPdfBalanceComprobacionSumaSaldo()">
+                    <i class="ace-icon fa fa-print bigger-160"></i>
+                    PDF
+                </button>
+                <button class="btn btn-app btn-success btn-xs" ng-click="generarExelBalanceGeneral()">
+                    <i class="ace-icon fa fa-print bigger-160"></i>
+                    Excel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

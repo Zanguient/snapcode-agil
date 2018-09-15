@@ -441,7 +441,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				id_especifica_texto3: id_texto3,
 				tipo_especifica: req.body.tipo_especifica,
 				vincular_cuenta: req.body.vincular_cuenta,
-				cuenta_activo:req.body.cuenta_activo
+				cuenta_activo:req.body.cuenta_activo,
+				estado_resultado:req.body.estado_resultado
 			}, {
 					where: {
 						id: req.body.id
@@ -531,6 +532,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				tipo_especifica: req.body.tipo_especifica,
 				vincular_cuenta: req.body.vincular_cuenta,
 				cuenta_activo: req.body.cuenta_activo,
+				estado_resultado:req.body.estado_resultado
 			}).then(function (cuentaCreada) {
 				if (req.body.cliente != null) {
 					ClienteCuenta.create({
