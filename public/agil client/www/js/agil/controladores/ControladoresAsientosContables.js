@@ -347,7 +347,7 @@ angular.module('agil.controladores')
                     var comprobantes = [];
                     var codigo = "", fecha = "", tipo = ""
                     do {
-                        row2 = row
+                        row2 = 2
                         var comprobante = { asientosContables: [] };
                         comprobante.tipoCambio=$scope.moneda
                         comprobante.tipo_comprobante = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
@@ -380,7 +380,7 @@ angular.module('agil.controladores')
                             }
                             row2++;
                             /*  i++; */
-                        } while (worksheet['G' + row2].v.toString() != codigo);
+                        } while (worksheet['B' + row2] != undefined);
 
 
 
