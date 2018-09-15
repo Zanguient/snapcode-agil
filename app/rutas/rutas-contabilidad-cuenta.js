@@ -789,7 +789,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				sequelize.transaction(function (t) {
 					return ClasificacionCuenta.findOrCreate({
 						where: { nombre: cuenta.clasificacion.nombre },
-						defaults: { nombre: cuenta.clasificacion.nombre },
+						defaults: { nombre: cuenta.clasificacion.nombre ,id_empresa:req.body.id_empresa},
 						transaction: t,
 						lock: t.LOCK.UPDATE
 					}).then(function (claficiacionEncontrada) {
