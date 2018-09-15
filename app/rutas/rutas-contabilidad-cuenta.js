@@ -790,17 +790,17 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 			req.body.cuentas.forEach(function (cuenta, index, array) {
 				sequelize.transaction(function (t) {
 					return ClasificacionCuenta.findOrCreate({
-						where: { nombre: cuenta.clasificacion.nombre },
+						where: { nombre: cuenta.clasificacion.nombre ,id_empresa:req.body.id_empresa},
 						defaults: { nombre: cuenta.clasificacion.nombre ,id_empresa:req.body.id_empresa},
 						transaction: t,
 						lock: t.LOCK.UPDATE
 					}).then(function (claficiacionEncontrada) {
 						return Tipo.find({
-							where: { nombre_corto: Diccionario.TIPOS_CUENTA_CONTABILIDAD },
+							where: { nombre_corto: Diccionario.TIPOS_CUENTA_CONTABILIDAD,id_empresa:req.body.id_empresa },
 							transaction: t
 						}).then(function (TipoEncontrado) {
 							return Clase.findOrCreate({
-								where: { nombre: cuenta.tipoCuenta.nombre },
+								where: { nombre: cuenta.tipoCuenta.nombre,id_tipo:TipoEncontrado.id },								
 								defaults: {
 									nombre: cuenta.tipoCuenta.nombre,
 									id_tipo: TipoEncontrado.id
