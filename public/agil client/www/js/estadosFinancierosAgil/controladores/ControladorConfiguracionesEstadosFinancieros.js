@@ -93,7 +93,7 @@ angular.module('agil.controladores')
 		}
         $scope.obtenerGestionesEEFF = function () {
             blockUI.start();
-            var promesa = ClasesTipoEmpresa("GESTIÓN EEFF", $scope.usuario.id_empresa);
+            var promesa = ClasesTipoEmpresa("GESTION_EEFF", $scope.usuario.id_empresa);
             promesa.then(function (entidad) {
                 $scope.ClasesGestionesEF = entidad.clases
                 blockUI.stop();

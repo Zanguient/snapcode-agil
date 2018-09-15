@@ -81,6 +81,10 @@ angular.module('agil.servicios')
 		return $resource(restServer + "productos/empresa");
 	})
 
+	.factory('ProductosEmpresaCreacionFormulacion', function ($resource) {
+		return $resource(restServer + "productos/formulacion/empresa");
+	})
+
 	.factory('ProductosEmpresa', function ($resource) {
 		return $resource(restServer + "productos/empresa/:idEmpresa");
 	})

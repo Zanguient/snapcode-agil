@@ -47,7 +47,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				});
 				if (req.body.activo_fijo) {
 					ActivosFijos.create({
-						id_usuario:  req.body.usuario,
+						id_usuario: req.body.usuario,
 						id_empresa: req.body.id_empresa,
 						id_producto: productoCreado.dataValues.id,
 						fecha_ingreso: new Date(req.body.fecha_ingreso.split('/').reverse()),
@@ -57,7 +57,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						ActivosFijosValores.create({
 							id_usuario: req.body.usuario,
 							id_activo: ACtivoCreado.dataValues.id,
-							mes: (new Date(req.body.fecha_ingreso.split('/').reverse()).getMonth()+1),
+							mes: (new Date(req.body.fecha_ingreso.split('/').reverse()).getMonth() + 1),
 							anio: (new Date(req.body.fecha_ingreso.split('/').reverse()).getFullYear()),
 							valor: req.body.valor_actualizado,
 							incremento_actualizacion: 0,
@@ -118,19 +118,19 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				condicion = { id_grupo: req.params.grupo, id_empresa: req.params.id_empresa, codigo: { $not: null } }
 			}
 
-			var fechaInicial =  new Date(2016, 1, 0) ;
-			var fechaFinal =  new Date() ;
-			var condicionMovimiento={id_almacen: req.params.id_almacen}
+			var fechaInicial = new Date(2016, 1, 0);
+			var fechaFinal = new Date();
+			var condicionMovimiento = { id_almacen: req.params.id_almacen }
 			condicionMovimiento.fecha = { $between: [fechaInicial, fechaFinal] }
-			
-			
+
+
 			Producto.findAll({
 				where: condicion,
 				include: [{ model: Empresa, as: 'empresa' },
 				{
 					model: DetalleMovimiento, as: "detallesMovimiento",
 
-					include: [{ model: Inventario, as: 'inventario'},
+					include: [{ model: Inventario, as: 'inventario' },
 					{
 						model: Movimiento, as: 'movimiento',
 						where: condicionMovimiento,
@@ -146,7 +146,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 							model: Almacen, as: 'almacen', required: false,
 							include: [{ model: Sucursal, as: 'sucursal' }]
 						},
-						{ model: Tipo, as: 'tipo'},
+						{ model: Tipo, as: 'tipo' },
 						{ model: Clase, as: 'clase' }]
 					}
 					],
@@ -180,22 +180,22 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 		.get(function (req, res) {
 			var fechaInicial = req.params.fecha_inicio == 0 ? new Date(2016, 1, 0) : new Date(req.params.fecha_inicio);
 			var fechaFinal = req.params.fecha_fin == 0 ? new Date() : new Date(req.params.fecha_fin);
-			var condicionMovimiento={id_almacen: req.params.id_almacen}
-			if(req.params.fecha_inicio !=0){
+			var condicionMovimiento = { id_almacen: req.params.id_almacen }
+			if (req.params.fecha_inicio != 0) {
 				condicionMovimiento.fecha = { $between: [fechaInicial, fechaFinal] }
 			}
 			var condicionInventario = {};
 			if (req.params.lote != "0") {
-				condicionInventario = {id_producto: req.params.id_producto, lote: req.params.lote }
+				condicionInventario = { id_producto: req.params.id_producto, lote: req.params.lote }
 			}
 
-		//	var busquedaQuery = (req.params.texto_busqueda === "0") ? "" : " AND p.nombre like '%" + req.params.texto_busqueda + "%'";
-			if (req.params.items_pagina != 0) {					
+			//	var busquedaQuery = (req.params.texto_busqueda === "0") ? "" : " AND p.nombre like '%" + req.params.texto_busqueda + "%'";
+			if (req.params.items_pagina != 0) {
 				var limite = {
 					where: { id_producto: req.params.id_producto },
 					offset: (req.params.items_pagina * (req.params.pagina - 1)),
 					limit: req.params.items_pagina,
-					include: [{ model: Inventario, as: 'inventario'},
+					include: [{ model: Inventario, as: 'inventario' },
 					{
 						model: Movimiento, as: 'movimiento',
 						where: condicionMovimiento,
@@ -211,16 +211,16 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 							model: Almacen, as: 'almacen', required: false,
 							include: [{ model: Sucursal, as: 'sucursal' }]
 						},
-						{ model: Tipo, as: 'tipo'},
+						{ model: Tipo, as: 'tipo' },
 						{ model: Clase, as: 'clase' }]
 					}
 					],
 					order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
 				}
-			}else{
+			} else {
 				var limite = {
 					where: { id_producto: req.params.id_producto },
-					include: [{ model: Inventario, as: 'inventario'},
+					include: [{ model: Inventario, as: 'inventario' },
 					{
 						model: Movimiento, as: 'movimiento',
 						where: condicionMovimiento,
@@ -236,7 +236,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 							model: Almacen, as: 'almacen', required: false,
 							include: [{ model: Sucursal, as: 'sucursal' }]
 						},
-						{ model: Tipo, as: 'tipo'},
+						{ model: Tipo, as: 'tipo' },
 						{ model: Clase, as: 'clase' }]
 					}
 					],
@@ -246,29 +246,29 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 
 			DetalleMovimiento.findAndCountAll({
 				where: { id_producto: req.params.id_producto },
-					include: [{ model: Inventario, as: 'inventario'},
+				include: [{ model: Inventario, as: 'inventario' },
+				{
+					model: Movimiento, as: 'movimiento',
+					where: condicionMovimiento,
+					include: [{
+						model: Compra, as: 'compra', required: false,
+						include: [{ model: Proveedor, as: 'proveedor' }]
+					},
 					{
-						model: Movimiento, as: 'movimiento',
-						where: condicionMovimiento,
-						include: [{
-							model: Compra, as: 'compra', required: false,
-							include: [{ model: Proveedor, as: 'proveedor' }]
-						},
-						{
-							model: Venta, as: 'venta', required: false,
-							include: [{ model: Cliente, as: 'cliente' }]
-						},
-						{
-							model: Almacen, as: 'almacen', required: false,
-							include: [{ model: Sucursal, as: 'sucursal' }]
-						},
-						{ model: Tipo, as: 'tipo'},
-						{ model: Clase, as: 'clase' }]
-					}
-					],
-					order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
+						model: Venta, as: 'venta', required: false,
+						include: [{ model: Cliente, as: 'cliente' }]
+					},
+					{
+						model: Almacen, as: 'almacen', required: false,
+						include: [{ model: Sucursal, as: 'sucursal' }]
+					},
+					{ model: Tipo, as: 'tipo' },
+					{ model: Clase, as: 'clase' }]
+				}
+				],
+				order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
 
-			}).then(function(datosCount){
+			}).then(function (datosCount) {
 				DetalleMovimiento.findAll(limite).then(function (productos) {
 					res.json({ kardex: productos, paginas: Math.ceil(datosCount.count / req.params.items_pagina) })
 
@@ -344,9 +344,24 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 
 	router.route('/productos/empresa')
 		.post(function (req, res) {
-			Clase.find({
-				where: { nombre_corto: 'PBASE' }
-			}).then(function (clase) {
+			Tipo.find({
+				where: {
+					nombre_corto: 'TPS'
+				},
+				include: [{ model: Clase, as: 'clases', where: { eliminado: false } }]
+			}).then(function (entidad) {
+				var producto_base = entidad.clases.find(function (tipo) {
+					return tipo.nombre_corte === 'PBASE'
+				})
+				var producto_intermedio = entidad.clases.find(function (tipo) {
+					return tipo.nombre_corte === 'PINTER'
+				})
+				var producto_final = entidad.clases.find(function (tipo) {
+					return tipo.nombre_corte === 'PFINAL'
+				})
+				// Clase.find({
+				// 	where: { nombre_corto: 'PBASE' }
+				// }).then(function (clase) {
 				Tipo.find({
 					where: {
 						nombre_corto: "GRUPOS PRODUCTOS",
@@ -361,6 +376,16 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					}).then(function (tipoSubGrupoEncontrado) {
 						req.body.productos.forEach(function (producto, index, array) {
 							sequelize.transaction(function (t) {
+								var tipo_producto;
+								if (producto.tipo_producto === 'base') {
+									tipo_producto = producto_base.id
+								}
+								if (producto.tipo_producto === 'intermedio') {
+									tipo_producto = producto_intermedio.id
+								}
+								if (producto.tipo_producto === 'final') {
+									tipo_producto = producto_final.id
+								}
 								return Producto.find({
 									where: {
 										$or: [{ codigo: producto.codigo }],
@@ -380,7 +405,6 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 										transaction: t,
 										lock: t.LOCK.UPDATE
 									}).then(function (claseGrupoEncontrado) {
-
 										return Clase.findOrCreate({
 											where: {
 												nombre: producto.subgrupo,
@@ -393,7 +417,6 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 											transaction: t,
 											lock: t.LOCK.UPDATE
 										}).then(function (claseSubGrupoEncontrado) {
-
 											if (productoEncontrado) {
 												return Producto.update({
 													nombre: producto.nombre,
@@ -414,6 +437,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													descuento: producto.descuento,
 													descuento_fijo: producto.descuento_fijo,
 													marca: producto.marca,
+													id_tipo_producto: tipo_producto ? tipo_producto : producto_base,
 													activo_fijo: req.body.activo_fijo
 												}, {
 														where: {
@@ -441,7 +465,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													alerta: producto.alerta,
 													descuento: producto.descuento,
 													descuento_fijo: producto.descuento_fijo,
-													id_tipo_producto: clase.id,
+													id_tipo_producto: tipo_producto ? tipo_producto : producto_base,
 													marca: producto.marca,
 													activo_fijo: producto.activo_fijo
 												}, { transaction: t });
@@ -462,6 +486,50 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 
 
 					});
+				});
+				// });
+			});
+		});
+
+	router.route('/productos/formulacion/empresa')
+		.post(function (req, res) {
+			req.body.productos.forEach(function (producto, index, array) {
+				sequelize.transaction(function (t) {
+					return Producto.find({
+						where: {
+							codigo: producto.codigo_final,
+							id_empresa: req.body.id_empresa
+						},
+						transaction: t
+					}).then(function (productoFinal) {
+						if (productoFinal) {
+							return Producto.find({
+								where: {
+									codigo: producto.codigo_Base,
+									id_empresa: req.body.id_empresa
+								},
+								transaction: t
+							}).then(function (productoBase) {
+								if (productoBase) {
+									return ProductoBase.create({
+										id_producto: productoFinal.dataValues.id,
+										id_producto_base: productoBase.id,
+										formulacion: producto.formulacion
+									}, { transaction: t });
+								}else{
+									throw new Error({stack: 'No se encuentra en la base de datos el producto: ' + producto.nombre_base + ' Código: ' + producto.codigo_base})
+								}
+							});
+						}else{
+							throw new Error({stack: 'No se encuentra en la base de datos el producto: ' + producto.nombre_final + ' Código: ' + producto.codigo_final})
+						}
+					});
+				}).then(function (result) {
+					if (index === (array.length - 1)) {
+						res.json({ mensaje: "¡Formulación de Productos actualizados satisfactoriamente!" });
+					}
+				}).catch(function (err) {
+					res.json({ hasError: true, mensaje: err.stack });
 				});
 			});
 		});
@@ -870,7 +938,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			});
 		});
 
-		router.route('/producto/empresa/:id_empresa/siguiente-codigo')
+	router.route('/producto/empresa/:id_empresa/siguiente-codigo')
 		.get(function (req, res) {
 			sequelize.query("SELECT MAX(CAST(SUBSTRING(codigo, 3, 5) AS UNSIGNED)) as ultimo_codigo FROM agil_producto where empresa=" + req.params.id_empresa, { type: sequelize.QueryTypes.SELECT })
 				.then(function (dato) {

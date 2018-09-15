@@ -356,7 +356,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
     }
     function verificarDatosAliasExcel(alias, empresa, t, i) {
         return AliasClienteEmpresa.find({
-            where: { $or: [{ nombre: { $like: '%' + alias.nombre } }, { codigo: alias.codigo }], id_empresa: empresa },
+            where: { $or: [{ nombre: { $like: alias.nombre + '%' } }, { codigo: alias.codigo }], id_empresa: empresa },
             transaction: t
         }).then(function (aliasEncontrado) {
             if (aliasEncontrado) {
@@ -365,7 +365,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                 })
             } else {
                 return Cliente.find({
-                    where: { razon_social: { $like: '%' + alias.empresaCliente }, id_empresa: empresa },
+                    where: { razon_social: { $like: alias.empresaCliente + '%' }, id_empresa: empresa },
                     transaction: t
                 }).then(function (clienteEncontrado) {
                     if (clienteEncontrado) {
@@ -386,13 +386,13 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
     }
     function verificarDatosGerenciasExcel(gerencia, empresa, t, i) {
         return Cliente.find({
-            where: { razon_social: { $like: '%' + gerencia.empresaCliente } },
+            where: { razon_social: { $like: gerencia.empresaCliente + '%'} },
             transaction: t
         }).then(function (aliasEncontrado) {
             if (aliasEncontrado) {
                 gerencia.empresaCliente = aliasEncontrado.dataValues
                 return GerenciasClienteEmpresa.find({
-                    where: { $or: [{ nombre: { $like: '%' + gerencia.nombre }, codigo: gerencia.codigo }], id_empresa: empresa },
+                    where: { $or: [{ nombre: { $like: gerencia.nombre + '%'}, codigo: gerencia.codigo }], id_empresa: empresa },
                     transaction: t
                 }).then(function (gerenciaEncontrado) {
                     if (gerenciaEncontrado) {
@@ -416,13 +416,13 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
     }
     function verificarDatosComidasExcel(comida, empresa, t, i) {
         return Cliente.find({
-            where: { razon_social: { $like: '%' + comida.empresaCliente } },
+            where: { razon_social: { $like: comida.empresaCliente + "%"} },
             transaction: t
         }).then(function (aliasEncontrado) {
             if (aliasEncontrado) {
                 comida.empresaCliente = aliasEncontrado.dataValues
                 return horarioComidasClienteEmpresa.find({
-                    where: { $or: [{ nombre: { $like: comida.nombre }, codigo: comida.codigo }], id_empresa: empresa, id_cliente: aliasEncontrado.id },
+                    where: { $or: [{ nombre: { $like: comida.nombre + "%" }, codigo: comida.codigo }], id_empresa: empresa, id_cliente: aliasEncontrado.id },
                     transaction: t
                 }).then(function (comidaEncontrada) {
                     if (comidaEncontrada) {
@@ -446,13 +446,13 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
     }
     function verificarDatosPreciosExcel(precio, empresa, t, i) {
         return Cliente.find({
-            where: { razon_social: { $like: '%' + precio.empresaCliente } },
+            where: { razon_social: { $like:  precio.empresaCliente + '%' } },
             transaction: t
         }).then(function (aliasEncontrado) {
             if (aliasEncontrado) {
                 precio.empresaCliente = aliasEncontrado.dataValues
                 return horarioComidasClienteEmpresa.find({
-                    where: { nombre: { $like: '%' + precio.nombre }, id_empresa: empresa },
+                    where: { nombre: { $like: precio.nombre + '%' }, id_empresa: empresa },
                     transaction: t
                 }).then(function (comidaEncontrada) {
                     if (comidaEncontrada) {

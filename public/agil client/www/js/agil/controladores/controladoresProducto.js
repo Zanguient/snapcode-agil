@@ -4,7 +4,7 @@ angular.module('agil.controladores')
 		$route, blockUI, Producto, Productos, ProductosPaginador, ProductosEmpresa,
 		ClasesTipo, Clases, ProductoKardex, ProductosEmpresaCreacion, DatoCodigoSiguienteProductoEmpresa, ListaProductosEmpresa,
 		Paginator, ListaCuentasComprobanteContabilidad, DatosProducto, CatalogoProductos,
-		ListaGruposProductoEmpresa,FieldViewer, ListaSubGruposProductoEmpresa, ListaGruposProductoUsuario, ReporteProductosKardex) {
+		ListaGruposProductoEmpresa,FieldViewer, ListaSubGruposProductoEmpresa, ListaGruposProductoUsuario, ReporteProductosKardex, ProductosEmpresaCreacionFormulacion) {
 		blockUI.start();
 		$scope.idModalWizardProductoKardex = 'modal-wizard-producto-kardex';
 		$scope.idModalWizardProductoEdicion = 'modal-wizard-producto-edicion';
@@ -1173,6 +1173,7 @@ angular.module('agil.controladores')
 						producto.descuento = worksheet['N' + row] != undefined && worksheet['N' + row] != "" ? parseFloat(worksheet['N' + row].v.toString()) : null;
 						producto.descuento_fijo = worksheet['O' + row] != undefined && worksheet['N' + row] != "" ? (parseInt(worksheet['O' + row].v.toString()) == 1 ? true : false) : null;
 						producto.marca = worksheet['P' + row] != undefined && worksheet['P' + row] != "" ? worksheet['P' + row].v.toString() : null;
+						producto.tipo_producto = worksheet['Q' + row] != undefined && worksheet['Q' + row] != "" ? worksheet['Q' + row].v.toString() : null;
 						productos.push(producto);
 						row++;
 						i++;
@@ -1187,6 +1188,52 @@ angular.module('agil.controladores')
 		$scope.guardarProductos = function (productos) {
 			var productosEmpresa = new ProductosEmpresaCreacion({ productos: productos, id_empresa: $scope.usuario.id_empresa });
 			productosEmpresa.$save(function (producto) {
+				blockUI.stop();
+				$scope.mostrarMensaje('Guardado Exitosamente!');
+				$scope.recargarItemsTabla();
+			}, function (error) {
+				blockUI.stop();
+				$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+				$scope.recargarItemsTabla();
+			});
+		}
+
+		$scope.subirExcelFormulacionProductos = function (event) {
+			var files = event.target.files;
+			var i, f;
+			for (i = 0, f = files[i]; i != files.length; ++i) {
+				var reader = new FileReader();
+				var name = f.name;
+				reader.onload = function (e) {
+					blockUI.start();
+					var data = e.target.result;
+
+					var workbook = XLSX.read(data, { type: 'binary' });
+					var first_sheet_name = workbook.SheetNames[0];
+					var row = 2, i = 0;
+					var worksheet = workbook.Sheets[first_sheet_name];
+					var productos = [];
+					do {
+						var producto = {};
+						producto.codigo_final = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+						producto.nombre_final = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+						producto.nombre_base = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+						producto.codigo_base = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? parseFloat(worksheet['D' + row].v.toString()) : null;
+						producto.formulacion = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
+						productos.push(producto);
+						row++;
+						i++;
+					} while (worksheet['A' + row] != undefined);
+					$scope.guardarFormulacionProductos(productos);
+					blockUI.stop();
+				};
+				reader.readAsBinaryString(f);
+			}
+		}
+
+		$scope.guardarFormulacionProductos = function (productos) {
+			var formulacionProductosEmpresa = new ProductosEmpresaCreacionFormulacion({ productos: productos, id_empresa: $scope.usuario.id_empresa });
+			formulacionProductosEmpresa.$save(function (producto) {
 				blockUI.stop();
 				$scope.mostrarMensaje('Guardado Exitosamente!');
 				$scope.recargarItemsTabla();

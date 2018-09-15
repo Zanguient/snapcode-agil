@@ -7,13 +7,20 @@
 			Nuevo
 		</button>
 		<div class="fileUpload btn btn-primary btn-success">
-			<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
+			<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar Productos</span>
+			<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelProductos" />&nbsp&nbsp
+		</div>
+		<div class="fileUpload btn btn-primary btn-success">
+			<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar Formulacion Productos</span>
 			<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelProductos" />&nbsp&nbsp
 		</div>
 		<a href="/recursos/EJEMPLO-DATOS-PRODUCTOS.xlsx" class="btn btn-primary btn-danger">
 			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
-			Ejemplo Importacion
+			Ejemplo Importacion Productos
 		</a>
+		<a href="/recursos/EJEMPLO-DATOS-FORMULACION-PRODUCTO.xlsx" class="btn btn-primary btn-danger">
+			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+			Ejemplo Importacion Formulacion </a>
 		<button type="button" class="btn btn-yellow" ng-click="descargarCatalogo()">Descargar catálogo productos</button>
 		<button type="button" class="btn btn-yellow" ng-click="abrirModalReporteProductosKardex()">Reporte Productos Kardex</button>
 		<div class="clearfix">
