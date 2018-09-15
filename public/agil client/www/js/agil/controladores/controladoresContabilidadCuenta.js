@@ -767,9 +767,9 @@ angular.module('agil.controladores')
 						cuenta.descripcion = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
 						cuenta.clasificacion.nombre = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
 						cuenta.tipoCuenta.nombre = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
-						cuenta.debe = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? parseInt(worksheet['F' + row].v.toString()) : null;
-						cuenta.haber = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? parseInt(worksheet['G' + row].v.toString()) : null;
-						cuenta.saldo = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? parseInt(worksheet['H' + row].v.toString()) : null;
+						cuenta.debe = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? parseFloat(worksheet['F' + row].v.toString()) : null;
+						cuenta.haber = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? parseFloat(worksheet['G' + row].v.toString()) : null;
+						cuenta.saldo = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? parseFloat(worksheet['H' + row].v.toString()) : null;
 						cuenta.bimonetaria = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? worksheet['I' + row].v.toString() : null;
 						if (cuenta.bimonetaria != "SI") {
 							cuenta.bimonetaria = 0;
