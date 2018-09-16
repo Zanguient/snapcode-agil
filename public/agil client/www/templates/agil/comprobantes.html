@@ -259,8 +259,25 @@
                                 <td ng-if="fieldViewer.getConfiguration().fecha.show"></td>
                                 <td ng-if="fieldViewer.getConfiguration().sucursal.show"></td>
                                 <td ng-if="fieldViewer.getConfiguration().gloza.show"></td>
-                                <td ng-if="fieldViewer.getConfiguration().hora_fecha.show">Toltal</td>
+                                <td ng-if="fieldViewer.getConfiguration().hora_fecha.show">Total</td>
                                 <td ng-if="fieldViewer.getConfiguration().importe.show">{{totalImporte|number:2}}</td>
+                                <td ng-if="fieldViewer.getConfiguration().usuario.show"></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td ng-if="fieldViewer.getConfiguration().comprobante.show"></td>
+                                <td ng-if="fieldViewer.getConfiguration().numero.show"></td>
+                                <td ng-if="fieldViewer.getConfiguration().fecha.show"></td>
+                                <td ng-if="fieldViewer.getConfiguration().sucursal.show"></td>
+                                <td ng-if="fieldViewer.getConfiguration().gloza.show"></td>
+                                <td ng-if="fieldViewer.getConfiguration().hora_fecha.show">Total General</td>
+                                <td ng-if="fieldViewer.getConfiguration().importe.show">{{totalGeneralComprobantes|number:2}}</td>
                                 <td ng-if="fieldViewer.getConfiguration().usuario.show"></td>
                                 <td></td>
                             </tr>

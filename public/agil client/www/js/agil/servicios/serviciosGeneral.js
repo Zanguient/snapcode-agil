@@ -654,6 +654,21 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	.factory('ComprobanteTotalGeneral', function ($resource) {
+		return $resource(restServer + "comprobantes/totalGeneral/empresa/:id_empresa");
+	})
+	.factory('ComprobanteTotalGeneralEmpresa', ['ComprobanteTotalGeneral', '$q', function (ComprobanteTotalGeneral, $q) {
+		var res = function (empresa) {
+			var delay = $q.defer();
+			ComprobanteTotalGeneral.get({ id_empresa: empresa}, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
 	.factory('ComprobanteRevisarDatosPaginador', function ($resource) {
 		return $resource(restServer + "comprobantes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion/busqueda/:texto_busqueda");
 	})

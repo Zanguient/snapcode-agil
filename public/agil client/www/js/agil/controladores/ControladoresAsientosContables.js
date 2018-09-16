@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
     .controller('ControladorComprobantes', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl, Paginator, ComprobantePaginador, ClasesTipo, ListaCuentasComprobanteContabilidad, ListaAsientosComprobanteContabilidad, NuevoComprobanteContabilidad, ClasesTipo, LibroMayorCuenta, ComprobanteRevisarPaginador,
-        AsignarComprobanteFavorito, Diccionario,ObtenerCambioMoneda, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante, ListaCambioMoneda, ActualizarCambioMoneda,GuardarComprobantesImportados) {
+        AsignarComprobanteFavorito, Diccionario,ObtenerCambioMoneda, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante, ListaCambioMoneda, ActualizarCambioMoneda,GuardarComprobantesImportados, ComprobanteTotalGeneralEmpresa) {
 
         blockUI.start();
         $scope.asientoNuevo = false
@@ -56,6 +56,13 @@ angular.module('agil.controladores')
                 }
             }, $scope.aplicacion.aplicacion.id);
             $scope.fieldViewer.updateObject();
+        }
+
+        $scope.obtenerTotalGeneral = function name(params) {
+            var prom = ComprobanteTotalGeneralEmpresa($scope.usuario.id_empresa)
+            prom.then(function (res) {
+                $scope.totalGeneralComprobantes = res.total[0].total
+            })
         }
 
         $scope.obtenerSucursales = function () {
@@ -347,7 +354,7 @@ angular.module('agil.controladores')
                     var comprobantes = [];
                     var codigo = "", fecha = "", tipo = ""
                     do {
-                        row2 = 2
+                        row2 = row
                         var comprobante = { asientosContables: [] };
                         comprobante.tipoCambio=$scope.moneda
                         comprobante.tipo_comprobante = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
@@ -380,7 +387,7 @@ angular.module('agil.controladores')
                             }
                             row2++;
                             /*  i++; */
-                        } while (worksheet['B' + row2] != undefined);
+                        } while (worksheet['G' + row2].v.toString() != codigo);
 
 
 

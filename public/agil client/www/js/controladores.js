@@ -1561,8 +1561,10 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			$scope.alertasProformas = []
 			var prom = alertasProformasLista(idEmpresa)
 			prom.then(function (proformas) {
-				$scope.alertasProformas = proformas.proformas
-				$scope.vencimientoTotal += $scope.alertasProformas.length
+				if (!proformas.hasErr) {
+					$scope.alertasProformas = proformas.proformas
+					$scope.vencimientoTotal += $scope.alertasProformas.length
+				}
 			}).catch(function (err) {
 				$scope.mostrarMensaje(err.data !== undefined ? err.data : err.message)
 			})
@@ -1929,9 +1931,9 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 		}
 
-		$scope.guardarDespachos = function (id_almacen_despacho, id_sucursal_despacho,fecha) {
+		$scope.guardarDespachos = function (id_almacen_despacho, id_sucursal_despacho, fecha) {
 			blockUI.start();
-			
+
 			GuardarGtmDetalleDespachoAlerta.update({ id_empresa: $scope.usuario.id_empresa, fecha: fecha }, { detalles_despacho: $scope.gtm_detalles_despacho_seleccionados, id_almacen: id_almacen_despacho, id_sucursal: id_sucursal_despacho }, function (res) {
 
 
@@ -1963,15 +1965,15 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 				$scope.gtm_detalles_despacho_seleccionados[i].id_estibaje = asignacion.id_estibaje;
 				$scope.gtm_detalles_despacho_seleccionados[i].id_grupo_estibaje = asignacion.id_grupo_estibaje;
 				$scope.gtm_detalles_despacho_seleccionados[i].id_transportista = asignacion.id_transportista;
-				
+
 			}
-			var fecha=new Date($scope.convertirFecha(asignacion.fecha))
-			$scope.guardarDespachos($scope.id_almacen_despacho, $scope.id_sucursal_despacho,fecha)
+			var fecha = new Date($scope.convertirFecha(asignacion.fecha))
+			$scope.guardarDespachos($scope.id_almacen_despacho, $scope.id_sucursal_despacho, fecha)
 			$scope.cerrarAsignacionDespacho();
 		}
 
 		$scope.abrirAsignacionDespacho = function (model, form, sucursal, almacen) {
-			if (form.$valid) {				
+			if (form.$valid) {
 				$scope.id_almacen_despacho = almacen
 				$scope.id_sucursal_despacho = sucursal
 				$scope.id_sucursal_despacho = sucursal

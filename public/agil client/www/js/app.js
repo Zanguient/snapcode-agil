@@ -266,6 +266,10 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
                 controller:'ControladorEstadoResultados',
                 templateUrl:'templates/estadosFinancierosAgil/estadoRultado-EEFF.html'
             })
+            .when('/estado-evolucion-patrimonio', {
+                controller:'controladoEvolucionPatrimonioNeto',
+                templateUrl:'templates/estadosFinancierosAgil/estado-evolucion-patrimonio-neto.html'
+            })
         .otherwise({
           redirectTo:'/'
         });

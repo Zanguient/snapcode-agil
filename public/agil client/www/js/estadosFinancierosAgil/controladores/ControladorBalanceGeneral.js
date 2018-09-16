@@ -839,8 +839,6 @@ angular.module('agil.controladores')
 																doc.font('Helvetica', 8);
 															}
 														}
-
-
 													}
 													if (items == itemsPorPagina) {
 														doc.addPage({ margin: 0, bufferPages: true });

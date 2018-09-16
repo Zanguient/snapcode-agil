@@ -335,6 +335,14 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				})
 			}) */
 
+	router.route('/comprobantes/totalGeneral/empresa/:id_empresa')
+		.get(function (req, res) {
+			var condicionSucursal = { id_empresa: req.params.id_empresa };
+			sequelize.query("Select SUM(importe) as total from agil_comprobante_contabilidad inner join agil_sucursal on agil_sucursal.id = agil_comprobante_contabilidad.sucursal where agil_sucursal.empresa =" + req.params.id_empresa,{ type: sequelize.QueryTypes.SELECT }).then(function (result) {
+				res.json({total:result})
+			})
+		});
+
 	router.route('/comprobantes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion/busqueda/:texto_busqueda')
 		.get(function (req, res) {
 			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
@@ -723,7 +731,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 		var arrayDatos = [], promises = []
 		comprobante.asientosContables.forEach(function (dato, index, array) {
 			promises.push(ContabilidadCuenta.find({
-				where: { codigo: dato.numero_cuenta, id_empresa: req.params.id_empresa },transaction:t
+				where: { codigo: dato.numero_cuenta, id_empresa: req.params.id_empresa }, transaction: t
 			}).then(function (cuentaEncontrada) {
 				dato.cuentaEncontrada = cuentaEncontrada
 				arrayDatos.push(dato)

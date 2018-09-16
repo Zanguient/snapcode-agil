@@ -688,7 +688,6 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 	router.route('/contabilidad-cuentas/empresa/:id_empresa/clasificacion/:id_clasificacion/tipo/:id_tipo/monto/:monto/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/columna/:columna/direccion/:direccion')
 		.get(/*ensureAuthorized,*/function (req, res) {
 			var condicionCuenta = {}, ordenArreglo = [], paginas;
-
 			if (req.params.columna == "clasificacion") {
 				ordenArreglo.push({ model: ClasificacionCuenta, as: 'clasificacion' });
 				req.params.columna = "nombre";
