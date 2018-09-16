@@ -506,11 +506,18 @@ angular.module('agil.controladores')
                     // doc.rect(50, y-7, 520, 0).stroke();
                     doc.addPage({ margin: 0, bufferPages: true });
                     y = 130;
-                    altura = 7;
+                    altura = 0;
                     items = 0;
                     pagina = pagina + 1;
                     $scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
                     doc.font('Helvetica', 8);
+                }
+
+                if (itemsPorPagina < items) {
+                    doc.rect(295, 123, 70, altura).stroke();
+                    doc.rect(365, 123, 70, altura).stroke();
+                    doc.rect(435, 123, 70, altura).stroke();
+                    doc.rect(505, 123, 65, altura).stroke();
                 }
 
                 // doc.text("TOTAL " + cuenta.nombre, 90, y);
