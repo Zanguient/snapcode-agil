@@ -265,7 +265,7 @@ angular.module('agil.controladores')
                 doc.text(reporte[index].reservaLegal !== '-' ? $scope.number_format(reporte[index].reservaLegal,2) : '', 410, y, { width: 120 });
                 doc.text(reporte[index].ajusteReservasPatrimoniales !== '-' ? $scope.number_format(reporte[index].ajusteReservasPatrimoniales, 2) : '', 490, y, { width: 120 });
                 doc.text(reporte[index].resultadoAcumulados !== '-' ? $scope.number_format(reporte[index].resultadoAcumulados, 2) : '', 570, y, { width: 120 });
-                doc.text(totalrow.toFixed(2), 710, y, { width: 120 });
+                doc.text($scope.number_format(totalrow, 2), 710, y, { width: 120 });
                 y = y + 20;
             }
             doc.text('Saldos al 31 de Diciembre de ' + $scope.configuracionImpresion.gestion.nombre, 60, y, { width: 200 });
