@@ -1,7 +1,8 @@
 angular.module('agil.controladores')
 
     .controller('ControladorComprobantes', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl, Paginator, ComprobantePaginador, ClasesTipo, ListaCuentasComprobanteContabilidad, ListaAsientosComprobanteContabilidad, NuevoComprobanteContabilidad, ClasesTipo, LibroMayorCuenta, ComprobanteRevisarPaginador,
-        AsignarComprobanteFavorito, Diccionario,ObtenerCambioMoneda, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante, ListaCambioMoneda, ActualizarCambioMoneda,GuardarComprobantesImportados) {
+        AsignarComprobanteFavorito, Diccionario, ObtenerCambioMoneda, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante, ListaCambioMoneda, ActualizarCambioMoneda, GuardarComprobantesImportados,
+        ComprobanteTotalGeneralEmpresa, EdicionComprobanteContabilidad) {
 
         blockUI.start();
         $scope.asientoNuevo = false
@@ -58,6 +59,13 @@ angular.module('agil.controladores')
             $scope.fieldViewer.updateObject();
         }
 
+
+        $scope.obtenerTotalGeneral = function name(params) {
+            var prom = ComprobanteTotalGeneralEmpresa($scope.usuario.id_empresa)
+            prom.then(function (res) {
+                $scope.totalGeneralComprobantes = res.total[0].total
+            })
+        }
         $scope.obtenerSucursales = function () {
             var sucursales = [];
             for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
@@ -95,6 +103,7 @@ angular.module('agil.controladores')
             $scope.paginator.filter.fin = new Date($scope.convertirFecha($scope.paginator.filter.fin));
             var promise = ComprobantePaginador($scope.paginator);
             $scope.totalImporte = 0;
+            $scope.obtenerTotalGeneral()
             promise.then(function (data) {
                 $scope.paginator.setPages(data.paginas);
                 $scope.comprobantes = data.comprobantes;
@@ -175,23 +184,28 @@ angular.module('agil.controladores')
              }
          } */
         $scope.verComprobante = function (comprobante, view) {
-            console.log(comprobante)
 
-            if (view) {
-                $scope.crearNuevoComprobante(null, null, comprobante, true)
-            } else {
+            var promesa = EdicionComprobanteContabilidad(comprobante.id)
+            promesa.then(function (dato) {
 
-                if (comprobante.abierto) {
-                    $scope.obtenerCambioMoneda2($scope.fechaATexto(comprobante.fecha))
-                    $scope.crearNuevoComprobante(null, null, comprobante)
+
+                console.log(comprobante)
+
+                if (view) {
+                    $scope.crearNuevoComprobante(null, null, dato.comprobante, true)
                 } else {
-                    if (!comprobante.id) {
-                        $scope.crearNuevoComprobante(null, null, comprobante)
+
+                    if (comprobante.abierto) {
+                        $scope.obtenerCambioMoneda2($scope.fechaATexto(dato.comprobante.fecha))
+                        $scope.crearNuevoComprobante(null, null, dato.comprobante)
+                    } else {
+                        if (!dato.comprobante.id) {
+                            $scope.crearNuevoComprobante(null, null, dato.comprobante)
+                        }
                     }
+
                 }
-
-            }
-
+            })
         }
         $scope.ComvertirDebeEnDolar = function (asiento) {
             asiento.debe_sus = Math.round((asiento.debe_bs / $scope.valorDolar) * 10000) / 10000;
@@ -349,16 +363,16 @@ angular.module('agil.controladores')
                     do {
                         row2 = row
                         var comprobante = { asientosContables: [] };
-                        comprobante.tipoCambio=$scope.moneda
+                        comprobante.tipoCambio = $scope.moneda
                         comprobante.tipo_comprobante = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
                         tipo = comprobante.tipo_comprobante
                         comprobante.codigo = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
                         codigo = comprobante.codigo
                         comprobante.fecha = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? new Date($scope.fecha_excel_angular(worksheet['C' + row].v.toString())) : null;
-                        comprobante.fechaActual=new Date()
+                        comprobante.fechaActual = new Date()
                         comprobante.sucursal = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
                         fecha = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? $scope.fecha_excel_angular(worksheet['C' + row].v.toString()) : null;
-                        comprobante.importe=0
+                        comprobante.importe = 0
                         comprobante.gloza = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
                         do {
                             var asiento = {}
@@ -366,16 +380,16 @@ angular.module('agil.controladores')
                             asiento.codigo = worksheet['G' + row2] != undefined && worksheet['G' + row2] != "" ? worksheet['G' + row2].v.toString() : null;
                             asiento.gloza = worksheet['H' + row2] != undefined && worksheet['H' + row2] != "" ? worksheet['H' + row2].v.toString() : null;
                             asiento.debe_bs = worksheet['I' + row2] != undefined && worksheet['I' + row2] != "" ? parseFloat(worksheet['I' + row2].v.toString()) : null;
-                            asiento.haber_bs = worksheet['J' + row2] != undefined && worksheet['J' + row2] != "" ?  parseFloat(worksheet['J' + row2].v.toString()) : null;
-                            asiento.debe_sus =Math.round((asiento.debe_bs / $scope.moneda.dolar) * 10000) / 10000;
-                            asiento.haber_sus =Math.round((asiento.haber_bs / $scope.moneda.dolar) * 10000) / 10000;
-                            asiento.eliminado=false
+                            asiento.haber_bs = worksheet['J' + row2] != undefined && worksheet['J' + row2] != "" ? parseFloat(worksheet['J' + row2].v.toString()) : null;
+                            asiento.debe_sus = Math.round((asiento.debe_bs / $scope.moneda.dolar) * 10000) / 10000;
+                            asiento.haber_sus = Math.round((asiento.haber_bs / $scope.moneda.dolar) * 10000) / 10000;
+                            asiento.eliminado = false
                             var codigoPrueba = worksheet['B' + row2] != undefined && worksheet['B' + row2] != "" ? parseInt(worksheet['B' + row2].v.toString()) : null;
                             var fechaPrueba = worksheet['C' + row2] != undefined && worksheet['C' + row2] != "" ? $scope.fecha_excel_angular(worksheet['C' + row2].v.toString()) : null;
                             var tipoPrueba = worksheet['A' + row2] != undefined && worksheet['A' + row2] != "" ? worksheet['A' + row2].v.toString() : null;
 
                             if (codigoPrueba == codigo && fechaPrueba == fecha && tipo == tipoPrueba) {
-                                comprobante.importe+=asiento.debe_bs
+                                comprobante.importe += asiento.debe_bs
                                 comprobante.asientosContables.push(asiento);
                             }
                             row2++;
@@ -387,7 +401,7 @@ angular.module('agil.controladores')
                         } else if (comprobantes[comprobantes.length - 1].codigo != codigo || comprobantes[comprobantes.length - 1].tipo_comprobante != tipo) {
                             comprobantes.push(comprobante);
                         }
-                        row=row2;
+                        row = row2;
                         console.log(row)
                         i++;
 
@@ -399,12 +413,12 @@ angular.module('agil.controladores')
             }
         }
         $scope.GuardarComprobantesImportacion = function (comprobantes) {
-            var promesa =GuardarComprobantesImportados(comprobantes,$scope.usuario.id,$scope.usuario.id_empresa)
-            promesa.then(function(dato){
+            var promesa = GuardarComprobantesImportados(comprobantes, $scope.usuario.id, $scope.usuario.id_empresa)
+            promesa.then(function (dato) {
                 blockUI.stop()
                 $scope.mostrarMensaje(dato.mensaje)
             })
-            
+
             blockUI.stop();
         }
         $scope.inicio();

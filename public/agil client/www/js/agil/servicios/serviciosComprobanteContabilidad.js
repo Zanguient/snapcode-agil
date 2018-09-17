@@ -23,6 +23,25 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	.factory('EditarComprobanteContabilidad', function ($resource) {
+		return $resource(restServer + "comprobante-contabilidad-edicion/id/:id", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+	.factory('EdicionComprobanteContabilidad', ['EditarComprobanteContabilidad', '$q', function (EditarComprobanteContabilidad, $q) {
+		var res = function (id) {
+			var delay = $q.defer();
+			EditarComprobanteContabilidad.get({ id: id }, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
+	
 	.factory('CambioMonedas', function ($resource) {
 		return $resource(restServer + "comprobante-contabilidad/monedaCambio/mes/:mes/anio/:anio");
 	})
