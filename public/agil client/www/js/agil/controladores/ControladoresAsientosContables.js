@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 
     .controller('ControladorComprobantes', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl, Paginator, ComprobantePaginador, ClasesTipo, ListaCuentasComprobanteContabilidad, ListaAsientosComprobanteContabilidad, NuevoComprobanteContabilidad, ClasesTipo, LibroMayorCuenta, ComprobanteRevisarPaginador,
-        AsignarComprobanteFavorito, Diccionario,ObtenerCambioMoneda, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante, ListaCambioMoneda, ActualizarCambioMoneda,GuardarComprobantesImportados, ComprobanteTotalGeneralEmpresa) {
+        AsignarComprobanteFavorito, Diccionario,ObtenerCambioMoneda, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante, ListaCambioMoneda, ActualizarCambioMoneda,GuardarComprobantesImportados) {
 
         blockUI.start();
         $scope.asientoNuevo = false
@@ -37,7 +37,6 @@ angular.module('agil.controladores')
             $scope.obtenerGestiones();
             $scope.obtenerAnios("2016")
             $scope.obtenerCambioDolar()
-            $scope.obtenerTotalGeneral()
         }
 
         $scope.obtenerColumnasAplicacion = function () {
@@ -57,13 +56,6 @@ angular.module('agil.controladores')
                 }
             }, $scope.aplicacion.aplicacion.id);
             $scope.fieldViewer.updateObject();
-        }
-
-        $scope.obtenerTotalGeneral = function name(params) {
-            var prom = ComprobanteTotalGeneralEmpresa($scope.usuario.id_empresa)
-            prom.then(function (res) {
-                $scope.totalGeneralComprobantes = res.total[0].total
-            })
         }
 
         $scope.obtenerSucursales = function () {
@@ -103,7 +95,6 @@ angular.module('agil.controladores')
             $scope.paginator.filter.fin = new Date($scope.convertirFecha($scope.paginator.filter.fin));
             var promise = ComprobantePaginador($scope.paginator);
             $scope.totalImporte = 0;
-            $scope.obtenerTotalGeneral()
             promise.then(function (data) {
                 $scope.paginator.setPages(data.paginas);
                 $scope.comprobantes = data.comprobantes;
@@ -356,7 +347,7 @@ angular.module('agil.controladores')
                     var comprobantes = [];
                     var codigo = "", fecha = "", tipo = ""
                     do {
-                        row2 = 2
+                        row2 = row
                         var comprobante = { asientosContables: [] };
                         comprobante.tipoCambio=$scope.moneda
                         comprobante.tipo_comprobante = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
@@ -369,52 +360,39 @@ angular.module('agil.controladores')
                         fecha = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? $scope.fecha_excel_angular(worksheet['C' + row].v.toString()) : null;
                         comprobante.importe=0
                         comprobante.gloza = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
-                        comprobantes.push(comprobante);
+                        do {
+                            var asiento = {}
+                            asiento.numero_cuenta = worksheet['F' + row2] != undefined && worksheet['F' + row2] != "" ? worksheet['F' + row2].v.toString() : null;
+                            asiento.codigo = worksheet['G' + row2] != undefined && worksheet['G' + row2] != "" ? worksheet['G' + row2].v.toString() : null;
+                            asiento.gloza = worksheet['H' + row2] != undefined && worksheet['H' + row2] != "" ? worksheet['H' + row2].v.toString() : null;
+                            asiento.debe_bs = worksheet['I' + row2] != undefined && worksheet['I' + row2] != "" ? parseFloat(worksheet['I' + row2].v.toString()) : null;
+                            asiento.haber_bs = worksheet['J' + row2] != undefined && worksheet['J' + row2] != "" ?  parseFloat(worksheet['J' + row2].v.toString()) : null;
+                            asiento.debe_sus =Math.round((asiento.debe_bs / $scope.moneda.dolar) * 10000) / 10000;
+                            asiento.haber_sus =Math.round((asiento.haber_bs / $scope.moneda.dolar) * 10000) / 10000;
+                            asiento.eliminado=false
+                            var codigoPrueba = worksheet['B' + row2] != undefined && worksheet['B' + row2] != "" ? parseInt(worksheet['B' + row2].v.toString()) : null;
+                            var fechaPrueba = worksheet['C' + row2] != undefined && worksheet['C' + row2] != "" ? $scope.fecha_excel_angular(worksheet['C' + row2].v.toString()) : null;
+                            var tipoPrueba = worksheet['A' + row2] != undefined && worksheet['A' + row2] != "" ? worksheet['A' + row2].v.toString() : null;
 
-                        // do {
-                        //     var asiento = {}
-                        //     asiento.numero_cuenta = worksheet['F' + row2] != undefined && worksheet['F' + row2] != "" ? worksheet['F' + row2].v.toString() : null;
-                        //     asiento.codigo = worksheet['G' + row2] != undefined && worksheet['G' + row2] != "" ? worksheet['G' + row2].v.toString() : null;
-                        //     asiento.gloza = worksheet['H' + row2] != undefined && worksheet['H' + row2] != "" ? worksheet['H' + row2].v.toString() : null;
-                        //     asiento.debe_bs = worksheet['I' + row2] != undefined && worksheet['I' + row2] != "" ? parseFloat(worksheet['I' + row2].v.toString()) : null;
-                        //     asiento.haber_bs = worksheet['J' + row2] != undefined && worksheet['J' + row2] != "" ?  parseFloat(worksheet['J' + row2].v.toString()) : null;
-                        //     asiento.debe_sus =Math.round((asiento.debe_bs / $scope.moneda.dolar) * 10000) / 10000;
-                        //     asiento.haber_sus =Math.round((asiento.haber_bs / $scope.moneda.dolar) * 10000) / 10000;
-                        //     asiento.eliminado=false
-                        //     var codigoPrueba = worksheet['B' + row2] != undefined && worksheet['B' + row2] != "" ? parseInt(worksheet['B' + row2].v.toString()) : null;
-                        //     var fechaPrueba = worksheet['C' + row2] != undefined && worksheet['C' + row2] != "" ? $scope.fecha_excel_angular(worksheet['C' + row2].v.toString()) : null;
-                        //     var tipoPrueba = worksheet['A' + row2] != undefined && worksheet['A' + row2] != "" ? worksheet['A' + row2].v.toString() : null;
-                        //     if (codigoPrueba == codigo && fechaPrueba == fecha && tipo == tipoPrueba) {
-                        //         comprobante.importe+=asiento.debe_bs
-                        //         comprobante.asientosContables.push(asiento);
-                        //     }
-                        //     row2++;
-                        //     /*  i++; */
-                        // } while (worksheet['G' + row2] != undefined);
-                        // if (comprobantes.length == 0) {
-                        //     comprobantes.push(comprobante);
-                        // } else if (comprobantes[comprobantes.length - 1].codigo != codigo || comprobantes[comprobantes.length - 1].tipo_comprobante != tipo) {
-                        //     comprobantes.push(comprobante);
-                        // }
-                        row++;
-                        i++;
-                    } while (worksheet['A' + row] != undefined);
-                    var paqueteComprovantes = []
-                    var indexComprobante = 1
-                    for (let index = 0; index < comprobantes.length; index++) {
-                        var paquete = comprobantes.filter(function (comp) {
-                            return comp.codigo === indexComprobante
-                        })
-                        if (paquete) {
-                            if (paquete.length) {
-                                paqueteComprovantes.push(paquete)
+                            if (codigoPrueba == codigo && fechaPrueba == fecha && tipo == tipoPrueba) {
+                                comprobante.importe+=asiento.debe_bs
+                                comprobante.asientosContables.push(asiento);
                             }
+                            row2++;
+                            var codigoPrueba2 = worksheet['B' + row2] != undefined && worksheet['B' + row2] != "" ? parseInt(worksheet['B' + row2].v.toString()) : null;
+                            /*  i++; */
+                        } while (codigoPrueba2 == codigo);
+                        if (comprobantes.length == 0) {
+                            comprobantes.push(comprobante);
+                        } else if (comprobantes[comprobantes.length - 1].codigo != codigo || comprobantes[comprobantes.length - 1].tipo_comprobante != tipo) {
+                            comprobantes.push(comprobante);
                         }
-                        indexComprobante += 1
-                        
-                    }
-                    $scope.GuardarComprobantesImportacion(comprobantes);
+                        row=row2;
+                        console.log(row)
+                        i++;
 
+                    } while (worksheet['A' + row] != undefined);
+                    $scope.GuardarComprobantesImportacion(comprobantes);
                 };
                 reader.readAsBinaryString(f);
 

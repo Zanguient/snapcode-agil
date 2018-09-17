@@ -575,63 +575,13 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 		.post(function (req, res) {
 			req.body.mensaje = ""
 			sequelize.transaction(function (t) {
-				var promises = [];
+				
 				var a = 0
-				req.body.forEach(function (comprobante, index, array) {
-					var inicio = new Date(comprobante.fecha)
-					var fin = new Date(comprobante.fecha)
-					inicio.setHours(0, 0, 0, 0);
-					fin.setHours(23, 59, 59, 999);
-					promises.push(ComprobanteContabilidad.find({
-						where: { fecha: { $between: [inicio, fin] }, numero: comprobante.codigo }, transaction: t,
-						include: [{ model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa } }, { model: Clase, as: 'tipoComprobante', where: { nombre: comprobante.tipo_comprobante } }]
-					}).then(function (comprobanteEncontrado) {
-						if (comprobanteEncontrado) {
-							return Tipo.find({
-
-								where: { nombre_corto: 'TCMC' }, transaction: t,
-							}).then(function (tipoEncontrado) {
-								return Clase.find({
-									where: { nombre: comprobante.tipo_comprobante, id_tipo: tipoEncontrado.id }, transaction: t,
-								}).then(function (tipoComprobanteEncontrado) {
-									return Sucursal.find({
-										transaction: t,
-										where: {
-											id_empresa: req.params.id_empresa,
-											nombre: comprobante.sucursal//your where conditions, or without them if you need ANY entry
-										}
-									}).then(function (SucursalEncontrada) {
-
-										return ActualizarComprobante(req, res, tipoComprobanteEncontrado, comprobante, comprobanteEncontrado, SucursalEncontrada, t)
-									});
-								});
-							});
-						} else {
-
-
-							return Tipo.find({
-
-								where: { nombre_corto: 'TCMC' }, transaction: t,
-							}).then(function (tipoEncontrado) {
-								return Clase.find({
-									where: { nombre: comprobante.tipo_comprobante, id_tipo: tipoEncontrado.id }, transaction: t,
-								}).then(function (tipoComprobanteEncontrado) {
-									return Sucursal.find({
-										transaction: t,
-										where: {
-											id_empresa: req.params.id_empresa,
-											nombre: comprobante.sucursal//your where conditions, or without them if you need ANY entry
-										}
-									}).then(function (SucursalEncontrada) {
-										return GuardarComprobante(req, res, tipoComprobanteEncontrado, comprobante, SucursalEncontrada, t)
-									});
-								});
-							});
-						}
-					}));
+				return Tipo.find({
+					where: { nombre_corto: 'TCMC' }, transaction: t,
+				}).then(function (tipoEncontrado) {
+					return recorrerComprobantes(req,res,t,tipoEncontrado)
 				});
-
-				return Promise.all(promises);
 
 			}).then(function (result) {
 				res.json({ mensaje: "Comprobantes Importados satisfactoriamente!" });
@@ -641,6 +591,58 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			});
 
 		})
+		
+		function recorrerComprobantes(req,res,t,tipoEncontrado){
+			var promises = [];
+			req.body.forEach(function (comprobante, index, array) {
+				var inicio = new Date(comprobante.fecha)
+				var fin = new Date(comprobante.fecha)
+				inicio.setHours(0, 0, 0, 0);
+				fin.setHours(23, 59, 59, 999);
+				promises.push(ComprobanteContabilidad.find({
+					where: { fecha: { $between: [inicio, fin] }, numero: comprobante.codigo }, transaction: t,
+					include: [{ model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa } }, { model: Clase, as: 'tipoComprobante', where: { nombre: comprobante.tipo_comprobante } }]
+				}).then(function (comprobanteEncontrado) {
+					if (comprobanteEncontrado) {
+
+						return Clase.find({
+							where: { nombre: comprobante.tipo_comprobante, id_tipo: tipoEncontrado.id }, transaction: t,
+						}).then(function (tipoComprobanteEncontrado) {
+							return Sucursal.find({
+								transaction: t,
+								where: {
+									id_empresa: req.params.id_empresa,
+									nombre: comprobante.sucursal//your where conditions, or without them if you need ANY entry
+								}
+							}).then(function (SucursalEncontrada) {
+
+								return ActualizarComprobante(req, res, tipoComprobanteEncontrado, comprobante, comprobanteEncontrado, SucursalEncontrada, t)
+							});
+						});
+
+					} else {
+
+
+
+						return Clase.find({
+							where: { nombre: comprobante.tipo_comprobante, id_tipo: tipoEncontrado.id }, transaction: t,
+						}).then(function (tipoComprobanteEncontrado) {
+							return Sucursal.find({
+								transaction: t,
+								where: {
+									id_empresa: req.params.id_empresa,
+									nombre: comprobante.sucursal//your where conditions, or without them if you need ANY entry
+								}
+							}).then(function (SucursalEncontrada) {
+								return GuardarComprobante(req, res, tipoComprobanteEncontrado, comprobante, SucursalEncontrada, t)
+							});
+						});
+
+					}
+				}));
+			});
+			return Promise.all(promises);
+		}
 	function ActualizarComprobante(req, res, tipoComprobanteEncontrado, comprobante, comprobanteEncontrado, SucursalEncontrada, t) {
 		return ComprobanteContabilidad.update({
 			id_tipo: tipoComprobanteEncontrado.id,
