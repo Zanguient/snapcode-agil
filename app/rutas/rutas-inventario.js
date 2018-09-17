@@ -62,6 +62,37 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			})
 		})
 
+		router.route('/obtenerDetalleVenta/empresa/:id_empresa/inicio/:inicio/fin/:fin')
+		.get(function (req, res) {
+			var inicio =  (req.params.inicio+"T00:00:00.000Z");//.split('/').reverse().join('-'); //inicio.setHours(0, 0, 0, 0, 0);
+			var fin = (req.params.fin+"T23:59:59.000Z");//.split('/').reverse().join('-'); //fin.setHours(23, 59, 59, 0, 0);
+			var condicionCompra = { fecha: { $between: [inicio, fin] } };
+			Venta.findAll({
+				where: condicionCompra,
+				include: [{
+					model: DetalleVenta, as: 'detallesVenta'
+				},
+				{
+					model: Cliente, as: 'cliente'
+				},
+				{
+					model: Movimiento, as: 'movimiento'
+				},
+				{
+					model: Almacen, as: 'almacen',
+					include: [
+						{
+							model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa }
+						}]
+				}
+				]
+			}).then(function (detalle) {
+				res.json(detalle);
+			}).catch(function (error) {
+				res.json([{ mensaje: error.stack }]);
+			})
+		})
+
 	router.route('/inventario/:id')
 		.put(function (req, res) {
 			Inventario.update({
@@ -328,7 +359,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			}).then(function (entity) {
 				Compra.findAll({
 					where: condicionCompra,
-					include: [/* {model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal }, */ {
+					include: [{
 						model: Movimiento, as: 'movimiento',
 						include: [{ model: Clase, as: 'clase', }]
 					},

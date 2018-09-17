@@ -186,6 +186,7 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])*/
+	
 	.factory('VentaEmpresaDatos', function ($resource) {
 		return $resource(restServer + "ventas/:id/empresa/:id_empresa", null,
 			{

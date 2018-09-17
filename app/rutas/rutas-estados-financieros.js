@@ -1,5 +1,6 @@
 module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, Tipo, Clase, ProveedorCuenta
-    , Proveedor, ClienteCuenta, Cliente, ClasificacionCuenta, ContabilidadCuenta, AsientoContabilidad, ComprobanteContabilidad, MonedaTipoCambio) {
+    , Proveedor, ClienteCuenta, Cliente, ClasificacionCuenta, ContabilidadCuenta, AsientoContabilidad, ComprobanteContabilidad, MonedaTipoCambio,ContabilidadCuentaAuxiliar,Usuario,
+    Persona,Sucursal,Empresa,NumeroLiteral ) {
 
     router.route('/gestiones/:id_empresa')
         .get(function (req, res) {
@@ -475,6 +476,7 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                 })
             }
         })
+
     router.route('/contabilidad-cuentas/empresa/:id_empresa/tipo_periodo/:periodo/tipo/:id_tipo/gestion/:gestion/mes/:mes/inicio/:inicio/fin/:fin/gestion_fin/:gestion_fin')
         .post(/*ensureAuthorized,*/function (req, res) {
             var condicionCuenta = {}, condicionComprobante = {};

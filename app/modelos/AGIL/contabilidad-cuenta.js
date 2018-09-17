@@ -91,11 +91,15 @@ module.exports = function (sequelize, Sequelize) {
 		cuenta_activo: {
 			type: Sequelize.BOOLEAN,
 			field: 'cuenta_activo'
-		},
+		}/*,
 		// estado_resultado:{
 		// 	type: Sequelize.BOOLEAN,
 		// 	field: 'estado_resultado'
 		// },
+		estado_resultado:{
+			type: Sequelize.BOOLEAN,
+			field: 'estado_resultado'
+		},*/
 	}, {
 			freezeTableName: true
 		});

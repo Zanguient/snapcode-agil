@@ -1064,6 +1064,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				})
 			}
 		})
+
 	router.route('/comprobante-contabolidad/:id_comprobante')
 		.post(function (req, res) {
 			ComprobanteContabilidad.update({

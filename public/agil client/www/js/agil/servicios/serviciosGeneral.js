@@ -831,6 +831,7 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+
 	.factory('EliminarComprobante', ['ActualizarComprobanteContabilidad', '$q', function (ActualizarComprobanteContabilidad, $q) {
 		var res = function (id_comprobante) {
 			var delay = $q.defer();

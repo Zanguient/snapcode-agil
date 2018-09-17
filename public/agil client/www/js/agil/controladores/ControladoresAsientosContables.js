@@ -237,10 +237,6 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(dato.message)
                 }
             })
-
-
-
-
         }
 
         $scope.abrirModalVerificarCuenta = function (comprobante) {
@@ -286,6 +282,7 @@ angular.module('agil.controladores')
             })
 
         }
+
         $scope.buscarCambioMoneda = function name(filtro) {
             var promesa = ListaCambioMoneda(filtro)
             promesa.then(function (datos) {
@@ -342,7 +339,7 @@ angular.module('agil.controladores')
             })
         }
         $scope.subirExcelComprobantes = function (event) {
-            blockUI.start();
+           blockUI.start();
             //console.log('iniciando carga de pacientes')
             var files = event.target.files;
             var i, f;
@@ -413,14 +410,27 @@ angular.module('agil.controladores')
             }
         }
         $scope.GuardarComprobantesImportacion = function (comprobantes) {
-            var promesa = GuardarComprobantesImportados(comprobantes, $scope.usuario.id, $scope.usuario.id_empresa)
-            promesa.then(function (dato) {
-                blockUI.stop()
-                $scope.mostrarMensaje(dato.mensaje)
-            })
-
-            blockUI.stop();
+            $scope.comprobantesParaGuardar = comprobantes
+            var comprobantesArray = []
+            if ($scope.comprobantesParaGuardar.length > 0) {
+                if ($scope.comprobantesParaGuardar.length > 300) {
+                    comprobantesArray = $scope.comprobantesParaGuardar.slice(0, 300)
+                    $scope.comprobantesParaGuardar = $scope.comprobantesParaGuardar.slice(300, $scope.comprobantesParaGuardar.length)
+                } else {
+                    comprobantesArray = $scope.comprobantesParaGuardar
+                    $scope.comprobantesParaGuardar = []
+                }
+                var promesa = GuardarComprobantesImportados(comprobantesArray, $scope.usuario.id, $scope.usuario.id_empresa)
+                promesa.then(function (dato) {     
+                    blockUI.stop();    
+                    $scope.mostrarMensaje("del codigo "+comprobantesArray[0].codigo+" hasta el codigo "+comprobantesArray[comprobantesArray.length-1].codigo+" "+ dato.mensaje+" faltan procesar "+$scope.comprobantesParaGuardar.length+" comprobantes")
+                    $scope.GuardarComprobantesImportacion($scope.comprobantesParaGuardar)
+                })
+            }else{
+                blockUI.stop();  
+            }
         }
+
         $scope.inicio();
 
     });

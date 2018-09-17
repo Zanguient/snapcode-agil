@@ -18,6 +18,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
+    
     .factory('GuardarGestionesEEFF', ['GestionesEEFF', '$q', function (GestionesEEFF, $q) {
         var res = function (idEmpresa,datos) {
             var delay = $q.defer();
@@ -61,6 +62,8 @@ angular.module('agil.servicios')
         };
         return res;
     }])
+
+    
     .factory('CuentaContabilidadFiltroEEFF', function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/empresa/:id_empresa/tipo_periodo/:periodo/tipo/:id_tipo/gestion/:gestion/mes/:mes/inicio/:inicio/fin/:fin/gestion_fin/:gestion_fin", null,
 			{
