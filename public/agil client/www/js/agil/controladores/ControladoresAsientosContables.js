@@ -402,8 +402,8 @@ angular.module('agil.controladores')
                     var paqueteComprovantes = []
                     var indexComprobante = 1
                     for (let index = 0; index < comprobantes.length; index++) {
-                        var paquete = comprobante.filter(function (comp) {
-                            return commp.codigo === indexComprobante
+                        var paquete = comprobantes.filter(function (comp) {
+                            return comp.codigo === indexComprobante
                         })
                         if (paquete) {
                             if (paquete.length) {
