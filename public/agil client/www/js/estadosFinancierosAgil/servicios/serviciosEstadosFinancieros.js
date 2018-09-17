@@ -67,11 +67,38 @@ angular.module('agil.servicios')
 				'update': { method: 'PUT' }
 			});
 	})
-
+    
 	.factory('CuentasContabilidadEEFF', ['CuentaContabilidadFiltroEEFF', '$q', function (CuentaContabilidadFiltroEEFF, $q) {
 		var res = function (filtro,idEmpresa) {
 			var delay = $q.defer();
 			CuentaContabilidadFiltroEEFF.save({
+				id_empresa: idEmpresa,
+				periodo: filtro.tipoPeriodo.nombre,
+                id_tipo: filtro.tipo_cuenta.id,
+                gestion:(filtro.gestion)?filtro.gestion.nombre:0,
+                mes:(filtro.mes.id)?filtro.mes.id:0,
+                inicio:(filtro.inicio2)?filtro.inicio2:0,
+                fin:(filtro.fin2)?filtro.fin2:0,
+                gestion_fin:(filtro.gestion_fin)?filtro.gestion_fin.nombre:0
+			},filtro, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+    }])
+    .factory('CuentaContabilidadEstadoResultadoEEFF', function ($resource) {
+		return $resource(restServer + "contabilidad-cuentas-estado-resultado/empresa/:id_empresa/tipo_periodo/:periodo/tipo/:id_tipo/gestion/:gestion/mes/:mes/inicio/:inicio/fin/:fin/gestion_fin/:gestion_fin", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	})
+    .factory('CuentasContabilidadEstadoResultadoEEFF', ['CuentaContabilidadEstadoResultadoEEFF', '$q', function (CuentaContabilidadEstadoResultadoEEFF, $q) {
+		var res = function (filtro,idEmpresa) {
+			var delay = $q.defer();
+			CuentaContabilidadEstadoResultadoEEFF.save({
 				id_empresa: idEmpresa,
 				periodo: filtro.tipoPeriodo.nombre,
                 id_tipo: filtro.tipo_cuenta.id,

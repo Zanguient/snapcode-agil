@@ -16,7 +16,12 @@ module.exports=function(sequelize,Sequelize){
 	  id_empresa: {
 		type: Sequelize.INTEGER,
 		field: 'empresa' 
+		},
+	  id_tipo: {
+		type: Sequelize.INTEGER,
+		field: 'tipo' 
 	  }
+		
 	}, {
 	  freezeTableName: true 
 	});

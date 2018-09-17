@@ -211,7 +211,7 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="comprobante in comprobantes track by $index">
-                                <td>{{$index+1}}</td>
+                                <td>{{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}</td>
                                 <td ng-if="fieldViewer.getConfiguration().abierto.show">
                                     <span ng-if="comprobante.abierto" class="label label-sm label-success">Si</span>
                                     <span ng-if="!comprobante.abierto" class="label label-sm label-warning">No</span>

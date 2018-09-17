@@ -465,16 +465,16 @@ angular.module('agil.controladores')
 			var stream = doc.pipe(blobStream());
 			// draw some text
 			var totalCosto = 0;
-			var datos = dato.length
+			var datos = dato.cuentas.length
 			var datosPasivo = []
 			var y = 130, altura=0, itemsPorPagina = 28, items = 0, pagina = ($scope.configuracionImpresion.usar_empesar_numeracion) ? $scope.configuracionImpresion.empesar_numeracion : 1, totalPaginas = ($scope.configuracionImpresion.usar_empesar_numeracion) ? ($scope.configuracionImpresion.empesar_numeracion - 1) + Math.ceil((datos) / itemsPorPagina) : Math.ceil((datos) / itemsPorPagina);
 			var totalActivos = 0
-			var totalPasivo = 0
+            var totalPasivo = 0
+            var indexT = 0
 			$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
             doc.font('Helvetica', 8);
             
 			for (var i = 0; i < dato.cuentas.length; i++) {
-                
                 doc.text(dato.cuentas[i].cuenta.nombre, 60, y)
                 doc.text(dato.cuentas[i].debe_bs, 300, y)
                 doc.text(dato.cuentas[i].haber_bs, 370, y)
@@ -489,8 +489,10 @@ angular.module('agil.controladores')
                 /*doc.text(number_format(cuenta.saldo,2), 530, y); */
                 /* total+=cuenta.saldo */
                 // doc.rect(50, 103, 520, 20).stroke();
-                doc.rect(50, y - 7, 230, 20).dash(5, {space: 10}).stroke();
-                doc.rect(365, y - 7, 0, 20).stroke();
+                doc.rect(50, y - 7, 0, 20).stroke();
+                doc.rect(285, y - 7, 0, 20).stroke();
+                doc.rect(50, y - 7, 235, 20).dash(1, {space: 10}).stroke();
+                doc.rect(365, y - 7, 0, 20).dash(1, {space: 0}).stroke();
                 doc.rect(435, y - 7, 0, 20).stroke();
                 doc.rect(505, y - 7, 0, 20).stroke();
                 doc.rect(570, y - 7, 0, 20).stroke();
@@ -512,13 +514,10 @@ angular.module('agil.controladores')
                     $scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
                     doc.font('Helvetica', 8);
                 }
-
-                // doc.text("TOTAL " + cuenta.nombre, 90, y);
-                // doc.text(number_format(cuenta.total, 2), x, y);
-                // var cuentatotalSus = cuenta.total / $scope.moneda.dolar
-                // if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuentatotalSus, 2), x + 130, y);
-                // y = y + 20;
-                // items++;
+                indexT = indexT + 1;
+                if(totalPaginas==pagina && dato.cuentas.length == indexT){
+                    doc.rect(50, y-7, 520, 0).stroke();
+                }
             }
             
 			if ($scope.configuracionImpresion.usar_firma_uno) {

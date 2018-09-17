@@ -920,8 +920,6 @@ angular.module('agil.controladores')
 			}
 		}
 		$scope.DibujarFijoPreestablecido = function (dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x) {
-
-
 			doc.font('Helvetica', 8);
 			for (var i = 0; i < dato.cuentasSubGrupoFijo.length && items <= itemsPorPagina; i++) {
 				cuenta = dato.cuentasSubGrupoFijo[i]

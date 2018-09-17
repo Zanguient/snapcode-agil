@@ -1,0 +1,2 @@
+ALTER TABLE agil_contabilidad_cuenta drop estado_resultado;
+ALTER TABLE agil_contabilidad_clasificacion_cuenta drop tipo;

@@ -604,7 +604,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 		.get(function (req, res) {
 			ClasificacionCuenta.findAll({
 				where: { id_empresa: req.params.id_empresa },
-				include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }],
+				include: [{ model: Clase, as: 'tipoClasificacion' },{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }],
 
 			}).then(function (clasificacionesCuenta) {
 				Clase.findAll({
@@ -624,7 +624,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				id_empresa:req.body.id_empresa,
 				nombre: req.body.nombre,
 				id_saldo: req.body.saldo.id,
-				id_movimiento: req.body.movimiento.id
+				id_movimiento: req.body.movimiento.id,
+				id_tipo:req.body.tipoClasificacion.id
 			}).then(function (clasificionCuenta) {
 				res.json({ mensaje: "Cotización creada sadisfactoriamente..." })
 			});
@@ -638,7 +639,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 						ClasificacionCuenta.update({
 							nombre: clasificacion.nombre,
 							id_saldo: (clasificacion.saldo ? clasificacion.saldo.id : null),
-							id_movimiento: (clasificacion.movimiento ? clasificacion.movimiento.id : null)
+							id_movimiento: (clasificacion.movimiento ? clasificacion.movimiento.id : null),
+							id_tipo:(clasificacion.tipoClasificacion ? clasificacion.tipoClasificacion.id : null),
 						}, {
 								where: {
 									id: clasificacion.id
@@ -649,7 +651,9 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 							id_empresa: req.params.id_empresa,
 							nombre: clasificacion.nombre,
 							id_saldo: (clasificacion.saldo ? clasificacion.saldo.id : null),
-							id_movimiento: (clasificacion.movimiento ? clasificacion.movimiento.id : null)
+							id_movimiento: (clasificacion.movimiento ? clasificacion.movimiento.id : null),
+							id_tipo:(clasificacion.tipoClasificacion ? clasificacion.tipoClasificacion.id : null),
+							id_empresa:req.params.id_empresa
 						});
 					}
 				} else {

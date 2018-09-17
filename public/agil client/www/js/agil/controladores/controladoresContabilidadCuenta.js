@@ -45,6 +45,7 @@ angular.module('agil.controladores')
 			$scope.obtenerTiposCuentasAuxilires()
 			$scope.obtenerClasificacionCuenta();
 			$scope.obtenerClasificacionSaldos();
+			$scope.obtenerClasificacionTipos()
 			$scope.obtenerClasificacionMovimientos();
 			$scope.obtenerOperacionesCalculo();
 			$scope.obtenerTotalesGeneral()
@@ -124,7 +125,7 @@ angular.module('agil.controladores')
 		$scope.guardarClasificacionCuenta = function (valido, clasificaciones) {
 			if (valido) {
 				blockUI.start();
-				CuentasClasificacionesEdicion.update({ id: 0 }, clasificaciones, function (res) {
+				CuentasClasificacionesEdicion.update({ id_empresa: $scope.usuario.id_empresa }, clasificaciones, function (res) {
 					blockUI.stop();
 					$scope.cerrarPopPupCalsificacionEdicionCuenta();
 					$scope.mostrarMensaje('Guardado Exitosamente!');
@@ -618,6 +619,7 @@ angular.module('agil.controladores')
 			$scope.paginator = Paginator();
 			$scope.paginator.column = "codigo";
 			$scope.paginator.callBack = $scope.obtenerLista;
+			
 			$scope.filtro = { empresa: $scope.usuario.id_empresa, clasificacion: "", tipo_cuenta: "", monto: "" };
 			$scope.paginator.getSearch("", $scope.filtro, null);
 		}
@@ -659,7 +661,15 @@ angular.module('agil.controladores')
 				blockUI.stop();
 			});
 		}
-
+		$scope.obtenerClasificacionTipos = function () {
+			blockUI.start();
+			var promesa = ClasesTipo("TIPOS_CLAS_CUENTA");
+			// console.log(promesa)
+			promesa.then(function (entidad) {
+				$scope.tiposClasificaciones = entidad.clases;
+				blockUI.stop();
+			});
+		}
 		$scope.obtenerClasificacionMovimientos = function () {
 			blockUI.start();
 			var promesa = ClasesTipo("CONTCLSMOV");

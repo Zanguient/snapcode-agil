@@ -79,7 +79,7 @@ angular.module('agil.servicios')
 		return $resource(restServer + "contabilidad-cuenta/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
-			});
+			})
 	})
 
 	.factory('CuentaContabilidadFiltro', function ($resource) {

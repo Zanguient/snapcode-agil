@@ -725,7 +725,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ClasificacionCuenta.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
 	Empresa.hasMany(ClasificacionCuenta, { foreignKey: 'id_empresa', as: 'clasificacionesCuentas' });
 	ClasificacionCuenta.hasMany(ContabilidadCuenta, { foreignKey: 'id_clasificacion', as: 'clasificacion' });
-
+	ClasificacionCuenta.belongsTo(Clase, { foreignKey: 'id_tipo', as: 'tipoClasificacion' });
+	Clase.hasMany(ClasificacionCuenta, { foreignKey: 'id_tipo', as: 'clasificaciones' });
 	ComprobanteContabilidad.hasMany(AsientoContabilidad, { foreignKey: 'id_comprobante', as: 'asientosContables' })
 
 	AsientoContabilidad.belongsTo(ComprobanteContabilidad, { foreignKey: 'id_comprobante', as: 'comprobante' })
