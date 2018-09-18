@@ -35,7 +35,7 @@ module.exports = function (sequelize, Sequelize) {
 		});
 
 	GerenciasClienteEmpresa.sync().then(function () {
-		
+	
 	});
 	return GerenciasClienteEmpresa;
 }
