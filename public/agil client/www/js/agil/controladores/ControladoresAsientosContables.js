@@ -431,6 +431,63 @@ angular.module('agil.controladores')
             }
         }
 
+
+
+      /*  $scope.ObtenerReporteComprobantes = function () {
+            $scope.paginator = Paginator();
+            $scope.paginator.column = "numero";
+            $scope.paginator.direction = "desc";
+            $scope.paginator.callBack = $scope.obtenerLista;
+            var date = new Date()
+            var fechafin = $scope.fechaATexto(date)
+            var fechaInicio = $scope.fechaATexto(sumarDias(date, -10))
+            $scope.filtro = { inicio: fechaInicio, fin: fechafin, empresa: $scope.usuario.id_empresa, clasificacion: "", tipo_comprobante: "", monto: "" };
+            if ($scope.filtro.inicio != null) {
+                $scope.paginator.getSearch("", $scope.filtro);
+            }
+        }*/
+        
+        $scope.imprimirFiltroExcelCajaCartaOficio = function(){
+            blockUI.start();
+
+            var fechainico = $scope.paginator.filter.inicio;
+            var fechafin = $scope.paginator.filter.fin;
+            $scope.paginator.filter.inicio = new Date($scope.convertirFecha($scope.paginator.filter.inicio));
+            $scope.paginator.filter.fin = new Date($scope.convertirFecha($scope.paginator.filter.fin));
+            
+            var paginador = Object.assign({},$scope.paginator)
+            paginador.itemsPerPage = 0;
+            var promise = ComprobantePaginador(paginador);
+            promise.then(function (data) {
+                $scope.ReporteComprovante = data.comprobantes;
+
+                var data = []
+                var cabecera = ["N°","COMPROBANTE","NUMERO"];
+                data.push(cabecera);
+                var index = 0;
+                for (var i = 0; i < $scope.ReporteComprovante.length; i++) {	
+                    $scope.reporte = $scope.ReporteComprovante[i];
+                    columns = [];
+                    index = index + 1;
+                    columns.push(index);       
+                    columns.push($scope.reporte.tipoComprobante.nombre);       
+                    columns.push($scope.reporte.numero);    
+
+                    data.push(columns);
+                }
+                
+                var ws_name = "SheetJS";
+                var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+                /* add worksheet to workbook */
+                wb.SheetNames.push(ws_name);
+                wb.Sheets[ws_name] = ws;
+                var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+                saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "VENTAS-MENSUALES.xlsx");
+                blockUI.stop();
+            });
+           // $scope.paginator.itemsPerPage = 10;
+        }
+
         $scope.inicio();
 
     });

@@ -736,6 +736,7 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	
 	.factory('LibroMayor', function ($resource) {
 		return $resource(restServer + "/comprobante-cuenta/:id_cuenta/periodo/:inicio/:fin");
 	})
