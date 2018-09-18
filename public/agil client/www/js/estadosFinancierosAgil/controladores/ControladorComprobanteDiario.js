@@ -3229,9 +3229,9 @@ angular.module('agil.controladores')
 					doc.text("- "+(indice++)+" -",350,y);
 					for(var j = 0;j< $scope.comprobante.asientosContables.length && items <= itemsPorPagina;j++){
 						$scope.asientoContable = $scope.comprobante.asientosContables[j];
-
-						doc.text($scope.asientoContable.glosa,100,y,{width:220});
-						if ($scope.asientoContable.glosa.length >= 100) {
+						
+						doc.text($scope.asientoContable.cuenta.nombre,100,y,{underline:true});
+						/*if ($scope.asientoContable.cuenta.nombre.length >= 100) {
 							doc.text("",100,y);
 							if($scope.asientoContable.debe_bs != 0){
 								doc.text($scope.asientoContable.debe_bs,440,y);
@@ -3244,7 +3244,7 @@ angular.module('agil.controladores')
 								doc.text(" ",530,y);
 							}
 							y = y + 10
-						}else if ($scope.asientoContable.glosa.length >= 45) {
+						}else if ($scope.asientoContable.cuenta.nombre.length >= 45) {
 
 							doc.text("",100,y);
 							if($scope.asientoContable.debe_bs != 0){
@@ -3258,7 +3258,7 @@ angular.module('agil.controladores')
 								doc.text(" ",530,y);
 							}
 							y = y + 5
-						}else{
+						}else{*/
 							
 							if($scope.asientoContable.debe_bs != 0){
 								doc.text($scope.asientoContable.debe_bs,440,y);
@@ -3270,7 +3270,7 @@ angular.module('agil.controladores')
 							}else{
 								doc.text(" ",530,y);
 							}
-						}
+						/*}*/
 						
 
 						y = y + 17;
@@ -3289,6 +3289,10 @@ angular.module('agil.controladores')
 							}
 						}
 					}
+					doc.font("Helvetica-Bold");
+					doc.text($scope.comprobante.gloza,100,y);
+					doc.font("Helvetica");
+					y = y +17;
 				}
 
 				/*var fechaActual = new Date();
@@ -3359,8 +3363,8 @@ angular.module('agil.controladores')
 						var inicio = $scope.fechasImpresion.inicio;
 						var fin = $scope.fechasImpresion.fin;
 						var anio =  $scope.configuracionImpresion.gestion.nombre;
-						var fechaInicio = inicio+"/"+anio;
-						var fechaFin = fin+"/"+anio;
+						var fechaInicio = new Date(inicio+"/"+anio);
+						var fechaFin = new Date($scope.convertirFecha(fin+"/"+anio));
 
 						$scope.imprimirReporteExcel(fechaInicio,fechaFin);
 
@@ -3406,7 +3410,7 @@ angular.module('agil.controladores')
 		promesa.then(function (datos) {
 			var datosComprobante = datos.comprobantes;
 			var data = []
-			var cabecera = ["N° CUENTA","FECHA","TITULO DE LA CUENTA","DEBE","HABER"];
+			var cabecera = ["N° CUENTA","FECHA","TITULO DE LA CUENTA","GLOSA PRINCIPAL","DEBE","HABER"];
 			data.push(cabecera);
 			var index = 0;
 			for (var i = 0; i < datosComprobante.length; i++) {		
@@ -3420,9 +3424,11 @@ angular.module('agil.controladores')
 					var myDate = new Date($scope.comprobante.fecha);
 					var fecha = myDate.getFullYear()+"/"+(myDate.getMonth() + 1)+"/"+myDate.getDate();
 					columns.push(fecha);
-					columns.push($scope.asientoContable.glosa);					
+					columns.push($scope.asientoContable.cuenta.nombre);
+					columns.push($scope.comprobante.gloza);					
 					columns.push($scope.asientoContable.debe_bs);
 					columns.push($scope.asientoContable.haber_bs);
+			
 
 
 					data.push(columns);
@@ -3436,7 +3442,7 @@ angular.module('agil.controladores')
 			wb.SheetNames.push(ws_name);
 			wb.Sheets[ws_name] = ws;
 			var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
-			saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "VENTAS-MENSUALES.xlsx");
+			saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "LIBRO-DIARIO.xlsx");
 			blockUI.stop();
 		});
 

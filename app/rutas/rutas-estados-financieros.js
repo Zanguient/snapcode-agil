@@ -744,9 +744,10 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
         ComprobanteContabilidad.findAll({
             // offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
             where: queryFecha,
-            include:[{model:AsientoContabilidad,as:'asientosContables',where: { eliminado: false }},
+            include:[
+                {model:AsientoContabilidad,as:'asientosContables',where: { eliminado: false }, include:[{ model: ContabilidadCuenta, as : 'cuenta'}]},
                 { model: Sucursal, as: 'sucursal',where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }]},
-                { model: MonedaTipoCambio, as: 'tipoCambio'}
+                { model: MonedaTipoCambio, as: 'tipoCambio'}             
             ]
             
         }).then(function (comprobantes) {
