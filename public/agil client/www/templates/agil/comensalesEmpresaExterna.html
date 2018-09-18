@@ -71,11 +71,11 @@
                                     ng-model="filtroComensales.hasta">
                             </td>
                             <td>
-                                <select ng-disabled="filtroComensales.desde || filtroComensales.hasta" id="periodoFiltroComensales" name="anio" ng-options="anio as anio.nombre for anio in anios track by anio.id"
+                                <select ng-disabled="filtroComensales.desde || filtroComensales.hasta" id="periodoFiltroComensales1" name="anio" ng-options="anio as anio.nombre for anio in anios track by anio.id"
                                     ng-model="filtroComensales.anio">
                                     <option disabled value="" selected>Año</option>
                                 </select>
-                                <select ng-disabled="filtroComensales.desde || filtroComensales.hasta" id="periodoFiltroComensales" name="mes" ng-options="mes as mes.nombre for mes in mesesFiltro track by mes.id"
+                                <select ng-disabled="filtroComensales.desde || filtroComensales.hasta" id="periodoFiltroComensales2" name="mes" ng-options="mes as mes.nombre for mes in mesesFiltro track by mes.id"
                                     ng-model="filtroComensales.mes">
                                     <option disabled value="" selected>Mes</option>
                                 </select>

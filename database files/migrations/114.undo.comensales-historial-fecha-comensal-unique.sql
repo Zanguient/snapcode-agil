@@ -1,0 +1,1 @@
+alter table agil_comensales_historial_comida_cliente_empresa drop fecha_comensal;

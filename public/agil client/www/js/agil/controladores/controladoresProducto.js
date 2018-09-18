@@ -4,7 +4,7 @@ angular.module('agil.controladores')
 		$route, blockUI, Producto, Productos, ProductosPaginador, ProductosEmpresa,
 		ClasesTipo, Clases, ProductoKardex, ProductosEmpresaCreacion, DatoCodigoSiguienteProductoEmpresa, ListaProductosEmpresa,
 		Paginator, ListaCuentasComprobanteContabilidad, DatosProducto, CatalogoProductos,
-		ListaGruposProductoEmpresa, Tipos, ClasesTipoEmpresa,FieldViewer, ListaSubGruposProductoEmpresa, ListaGruposProductoUsuario, ReporteProductosKardex, ProductosEmpresaCreacionFormulacion) {
+		ListaGruposProductoEmpresa, Tipos, ClasesTipoEmpresa,FieldViewer, ListaSubGruposProductoEmpresa, ListaGruposProductoUsuario, ReporteProductosKardex, GuardarProductosFormulacion) {
 		blockUI.start();
 		$scope.idModalWizardProductoKardex = 'modal-wizard-producto-kardex';
 		$scope.idModalWizardProductoEdicion = 'modal-wizard-producto-edicion';
@@ -1236,16 +1236,23 @@ angular.module('agil.controladores')
 		}
 
 		$scope.guardarFormulacionProductos = function (productos) {
-			var formulacionProductosEmpresa = new ProductosEmpresaCreacionFormulacion({ productos: productos, id_empresa: $scope.usuario.id_empresa });
-			formulacionProductosEmpresa.$save(function (producto) {
-				blockUI.stop();
-				$scope.mostrarMensaje('Guardado Exitosamente!');
-				$scope.recargarItemsTabla();
-			}, function (error) {
-				blockUI.stop();
-				$scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-				$scope.recargarItemsTabla();
-			});
+			var prom = GuardarProductosFormulacion($scope.usuario.id_empresa, productos)
+			prom.then(function (res) {
+				if (!res.hasErr) {
+					if (res.mensajes) {
+						$scope.mostrarMensaje(res.mensaje + res.mensajes)
+					} else {
+						$scope.mostrarMensaje(res.mensaje)
+					}
+				} else {
+					$scope.mostrarMensaje(res.mensajes)
+				}
+				blockUI.stop()
+			}).catch(function (err) {
+                var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                $scope.mostrarMensaje(msg)
+                blockUI.stop()
+            })
 		}
 
 		$scope.buscarCuenta = function (buscarCuentaQuery) {

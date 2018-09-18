@@ -1369,6 +1369,10 @@ angular.module('agil.controladores')
                     promComidas.then(function (comidas) {
                         var comidasEmpresa = comidas.lista
                         var cabecera = []
+                        if(comidasEmpresa.length === 0){
+                                $scope.mostrarMensaje('El listado de comidas para esta empresa esta vacio, no se puede generar el reporte')
+                                return
+                        }
                         comidasEmpresa.forEach(function (comida) {
                             cabecera.push(comida.nombre.toUpperCase())
                         })

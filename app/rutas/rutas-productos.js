@@ -491,46 +491,75 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			});
 		});
 
-	router.route('/productos/formulacion/empresa')
-		.post(function (req, res) {
-			req.body.productos.forEach(function (producto, index, array) {
-				sequelize.transaction(function (t) {
+		function crearFormulacion(producto, req, t) {
+			return Producto.find({
+				where: {
+					codigo: producto.codigo_final.toString(),
+					id_empresa: req.params.id_empresa
+				},
+				transaction: t
+			}).then(function (productoFinal) {
+				if (productoFinal) {
 					return Producto.find({
 						where: {
-							codigo: producto.codigo_final,
-							id_empresa: req.body.id_empresa
+							codigo: producto.codigo_base.toString(),
+							id_empresa: req.params.id_empresa
 						},
 						transaction: t
-					}).then(function (productoFinal) {
-						if (productoFinal) {
-							return Producto.find({
-								where: {
-									codigo: producto.codigo_Base,
-									id_empresa: req.body.id_empresa
-								},
-								transaction: t
-							}).then(function (productoBase) {
-								if (productoBase) {
-									return ProductoBase.create({
-										id_producto: productoFinal.dataValues.id,
-										id_producto_base: productoBase.id,
-										formulacion: producto.formulacion
-									}, { transaction: t });
-								}else{
-									throw new Error({stack: 'No se encuentra en la base de datos el producto: ' + producto.nombre_base + ' Código: ' + producto.codigo_base})
-								}
-							});
+					}).then(function (productoBase) {
+						if (productoBase) {
+							return ProductoBase.create({
+								id_producto: productoFinal.dataValues.id,
+								id_producto_base: productoBase.id,
+								formulacion: parseFloat(producto.formulacion)
+							}, { transaction: t });
 						}else{
-							throw new Error({stack: 'No se encuentra en la base de datos el producto: ' + producto.nombre_final + ' Código: ' + producto.codigo_final})
+							return new Promise(function (fullfill, reject) {
+								fullfill({hasErr: true, mensaje:'No se encuentra en la base de datos el producto: ' + producto.nombre_base + ' Código: ' + producto.codigo_base})
+							})
 						}
 					});
-				}).then(function (result) {
-					if (index === (array.length - 1)) {
-						res.json({ mensaje: "¡Formulación de Productos actualizados satisfactoriamente!" });
-					}
-				}).catch(function (err) {
-					res.json({ hasError: true, mensaje: err.stack });
-				});
+				}else{
+					return new Promise(function (fullfill, reject) {
+						fullfill({hasErr: true, mensaje:'No se encuentra en la base de datos el producto: ' + producto.nombre_final + ' Código: ' + producto.codigo_final})
+					})
+				}
+			});
+		}
+
+	router.route('/productos/formulacion/empresa/:id_empresa')
+		.post(function (req, res) {
+			var promesas = []
+			sequelize.transaction(function (t) {
+				for (let index = 0; index < req.body.length; index++) {
+					promesas.push(crearFormulacion(req.body[index], req, t))
+				}
+				return Promise.all(promesas)
+			}).then(function (result) {
+				if (result.length > 0) {
+                    var mensajes = []
+                    result.forEach(function (dato) {
+                        if (dato !== undefined) {
+                            if (dato.hasErr) {
+                                mensajes.push(dato.mensaje)
+                            }
+                        }
+                    });
+                    if (mensajes.length === result.length) {
+                        mensajes.unshift('No se guardo')
+                        res.json({ hasErr: true, mensaje: 'No se guardo', mensajes: mensajes })
+                    } else if (mensajes.length === 0) {
+                        res.json({ mensaje: 'Guardado correctamente.' })
+                    } else {
+                        mensajes.unshift('Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length)
+                        res.json({ hasErr: true, mensaje: 'Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length, mensajes: mensajes })
+                    }
+                } else {
+                    res.json({ mensaje: 'No se guardo, ocurrio un error.' })
+                }
+				// res.json({ mensaje: "¡Formulación de Productos actualizados satisfactoriamente!" });
+			}).catch(function (err) {
+				res.json({ hasError: true, mensaje: err.stack });
 			});
 		});
 

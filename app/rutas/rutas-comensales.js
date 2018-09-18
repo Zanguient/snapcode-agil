@@ -158,9 +158,16 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 }, { where: { id: historial.id }, transaction: t }).then(function (historialActualizado) {
                     return crearMarcacion(historial, empresa, t)
                 }).catch(function (err) {
-                    return new Promise(function (fullfil, reject) {
-                        fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
-                    })
+                    if (err.name === "SequelizeUniqueConstraintError") {
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({ hasErr: true, mensaje: 'Registro ya existente: Comensal '+ comensal.nombre + ' Fecha:' + historial.fecha, index: i + 2, tipo: 'Error' })
+                        })
+                    }else{
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+                        })
+                    }
+                    
                 })
             }
         } else {
@@ -182,9 +189,15 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 }).then(function (historialCreado) {
                     return crearMarcacion(historial, empresa, t, i)
                 }).catch(function (err) {
-                    return new Promise(function (fullfil, reject) {
-                        fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
-                    })
+                    if (err.name === "SequelizeUniqueConstraintError") {
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({ hasErr: true, mensaje: 'Registro ya existente: Comensal '+ historial.comensal.nombre + ' Fecha:' + historial.fecha, index: i + 2, tipo: 'Error' })
+                        })
+                    }else{
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+                        })
+                    }
                 })
         }
     }

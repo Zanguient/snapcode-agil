@@ -82,8 +82,23 @@ angular.module('agil.servicios')
 	})
 
 	.factory('ProductosEmpresaCreacionFormulacion', function ($resource) {
-		return $resource(restServer + "productos/formulacion/empresa");
+		return $resource(restServer + "productos/formulacion/empresa/:id_empresa");
 	})
+
+	.factory('GuardarProductosFormulacion', ['ProductosEmpresaCreacionFormulacion', '$q', function (ProductosEmpresaCreacionFormulacion, $q) {
+		var res = function (idEmpresa, productos) {
+			var delay = $q.defer();
+			ProductosEmpresaCreacionFormulacion.save({ id_empresa: idEmpresa }, productos, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
+
+
 
 	.factory('ProductosEmpresa', function ($resource) {
 		return $resource(restServer + "productos/empresa/:idEmpresa");
