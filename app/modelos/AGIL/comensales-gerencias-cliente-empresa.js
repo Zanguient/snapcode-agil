@@ -29,13 +29,16 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'eliminado',
 			defaultValue: false
-		}
+		},
 	}, {
 			freezeTableName: true
 		});
 
 	GerenciasClienteEmpresa.sync().then(function () {
-
+		Sequelize.queryInterface.addConstraint('agil_comensales_gerencias_cliente_empresa', ['cliente', 'nombre'], {
+			type: 'unique',
+			name: 'custom_unique_constraint_cliente-nombreGerencia'
+		  });
 	});
 	return GerenciasClienteEmpresa;
 }

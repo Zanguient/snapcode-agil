@@ -184,6 +184,7 @@ angular.module('agil.controladores')
                         $scope.clienteEmpresaComidas = {}
                     }
                     $scope.clienteEmpresaComidas.empresaCliente = Object.assign({}, cliente)
+                    $scope.clienteEmpresaComidas.verTodos
                     $scope.obtenerComidas(true)
                     break;
                 case 5:
@@ -242,6 +243,7 @@ angular.module('agil.controladores')
                         $scope.clienteEmpresaComidas = {}
                     }
                     $scope.clienteEmpresaComidas.empresaCliente = Object.assign({}, cliente)
+                    $scope.clienteEmpresaComidas.verTodos = false
                     $scope.obtenerComidas(true)
                     break;
                 case 5:
@@ -319,13 +321,31 @@ angular.module('agil.controladores')
                 blockUI.stop()
             })
         }
+        $scope.verTodasLasComidas = function () {
+            if (!$scope.clienteEmpresaComidas) {
+                $scope.clienteEmpresaComidas = {}
+                $scope.clienteEmpresaComidas.verTodos = false
+            }else if(!$scope.clienteEmpresaComidas.verTodos){
+                $scope.clienteEmpresaComidas.verTodos = true
+            }else{
+                $scope.clienteEmpresaComidas.verTodos = false
+            }
+            $scope.obtenerComidas()
+        }
+        
 
         $scope.obtenerComidas = function (empresa) {
             blockUI.start()
             var prom;
+            if (!$scope.clienteEmpresaComidas) {
+                $scope.clienteEmpresaComidas = {}
+                $scope.clienteEmpresaComidas.verTodos = false
+            }            
             if (empresa) {
                 prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaComidas.empresaCliente.id)
-            } else {
+            } else if($scope.clienteEmpresaComidas.verTodos) {
+                prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, 0)
+            }else{
                 prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
             }
             prom.then(function (res) {
@@ -770,7 +790,9 @@ angular.module('agil.controladores')
                 horas = horas.split('A')[0].split(':')
             } else if (horas.indexOf('PM') > 0) {
                 horas = horas.split('P')[0].split(':')
-                horas[0] = (parseInt(horas[0]) + 12) + ''
+                if ((parseInt(horas[0])) < 12) {
+                    horas[0] = (parseInt(horas[0]) + 12) + ''
+                }
             }
             var fecha_texto = fecha[0] + '-' + (fecha[2].length == 2 ? fecha[2] : '0' + fecha[2]) + '-' + (fecha[1].length == 2 ? fecha[1] : '0' + fecha[1]) + 'T' + (horas[0].length == 2 ? horas[0] : '0' + horas[0]) + ':' + (horas[1].length == 2 ? horas[1] : '0' + horas[1]) + ':' + (horas[2].length == 2 ? horas[2] : '0' + horas[2]) + '.000Z'
             var fechaCompleta = new Date(fecha[0], fecha[2] - 1, fecha[1], (horas[0].length == 2 ? horas[0] : '0' + horas[0]), (horas[1].length == 2 ? horas[1] : '0' + horas[1]), (horas[2].length == 2 ? horas[2] : '0' + horas[2]))
@@ -2557,10 +2579,10 @@ angular.module('agil.controladores')
         }
 
         $scope.abrirModalEdicionGerencias = function () {
+            $scope.activeModal = 2
             $scope.clienteEmpresaEdicionGerencias = {}
             $scope.clienteEmpresaEdicionGerencias.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
             $scope.obtenerGerencias()
-            $scope.activeModal = 2
             $scope.abrirPopup($scope.modalEdicionGerencias);
         }
         $scope.cerrarModalEdicionGerencias = function () {
@@ -2570,11 +2592,11 @@ angular.module('agil.controladores')
         }
 
         $scope.abrirModalEdicionComensales = function () {
+            $scope.activeModal = 3
             $scope.clienteEmpresaEdicionComensales = {}
             $scope.clienteEmpresaEdicionComensales.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
             $scope.obtenerGerencias()
             $scope.obtenerComensales()
-            $scope.activeModal = 3
             $scope.abrirPopup($scope.modalEdicionComensales);
         }
 
@@ -2587,6 +2609,7 @@ angular.module('agil.controladores')
         $scope.abrirModalEdicionComidas = function () {
             $scope.clienteEmpresaComidas = {}
             $scope.clienteEmpresaComidas.empresaCliente = Object.assign({}, $scope.empresaExternaSeleccionada)
+            $scope.clienteEmpresaComidas.verTodos = false
             $scope.obtenerComidas()
             $scope.activeModal = 4
             $scope.abrirPopup($scope.modalEdicionComidas);
@@ -2624,7 +2647,7 @@ angular.module('agil.controladores')
         }
 
         $scope.cerrardialogClientesComensales = function () {
-            $scope.activeModal = 0
+            //             $scope.activeModal = 0
             $scope.cerrarPopup($scope.dialogClienteEmpresa);
         }
 

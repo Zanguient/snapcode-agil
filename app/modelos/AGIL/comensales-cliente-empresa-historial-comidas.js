@@ -9,6 +9,7 @@ module.exports = function (sequelize, Sequelize) {
             field: 'comensal'
         },
         fecha: {
+            unique: true,
             type: Sequelize.DATE,
             field: 'fecha'
         },

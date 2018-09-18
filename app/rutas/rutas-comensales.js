@@ -1,4 +1,4 @@
-module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, Usuario,
+module.exports = function (router, sequelize, Sequelize, Persona, Cliente, AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, Usuario,
     ComensalesMarcacionesClienteEmpresa) {
 
     function crearAlias(alias, empresa, t) {
@@ -272,7 +272,6 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                                     return crearHistorial(historial, empresa, t)
                                     // promises.push(crearHistorial(historial, empresa, t))
                                     // promises.push(crearMarcacion(historial, empresa, t))
-
                                 } else {
                                     historial.gerencia = null
                                     return crearHistorial(historial, empresa, t)
@@ -330,11 +329,33 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                             fullfil({ hasErr: true, mensaje: 'El código ' + comensal.codigo + ' ya existe en la base de datos', index: i + 2, tipo: 'Error' })
                         })
                     } else {
-                        return GerenciasClienteEmpresa.find({
-                            where: { nombre: comensal.gerencia, id_empresa: empresa, id_cliente: comensal.empresaCliente.id }
-                        }).then(function (gerenciaEncontrada) {
+                        return GerenciasClienteEmpresa.findOrCreate({
+                            where: { nombre: comensal.gerencia, id_empresa: empresa, id_cliente: comensal.empresaCliente.id },
+                            defaults: {
+                                // codigo: gerencia.codigo,
+                                id_cliente: comensal.empresaCliente.id,
+                                nombre: comensal.gerencia,
+                                id_empresa: empresa,
+                                // identificador_equipo: gerencia.lectora
+                            },
+                            transaction: t
+                        }).spread(function (gerenciaEncontrada, created) {
                             comensal.gerencia = gerenciaEncontrada ? gerenciaEncontrada.dataValues : { id: null, nombre: 'Sin asignación' }
                             return crearComensal(comensal, empresa, t)
+                        }).catch(function (err) {
+                            if (err.name === "SequelizeUniqueConstraintError") {
+                                return GerenciasClienteEmpresa.find({
+                                    where: { nombre: err.fields.nombre, id_empresa: empresa, id_cliente: comensal.empresaCliente.id },
+                                    transaction: t
+                                }).then(function (gerenciaEncontrada) {
+                                    comensal.gerencia = gerenciaEncontrada ? gerenciaEncontrada.dataValues : { id: null, nombre: 'Sin asignación' }
+                                    return crearComensal(comensal, empresa, t)
+                                })
+                            }else{
+                                return new Promise(function (fullfil, reject) {
+                                    fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+                                })
+                            }
                         })
                     }
                 }).catch(function (err) {
@@ -386,13 +407,13 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
     }
     function verificarDatosGerenciasExcel(gerencia, empresa, t, i) {
         return Cliente.find({
-            where: { razon_social: { $like: gerencia.empresaCliente + '%'} },
+            where: { razon_social: { $like: gerencia.empresaCliente + '%' } },
             transaction: t
         }).then(function (aliasEncontrado) {
             if (aliasEncontrado) {
                 gerencia.empresaCliente = aliasEncontrado.dataValues
                 return GerenciasClienteEmpresa.find({
-                    where: { $or: [{ nombre: { $like: gerencia.nombre + '%'}, codigo: gerencia.codigo }], id_empresa: empresa },
+                    where: { $or: [{ nombre: { $like: gerencia.nombre + '%' }, codigo: gerencia.codigo }], id_empresa: empresa },
                     transaction: t
                 }).then(function (gerenciaEncontrado) {
                     if (gerenciaEncontrado) {
@@ -416,7 +437,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
     }
     function verificarDatosComidasExcel(comida, empresa, t, i) {
         return Cliente.find({
-            where: { razon_social: { $like: comida.empresaCliente + "%"} },
+            where: { razon_social: { $like: comida.empresaCliente + "%" } },
             transaction: t
         }).then(function (aliasEncontrado) {
             if (aliasEncontrado) {
@@ -446,7 +467,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
     }
     function verificarDatosPreciosExcel(precio, empresa, t, i) {
         return Cliente.find({
-            where: { razon_social: { $like:  precio.empresaCliente + '%' } },
+            where: { razon_social: { $like: precio.empresaCliente + '%' } },
             transaction: t
         }).then(function (aliasEncontrado) {
             if (aliasEncontrado) {
@@ -518,8 +539,8 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
                     sequelize.transaction(function (t) {
                         var gerencia = { codigo: 'NANAN', nombre: 'Sin asignación', empresaCliente: { id: req.params.id_cliente } }
                         return crearGerencia(gerencia, req.params.id_empresa, t)
-                    }).then(function (result) {
-                        res.json({ lista: result })
+                    }).then(function (resulta) {
+                        res.json({ lista: [resulta] })
                     }).catch(function (err) {
                         res.json({ mensaje: err.stack, hasErr: true })
                     })
@@ -706,7 +727,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
         .post(function (req, res) {
             var Errors = []
             var promises = []
-            sequelize.transaction(function (t) {
+            sequelize.transaction({isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED},function (t) {
                 for (let i = 0; i < req.body.length; i++) {
                     req.body[i].id_usuario = req.params.id_usuario
                     req.body[i].id_empresa = req.params.id_empresa
@@ -1407,7 +1428,7 @@ module.exports = function (router, sequelize, Persona, Cliente, AliasClienteEmpr
             if (req.params.marcacion == "3") {
                 req.body.cena = 1
             }
-            var historial = {alias:{id_cliente: req.body.comida.empresaCliente.id}, comensal: req.body.comensal, fecha: (req.body.fecha.split('/').reverse().join('-') + 'T' + req.body.comida.inicio + '.000Z'), gerencia:req.body.gerencia, comida: req.body.comida, habilitado: req.body.habilitado}
+            var historial = { alias: { id_cliente: req.body.comida.empresaCliente.id }, comensal: req.body.comensal, fecha: (req.body.fecha.split('/').reverse().join('-') + 'T' + req.body.comida.inicio + '.000Z'), gerencia: req.body.gerencia, comida: req.body.comida, habilitado: req.body.habilitado }
             sequelize.transaction(function (t) {
                 return crearMarcacion(historial, req.params.id_empresa, t, 0)
                 // id_empresa: empresa,

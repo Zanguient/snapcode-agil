@@ -338,7 +338,7 @@
                                                         {{aliasEmpresa.nombre}}
                                                     </td>
                                                     <td>
-                                                        <a e-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarAsignacionaliasClienteEmpresa,aliasEmpresa)"
+                                                        <a class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarAsignacionaliasClienteEmpresa,aliasEmpresa)"
                                                             data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
                                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                         </a>
@@ -467,7 +467,7 @@
                                                     </td>
 
                                                     <td>
-                                                        <a e-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarAsignaciongerenciaClienteEmpresa,gerencia)"
+                                                        <a class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarAsignaciongerenciaClienteEmpresa,gerencia)"
                                                             data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
                                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                         </a>
@@ -487,7 +487,7 @@
                     </div>
                 </div>
                 <div class="modal-footer wizard-actions">
-                    <button id="siguiente3CCC" type="submit" ng-disabled="!aplicacion.puede_crear" class="btn btn-success btn-sm btn-next" data-last="Finish">
+                    <button id="siguiente3CCC" type="submit" class="btn btn-success btn-sm btn-next" data-last="Finish">
                         Siguiente
                         <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                     </button>
@@ -634,7 +634,7 @@
                                                             {{comensalEmpresa.tipo}}
                                                         </td>
                                                         <td>
-                                                            <a e-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarAsignacioncomensalClienteEmpresa,comensalEmpresa)"
+                                                            <a class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarAsignacioncomensalClienteEmpresa,comensalEmpresa)"
                                                                 data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
                                                                 <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                             </a>
@@ -726,6 +726,7 @@
                                     <div class="row form-group">
                                         <div class="col-lg-5">
                                             <label>Empresa</label>
+                                            <!-- <input type="checkbox" class="ace" ng-model="" /> -->
                                         </div>
                                         <div class="col-lg-7">
                                             <input autocomplete="off" data-validate="validate()" type="text" ng-model="clienteEmpresaComidas.empresaCliente" placeholder="Ingrese la Razon Social"
@@ -763,6 +764,7 @@
                                     </div>
                                     <div class="row form-group">
                                         <div class="container-fluid">
+                                                <button type="button" class="btn btn-danger pull-right" ng-click="verTodasLasComidas()">{{clienteEmpresaComidas.verTodos ? 'Solo de Empresa seleccionada' : 'Ver de todas las empresas' }}</button>
                                             <table class="table table-striped table-bordered table-hover">
                                                 <thead>
                                                     <th>Código</th>
@@ -789,7 +791,7 @@
                                                         {{comida.final | date: 'HH:mm:ss'}}
                                                     </td>
                                                     <td>
-                                                        <a e-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarAsignacioncomidaClienteEmpresa,comida)"
+                                                        <a class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarAsignacioncomidaClienteEmpresa,comida)"
                                                             data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
                                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                         </a>
@@ -935,7 +937,7 @@
                                                         {{precioComida.precio | number:2}}
                                                     </td>
                                                     <td>
-                                                        <a e-disabled="!aplicacion.puede_eliminar" class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarAsignacionprecioComidaClienteEmpresa,precioComida)"
+                                                        <a class="red" ng-click="abrirPopupConfirmacionEliminacion(eliminarAsignacionprecioComidaClienteEmpresa,precioComida)"
                                                             data-rel="tooltip" tooltip-placement="top" uib-tooltip="Eliminar">
                                                             <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                                         </a>
