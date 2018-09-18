@@ -4263,11 +4263,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/recursos-humanos/vacacion/empresa/:id_empresa/inicio/:inicio/fin/:fin/estado/:estado')
         .get(function (req, res) {
             var condicionEmpleado = { id_empresa: req.params.id_empresa }
+            var  condicionFicha= {}
             if (req.params.estado != 2) {
                 if (req.params.estado == 0) {
-                    wwwwwwcondicionEmpleado = { eliminado: true, id_empresa: req.params.id_empresa }
+                    condicionEmpleado = { eliminado: true, id_empresa: req.params.id_empresa }
+                    condicionFicha= { fecha_expiracion:{$ne:null} }
                 } else {
                     condicionEmpleado = { eliminado: false, id_empresa: req.params.id_empresa }
+                    condicionFicha= { fecha_expiracion:{$eq:null} }
                 }
 
             }
@@ -4280,7 +4283,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             RrhhEmpleadoVacaciones.findAll({
                 where: condicionVacaciones,
                 include: [{ model: RrhhEmpleadoDescuentoVacacionHistorial, as: 'detalleDescuentosVacacionHistorial', include: [{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacacion' }] }, {
-                    model: RrhhEmpleadoFicha, as: 'ficha', include: [{
+                    model: RrhhEmpleadoFicha, as: 'ficha',where:condicionFicha, include: [{
                         model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }]
                     }, { model: RrhhEmpleadoHistorialVacacion, as: 'historialVacaciones' }, { model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' }, { model: Clase, as: 'campo' }] }]
                 }]

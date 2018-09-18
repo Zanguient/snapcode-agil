@@ -103,7 +103,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			ComprobanteContabilidad.findAndCountAll({
 				where: condicionComprobante,
 				include: [//{ model: AsientoContabilidad, as: 'asientosContables', where: { eliminado: false } }, { model: Clase, as: 'tipoComprobante' }, { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] },
-					{ model: Sucursal, as: 'sucursal', where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }] }],
+					{ model: Sucursal, as: 'sucursal', attributes:['id','nombre'], where: condicionSucursal }],
 			}).then(function (data) {
 				if (req.params.items_pagina == "0") {
 					ComprobanteContabilidad.findAll({

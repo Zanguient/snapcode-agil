@@ -351,13 +351,13 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				include: [{ model: Clase, as: 'clases', where: { eliminado: false } }]
 			}).then(function (entidad) {
 				var producto_base = entidad.clases.find(function (tipo) {
-					return tipo.nombre_corte === 'PBASE'
+					return tipo.nombre_corto === 'PBASE'
 				})
 				var producto_intermedio = entidad.clases.find(function (tipo) {
-					return tipo.nombre_corte === 'PINTER'
+					return tipo.nombre_corto === 'PINTER'
 				})
 				var producto_final = entidad.clases.find(function (tipo) {
-					return tipo.nombre_corte === 'PFINAL'
+					return tipo.nombre_corto === 'PFINAL'
 				})
 				// Clase.find({
 				// 	where: { nombre_corto: 'PBASE' }
@@ -444,6 +444,14 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 															id: productoEncontrado.id
 														},
 														transaction: t
+													}).then(function (creado) {
+														return new Promise(function (fulfill, reject) {
+															fulfill(creado)
+														});
+													}).catch(function (err) {
+														return new Promise(function (fulfill, reject) {
+															reject((err.stack !== undefined) ? err.stack : err);
+														});
 													});
 											} else {
 												return Producto.create({
@@ -468,13 +476,33 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													id_tipo_producto: tipo_producto ? tipo_producto : producto_base,
 													marca: producto.marca,
 													activo_fijo: producto.activo_fijo
-												}, { transaction: t });
+												}, { transaction: t }).then(function (creado) {
+													return new Promise(function (fulfill, reject) {
+														fulfill(creado)
+													});
+												}).catch(function (err) {
+													return new Promise(function (fulfill, reject) {
+														reject((err.stack !== undefined) ? err.stack : err);
+													});
+												});
 											}
+										}).catch(function (err) {
+											return new Promise(function (fulfill, reject) {
+												reject((err.stack !== undefined) ? err.stack : err);
+											});
 										})
 
+									}).catch(function (err) {
+										return new Promise(function (fulfill, reject) {
+											reject((err.stack !== undefined) ? err.stack : err);
+										});
 									})
 
-								});
+								}).catch(function (err) {
+									return new Promise(function (fulfill, reject) {
+										reject((err.stack !== undefined) ? err.stack : err);
+									});
+								})
 							}).then(function (result) {
 								if (index === (array.length - 1)) {
 									res.json({ mensaje: "¡Datos de Productos actualizados satisfactoriamente!" });
@@ -485,10 +513,16 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						});
 
 
+					}).catch(function (err) {
+						res.json({ hasError: true, mensaje: err.stack });
 					});
+				}).catch(function (err) {
+					res.json({ hasError: true, mensaje: err.stack });
 				});
 				// });
-			});
+			}).catch(function (err) {
+				res.json({ hasError: true, mensaje: err.stack });
+			});;
 		});
 
 		function crearFormulacion(producto, req, t) {
@@ -682,7 +716,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				include: [{ model: Empresa, as: 'empresa' },
 				{ model: Clase, as: 'tipoProducto' },
 				{ model: Clase, as: 'grupo' },
-				{ model: ProductoTipoPrecio, as: 'tiposPrecio',include: [{ model: Clase, as: 'tipoPrecio' }] },
+				{ model: ProductoTipoPrecio, as: 'tiposPrecio', include: [{ model: Clase, as: 'tipoPrecio' }] },
 				{ model: Clase, as: 'subgrupo' },
 				{
 					model: Almacen, as: 'almacenErp',
@@ -705,35 +739,37 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				where: { id: productoCreado.id }
 			}).then(function (affecteedRows) {
 				if (req.body.tiposPrecio.length > 0) {
-					req.body.tiposPrecio.forEach(function(tipoP,index,array){
-						if(tipoP.id){
+					req.body.tiposPrecio.forEach(function (tipoP, index, array) {
+						if (tipoP.id) {
 							ProductoTipoPrecio.update({
-								id_producto:productoCreado.id,
-								id_tipo_precio:tipoP.tipoPrecio.id,
-								precio_unitario:tipoP.precio_unitario,
-								rango_positivo:tipoP.rango_positivo,
-								rango_negativo:tipoP.rango_negativo,
-								eliminado:tipoP.eliminado},{where:{id:tipoP.id}
-							}).then(function(actualizado){
-								if(index===(array.length-1)){
-									res.json({ producto: productoCreado, url: imagen, signedRequest: signedRequest, image_name: 'producto-' + productoCreado.id + '.jpg' });
-								}
-							})
-						}else{
+								id_producto: productoCreado.id,
+								id_tipo_precio: tipoP.tipoPrecio.id,
+								precio_unitario: tipoP.precio_unitario,
+								rango_positivo: tipoP.rango_positivo,
+								rango_negativo: tipoP.rango_negativo,
+								eliminado: tipoP.eliminado
+							}, {
+								where: { id: tipoP.id }
+								}).then(function (actualizado) {
+									if (index === (array.length - 1)) {
+										res.json({ producto: productoCreado, url: imagen, signedRequest: signedRequest, image_name: 'producto-' + productoCreado.id + '.jpg' });
+									}
+								})
+						} else {
 							ProductoTipoPrecio.create({
-								id_producto:productoCreado.id,
-								id_tipo_precio:tipoP.tipoPrecio.id,
-								precio_unitario:tipoP.precio_unitario,
-								rango_positivo:tipoP.rango_positivo,
-								rango_negativo:tipoP.rango_negativo,
-								eliminado:false
-							}).then(function(creado){
-								if(index===(array.length-1)){
+								id_producto: productoCreado.id,
+								id_tipo_precio: tipoP.tipoPrecio.id,
+								precio_unitario: tipoP.precio_unitario,
+								rango_positivo: tipoP.rango_positivo,
+								rango_negativo: tipoP.rango_negativo,
+								eliminado: false
+							}).then(function (creado) {
+								if (index === (array.length - 1)) {
 									res.json({ producto: productoCreado, url: imagen, signedRequest: signedRequest, image_name: 'producto-' + productoCreado.id + '.jpg' });
 								}
 							})
 						}
-						
+
 					})
 				} else {
 					res.json({ producto: productoCreado, url: imagen, signedRequest: signedRequest, image_name: 'producto-' + productoCreado.id + '.jpg' });
@@ -799,7 +835,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				Producto.findAll({
 					where: { id_empresa: req.params.id_empresa, publicar_panel: true, id_grupo: { $in: gruposUsuario } },
 					include: [
-						{ model: ProductoTipoPrecio, as: 'tiposPrecio',include: [{ model: Clase, as: 'tipoPrecio' }] },
+						{ model: ProductoTipoPrecio, as: 'tiposPrecio', include: [{ model: Clase, as: 'tipoPrecio' }] },
 						{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
 						{ model: Clase, as: 'tipoProducto' },
 						{

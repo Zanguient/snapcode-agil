@@ -5322,17 +5322,17 @@
             <form ng-submit="obtenerHistorialEmpresaVacacion(filtroVacacion)">
                 <div class="row">
                     <div class="form-group col-sm-3">
-                        <label for="nombres">Desde</label>
+                        <p for="nombres">Desde</p>
                         <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVacacion.inicio"
                             data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
                     </div>
                     <div class="form-group col-sm-3">
-                        <label for="ap-paterno">Hasta</label>
+                        <p for="ap-paterno">Hasta</p>
                         <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVacacion.fin" data-date-format="dd/mm/yyyy"
                             id="ap-paterno" name="ap-paterno" placeholder="Hasta">
                     </div>
                     <div class="form-group col-sm-2">
-                        <label for="ap-paterno">Estado</label>
+                        <p for="ap-paterno">Estado</p>
                         <select name="estado" id="estado-empleado" ng-model="filtroVacacion.estado">
                             <option value="2">Todos</option>
                             <option value="1">Activo</option>

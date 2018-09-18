@@ -617,8 +617,8 @@ angular.module('agil.controladores')
 			for (var i = 0; i < cuentasSubGrupo.length && items <= itemsPorPagina; i++) {
 				cuenta = cuentasSubGrupo[i]
 				cuenta.total = 0
-
-				if (cuenta.clasificacion.nombre === "Activo") {
+				cuenta.codigo = obtenercodigoCuenta(cuenta.codigo)
+				if (cuenta.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 					if (items == itemsPorPagina) {
 						doc.addPage({ margin: 0, bufferPages: true });
 						y = 140;
@@ -635,11 +635,12 @@ angular.module('agil.controladores')
 
 					for (var L = 0; L < cuentasGenericas.length && items <= itemsPorPagina; L++) {
 						cuenta3 = cuentasGenericas[L]
-
-						var cod = String(cuenta3.codigo).substr(0, 3)
+						cuenta3.codigo = obtenercodigoCuenta(cuenta3.codigo)
+						var cod = String(cuenta3.codigo).substr(0, 2)
 						if (cuenta.codigo == cod) {
 							if (cuentasApropiacion.some(function (cuenta2) {
-								var cod = String(cuenta2.codigo).substr(0, 5)
+								cuenta2.codigo = obtenercodigoCuenta(cuenta2.codigo)
+								var cod = String(cuenta2.codigo).substr(0, 3)
 								if (cuenta3.codigo == cod) {
 									return true
 								} else {
@@ -653,8 +654,8 @@ angular.module('agil.controladores')
 
 								for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
 									cuenta2 = cuentasApropiacion[p]
-
-									var cod = String(cuenta2.codigo).substr(0, 5)
+									cuenta2.codigo = obtenercodigoCuenta(cuenta2.codigo)
+									var cod = String(cuenta2.codigo).substr(0, 3)
 									if (cuenta3.codigo == cod) {
 										doc.text(cuenta2.nombre, 60, y)
 										doc.text(number_format(cuenta2.saldo, 2), x, y);
@@ -741,13 +742,12 @@ angular.module('agil.controladores')
 		}
 		$scope.DibujarFijoApropiacion = function (dato, totalActivos, doc, y, items, pagina, totalPaginas, itemsPorPagina, x) {
 			if ($scope.configuracionImpresion.tipoPeriodo.nombre != 'COMPARATIVO') {
-
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < dato.cuentasSubGrupoFijo.length && items <= itemsPorPagina; i++) {
 					cuenta = dato.cuentasSubGrupoFijo[i]
 					cuenta.total = 0
-
-					if (cuenta.clasificacion.nombre === "Activo") {
+					cuenta.codigo = obtenercodigoCuenta(cuenta.codigo)
+					if (cuenta.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 						if (items == itemsPorPagina) {
 							doc.addPage({ margin: 0, bufferPages: true });
 							y = 140;
@@ -764,82 +764,54 @@ angular.module('agil.controladores')
 
 						for (var L = 0; L < dato.cuentasGenericasFijo.length && items <= itemsPorPagina; L++) {
 							cuenta3 = dato.cuentasGenericasFijo[L]
-							if (cuenta3.tipoCuenta.nombre_corto === "3") {
-								var cod = String(cuenta3.codigo).substr(0, 3)
-								if (cuenta.codigo == cod) {
-									if (dato.cuentasApropiacionFijo.some(function (cuenta2) {
-										var cod = String(cuenta2.codigo).substr(0, 5)
+							cuenta3.codigo = obtenercodigoCuenta(cuenta3.codigo)
+							var cod = String(cuenta3.codigo).substr(0, 2)
+							if (cuenta.codigo == cod) {
+								if (dato.cuentasApropiacionFijo.some(function (cuenta2) {
+									cuenta2.codigo = obtenercodigoCuenta(cuenta2.codigo)
+									var cod = String(cuenta2.codigo).substr(0, 3)
+									if (cuenta3.codigo == cod) {
+										return true
+									} else {
+										return false
+									}
+								})) {
+									doc.text(cuenta3.nombre, 40, y)
+									y = y + 20;
+									items++;
+
+
+									for (var p = 0; p < dato.cuentasApropiacionFijo.length && items <= itemsPorPagina; p++) {
+										cuenta2 = dato.cuentasApropiacionFijo[p]
+										cuenta2.codigo = obtenercodigoCuenta(cuenta2.codigo)
+										var cod = String(cuenta2.codigo).substr(0, 3)
 										if (cuenta3.codigo == cod) {
-											return true
-										} else {
-											return false
-										}
-									})) {
-										doc.text(cuenta3.nombre, 40, y)
-										y = y + 20;
-										items++;
-
-
-										for (var p = 0; p < dato.cuentasApropiacionFijo.length && items <= itemsPorPagina; p++) {
-											cuenta2 = dato.cuentasApropiacionFijo[p]
-											if (cuenta2.tipoCuenta.nombre_corto === "4") {
-												var cod = String(cuenta2.codigo).substr(0, 5)
-												if (cuenta3.codigo == cod) {
-													doc.text(cuenta2.nombre, 60, y)
-													doc.text(number_format(cuenta2.saldo, 2), x - 80, y);
-													var saldoSus = cuenta2.saldo / $scope.moneda.dolar;
+											doc.text(cuenta2.nombre, 60, y)
+											doc.text(number_format(cuenta2.saldo, 2), x - 80, y);
+											var saldoSus = cuenta2.saldo / $scope.moneda.dolar;
+											if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 65, y);
+											/* cuenta.total += cuenta2.saldo
+											totalActivos += cuenta2.saldo */
+											y = y + 20;
+											items++;
+											for (var S = 0; S < dato.cuentasApropiacionFijo.length && items <= itemsPorPagina; S++) {
+												cuenta5 = dato.cuentasApropiacionFijo[S]
+												cuenta5.codigo = obtenercodigoCuenta(cuenta5.codigo)
+												var cod = String(cuenta5.codigo).substr(3)
+												var codDos = String(cuenta2.codigo).substr(3)
+												if (codDos == cod && cuenta5.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
+													doc.text(cuenta5.nombre, 60, y)
+													doc.text("(" + number_format(cuenta5.saldo, 2) + ")", x - 80, y);
+													var totalSumado = cuenta2.saldo - cuenta5.saldo
+													doc.text(number_format((totalSumado), 2), x, y);
+													var saldoSus = cuenta5.saldo / $scope.moneda.dolar;
+													var saldoSusTotal = totalSumado / $scope.moneda.dolar;
 													if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 65, y);
-													/* cuenta.total += cuenta2.saldo
-													totalActivos += cuenta2.saldo */
+													if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSusTotal, 2), x + 130, y);
+													cuenta.total += totalSumado
+													totalActivos += totalSumado
 													y = y + 20;
 													items++;
-													for (var S = 0; S < dato.cuentasApropiacionFijo.length && items <= itemsPorPagina; S++) {
-														cuenta5 = dato.cuentasApropiacionFijo[S]
-														if (cuenta5.tipoCuenta.nombre_corto === "4") {
-															var cod = String(cuenta5.codigo).substr(4)
-															var codDos = String(cuenta2.codigo).substr(4)
-															if (codDos == cod && cuenta5.clasificacion.nombre === "Pasivo") {
-																doc.text(cuenta5.nombre, 60, y)
-																doc.text("(" + number_format(cuenta5.saldo, 2) + ")", x - 80, y);
-																var totalSumado = cuenta2.saldo - cuenta5.saldo
-																doc.text(number_format((totalSumado), 2), x, y);
-																var saldoSus = cuenta5.saldo / $scope.moneda.dolar;
-																var saldoSusTotal = totalSumado / $scope.moneda.dolar;
-																if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 65, y);
-																if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSusTotal, 2), x + 130, y);
-																cuenta.total += totalSumado
-																totalActivos += totalSumado
-																y = y + 20;
-																items++;
-																if (items == itemsPorPagina) {
-																	doc.addPage({ margin: 0, bufferPages: true });
-																	y = 140;
-																	items = 0;
-																	pagina = pagina + 1;
-																	$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-																	doc.font('Helvetica', 8);
-																}
-															} else {
-																if (items == itemsPorPagina) {
-																	doc.addPage({ margin: 0, bufferPages: true });
-																	y = 140;
-																	items = 0;
-																	pagina = pagina + 1;
-																	$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-																	doc.font('Helvetica', 8);
-																}
-															}
-														} else {
-															if (items == itemsPorPagina) {
-																doc.addPage({ margin: 0, bufferPages: true });
-																y = 140;
-																items = 0;
-																pagina = pagina + 1;
-																$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-																doc.font('Helvetica', 8);
-															}
-														}
-													}
 													if (items == itemsPorPagina) {
 														doc.addPage({ margin: 0, bufferPages: true });
 														y = 140;
@@ -858,28 +830,28 @@ angular.module('agil.controladores')
 														doc.font('Helvetica', 8);
 													}
 												}
-											} else {
-												if (items == itemsPorPagina) {
-													doc.addPage({ margin: 0, bufferPages: true });
-													y = 140;
-													items = 0;
-													pagina = pagina + 1;
-													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-													doc.font('Helvetica', 8);
-												}
+
 											}
-
-
+											if (items == itemsPorPagina) {
+												doc.addPage({ margin: 0, bufferPages: true });
+												y = 140;
+												items = 0;
+												pagina = pagina + 1;
+												$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+												doc.font('Helvetica', 8);
+											}
+										} else {
+											if (items == itemsPorPagina) {
+												doc.addPage({ margin: 0, bufferPages: true });
+												y = 140;
+												items = 0;
+												pagina = pagina + 1;
+												$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+												doc.font('Helvetica', 8);
+											}
 										}
-									}
-								} else {
-									if (items == itemsPorPagina) {
-										doc.addPage({ margin: 0, bufferPages: true });
-										y = 140;
-										items = 0;
-										pagina = pagina + 1;
-										$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-										doc.font('Helvetica', 8);
+
+
 									}
 								}
 							} else {
@@ -923,9 +895,10 @@ angular.module('agil.controladores')
 			doc.font('Helvetica', 8);
 			for (var i = 0; i < dato.cuentasSubGrupoFijo.length && items <= itemsPorPagina; i++) {
 				cuenta = dato.cuentasSubGrupoFijo[i]
+				cuenta.codigo = $scope.obtenercodigoCuenta(cuenta.codigo)
 				cuenta.total = 0
 
-				if (cuenta.clasificacion.nombre === "Activo") {
+				if (cuenta.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 					if (items == itemsPorPagina) {
 						doc.addPage({ margin: 0, bufferPages: true });
 						y = 140;
@@ -942,95 +915,68 @@ angular.module('agil.controladores')
 
 					for (var L = 0; L < dato.cuentasGenericasFijo.length && items <= itemsPorPagina; L++) {
 						cuenta3 = dato.cuentasGenericasFijo[L]
+						cuenta3.codigo = $scope.obtenercodigoCuenta(cuenta3.codigo)
 						cuenta3.total = 0
-						if (cuenta3.tipoCuenta.nombre_corto === "3") {
-							var cod = String(cuenta3.codigo).substr(0, 3)
-							if (cuenta.codigo == cod) {
-								if (dato.cuentasApropiacionFijo.some(function (cuenta2) {
-									var cod = String(cuenta2.codigo).substr(0, 5)
-									if (cuenta3.codigo == cod) {
-										return true
-									} else {
-										return false
+
+						var cod = String(cuenta3.codigo).substr(0, 2)
+						if (cuenta.codigo == cod) {
+							if (dato.cuentasApropiacionFijo.some(function (cuenta2) {
+								var cod = String(cuenta2.codigo).substr(0, 3)
+								if (cuenta3.codigo == cod) {
+									return true
+								} else {
+									return false
+								}
+							})) {
+								doc.text(cuenta3.nombre, 40, y)
+								y = y + 20;
+								items++;
+								for (var s = 0; s < dato.cuentasGenericasFijo.length && items <= itemsPorPagina; s++) {
+									cuenta6 = dato.cuentasGenericasFijo[s]
+									cuenta6.codigo = $scope.obtenercodigoCuenta(cuenta6.codigo)
+									cuenta6.total = 0
+									var cod = String(cuenta6.codigo).substr(2)
+									var codDos = String(cuenta3.codigo).substr(2)
+									if (codDos == cod && cuenta6.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
+										doc.text(cuenta6.nombre, 40, y)
+										y = y + 20;
+										items++;
 									}
-								})) {
-									doc.text(cuenta3.nombre, 40, y)
-									y = y + 20;
-									items++;
-									for (var s = 0; s < dato.cuentasGenericasFijo.length && items <= itemsPorPagina; s++) {
-										cuenta6 = dato.cuentasGenericasFijo[s]
-										cuenta6.total = 0
-										var cod = String(cuenta6.codigo).substr(3)
-										var codDos = String(cuenta3.codigo).substr(3)
-										if (codDos == cod && cuenta6.clasificacion.nombre === "Pasivo") {
-											doc.text(cuenta6.nombre, 40, y)
-											y = y + 20;
-											items++;
-										}
-										if (s == (dato.cuentasGenericasFijo.length - 1)) {
-											for (var p = 0; p < dato.cuentasApropiacionFijo.length && items <= itemsPorPagina; p++) {
-												cuenta2 = dato.cuentasApropiacionFijo[p]
-												if (cuenta2.tipoCuenta.nombre_corto === "4") {
-													var cod = String(cuenta2.codigo).substr(0, 5)
-													if (cuenta3.codigo == cod) {
-														/* 	doc.text(cuenta2.nombre, 60, y) */
-														cuenta3.total += cuenta2.saldo
-														//doc.text(number_format(cuenta2.saldo, 2), x - 80, y-20);
-														var saldoSus = cuenta2.saldo / $scope.moneda.dolar;
-														//if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x +65, y-20);
+									if (s == (dato.cuentasGenericasFijo.length - 1)) {
+										for (var p = 0; p < dato.cuentasApropiacionFijo.length && items <= itemsPorPagina; p++) {
+											cuenta2 = dato.cuentasApropiacionFijo[p]
+											cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
 
-														/* y = y + 20;
-														items++; */
-														for (var S = 0; S < dato.cuentasApropiacionFijo.length && items <= itemsPorPagina; S++) {
-															cuenta5 = dato.cuentasApropiacionFijo[S]
-															if (cuenta5.tipoCuenta.nombre_corto === "4") {
-																var cod = String(cuenta5.codigo).substr(4)
-																var codDos = String(cuenta2.codigo).substr(4)
-																if (codDos == cod && cuenta5.clasificacion.nombre === "Pasivo") {
-																	/* doc.text(cuenta5.nombre, 60, y) */
-																	/* doc.text("("+number_format(cuenta5.saldo, 2)+")", x - 80, y-20); */
-																	cuenta6.total += cuenta5.saldo
-																	var totalSumado = cuenta2.saldo - cuenta5.saldo
-																	/* 	doc.text(number_format((totalSumado), 2), x, y-20); */
-																	var saldoSus = cuenta5.saldo / $scope.moneda.dolar;
-																	var saldoSusTotal = totalSumado / $scope.moneda.dolar;
-																	/* 	if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 65, y-20);
-																		if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSusTotal, 2), x + 130, y-20); */
-																	cuenta.total += totalSumado
-																	totalActivos += totalSumado
-																	/* 	y = y + 20;
-																		items++; */
-																	if (items == itemsPorPagina) {
-																		doc.addPage({ margin: 0, bufferPages: true });
-																		y = 140;
-																		items = 0;
-																		pagina = pagina + 1;
-																		$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-																		doc.font('Helvetica', 8);
-																	}
-																} else {
-																	if (items == itemsPorPagina) {
-																		doc.addPage({ margin: 0, bufferPages: true });
-																		y = 140;
-																		items = 0;
-																		pagina = pagina + 1;
-																		$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-																		doc.font('Helvetica', 8);
-																	}
-																}
-															} else {
-																if (items == itemsPorPagina) {
-																	doc.addPage({ margin: 0, bufferPages: true });
-																	y = 140;
-																	items = 0;
-																	pagina = pagina + 1;
-																	$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-																	doc.font('Helvetica', 8);
-																}
-															}
+											var cod = String(cuenta2.codigo).substr(0, 3)
+											if (cuenta3.codigo == cod) {
+												/* 	doc.text(cuenta2.nombre, 60, y) */
+												cuenta3.total += cuenta2.saldo
+												//doc.text(number_format(cuenta2.saldo, 2), x - 80, y-20);
+												var saldoSus = cuenta2.saldo / $scope.moneda.dolar;
+												//if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x +65, y-20);
 
+												/* y = y + 20;
+												items++; */
+												for (var S = 0; S < dato.cuentasApropiacionFijo.length && items <= itemsPorPagina; S++) {
+													cuenta5 = dato.cuentasApropiacionFijo[S]
+													cuenta5.codigo = $scope.obtenercodigoCuenta(cuenta5.codigo)
 
-														}
+													var cod = String(cuenta5.codigo).substr(3)
+													var codDos = String(cuenta2.codigo).substr(3)
+													if (codDos == cod && cuenta5.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
+														/* doc.text(cuenta5.nombre, 60, y) */
+														/* doc.text("("+number_format(cuenta5.saldo, 2)+")", x - 80, y-20); */
+														cuenta6.total += cuenta5.saldo
+														var totalSumado = cuenta2.saldo - cuenta5.saldo
+														/* 	doc.text(number_format((totalSumado), 2), x, y-20); */
+														var saldoSus = cuenta5.saldo / $scope.moneda.dolar;
+														var saldoSusTotal = totalSumado / $scope.moneda.dolar;
+														/* 	if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 65, y-20);
+															if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSusTotal, 2), x + 130, y-20); */
+														cuenta.total += totalSumado
+														totalActivos += totalSumado
+														/* 	y = y + 20;
+															items++; */
 														if (items == itemsPorPagina) {
 															doc.addPage({ margin: 0, bufferPages: true });
 															y = 140;
@@ -1049,44 +995,44 @@ angular.module('agil.controladores')
 															doc.font('Helvetica', 8);
 														}
 													}
-												} else {
-													if (items == itemsPorPagina) {
-														doc.addPage({ margin: 0, bufferPages: true });
-														y = 140;
-														items = 0;
-														pagina = pagina + 1;
-														$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-														doc.font('Helvetica', 8);
-													}
 												}
-
-
+												if (items == itemsPorPagina) {
+													doc.addPage({ margin: 0, bufferPages: true });
+													y = 140;
+													items = 0;
+													pagina = pagina + 1;
+													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+													doc.font('Helvetica', 8);
+												}
+											} else {
+												if (items == itemsPorPagina) {
+													doc.addPage({ margin: 0, bufferPages: true });
+													y = 140;
+													items = 0;
+													pagina = pagina + 1;
+													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+													doc.font('Helvetica', 8);
+												}
 											}
 
-											doc.text(number_format(cuenta3.total, 2), x - 80, y - 40);
-											var saldoSus = cuenta3.total / $scope.moneda.dolar;
-											if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 65, y - 40);
-											doc.text("(" + number_format(cuenta6.total, 2) + ")", x - 80, y - 20);
-											var saldoSus = cuenta6.total / $scope.moneda.dolar;
-											if ($scope.configuracionImpresion.bimonetario) doc.text("(" + number_format(saldoSus, 2) + ")", x + 65, y - 20);
-											var totalFijos = cuenta3.total - cuenta6.total
-											var totalFijosSus = totalFijos / $scope.moneda.dolar;
-											doc.text(number_format(totalFijos, 2), x, y - 20);
-											if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(totalFijosSus, 2), x + 130, y - 20);
+
+
 										}
 
+										doc.text(number_format(cuenta3.total, 2), x - 80, y - 40);
+										var saldoSus = cuenta3.total / $scope.moneda.dolar;
+										if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 65, y - 40);
+										doc.text("(" + number_format(cuenta6.total, 2) + ")", x - 80, y - 20);
+										var saldoSus = cuenta6.total / $scope.moneda.dolar;
+										if ($scope.configuracionImpresion.bimonetario) doc.text("(" + number_format(saldoSus, 2) + ")", x + 65, y - 20);
+										var totalFijos = cuenta3.total - cuenta6.total
+										var totalFijosSus = totalFijos / $scope.moneda.dolar;
+										doc.text(number_format(totalFijos, 2), x, y - 20);
+										if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(totalFijosSus, 2), x + 130, y - 20);
 									}
 
 								}
-							} else {
-								if (items == itemsPorPagina) {
-									doc.addPage({ margin: 0, bufferPages: true });
-									y = 140;
-									items = 0;
-									pagina = pagina + 1;
-									$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-									doc.font('Helvetica', 8);
-								}
+
 							}
 						} else {
 							if (items == itemsPorPagina) {
@@ -1098,6 +1044,7 @@ angular.module('agil.controladores')
 								doc.font('Helvetica', 8);
 							}
 						}
+
 
 
 					}
@@ -1343,9 +1290,10 @@ angular.module('agil.controladores')
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < dato.cuentasSubGrupoFijo.length && items <= itemsPorPagina; i++) {
 					cuenta = dato.cuentasSubGrupoFijo[i]
+					cuenta.codigo = $scope.obtenercodigoCuenta(cuenta.codigo)
 					cuenta.total = 0
 
-					if (cuenta.clasificacion.nombre === "Activo") {
+					if (cuenta.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 						if (items == itemsPorPagina) {
 							doc.addPage({ margin: 0, bufferPages: true });
 							y = 140;
@@ -1361,12 +1309,14 @@ angular.module('agil.controladores')
 
 						for (var L = 0; L < dato.cuentasGenericasFijo.length && items <= itemsPorPagina; L++) {
 							cuenta3 = dato.cuentasGenericasFijo[L]
+							cuenta3.codigo = $scope.obtenercodigoCuenta(cuenta3.codigo)
 							cuenta3.total = 0
 
-							var cod = String(cuenta3.codigo).substr(0, 3)
+							var cod = String(cuenta3.codigo).substr(0, 2)
 							if (cuenta.codigo == cod) {
 								if (dato.cuentasApropiacionFijo.some(function (cuenta2) {
-									var cod = String(cuenta2.codigo).substr(0, 5)
+									cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+									var cod = String(cuenta2.codigo).substr(0, 3)
 									if (cuenta3.codigo == cod) {
 										return true
 									} else {
@@ -1376,21 +1326,24 @@ angular.module('agil.controladores')
 
 									for (var s = 0; s < dato.cuentasGenericasFijo.length && items <= itemsPorPagina; s++) {
 										cuenta6 = dato.cuentasGenericasFijo[s]
+										cuenta6.codigo = $scope.obtenercodigoCuenta(cuenta6.codigo)
 										cuenta6.total = 0
-										var cod = String(cuenta6.codigo).substr(3)
-										var codDos = String(cuenta3.codigo).substr(3)
+										var cod = String(cuenta6.codigo).substr(2)
+										var codDos = String(cuenta3.codigo).substr(2)
 
 										if (s == (dato.cuentasGenericasFijo.length - 1)) {
 											for (var p = 0; p < dato.cuentasApropiacionFijo.length && items <= itemsPorPagina; p++) {
 												cuenta2 = dato.cuentasApropiacionFijo[p]
-												var cod = String(cuenta2.codigo).substr(0, 5)
+												cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+												var cod = String(cuenta2.codigo).substr(0, 3)
 												if (cuenta3.codigo == cod) {
 													cuenta3.total += cuenta2.saldo
 													for (var S = 0; S < dato.cuentasApropiacionFijo.length && items <= itemsPorPagina; S++) {
 														cuenta5 = dato.cuentasApropiacionFijo[S]
-														var cod = String(cuenta5.codigo).substr(4)
-														var codDos = String(cuenta2.codigo).substr(4)
-														if (codDos == cod && cuenta5.clasificacion.nombre === "Pasivo") {
+														cuenta5.codigo = $scope.obtenercodigoCuenta(cuenta5.codigo)
+														var cod = String(cuenta5.codigo).substr(3)
+														var codDos = String(cuenta2.codigo).substr(3)
+														if (codDos == cod && cuenta5.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 															cuenta6.total += cuenta5.saldo
 															var totalSumado = cuenta2.saldo - cuenta5.saldo
 															cuenta.total += totalSumado
@@ -1447,9 +1400,10 @@ angular.module('agil.controladores')
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < dato.cuentasSubGrupoFijo.length && items <= itemsPorPagina; i++) {
 					cuenta = dato.cuentasSubGrupoFijo[i]
+					cuenta.codigo = $scope.obtenercodigoCuenta(cuenta.codigo)
 					cuenta.total = 0
 
-					if (cuenta.clasificacion.nombre === "Activo") {
+					if (cuenta.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 						if (items == itemsPorPagina) {
 							doc.addPage({ margin: 0, bufferPages: true });
 							y = 140;
@@ -1466,11 +1420,13 @@ angular.module('agil.controladores')
 
 						for (var L = 0; L < dato.cuentasGenericasFijo.length && items <= itemsPorPagina; L++) {
 							cuenta3 = dato.cuentasGenericasFijo[L]
+							cuenta3.codigo = $scope.obtenercodigoCuenta(cuenta3.codigo)
 							cuenta3.total = 0
-							var cod = String(cuenta3.codigo).substr(0, 3)
+							var cod = String(cuenta3.codigo).substr(0, 2)
 							if (cuenta.codigo == cod) {
 								if (dato.cuentasApropiacionFijo.some(function (cuenta2) {
-									var cod = String(cuenta2.codigo).substr(0, 5)
+									cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+									var cod = String(cuenta2.codigo).substr(0, 3)
 									if (cuenta3.codigo == cod) {
 										return true
 									} else {
@@ -1482,10 +1438,11 @@ angular.module('agil.controladores')
 									items++; */
 									for (var s = 0; s < dato.cuentasGenericasFijo.length && items <= itemsPorPagina; s++) {
 										cuenta6 = dato.cuentasGenericasFijo[s]
+										cuenta6.codigo = $scope.obtenercodigoCuenta(cuenta6.codigo)
 										cuenta6.total = 0
-										var cod = String(cuenta6.codigo).substr(3)
-										var codDos = String(cuenta3.codigo).substr(3)
-										if (codDos == cod && cuenta6.clasificacion.nombre === "Pasivo") {
+										var cod = String(cuenta6.codigo).substr(2)
+										var codDos = String(cuenta3.codigo).substr(2)
+										if (codDos == cod && cuenta6.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 											/* doc.text(cuenta6.nombre, 40, y)
 											y = y + 20;
 											items++; */
@@ -1493,7 +1450,8 @@ angular.module('agil.controladores')
 										if (s == (dato.cuentasGenericasFijo.length - 1)) {
 											for (var p = 0; p < dato.cuentasApropiacionFijo.length && items <= itemsPorPagina; p++) {
 												cuenta2 = dato.cuentasApropiacionFijo[p]
-												var cod = String(cuenta2.codigo).substr(0, 5)
+												cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+												var cod = String(cuenta2.codigo).substr(0, 3)
 												if (cuenta3.codigo == cod) {
 													/* 	doc.text(cuenta2.nombre, 60, y) */
 													cuenta3.total += cuenta2.saldo
@@ -1505,10 +1463,10 @@ angular.module('agil.controladores')
 													items++; */
 													for (var S = 0; S < dato.cuentasApropiacionFijo.length && items <= itemsPorPagina; S++) {
 														cuenta5 = dato.cuentasApropiacionFijo[S]
-
-														var cod = String(cuenta5.codigo).substr(4)
-														var codDos = String(cuenta2.codigo).substr(4)
-														if (codDos == cod && cuenta5.clasificacion.nombre === "Pasivo") {
+														cuenta5.codigo = $scope.obtenercodigoCuenta(cuenta5.codigo)
+														var cod = String(cuenta5.codigo).substr(3)
+														var codDos = String(cuenta2.codigo).substr(3)
+														if (codDos == cod && cuenta5.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 															cuenta6.total += cuenta5.saldo
 															var totalSumado = cuenta2.saldo - cuenta5.saldo
 
@@ -1569,7 +1527,7 @@ angular.module('agil.controladores')
 				y += 20
 				for (var j = 0; j < dato.cuentasSubGrupo.length && items <= itemsPorPagina; j++) {
 					var cuenta = dato.cuentasSubGrupo[j]
-					if (cuenta.clasificacion.nombre === "Pasivo") {
+					if (cuenta.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 						if (items == itemsPorPagina) {
 							doc.addPage({ margin: 0, bufferPages: true });
 							y = 140;
@@ -1676,7 +1634,7 @@ angular.module('agil.controladores')
 					}
 					if (j === (dato.cuentasSubGrupo.length - 1)) {
 						doc.font('Helvetica-Bold', 8);
-						doc.text("TOTAL PASIVO:  ", 30, y)
+						doc.text("TOTAL PASIVO Y PATRIMONIO:  ", 30, y)
 						doc.text(number_format(totalPasivo, 2), x, y)
 						var saldoSus = Math.round((totalPasivo / $scope.moneda.dolar) * 10000) / 10000;
 						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
@@ -1818,7 +1776,7 @@ angular.module('agil.controladores')
 				}
 				if (j === (cuentasSubGrupo.length - 1)) {
 					doc.font('Helvetica-Bold', 8);
-					doc.text("TOTAL PASIVO:  ", 30, y)
+					doc.text("TOTAL PASIVO Y PATRIMONIO:  ", 30, y)
 					doc.text(number_format(totalesPasivo.totalPasivoPrimerAnio, 2), x, y)
 					var saldoSus = Math.round((totalesPasivo.totalPasivoPrimerAnio / $scope.moneda.dolar) * 10000) / 10000;
 					if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 80, y);
@@ -1846,7 +1804,8 @@ angular.module('agil.controladores')
 			for (var j = 0; j < dato.cuentasSubGrupo.length && items <= itemsPorPagina; j++) {
 				doc.font('Helvetica', 8);
 				var cuenta = dato.cuentasSubGrupo[j]
-				if (cuenta.clasificacion.nombre === "Pasivo" || cuenta.clasificacion.nombre == 'Capital') {
+				cuenta.codigo = $scope.obtenercodigoCuenta(cuenta.codigo)
+				if (cuenta.clasificacion.tipoClasificacion.nombre === "PASIVO" || cuenta.clasificacion.tipoClasificacion.nombre === "PATRIMONIO") {
 					if (items == itemsPorPagina) {
 						doc.addPage({ margin: 0, bufferPages: true });
 						y = 140;
@@ -1861,84 +1820,66 @@ angular.module('agil.controladores')
 					items++;
 					for (var L = 0; L < dato.cuentasGenericas.length && items <= itemsPorPagina; L++) {
 						var cuenta4 = dato.cuentasGenericas[L]
-						if (cuenta4.tipoCuenta.nombre_corto === "3") {
-							var cod = String(cuenta4.codigo).substr(0, 3)
-							if (cuenta.codigo == cod) {
-								if (dato.cuentasApropiacion.some(function (cuenta2) {
-									var cod = String(cuenta2.codigo).substr(0, 5)
+						cuenta4.codigo = $scope.obtenercodigoCuenta(cuenta4.codigo)
+
+						var cod = String(cuenta4.codigo).substr(0, 2)
+						if (cuenta.codigo == cod) {
+							if (dato.cuentasApropiacion.some(function (cuenta2) {
+								var cod = String(cuenta2.codigo).substr(0, 3)
+								if (cuenta4.codigo == cod) {
+									return true
+								} else {
+									return false
+								}
+							})) {
+								doc.text(cuenta4.nombre, 40, y)
+								cuenta4.total = 0
+								cuenta4.totalSus = 0
+								/* y = y + 20;
+								items++; */
+								for (var p = 0; p < dato.cuentasApropiacion.length && items <= itemsPorPagina; p++) {
+									var cuenta2 = dato.cuentasApropiacion[p]
+									cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+
+									var cod = String(cuenta2.codigo).substr(0, 3)
 									if (cuenta4.codigo == cod) {
-										return true
-									} else {
-										return false
-									}
-								})) {
-									doc.text(cuenta4.nombre, 40, y)
-									cuenta4.total = 0
-									cuenta4.totalSus = 0
-									/* y = y + 20;
-									items++; */
-									for (var p = 0; p < dato.cuentasApropiacion.length && items <= itemsPorPagina; p++) {
-										var cuenta2 = dato.cuentasApropiacion[p]
-										if (cuenta2.tipoCuenta.nombre_corto === "4") {
-											var cod = String(cuenta2.codigo).substr(0, 5)
-											if (cuenta4.codigo == cod) {
-												/* doc.text(cuenta2.nombre, 60, y)
-												doc.text(number_format(cuenta2.saldo, 2), x, y);
-												var saldoSus = cuenta2.saldo / $scope.moneda.dolar;
-												if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y); */
-												cuenta4.total += cuenta2.saldo
-												cuenta4.totalSus += cuenta2.saldo / $scope.moneda.dolar;
-												cuenta.total += cuenta2.saldo
-												totalPasivo += cuenta2.saldo
+										/* doc.text(cuenta2.nombre, 60, y)
+										doc.text(number_format(cuenta2.saldo, 2), x, y);
+										var saldoSus = cuenta2.saldo / $scope.moneda.dolar;
+										if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y); */
+										cuenta4.total += cuenta2.saldo
+										cuenta4.totalSus += cuenta2.saldo / $scope.moneda.dolar;
+										cuenta.total += cuenta2.saldo
+										totalPasivo += cuenta2.saldo
 
-												if (items == itemsPorPagina) {
-													doc.addPage({ margin: 0, bufferPages: true });
-													y = 140;
-													items = 0;
-													pagina = pagina + 1;
-													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
-													doc.font('Helvetica', 8);
-												}
-											} else {
-												if (items == itemsPorPagina) {
-													doc.addPage({ margin: 0, bufferPages: true });
-													y = 140;
-													items = 0;
-													pagina = pagina + 1;
-													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
-													doc.font('Helvetica', 8);
-												}
-											}
-										} else {
-											if (items == itemsPorPagina) {
-												doc.addPage({ margin: 0, bufferPages: true });
-												y = 140;
-												items = 0;
-												pagina = pagina + 1;
-												$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
-												doc.font('Helvetica', 8);
-											}
+										if (items == itemsPorPagina) {
+											doc.addPage({ margin: 0, bufferPages: true });
+											y = 140;
+											items = 0;
+											pagina = pagina + 1;
+											$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
+											doc.font('Helvetica', 8);
 										}
-
-
+									} else {
+										if (items == itemsPorPagina) {
+											doc.addPage({ margin: 0, bufferPages: true });
+											y = 140;
+											items = 0;
+											pagina = pagina + 1;
+											$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
+											doc.font('Helvetica', 8);
+										}
 									}
-									doc.text(cuenta4.total, x, y)
-									if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuenta4.totalSus, 2), x + 130, y);
-									y = y + 20;
-									items++;
+
+
+
 								}
-							} else {
-								if (items == itemsPorPagina) {
-									doc.addPage({ margin: 0, bufferPages: true });
-									y = 140;
-									items = 0;
-									pagina = pagina + 1;
-									$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
-									doc.font('Helvetica', 8);
-								}
+								doc.text(cuenta4.total, x, y)
+								if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuenta4.totalSus, 2), x + 130, y);
+								y = y + 20;
+								items++;
 							}
 						} else {
-
 							if (items == itemsPorPagina) {
 								doc.addPage({ margin: 0, bufferPages: true });
 								y = 140;
@@ -1948,6 +1889,7 @@ angular.module('agil.controladores')
 								doc.font('Helvetica', 8);
 							}
 						}
+
 
 
 					}
@@ -1960,7 +1902,7 @@ angular.module('agil.controladores')
 				}
 				if (j === (dato.cuentasSubGrupo.length - 1)) {
 					doc.font('Helvetica-Bold', 8);
-					doc.text("TOTAL PASIVO:  ", 30, y)
+					doc.text("TOTAL PASIVO Y PATRIMONIO:  ", 30, y)
 					doc.text(number_format(totalPasivo, 2), x, y)
 					var saldoSus = Math.round((totalPasivo / $scope.moneda.dolar) * 10000) / 10000;
 					if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
@@ -1985,7 +1927,7 @@ angular.module('agil.controladores')
 				for (var j = 0; j < dato.cuentasSubGrupo.length && items <= itemsPorPagina; j++) {
 					doc.font('Helvetica', 8);
 					var cuenta = dato.cuentasSubGrupo[j]
-					if (cuenta.clasificacion.nombre === "Pasivo" || cuenta.clasificacion.nombre == 'Capital') {
+					if (cuenta.clasificacion.tipoClasificacion.nombre === "PASIVO" || cuenta.clasificacion.tipoClasificacion.nombre === "PATRIMONIO") {
 						if (items == itemsPorPagina) {
 							doc.addPage({ margin: 0, bufferPages: true });
 							y = 140;
@@ -2041,7 +1983,7 @@ angular.module('agil.controladores')
 					}
 					if (j === (dato.cuentasSubGrupo.length - 1)) {
 						doc.font('Helvetica-Bold', 8);
-						doc.text("TOTAL PASIVO:  ", 30, y)
+						doc.text("TOTAL PASIVO Y PATRIMONIO:  ", 30, y)
 						doc.text(number_format(totalPasivo, 2), x, y)
 						var saldoSus = Math.round((totalPasivo / $scope.moneda.dolar) * 10000) / 10000;
 						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
@@ -2067,52 +2009,57 @@ angular.module('agil.controladores')
 				items++;
 				for (var i = 0; i < dato.cuentasGrupo.length && items <= itemsPorPagina; i++) {
 					cuenta = dato.cuentasGrupo[i]
+					cuenta.codigo = $scope.obtenercodigoCuenta(cuenta.codigo)
 					cuenta.total = 0
 					cuenta.totalSus = 0
-					if (cuenta.clasificacion.nombre === "Pasivo" || cuenta.clasificacion.nombre === "Capital") {
+					if (cuenta.clasificacion.tipoClasificacion.nombre === "PASIVO" || cuenta.clasificacion.tipoClasificacion.nombre === "PATRIMONIO") {
 						if (items == itemsPorPagina) {
 							doc.addPage({ margin: 0, bufferPages: true });
 							y = 140;
 							items = 0;
 							pagina = pagina + 1;
-							$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+							$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "PASIVO Y PATRIMONIO");
 							doc.font('Helvetica', 8);
 						}
 						doc.text(cuenta.nombre, 30, y)
 						for (var r = 0; r < dato.cuentasSubGrupo.length && items <= itemsPorPagina; r++) {
 							cuenta4 = dato.cuentasSubGrupo[r]
+							cuenta4.codigo = $scope.obtenercodigoCuenta(cuenta4.codigo)
 							if (cuenta4.tipoCuenta.nombre_corto === "2") {
 								var cod = String(cuenta4.codigo).substr(0, 1)
 								if (cuenta.codigo == cod) {
 
 									for (var L = 0; L < dato.cuentasGenericas.length && items <= itemsPorPagina; L++) {
 										cuenta3 = dato.cuentasGenericas[L]
-										if (cuenta3.tipoCuenta.nombre_corto === "3") {
-											var cod = String(cuenta3.codigo).substr(0, 3)
-											if (cuenta4.codigo == cod) {
-												if (dato.cuentasApropiacion.some(function (cuenta2) {
-													var cod = String(cuenta2.codigo).substr(0, 5)
+										cuenta3.codigo = $scope.obtenercodigoCuenta(cuenta3.codigo)
+
+										var cod = String(cuenta3.codigo).substr(0, 2)
+										if (cuenta4.codigo == cod) {
+											if (dato.cuentasApropiacion.some(function (cuenta2) {
+												cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+												var cod = String(cuenta2.codigo).substr(0, 3)
+												if (cuenta3.codigo == cod) {
+													return true
+												} else {
+													return false
+												}
+											})) {
+												for (var p = 0; p < dato.cuentasApropiacion.length && items <= itemsPorPagina; p++) {
+													cuenta2 = dato.cuentasApropiacion[p]
+													cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+
+													var cod = String(cuenta2.codigo).substr(0, 3)
 													if (cuenta3.codigo == cod) {
-														return true
-													} else {
-														return false
-													}
-												})) {
-													for (var p = 0; p < dato.cuentasApropiacion.length && items <= itemsPorPagina; p++) {
-														cuenta2 = dato.cuentasApropiacion[p]
-														if (cuenta2.tipoCuenta.nombre_corto === "4") {
-															var cod = String(cuenta2.codigo).substr(0, 5)
-															if (cuenta3.codigo == cod) {
-																cuenta.total += cuenta2.saldo
-																cuenta.totalSus += cuenta2.saldo
-																totalPasivo += cuenta2.saldo
-															}
-														}
+														cuenta.total += cuenta2.saldo
+														cuenta.totalSus += cuenta2.saldo
+														totalPasivo += cuenta2.saldo
 													}
 
 												}
+
 											}
 										}
+
 
 									}
 								}
@@ -2132,7 +2079,7 @@ angular.module('agil.controladores')
 					}
 					if (i === (dato.cuentasGrupo.length - 1)) {
 						doc.font('Helvetica-Bold', 8);
-						doc.text("TOTAL PASIVO:  ", 30, y)
+						doc.text("TOTAL PASIVO Y PATRIMONIO:  ", 30, y)
 						doc.text(number_format(totalPasivo, 2), x, y)
 						var saldoSus = Math.round((totalPasivo / $scope.moneda.dolar) * 10000) / 10000;
 						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
@@ -2160,9 +2107,10 @@ angular.module('agil.controladores')
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < cuentasGrupo.length && items <= itemsPorPagina; i++) {
 					cuenta = cuentasGrupo[i]
+					cuenta.codigo = $scope.obtenercodigoCuenta(cuenta.codigo)
 					cuenta.total = 0
 					cuenta.totalSus = 0
-					if (cuenta.clasificacion.nombre === "Activo") {
+					if (cuenta.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 						if (items == itemsPorPagina) {
 							doc.addPage({ margin: 0, bufferPages: true });
 							y = 140;
@@ -2174,42 +2122,45 @@ angular.module('agil.controladores')
 						doc.text(cuenta.nombre, 30, y)
 						for (var r = 0; r < cuentasSubGrupo.length && items <= itemsPorPagina; r++) {
 							cuenta4 = cuentasSubGrupo[r]
-							if (cuenta4.tipoCuenta.nombre_corto === "2") {
-								var cod = String(cuenta4.codigo).substr(0, 1)
-								if (cuenta.codigo == cod) {
+							cuenta4.codigo = $scope.obtenercodigoCuenta(cuenta4.codigo)
 
-									for (var L = 0; L < cuentasGenericas.length && items <= itemsPorPagina; L++) {
-										cuenta3 = cuentasGenericas[L]
-										if (cuenta3.tipoCuenta.nombre_corto === "3") {
-											var cod = String(cuenta3.codigo).substr(0, 3)
-											if (cuenta4.codigo == cod) {
-												if (cuentasApropiacion.some(function (cuenta2) {
-													var cod = String(cuenta2.codigo).substr(0, 5)
+							var cod = String(cuenta4.codigo).substr(0, 1)
+							if (cuenta.codigo == cod) {
+
+								for (var L = 0; L < cuentasGenericas.length && items <= itemsPorPagina; L++) {
+									cuenta3 = cuentasGenericas[L]
+									cuenta3.codigo = $scope.obtenercodigoCuenta(cuenta3.codigo)
+									var cod = String(cuenta3.codigo).substr(0, 2)
+									if (cuenta4.codigo == cod) {
+										if (cuentasApropiacion.some(function (cuenta2) {
+											cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+											var cod = String(cuenta2.codigo).substr(0, 3)
+											if (cuenta3.codigo == cod) {
+												return true
+											} else {
+												return false
+											}
+										})) {
+											for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
+												cuenta2 = cuentasApropiacion[p]
+												cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+												if (cuenta2.tipoCuenta.nombre_corto === "4") {
+													var cod = String(cuenta2.codigo).substr(0, 3)
 													if (cuenta3.codigo == cod) {
-														return true
-													} else {
-														return false
+														cuenta.total += cuenta2.saldo
+														cuenta.totalSus += cuenta2.saldo
+														totalActivos += cuenta2.saldo
 													}
-												})) {
-													for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
-														cuenta2 = cuentasApropiacion[p]
-														if (cuenta2.tipoCuenta.nombre_corto === "4") {
-															var cod = String(cuenta2.codigo).substr(0, 5)
-															if (cuenta3.codigo == cod) {
-																cuenta.total += cuenta2.saldo
-																cuenta.totalSus += cuenta2.saldo
-																totalActivos += cuenta2.saldo
-															}
-														}
-													}
-
 												}
 											}
-										}
 
+										}
 									}
 								}
+
+
 							}
+
 						}
 						if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuenta.totalSus, 2), x + 130, y);
 						doc.text(number_format(cuenta.total, 2), x, y)
@@ -2254,7 +2205,22 @@ angular.module('agil.controladores')
 
 			}
 		}
-
+		$scope.obtenercodigoCuenta = function (codigo) {
+			var checkOK = "123456789";
+			var checkStr = codigo;
+			var allValid = true;
+			var decPoints = 0;
+			var nuevoString = "";
+			for (i = 0; i < checkStr.length; i++) {
+				ch = checkStr.charAt(i);
+				for (j = 0; j < checkOK.length; j++) {
+					if (ch == checkOK.charAt(j)) {
+						nuevoString = nuevoString + ch;
+					}
+				}
+			}
+			return nuevoString;
+		}
 		$scope.generarPdfsubGrupo = function (dato, x, cuentasGrupo, cuentasSubGrupo, cuentasGenericas, cuentasApropiacion) {
 			if ($scope.configuracionImpresion.tipoPeriodo.nombre != 'COMPARATIVO') {
 				var doc = new PDFDocument({ size: 'letter', margin: 10 });
@@ -2270,9 +2236,10 @@ angular.module('agil.controladores')
 				doc.font('Helvetica', 8);
 				for (var i = 0; i < cuentasSubGrupo.length && items <= itemsPorPagina; i++) {
 					cuenta = cuentasSubGrupo[i]
+					cuenta.codigo = $scope.obtenercodigoCuenta(cuenta.codigo)
 					cuenta.total = 0
 
-					if (cuenta.clasificacion.nombre === "Activo") {
+					if (cuenta.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 						if (items == itemsPorPagina) {
 							doc.addPage({ margin: 0, bufferPages: true });
 							y = 140;
@@ -2284,11 +2251,14 @@ angular.module('agil.controladores')
 						doc.text(cuenta.nombre, 30, y)
 						for (var L = 0; L < cuentasGenericas.length && items <= itemsPorPagina; L++) {
 							cuenta3 = cuentasGenericas[L]
+							cuenta3.codigo = $scope.obtenercodigoCuenta(cuenta3.codigo)
 							if (cuenta3.tipoCuenta.nombre_corto === "3") {
-								var cod = String(cuenta3.codigo).substr(0, 3)
+
+								var cod = String(cuenta3.codigo).substr(0, 2)
 								if (cuenta.codigo == cod) {
 									if (cuentasApropiacion.some(function (cuenta2) {
-										var cod = String(cuenta2.codigo).substr(0, 5)
+										cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+										var cod = String(cuenta2.codigo).substr(0, 3)
 										if (cuenta3.codigo == cod) {
 											return true
 										} else {
@@ -2297,14 +2267,15 @@ angular.module('agil.controladores')
 									})) {
 										for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
 											cuenta2 = cuentasApropiacion[p]
-											if (cuenta2.tipoCuenta.nombre_corto === "4") {
-												var cod = String(cuenta2.codigo).substr(0, 5)
-												if (cuenta3.codigo == cod) {
-													cuenta.total += cuenta2.saldo
-													cuenta.totalSus += cuenta2.saldo
-													totalActivos += cuenta2.saldo
-												}
+											cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+
+											var cod = String(cuenta2.codigo).substr(0, 3)
+											if (cuenta3.codigo == cod) {
+												cuenta.total += cuenta2.saldo
+												cuenta.totalSus += cuenta2.saldo
+												totalActivos += cuenta2.saldo
 											}
+
 										}
 
 									}
@@ -2371,9 +2342,10 @@ angular.module('agil.controladores')
 			doc.font('Helvetica', 8);
 			for (var i = 0; i < cuentasSubGrupo.length && items <= itemsPorPagina; i++) {
 				cuenta = cuentasSubGrupo[i]
+				cuenta.codigo = $scope.obtenercodigoCuenta(cuenta.codigo)
 				cuenta.total = 0
 
-				if (cuenta.clasificacion.nombre === "Activo") {
+				if (cuenta.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 					if (items == itemsPorPagina) {
 						doc.addPage({ margin: 0, bufferPages: true });
 						y = 140;
@@ -2390,82 +2362,63 @@ angular.module('agil.controladores')
 
 					for (var L = 0; L < cuentasGenericas.length && items <= itemsPorPagina; L++) {
 						cuenta3 = cuentasGenericas[L]
-						if (cuenta3.tipoCuenta.nombre_corto === "3") {
-							var cod = String(cuenta3.codigo).substr(0, 3)
-							if (cuenta.codigo == cod) {
-								if (cuentasApropiacion.some(function (cuenta2) {
-									var cod = String(cuenta2.codigo).substr(0, 5)
+						cuenta3.codigo = $scope.obtenercodigoCuenta(cuenta3.codigo)
+						var cod = String(cuenta3.codigo).substr(0, 2)
+						if (cuenta.codigo == cod) {
+							if (cuentasApropiacion.some(function (cuenta2) {
+								cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+								var cod = String(cuenta2.codigo).substr(0, 3)
+								if (cuenta3.codigo == cod) {
+									return true
+								} else {
+									return false
+								}
+							})) {
+								doc.text(cuenta3.nombre, 40, y)
+								cuenta3.total = 0
+								cuenta3.totalSus = 0
+								/* y = y + 20;
+								items++; */
+
+
+								for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
+									cuenta2 = cuentasApropiacion[p]
+									cuenta2.codigo = $scope.obtenercodigoCuenta(cuenta2.codigo)
+									var cod = String(cuenta2.codigo).substr(0, 3)
 									if (cuenta3.codigo == cod) {
-										return true
-									} else {
-										return false
-									}
-								})) {
-									doc.text(cuenta3.nombre, 40, y)
-									cuenta3.total = 0
-									cuenta3.totalSus = 0
-									/* y = y + 20;
-									items++; */
+										/* doc.text(cuenta2.nombre, 60, y) */
+										/* doc.text(number_format(cuenta2.saldo, 2), x, y); */
+										cuenta3.totalSus += cuenta2.saldo / $scope.moneda.dolar;
+										//if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
+										cuenta3.total += cuenta2.saldo
+										cuenta.total += cuenta2.saldo
+										totalActivos += cuenta2.saldo
 
-
-									for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
-										cuenta2 = cuentasApropiacion[p]
-										if (cuenta2.tipoCuenta.nombre_corto === "4") {
-											var cod = String(cuenta2.codigo).substr(0, 5)
-											if (cuenta3.codigo == cod) {
-												/* doc.text(cuenta2.nombre, 60, y) */
-												/* doc.text(number_format(cuenta2.saldo, 2), x, y); */
-												cuenta3.totalSus += cuenta2.saldo / $scope.moneda.dolar;
-												//if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(saldoSus, 2), x + 130, y);
-												cuenta3.total += cuenta2.saldo
-												cuenta.total += cuenta2.saldo
-												totalActivos += cuenta2.saldo
-
-												if (items == itemsPorPagina) {
-													doc.addPage({ margin: 0, bufferPages: true });
-													y = 140;
-													items = 0;
-													pagina = pagina + 1;
-													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-													doc.font('Helvetica', 8);
-												}
-											} else {
-												if (items == itemsPorPagina) {
-													doc.addPage({ margin: 0, bufferPages: true });
-													y = 140;
-													items = 0;
-													pagina = pagina + 1;
-													$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-													doc.font('Helvetica', 8);
-												}
-											}
-										} else {
-											if (items == itemsPorPagina) {
-												doc.addPage({ margin: 0, bufferPages: true });
-												y = 140;
-												items = 0;
-												pagina = pagina + 1;
-												$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-												doc.font('Helvetica', 8);
-											}
+										if (items == itemsPorPagina) {
+											doc.addPage({ margin: 0, bufferPages: true });
+											y = 140;
+											items = 0;
+											pagina = pagina + 1;
+											$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+											doc.font('Helvetica', 8);
 										}
-
-
+									} else {
+										if (items == itemsPorPagina) {
+											doc.addPage({ margin: 0, bufferPages: true });
+											y = 140;
+											items = 0;
+											pagina = pagina + 1;
+											$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
+											doc.font('Helvetica', 8);
+										}
 									}
-									if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuenta3.totalSus, 2), x + 130, y);
-									doc.text(number_format(cuenta3.total, 2), x, y)
-									y = y + 20;
-									items++;
+
+
 								}
-							} else {
-								if (items == itemsPorPagina) {
-									doc.addPage({ margin: 0, bufferPages: true });
-									y = 140;
-									items = 0;
-									pagina = pagina + 1;
-									$scope.dibujarCabeceraPDFBalanceGeneral(doc, pagina, totalPaginas, "ACTIVO");
-									doc.font('Helvetica', 8);
-								}
+								if ($scope.configuracionImpresion.bimonetario) doc.text(number_format(cuenta3.totalSus, 2), x + 130, y);
+								doc.text(number_format(cuenta3.total, 2), x, y)
+								y = y + 20;
+								items++;
 							}
 						} else {
 							if (items == itemsPorPagina) {
@@ -2853,7 +2806,7 @@ angular.module('agil.controladores')
 				cuenta = cuentasSubGrupo[i]
 				cuenta.total = 0
 
-				if (cuenta.clasificacion.nombre === "Activo") {
+				if (cuenta.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 					columns.push("")
 					columns.push(cuenta.nombre)
 					data.push(columns);
@@ -3017,7 +2970,7 @@ angular.module('agil.controladores')
 				cuenta = cuentasSubGrupo[i]
 				cuenta.total = 0
 
-				if (cuenta.clasificacion.nombre === "Activo") {
+				if (cuenta.clasificacion.tipoClasificacion.nombre === "ACTIVO") {
 					if (items == itemsPorPagina) {
 						items = 0;
 						pagina = pagina + 1;
@@ -3061,7 +3014,7 @@ angular.module('agil.controladores')
 											text1 = String(cuenta2.nombre).substr(0, 22)
 											text2 = String(cuenta2.nombre).substr(22)
 											texto.push(text1)
-											texto.push("\n\r\t\t");	items++
+											texto.push("\n\r\t\t"); items++
 											texto.push(text2)
 											texto.push("\t")
 										} else {

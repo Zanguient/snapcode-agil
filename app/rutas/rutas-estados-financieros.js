@@ -10,6 +10,7 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                 res.json(datos)
             })
         })
+        
         .post(function (req, res) {
             req.body.forEach(function (gestion, index, array) {
                 if (gestion.id) {
@@ -523,19 +524,13 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                 include: [{ model: AsientoContabilidad, as: 'cuenta', 
                 include: [{ model: ComprobanteContabilidad, as: 'comprobante'}] },
                 {
-                    model: ClasificacionCuenta, as: "clasificacion",
-                    include: [{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
+                    model: ClasificacionCuenta, as: "clasificacion",include:[{ model: Clase, as: 'tipoClasificacion'}],
+                 
                 },
                 {
                     model: Clase, as: 'tipoCuenta', where: condicionTipo
                 },
-                {
-                    model: Clase, as: 'claseCalculo'
-                },
-                {
-                    model: Clase, as: 'tipoAuxiliar'
-                }
-
+                
                 ],
 
             }
