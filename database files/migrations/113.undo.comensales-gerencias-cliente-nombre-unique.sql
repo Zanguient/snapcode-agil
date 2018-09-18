@@ -1,0 +1,1 @@
+alter table agil_comensales_gerencias_cliente_empresa drop constraint cliente_nombre;

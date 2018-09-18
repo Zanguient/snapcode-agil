@@ -1,0 +1,1 @@
+alter table agil_comensales_gerencias_cliente_empresa add constraint cliente_nombre  unique (cliente, nombre);
