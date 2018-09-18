@@ -64,10 +64,16 @@ var sequelize = new Sequelize(database,username, dbpass, {
   host: '138.197.35.199',
   dialect: 'mysql',
   timezone : "-04:00",
+  // pool: {
+  //   max: 10,
+  //   min: 0,
+  //   idle: 10000
+  // }
   pool: {
     max: 10,
     min: 0,
-    idle: 10000
+    idle: 20000,
+    acquire: 20000
   }
 });
 
