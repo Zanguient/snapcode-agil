@@ -908,7 +908,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 { model: Clase, as: 'tamanoPapelNotaTraspaso' },
                 { model: Clase, as: 'tamanoPapelNotaBaja' },
                 { model: Clase, as: 'tamanoPapelNotaPedido' },
-                { model: Clase, as: 'tamanoPapelCierreCaja' }]
+                { model: Clase, as: 'tamanoPapelCierreCaja' },
+                { model: Clase, as: 'formatoPapelFactura' },
+                { model: Clase, as: 'formatoColorFactura' },
+                { model: Clase, as: 'formatoPapelFacturaServicio' },
+                { model: Clase, as: 'formatoColorFacturaServicio' }
+                ]
             }).then(function (configuracionGeneralFactura) {
                 venta.detallesVentaNoConsolidadas.forEach(function (detalleVentaNoConsolidada, index, array) {
                     //crearDetalleVentaNoConsolidada(ventaCreada.id, detalleVentaNoConsolidada.producto.id, null, detalleVentaNoConsolidada);
@@ -935,7 +940,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                         { model: Clase, as: 'tamanoPapelNotaTraspaso' },
                         { model: Clase, as: 'tamanoPapelNotaBaja' },
                         { model: Clase, as: 'tamanoPapelNotaPedido' },
-                        { model: Clase, as: 'tamanoPapelCierreCaja' }]
+                        { model: Clase, as: 'tamanoPapelCierreCaja' },
+                        { model: Clase, as: 'formatoPapelFactura' },
+                        { model: Clase, as: 'formatoColorFactura' },
+                        { model: Clase, as: 'formatoPapelFacturaServicio' },
+                        { model: Clase, as: 'formatoColorFacturaServicio' }
+                        ]
                     }).then(function (configuracionFactura) {
                         var promises = [];
                         venta.configuracion = configuracionFactura;
@@ -1185,7 +1195,10 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 { model: Clase, as: 'tamanoPapelNotaBaja' },
                 { model: Clase, as: 'tamanoPapelNotaPedido' },
                 { model: Clase, as: 'tamanoPapelCierreCaja' },
-                { model: Clase, as: 'formatoPapelFactura' }
+                { model: Clase, as: 'formatoPapelFactura' },
+                { model: Clase, as: 'formatoColorFactura' },
+                { model: Clase, as: 'formatoPapelFacturaServicio' },
+                { model: Clase, as: 'formatoColorFacturaServicio' }
                 ]
             }).then(function (configuracionGeneralFactura) {
                 factura.configuracion = configuracionGeneralFactura
@@ -1318,7 +1331,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 { model: Clase, as: 'tamanoPapelNotaTraspaso' },
                 { model: Clase, as: 'tamanoPapelNotaBaja' },
                 { model: Clase, as: 'tamanoPapelNotaPedido' },
-                { model: Clase, as: 'tamanoPapelCierreCaja' }]
+                { model: Clase, as: 'tamanoPapelCierreCaja' },
+                { model: Clase, as: 'formatoPapelFactura' },
+                { model: Clase, as: 'formatoColorFactura' },
+                { model: Clase, as: 'formatoPapelFacturaServicio' },
+                { model: Clase, as: 'formatoColorFacturaServicio' }
+                ]
             }).then(function (configuracionGeneralFactura) {
                 res.json({ configuracion: configuracionGeneralFactura })
             }).catch(function (err) {
