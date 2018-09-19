@@ -729,7 +729,7 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
         //var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
         //var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
 
-        var inicio =  new Date(req.params.inicio);//.toISOString().split('T')[0].reverse().join('-')+" T00.00.00.000Z"; 
+        var inicio =  new Date(req.params.inicio);
         var fin = new Date(req.params.fin);
         fin.setHours(23)
         fin.setMinutes(59)
@@ -749,5 +749,20 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
             res.json({comprobantes});
         });
     })
+
+    /*router.route('/comprobante-contabilidad/empresa/:empresa/inicio/:inicio/fin/:fin')
+    .get(function(req,res){
+
+       var fechaInicio = req.params.inicio.split("/").reverse().join("-")+"T00:00:00:0000Z";
+       var fechaFin = req.params.fin.split("/").reverse().join("-")+"T23:00:00:0000Z";
+
+        sequelize.query("CALL LibrosDiarios("+req.params.empresa+",'"+fechaInicio+"','"+fechaFin+"')",
+                { type: sequelize.QueryTypes.SELECT })
+                .then(function (datos) {
+                    res.json( datos[0] );
+                }).catch(function(err){
+                    res.json({ mensaje: err.stack, hasErr: true })
+                });
+        });*/
       
 }

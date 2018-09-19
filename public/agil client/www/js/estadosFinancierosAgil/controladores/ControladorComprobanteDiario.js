@@ -3154,11 +3154,10 @@ angular.module('agil.controladores')
 						var inicio = $scope.fechasImpresion.inicio;
 						var fin = $scope.fechasImpresion.fin;
 						var anio =  $scope.configuracionImpresion.gestion.nombre;
-						var fechaInicio = new Date($scope.convertirFecha(inicio+"/"+anio));
-						var fechaFin = new Date($scope.convertirFecha(fin+"/"+anio));
+						var fechaInicio = inicio+"/"+anio;
+						var fechaFin = fin+"/"+anio;
 
-						var message = "DEBITO-RETENCION JUDICIAL, Gobierno Municipal de Cochabamba. Motivo (Impuestos de vehiculos realizados en cbba)";
-						console.log(message.length);
+						$scope.imprimirReportePDF(fechaInicio,fechaFin);
 
 					}else if($scope.periodo === "MES"){
 						var anio = $scope.configuracionImpresion.gestion.nombre;
@@ -3169,17 +3168,21 @@ angular.module('agil.controladores')
 							}
 						}
 						var fechaInicio = mes+"/"+"01"+"/"+anio;
-								
+						//var fechaInicio = "01"+"/"+mes+"/"+anio;
+
 						var date = new Date(fechaInicio);
 						var primerDia = new Date(date.getFullYear(), date.getMonth(), 1);				
 						var ultimoDia = new Date(date.getFullYear(), (date.getMonth() + 1), 0);
 						var finDia = ultimoDia.getDate();
 						var fechaFin = mes+"/"+finDia+"/"+anio;
+						//var fechaFin = finDia+"/"+mes+"/"+anio;
 						$scope.imprimirReportePDF(primerDia,ultimoDia);
 						
 					}else if ($scope.periodo === "FECHAS") {
 						var primerDia = new Date($scope.convertirFecha($scope.configuracionImpresion.fecha_inicio));
 						var ultimoDia = new Date($scope.convertirFecha($scope.configuracionImpresion.fecha_fin)); 
+						//var primerDia = $scope.configuracionImpresion.fecha_inicio;
+						//var ultimoDia = $scope.configuracionImpresion.fecha_fin; 
 						$scope.imprimirReportePDF(primerDia,ultimoDia);
 
 					}else if ($scope.periodo === "COMPARATIVO") {
@@ -3205,12 +3208,12 @@ angular.module('agil.controladores')
 				var razon_social=$scope.datosReporte[0].sucursal.empresa.razon_social;
 				var nit = $scope.datosReporte[0].sucursal.empresa.nit;
 				var direccion = $scope.datosReporte[0].sucursal.empresa.direccion;
-				empresa = {razon_social,nit,direccion};
+				empresa = {razon_social: razon_social,nit: nit,direccion: direccion};
 
 				var doc = new PDFDocument({ compress: false, margin: 10 });
 				var stream = doc.pipe(blobStream());
 				doc.font('Helvetica', 8);
-				var y = 180, itemsPorPagina = 22, items = 0, pagina = 1;
+				var y = 180, itemsPorPagina = 20, items = 0, pagina = 1;
 				var cant = 0;
 				for (let i = 0; i < $scope.datosReporte.length; i++) {				
 					cant += $scope.datosReporte[i].asientosContables.length;										
@@ -3223,7 +3226,7 @@ angular.module('agil.controladores')
 					$scope.comprobante = $scope.datosReporte[i];
 
 					var myDate = new Date($scope.comprobante.fecha);
-					var fecha = myDate.getFullYear()+"/"+(myDate.getMonth() + 1)+"/"+myDate.getDate();
+					var fecha = myDate.getDate()+"/"+(myDate.getMonth() + 1)+"/"+myDate.getFullYear();
 					doc.text(fecha,45,y);
 					y = y + 10;
 					doc.text("- "+(indice++)+" -",350,y);
@@ -3290,7 +3293,7 @@ angular.module('agil.controladores')
 						}
 					}
 					doc.font("Helvetica-Bold");
-					doc.text($scope.comprobante.gloza,100,y);
+					doc.text($scope.comprobante.gloza,100,y,{width:320});
 					doc.font("Helvetica");
 					y = y +17;
 				}
@@ -3302,7 +3305,7 @@ angular.module('agil.controladores')
 				}
 				doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, 750);
 				doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, 750);
-*/
+				*/
 				doc.end();
 				stream.on('finish', function () {
 					var fileURL = stream.toBlobURL('application/pdf');
