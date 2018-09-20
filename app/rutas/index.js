@@ -297,8 +297,8 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		Compra, Movimiento, Inventario, DetalleCompra, DetalleMovimiento)
 	require('./rutas-activos-fijos')(router, sequelize, Sequelize, Usuario, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion, Clase, Producto, Inventario, MonedaTipoCambio)
 	require('./rutas-estados-financieros')(router, sequelize, Sequelize, EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, Tipo, Clase, ProveedorCuenta
-		, Proveedor, ClienteCuenta, Cliente, ClasificacionCuenta, ContabilidadCuenta, AsientoContabilidad, ComprobanteContabilidad, MonedaTipoCambio,ContabilidadCuentaAuxiliar,Usuario,
-		Persona,Sucursal,Empresa,NumeroLiteral)
+		, Proveedor, ClienteCuenta, Cliente, ClasificacionCuenta, ContabilidadCuenta, AsientoContabilidad, ComprobanteContabilidad, MonedaTipoCambio, ContabilidadCuentaAuxiliar, Usuario,
+		Persona, Sucursal, Empresa, NumeroLiteral)
 	require('./rutas-solicitud-caja-chica')(router, sequelize, Sequelize, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, Tipo, Clase, CajaChica, SolicitudCajaChica, Empresa, ConceptoMovimientoCajaChica, MedicoPaciente, Usuario, Persona, ContabilidadCuenta, Movimiento, Proveedor, Compra, Sucursal, CierreCajaChica,
 		DetalleCompra, Producto)
 	require('./rutas-comensales')(router, sequelize, Sequelize, Persona, Cliente, AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, Usuario, ComensalesMarcacionesClienteEmpresa)

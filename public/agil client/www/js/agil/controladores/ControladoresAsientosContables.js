@@ -1,9 +1,7 @@
 angular.module('agil.controladores')
-
     .controller('ControladorComprobantes', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl, Paginator, ComprobantePaginador, ClasesTipo, ListaCuentasComprobanteContabilidad, ListaAsientosComprobanteContabilidad, NuevoComprobanteContabilidad, ClasesTipo, LibroMayorCuenta, ComprobanteRevisarPaginador,
         AsignarComprobanteFavorito, Diccionario, ObtenerCambioMoneda, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante, ListaCambioMoneda, ActualizarCambioMoneda, GuardarComprobantesImportados,
         ComprobanteTotalGeneralEmpresa, EdicionComprobanteContabilidad) {
-
         blockUI.start();
         $scope.asientoNuevo = false
         $scope.usuario = JSON.parse($localStorage.usuario);

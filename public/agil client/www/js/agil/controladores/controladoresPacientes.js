@@ -1526,7 +1526,7 @@ angular.module('agil.controladores')
                 blockUI.stop()
             })
         }
-
+       
         $scope.saveFormPrerequisito = function (nuevoPrerequisito) {
             blockUI.start();
             // nuevoPrerequisito.fecha_inicio = new Date($scope.convertirFecha(nuevoPrerequisito.fecha_inicio))

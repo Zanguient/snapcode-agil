@@ -441,8 +441,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				id_especifica_texto3: id_texto3,
 				tipo_especifica: req.body.tipo_especifica,
 				vincular_cuenta: req.body.vincular_cuenta,
-				cuenta_activo:req.body.cuenta_activo,
-				estado_resultado:req.body.estado_resultado
+				cuenta_activo: req.body.cuenta_activo,
+				estado_resultado: req.body.estado_resultado
 			}, {
 					where: {
 						id: req.body.id
@@ -532,7 +532,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				tipo_especifica: req.body.tipo_especifica,
 				vincular_cuenta: req.body.vincular_cuenta,
 				cuenta_activo: req.body.cuenta_activo,
-				estado_resultado:req.body.estado_resultado
+				estado_resultado: req.body.estado_resultado
 			}).then(function (cuentaCreada) {
 				if (req.body.cliente != null) {
 					ClienteCuenta.create({
@@ -604,7 +604,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 		.get(function (req, res) {
 			ClasificacionCuenta.findAll({
 				where: { id_empresa: req.params.id_empresa },
-				include: [{ model: Clase, as: 'tipoClasificacion' },{ model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }],
+				include: [{ model: Clase, as: 'tipoClasificacion' }, { model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }],
 
 			}).then(function (clasificacionesCuenta) {
 				Clase.findAll({
@@ -621,11 +621,11 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 	router.route('/contabilidad-cuentas/clasificaciones')
 		.post(function (req, res) {
 			ClasificacionCuenta.create({
-				id_empresa:req.body.id_empresa,
+				id_empresa: req.body.id_empresa,
 				nombre: req.body.nombre,
 				id_saldo: req.body.saldo.id,
 				id_movimiento: req.body.movimiento.id,
-				id_tipo:req.body.tipoClasificacion.id
+				id_tipo: req.body.tipoClasificacion.id
 			}).then(function (clasificionCuenta) {
 				res.json({ mensaje: "Cotización creada sadisfactoriamente..." })
 			});
@@ -640,7 +640,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 							nombre: clasificacion.nombre,
 							id_saldo: (clasificacion.saldo ? clasificacion.saldo.id : null),
 							id_movimiento: (clasificacion.movimiento ? clasificacion.movimiento.id : null),
-							id_tipo:(clasificacion.tipoClasificacion ? clasificacion.tipoClasificacion.id : null),
+							id_tipo: (clasificacion.tipoClasificacion ? clasificacion.tipoClasificacion.id : null),
 						}, {
 								where: {
 									id: clasificacion.id
@@ -652,8 +652,8 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 							nombre: clasificacion.nombre,
 							id_saldo: (clasificacion.saldo ? clasificacion.saldo.id : null),
 							id_movimiento: (clasificacion.movimiento ? clasificacion.movimiento.id : null),
-							id_tipo:(clasificacion.tipoClasificacion ? clasificacion.tipoClasificacion.id : null),
-							id_empresa:req.params.id_empresa
+							id_tipo: (clasificacion.tipoClasificacion ? clasificacion.tipoClasificacion.id : null),
+							id_empresa: req.params.id_empresa
 						});
 					}
 				} else {
@@ -787,23 +787,34 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 				});
 			})
 		});
+	function obtenercodigoCuenta(codigo, tipo) {
+		var nuevoString = "0"
+		if (tipo == 2) {
+			nuevoString = codigo.substring(0, 1);
+		} else if (tipo == 3) {
+			nuevoString = codigo.substring(0, 2);
+		} else if (tipo == 4) {
+			nuevoString = codigo.substring(0, 3);
+		}
 
+		return nuevoString;
+	}
 	router.route('/cuentas/empresa')
 		.post(function (req, res) {
 			req.body.cuentas.forEach(function (cuenta, index, array) {
 				sequelize.transaction(function (t) {
 					return ClasificacionCuenta.findOrCreate({
-						where: { nombre: cuenta.clasificacion.nombre ,id_empresa:req.body.id_empresa},
-						defaults: { nombre: cuenta.clasificacion.nombre ,id_empresa:req.body.id_empresa},
+						where: { nombre: cuenta.clasificacion.nombre, id_empresa: req.body.id_empresa },
+						defaults: { nombre: cuenta.clasificacion.nombre, id_empresa: req.body.id_empresa },
 						transaction: t,
 						lock: t.LOCK.UPDATE
 					}).then(function (claficiacionEncontrada) {
 						return Tipo.find({
-							where: { nombre_corto: Diccionario.TIPOS_CUENTA_CONTABILIDAD,id_empresa:req.body.id_empresa },
+							where: { nombre_corto: Diccionario.TIPOS_CUENTA_CONTABILIDAD, id_empresa: req.body.id_empresa },
 							transaction: t
 						}).then(function (TipoEncontrado) {
 							return Clase.findOrCreate({
-								where: { nombre: cuenta.tipoCuenta.nombre,id_tipo:TipoEncontrado.id },								
+								where: { nombre: cuenta.tipoCuenta.nombre, id_tipo: TipoEncontrado.id },
 								defaults: {
 									nombre: cuenta.tipoCuenta.nombre,
 									id_tipo: TipoEncontrado.id
@@ -838,9 +849,33 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 												},
 												transaction: t
 											}).then(function (cuentaActualizada) {
-												return sequelize.query("UPDATE agil_contabilidad_cuenta set cuenta_padre=" + cuentaEncontrada.id + " where LENGTH(codigo)=" + (cuenta.codigo.length + 2) + " AND codigo LIKE '" + cuenta.codigo + "%';", { transaction: t })
+												var codigoCuentaPadre = obtenercodigoCuenta(cuenta.codigo, claseEncontrada[0].nombre_corto);
+												return ContabilidadCuenta.find({
+													where: {
+														$or: [{ codigo: codigoCuentaPadre }],
+														id_empresa: req.body.id_empresa
+													},
+													transaction: t
+												}).then(function (cuentaPadreEncontrada) {
+													if (cuentaPadreEncontrada) {
+														return ContabilidadCuenta.update({
+															id_cuenta_padre: cuentaPadreEncontrada.id
+														}, {
+																where: {
+																	id: cuentaEncontrada.id
+																},
+																transaction: t
+															});
+													} else {
+														return new Promise(function (fulfill, reject) {
+															fulfill({});
+														});
+													}
+												})
+
+												/* return sequelize.query("UPDATE agil_contabilidad_cuenta set cuenta_padre=" + cuentaEncontrada.id + " where LENGTH(codigo)=" + (cuenta.codigo.length + 2) + " AND codigo LIKE '" + cuenta.codigo + "%';", { transaction: t })
 													.then(function (act) {
-														var codigoCuentaPadre = cuenta.codigo.substring(0, cuenta.codigo.length - 2);
+														var codigoCuentaPadre =obtenercodigoCuenta(cuenta.codigo);
 														return ContabilidadCuenta.find({
 															where: {
 																$or: [{ codigo: codigoCuentaPadre }],
@@ -863,7 +898,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 																});
 															}
 														});
-													});
+													}); */
 											});
 									} else {
 										return ContabilidadCuenta.create({
@@ -878,34 +913,31 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 											id_tipo_cuenta: claseEncontrada[0].id,
 											bimonetaria: cuenta.bimonetaria,
 											eliminado: false,
-											
+
 										}, { transaction: t }).then(function (cuentaCreada) {
-											return sequelize.query("UPDATE agil_contabilidad_cuenta set cuenta_padre=" + cuentaCreada.id + " where LENGTH(codigo)=" + (cuentaCreada.codigo.length + 2) + " AND codigo LIKE '" + cuentaCreada.codigo + "%';", { transaction: t })
-												.then(function (act) {
-													var codigoCuentaPadre = cuentaCreada.codigo.substring(0, cuentaCreada.codigo.length - 2);
-													return ContabilidadCuenta.find({
-														where: {
-															$or: [{ codigo: codigoCuentaPadre }],
-															id_empresa: req.body.id_empresa
-														},
-														transaction: t
-													}).then(function (cuentaPadreEncontrada) {
-														if (cuentaPadreEncontrada) {
-															return ContabilidadCuenta.update({
-																id_cuenta_padre: cuentaPadreEncontrada.id
-															}, {
-																	where: {
-																		id: cuentaCreada.id
-																	},
-																	transaction: t
-																});
-														} else {
-															return new Promise(function (fulfill, reject) {
-																fulfill({});
-															});
-														}
+											var codigoCuentaPadre = obtenercodigoCuenta(cuenta.codigo, claseEncontrada[0].nombre_corto);
+											return ContabilidadCuenta.find({
+												where: {
+													$or: [{ codigo: codigoCuentaPadre }],
+													id_empresa: req.body.id_empresa
+												},
+												transaction: t
+											}).then(function (cuentaPadreEncontrada) {
+												if (cuentaPadreEncontrada) {
+													return ContabilidadCuenta.update({
+														id_cuenta_padre: cuentaPadreEncontrada.id
+													}, {
+															where: {
+																id: cuentaCreada.id
+															},
+															transaction: t
+														});
+												} else {
+													return new Promise(function (fulfill, reject) {
+														fulfill({});
 													});
-												});
+												}
+											});
 										});
 									}
 								});
