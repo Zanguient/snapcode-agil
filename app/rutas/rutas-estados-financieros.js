@@ -749,7 +749,6 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
             res.json({comprobantes});
         });
     })
-
     /*router.route('/comprobante-contabilidad/empresa/:empresa/inicio/:inicio/fin/:fin')
     .get(function(req,res){
 
@@ -759,7 +758,7 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
         sequelize.query("CALL LibrosDiarios("+req.params.empresa+",'"+fechaInicio+"','"+fechaFin+"')",
                 { type: sequelize.QueryTypes.SELECT })
                 .then(function (datos) {
-                    res.json( datos[0] );
+                    res.json( {res:Object.values(datos[0])} ); 
                 }).catch(function(err){
                     res.json({ mensaje: err.stack, hasErr: true })
                 });
