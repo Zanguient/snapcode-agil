@@ -734,12 +734,12 @@
 						</li>
 						<li data-step="3">
 							<span class="step">3</span>
-							<span class="title">Contable</span>
-						</li>
-						<li data-step="4">
-							<span class="step">3</span>
 							<span class="title">Finalizar</span>
 						</li>
+						<!-- <li data-step="4">
+							<span class="step">3</span>
+							<span class="title">Finalizar</span>
+						</li> -->
 					</ul>
 				</div>
 
@@ -885,7 +885,7 @@
 								<tr>
 									<th><b>DOCUMENTO</b></th>
 									<th><b>TAMAÑO</b></th>
-									<th><b>CORRELATIVO</b></th>
+									<!-- <th><b>CORRELATIVO</b></th> -->
 									<th><b>FORMATO IMPRESIÓN</b></th>
 									<th><b>FORMATO COLOR</b></th>
 									<th><b>COLORES IMP</b></th>
@@ -903,9 +903,7 @@
 												TAMAÑO
 											</option></select>
 									</td>
-									<td>
-										<!-- <input type="number" class="form-control"> -->
-									</td>
+									
 									<td>
 										<select class="form-control" required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id"
 										 ng-model="sucursal.configuracionFactura.formatoPapelFactura"><option value="0">SELECCIONAR TIPO IMP.</option></select>
@@ -935,9 +933,7 @@
 												TAMAÑO
 											</option></select>
 									</td>
-									<td>
-										<!-- <input type="number" class="form-control"> -->
-									</td>
+								
 									<td>
 										<select class="form-control" required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id"
 										 ng-model="sucursal.configuracionFactura.formatoPapelFacturaServicio"><option value="0">SELECCIONAR TIPO
@@ -968,7 +964,7 @@
 												TAMAÑO
 											</option></select>
 									</td>
-									<td><input type="number" class="form-control" ng-model="sucursal.nota_venta_correlativo" required></td>
+									<!-- <td><input type="number" class="form-control" ng-model="sucursal.nota_venta_correlativo" required></td> -->
 									<td>
 
 									</td>
@@ -992,7 +988,7 @@
 												TAMAÑO
 											</option></select>
 									</td>
-									<td><input type="number" class="form-control" ng-model="sucursal.nota_traspaso_correlativo" required></td>
+									<!-- <td><input type="number" class="form-control" ng-model="sucursal.nota_traspaso_correlativo" required></td> -->
 									<td>
 									</td>
 									<td>
@@ -1012,7 +1008,7 @@
 												TAMAÑO
 											</option></select>
 									</td>
-									<td><input type="number" class="form-control" ng-model="sucursal.nota_baja_correlativo" required></td>
+									<!-- <td><input type="number" class="form-control" ng-model="sucursal.nota_baja_correlativo" required></td> -->
 									<td>
 									</td>
 									<td>
@@ -1032,7 +1028,7 @@
 												TAMAÑO
 											</option></select>
 									</td>
-									<td><input type="number" class="form-control" ng-model="sucursal.pedido_correlativo" required></td>
+									<!-- <td><input type="number" class="form-control" ng-model="sucursal.pedido_correlativo" required></td> -->
 									<td>
 									</td>
 									<td>
@@ -1072,7 +1068,7 @@
 												TAMAÑO
 											</option></select>
 									</td>
-									<td><input type="number" class="form-control" ng-model="sucursal.cotizacion_correlativo" required></td>
+									<!-- <td><input type="number" class="form-control" ng-model="sucursal.cotizacion_correlativo" required></td> -->
 									<td>
 									</td>
 									<td>
@@ -1092,7 +1088,7 @@
 												TAMAÑO
 											</option></select> -->CARTA
 									</td>
-									<td><input type="number" class="form-control" ng-model="sucursal.despacho_correlativo" required></td>
+									<!-- <td><input type="number" class="form-control" ng-model="sucursal.despacho_correlativo" required></td> -->
 									<td>
 									</td>
 									<td>
@@ -1112,7 +1108,7 @@
 												TAMAÑO
 											</option></select> -->ROLLO
 									</td>
-									<td><input type="number" class="form-control" ng-model="sucursal.nota_venta_farmacia_correlativo" required></td>
+									<!-- <td><input type="number" class="form-control" ng-model="sucursal.nota_venta_farmacia_correlativo" required></td> -->
 									<td>
 									</td>
 									<td>
@@ -1132,7 +1128,7 @@
 												TAMAÑO
 											</option></select> -->CARTA
 									</td>
-									<td><input type="number" class="form-control" ng-model="sucursal.ropa_trabajo_correlativo" required></td>
+									<!-- <td><input type="number" class="form-control" ng-model="sucursal.ropa_trabajo_correlativo" required></td> -->
 									<td>
 									</td>
 									<td>
@@ -1152,7 +1148,7 @@
 												TAMAÑO
 											</option></select> -->CARTA
 									</td>
-									<td><input type="number" class="form-control" ng-model="sucursal.caja_chica_ingreso_correlativo" required></td>
+									<!-- <td><input type="number" class="form-control" ng-model="sucursal.caja_chica_ingreso_correlativo" required></td> -->
 									<td>
 									</td>
 									<td>
@@ -1172,7 +1168,7 @@
 												TAMAÑO
 											</option></select> -->CARTA
 									</td>
-									<td><input type="number" class="form-control" ng-model="sucursal.caja_chica_egreso_correlativo" required></td>
+									<!-- <td><input type="number" class="form-control" ng-model="sucursal.caja_chica_egreso_correlativo" required></td> -->
 									<td>
 									</td>
 									<td>
@@ -1234,7 +1230,7 @@
 								</div>
 							</div> -->
 					</div>
-					<div class="step-pane" data-step="3">
+					<!-- <div class="step-pane" data-step="3">
 
 						<div class="form-group">
 							<div class="row">
@@ -1314,8 +1310,8 @@
 							</div>
 						</div>
 
-					</div>
-					<div class="step-pane" data-step="4">
+					</div> -->
+					<div class="step-pane" data-step="3">
 						<div class="center">
 							<h4 class="blue">Finalización</h4>
 						</div>

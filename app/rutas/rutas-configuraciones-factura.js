@@ -41,7 +41,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 			}, {
 					where: { id: req.params.id_configuracion }
 				}).then(function (score) {
-					Sucursal.update({						
+					/* Sucursal.update({						
 						nota_venta_correlativo: req.body.nota_venta_correlativo,
 						nota_traspaso_correlativo: req.body.nota_traspaso_correlativo,
 						nota_baja_correlativo: req.body.nota_baja_correlativo,
@@ -66,9 +66,9 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 							where: {
 								id: req.body.id
 							}
-						}).then(function (sucursalActualizada) {
+						}).then(function (sucursalActualizada) { */
 							res.json({ mensaje: "¡Configuracion de Factura actualizado correctamente!" });
-						});
+						/* }); */
 				});
 		});
 
