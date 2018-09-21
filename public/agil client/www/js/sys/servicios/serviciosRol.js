@@ -1,8 +1,8 @@
 angular.module('agil.servicios')
 
-.factory('Rol', function($resource) {
+.factory('Rol', ['$resource',function($resource) {
 		return $resource(restServer+"roles");
-})
+}])
 
 .factory('Roles', ['Rol','$q',function(Rol, $q) 
   {

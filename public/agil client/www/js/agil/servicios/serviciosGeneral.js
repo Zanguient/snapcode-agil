@@ -636,12 +636,12 @@ angular.module('agil.servicios')
 	}])
 
 
-	.factory('ComprasComprobante', function ($resource) {
+	.factory('ComprasComprobante', ['$resource',function ($resource) {
 		return $resource(restServer + "comprasComprobante");
-	})
-	.factory('CuentasAuxiliares', function ($resource) {
+	}])
+	.factory('CuentasAuxiliares', ['$resource',function ($resource) {
 		return $resource(restServer + "cuentas-auxiliares/empresa/:id_empresa/tipo/:tipo");
-	})
+	}])
 	.factory('ListasCuentasAuxiliares', ['CuentasAuxiliares', '$q', function (CuentasAuxiliares, $q) {
 		var res = function (idEmpresa, Tipo) {
 			var delay = $q.defer();
@@ -654,9 +654,9 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ComprobanteTotalGeneral', function ($resource) {
+	.factory('ComprobanteTotalGeneral', ['$resource',function ($resource) {
 		return $resource(restServer + "comprobantes/totalGeneral/empresa/:id_empresa");
-	})
+	}])
 	.factory('ComprobanteTotalGeneralEmpresa', ['ComprobanteTotalGeneral', '$q', function (ComprobanteTotalGeneral, $q) {
 		var res = function (empresa) {
 			var delay = $q.defer();
@@ -669,9 +669,9 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ComprobanteRevisarDatosPaginador', function ($resource) {
+	.factory('ComprobanteRevisarDatosPaginador', ['$resource',function ($resource) {
 		return $resource(restServer + "comprobantes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion/busqueda/:texto_busqueda");
-	})
+	}])
 
 	.factory('ComprobanteRevisarPaginador', ['ComprobanteRevisarDatosPaginador', '$q', function (ComprobanteRevisarDatosPaginador, $q) {
 		var res = function (paginator) {
@@ -685,12 +685,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('CuentasComprobanteContabilidad', function ($resource) {
+	.factory('CuentasComprobanteContabilidad', ['$resource',function ($resource) {
 		return $resource(restServer + "comprobante-cuenta/empresa/:id_empresa/busqueda/:buscar", { id_empresa: '@id_empresa', buscar: '@buscar' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ListaCuentasComprobanteContabilidad', ['CuentasComprobanteContabilidad', '$q', function (CuentasComprobanteContabilidad, $q) {
 		var res = function (id_empresa, buscar) {
@@ -704,9 +704,9 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ComprobanteEmpresaPaginador', function ($resource) {
+	.factory('ComprobanteEmpresaPaginador', ['$resource',function ($resource) {
 		return $resource(restServer + "comprobantes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion/monto/:monto/tipo-comprobante/:tipo_comprobante/sucursal/:sucursal/usuario/:usuario/numero/:numero/busqueda/:busqueda");
-	})
+	}])
 
 	.factory('ComprobantePaginador', ['ComprobanteEmpresaPaginador', '$q', function (ComprobanteEmpresaPaginador, $q) {
 		var res = function (paginator) {
@@ -737,9 +737,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 	
-	.factory('LibroMayor', function ($resource) {
+	.factory('LibroMayor', ['$resource',function ($resource) {
 		return $resource(restServer + "/comprobante-cuenta/:id_cuenta/periodo/:inicio/:fin");
-	})
+	}])
 
 	.factory('LibroMayorCuenta', ['LibroMayor', '$q', function (LibroMayor, $q) {
 		var res = function (idcuenta, Inicio, Fin) {
@@ -753,12 +753,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ComprobanteFavorito', function ($resource) {
+	.factory('ComprobanteFavorito', ['$resource',function ($resource) {
 		return $resource(restServer + "comprobante-contabilidad/favorito/:id_comprobante", { id_comprobante: '@id_comprobante' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 	.factory('AsignarComprobanteFavorito', ['ComprobanteFavorito', '$q', function (ComprobanteFavorito, $q) {
 		var res = function (idComprobante) {
 			var delay = $q.defer();
@@ -773,18 +773,18 @@ angular.module('agil.servicios')
 	}])
 
 
-	.factory('AsientosComprobanteContabilidad', function ($resource) {
+	.factory('AsientosComprobanteContabilidad', ['$resource',function ($resource) {
 		return $resource(restServer + "comprobante-cuenta/asientos/:id_cuenta", { id_cuenta: '@id_cuenta' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
-	.factory('FormatoImpresion', function ($resource) {
+	}])
+	.factory('FormatoImpresion', ['$resource',function ($resource) {
 		return $resource(restServer + "tipos/:nombre_corto", { nombre_corto: '@nombre_corto' },
 			{
 				'update': { method: 'PUT' }
 			});
-	}).factory('IdsFormatoImpresion', ['FormatoImpresion', '$q', function (FormatoImpresion, $q) {
+	}]).factory('IdsFormatoImpresion', ['FormatoImpresion', '$q', function (FormatoImpresion, $q) {
 		var res = function () {
 			var delay = $q.defer();
 			FormatoImpresion.get({ nombre_corto: 'FORM_IMP_FAC' }, function (entidades) {
@@ -808,18 +808,18 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('NuevoComprobanteContabilidad', function ($resource) {
+	.factory('NuevoComprobanteContabilidad', ['$resource',function ($resource) {
 		return $resource(restServer + "comprobante-contabolidad",
 			{
 				'update': { method: 'PUT' }
 			});
-	})
-	.factory('ActualizarComprobanteContabilidad', function ($resource) {
+	}])
+	.factory('ActualizarComprobanteContabilidad', ['$resource',function ($resource) {
 		return $resource(restServer + "comprobante-contabolidad/:id_comprobante", { id_comprobante: '@id_comprobante' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 	.factory('DatosComprobante', ['ActualizarComprobanteContabilidad', '$q', function (ActualizarComprobanteContabilidad, $q) {
 		var res = function (id_comprobante) {
 			var delay = $q.defer();

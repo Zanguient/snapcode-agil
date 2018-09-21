@@ -1,6 +1,8 @@
 angular.module('agil.controladores')
 
-.controller('ControladorConfiguracionesApp', function($scope,$localStorage,$location,$templateCache,$route,blockUI,
+.controller('ControladorConfiguracionesApp',['$scope','$localStorage','$location','$templateCache','$route','blockUI',
+	'ConfiguracionesApp','ConfiguracionGeneralAppDato','ClasesTipo',
+	'ConfiguracionAppVendedor','ConfiguracionAppEmpresa', function($scope,$localStorage,$location,$templateCache,$route,blockUI,
 											ConfiguracionesApp,ConfiguracionGeneralAppDato,ClasesTipo,
 											ConfiguracionAppVendedor,ConfiguracionAppEmpresa){
 	blockUI.start();
@@ -138,7 +140,7 @@ angular.module('agil.controladores')
 	}
 	
 	$scope.inicio();
-});
+}]);
 
 
 

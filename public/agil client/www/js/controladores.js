@@ -1,14 +1,24 @@
 angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
-	.controller('ControladorPrincipal', function ($scope, $sce, $rootScope, $route, $templateCache, $location, $window, $localStorage, Sesion, $timeout,
+	.controller('ControladorPrincipal', ['$scope', '$sce', '$rootScope', '$route', '$templateCache', '$location', '$window', '$localStorage', 'Sesion', '$timeout',
+		'blockUI', 'UsuarioSucursalesAutenticacion', 'VencimientosProductosEmpresa', 'VencimientosCreditosEmpresa',
+		'VencimientosDeudasEmpresa', 'VentaEmpresaDatos', 'ClienteVencimientoCredito', 'socket', '$http', 'Tipos',
+		'ProveedorVencimientoCredito', 'Venta', 'ClasesTipo', 'Compra', 'Producto', 'DatosVenta', 'DatosCompra',
+		'ImprimirSalida', 'Diccionario', 'VentasComprobantesEmpresa', 'ComprasComprobantesEmpresa', 'LibroMayorCuenta', 'Paginator', 'ComprobanteRevisarPaginador', 'AsignarComprobanteFavorito', 'ListaCuentasComprobanteContabilidad', 'NuevoComprobanteContabilidad', 'NuevoComprobante', 'ComprasComprobante',
+		'ConfiguracionesCuentasEmpresa', 'ContabilidadCambioMoneda', 'ObtenerCambioMoneda', 'AsignarCuentaCiente', 'AsignarCuentaProveedor',
+		'GtmTransportistas', 'GtmEstibajes', 'GtmGrupoEstibajes', 'ListasCuentasAuxiliares', 'GtmDetallesDespachoAlerta', '$interval', 'GuardarGtmDetalleDespachoAlerta', 'GtmDetalleDespacho', 'VerificarCorrelativosSucursale',
+		'ReiniciarCorrelativoSucursales', 'ClasesTipoEmpresa', 'alertasProformasLista', 'UltimaFechaTipoComprobante', 'FacturaProforma', 'ListaDetallesProformasAFacturar', 'ProformasInfo', 'FacturarProformas', 'ImprimirPdfAlertaDespacho', 
+		'ExportarExelAlarmasDespachos', 'VencimientoDosificaciones', 'EmpresaDatosInicio', 'VerificacionMensualActivos', 'ProductosPaginador', 'Pedidos', 'ClientesNit', 'GetCliente', 'ClientePedido', 'ClientePedidoRazonSocial', 'ClientePedidoDestino', 
+		'$filter', 'ObtenerAlertasCajaChica', 'GuardarVerificadorSolicitud', function ($scope, $sce, $rootScope, $route, $templateCache, $location, $window, $localStorage, Sesion, $timeout,
 		blockUI, UsuarioSucursalesAutenticacion, VencimientosProductosEmpresa, VencimientosCreditosEmpresa,
 		VencimientosDeudasEmpresa, VentaEmpresaDatos, ClienteVencimientoCredito, socket, $http, Tipos,
 		ProveedorVencimientoCredito, Venta, ClasesTipo, Compra, Producto, DatosVenta, DatosCompra,
 		ImprimirSalida, Diccionario, VentasComprobantesEmpresa, ComprasComprobantesEmpresa, LibroMayorCuenta, Paginator, ComprobanteRevisarPaginador, AsignarComprobanteFavorito, ListaCuentasComprobanteContabilidad, NuevoComprobanteContabilidad, NuevoComprobante, ComprasComprobante,
 		ConfiguracionesCuentasEmpresa, ContabilidadCambioMoneda, ObtenerCambioMoneda, AsignarCuentaCiente, AsignarCuentaProveedor,
-		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale, ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante,
-		FacturaProforma, ListaDetallesProformasAFacturar, ProformasInfo, FacturarProformas, ImprimirPdfAlertaDespacho, ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos, ProductosPaginador, Pedidos, ClientesNit, GetCliente, ClientePedido, ClientePedidoRazonSocial, ClientePedidoDestino, $filter,
-		ObtenerAlertasCajaChica, GuardarVerificadorSolicitud) {
+		GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale,
+		ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante, FacturaProforma, ListaDetallesProformasAFacturar, ProformasInfo, FacturarProformas, ImprimirPdfAlertaDespacho, 
+		ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos, ProductosPaginador, Pedidos, ClientesNit, GetCliente, ClientePedido, ClientePedidoRazonSocial, ClientePedidoDestino, 
+		$filter, ObtenerAlertasCajaChica, GuardarVerificadorSolicitud) {
 		$scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
 		$scope.idModalTablaDespachos = "tabla-gtm-despachos";
 		$scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -3751,4 +3761,4 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 			}
 			$scope.ocultarMenu = true;
 		}
-	});
+	}]);

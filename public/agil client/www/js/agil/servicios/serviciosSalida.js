@@ -1,8 +1,8 @@
 angular.module('agil.servicios')
 
-.factory('BusquedaProductosEmpresa', function($resource) {
+.factory('BusquedaProductosEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"productos/empresa/:idEmpresa/texto/:texto");
-})
+}])
 
 .factory('ListaProductosEmpresa', ['BusquedaProductosEmpresa','$q',function(BusquedaProductosEmpresa, $q) 
   {
@@ -21,9 +21,9 @@ angular.module('agil.servicios')
     return res;
 	}])
 	
-	.factory('BusquedaProductosEmpresaUsuario', function($resource) {
+	.factory('BusquedaProductosEmpresaUsuario',  ['$resource',function ($resource) {
 		return $resource(restServer+"productos/empresa/:idEmpresa/texto/:texto/user/:id_usuario/almacen/:id_almacen");
-})
+}])
 
 .factory('ListaProductosEmpresaUsuario', ['BusquedaProductosEmpresaUsuario','$q',function(BusquedaProductosEmpresaUsuario, $q) 
   {
@@ -42,9 +42,9 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('InventariosProducto', function($resource) {
+.factory('InventariosProducto',  ['$resource',function ($resource) {
 		return $resource(restServer+"inventarios/producto/:id_producto/almacen/:id_almacen");
-})
+}])
 
 .factory('ListaInventariosProducto', ['InventariosProducto','$q',function(InventariosProducto, $q) 
   {
@@ -65,12 +65,12 @@ angular.module('agil.servicios')
 	
   
   
-.factory('ConfiguracionVentaVista', function($resource) {
+.factory('ConfiguracionVentaVista',  ['$resource',function ($resource) {
 		return $resource(restServer+"empresas/:id_empresa/configuracion-venta-vista", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ConfiguracionVentaVistaDatos', ['ConfiguracionVentaVista','$q',function(ConfiguracionVentaVista, $q) 
   {
@@ -89,12 +89,12 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('ConfiguracionCompraVista', function($resource) {
+.factory('ConfiguracionCompraVista',  ['$resource',function ($resource) {
 		return $resource(restServer+"empresas/:id_empresa/configuracion-compra-vista", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ConfiguracionCompraVistaDatos', ['ConfiguracionCompraVista','$q',function(ConfiguracionCompraVista, $q) 
   {
@@ -113,12 +113,12 @@ angular.module('agil.servicios')
     return res;
   }])
 
-.factory('GruposProductoEmpresa', function($resource) {
+.factory('GruposProductoEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"grupos/empresa/:id_empresa", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ListaGruposProductoEmpresa', ['GruposProductoEmpresa','$q',function(GruposProductoEmpresa, $q) 
   {
@@ -137,12 +137,12 @@ angular.module('agil.servicios')
     return res;
 	}])
 
-	.factory('GruposProductoUsuario', function($resource) {
+	.factory('GruposProductoUsuario',  ['$resource',function ($resource) {
 		return $resource(restServer+"grupos/empresa/:id_empresa/user/:id_usuario", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ListaGruposProductoUsuario', ['GruposProductoUsuario','$q',function(GruposProductoUsuario, $q) 
   {
@@ -161,12 +161,12 @@ angular.module('agil.servicios')
     return res;
 	}])
 	
-.factory('VendedorVenta', function($resource) {
+.factory('VendedorVenta',  ['$resource',function ($resource) {
 		return $resource(restServer+"vendedor-venta/empresa/:id_empresa", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ListaVendedorVenta', ['VendedorVenta','$q',function(VendedorVenta, $q) 
   {
@@ -185,19 +185,19 @@ angular.module('agil.servicios')
     return res;
 	}])
 	
-	.factory('VendedorVentaActualizacion', function($resource) {
+	.factory('VendedorVentaActualizacion',  ['$resource',function ($resource) {
 		return $resource(restServer+"vendedor-venta/:id_vendedor", { id_vendedor:  '@id' },
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('SubGruposProductoEmpresa', function($resource) {
+.factory('SubGruposProductoEmpresa',  ['$resource',function ($resource) {
 	return $resource(restServer+"subgrupos/empresa/:id_empresa", null,
 	{
 		'update': { method:'PUT' }
 	});
-})
+}])
 
 .factory('ListaSubGruposProductoEmpresa', ['SubGruposProductoEmpresa','$q',function(SubGruposProductoEmpresa, $q) 
 {
@@ -215,9 +215,9 @@ var res = function(id_empresa)
 };
 	return res;
 }])
-.factory('InventariosProductosVentaEdicion', function($resource) {
+.factory('InventariosProductosVentaEdicion',  ['$resource',function ($resource) {
 		return $resource(restServer+"inventarios-venta-edicion/producto/:id_producto/almacen/:id_almacen/fecha/:fecha");
-})
+}])
 
 .factory('ListaInventariosProductoVentaEdicion', ['InventariosProductosVentaEdicion','$q',function(InventariosProductosVentaEdicion, $q) 
   {

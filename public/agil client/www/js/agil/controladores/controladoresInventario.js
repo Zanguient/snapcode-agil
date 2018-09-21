@@ -1,7 +1,10 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorInventarios', function ($scope, $timeout, $filter, $window, $localStorage, $location, $templateCache, $route, blockUI, ListaInventariosProducto,
-		Inventario, InventarioPaginador, Productos, ActualizacionInventario, ListaProductosEmpresa, IngresosPorInventario, ActualizarDetalleMovimiento, ListaGruposProductoUsuario, ProductosUsuario,IngPorInventario, InventarioInicial) {
+	.controller('ControladorInventarios', ['$scope', '$timeout', '$filter', '$window', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'ListaInventariosProducto',
+		'Inventario', 'InventarioPaginador', 'Productos', 'ActualizacionInventario', 'ListaProductosEmpresa', 'IngresosPorInventario', 'ActualizarDetalleMovimiento', 'ListaGruposProductoUsuario',
+		'ProductosUsuario','IngPorInventario', 'InventarioInicial',function ($scope, $timeout, $filter, $window, $localStorage, $location, $templateCache, $route, blockUI, ListaInventariosProducto,
+		Inventario, InventarioPaginador, Productos, ActualizacionInventario, ListaProductosEmpresa, IngresosPorInventario, ActualizarDetalleMovimiento, ListaGruposProductoUsuario,
+		ProductosUsuario,IngPorInventario, InventarioInicial) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -682,4 +685,4 @@ angular.module('agil.controladores')
 
 
 		$scope.inicio();
-	});
+	}]);

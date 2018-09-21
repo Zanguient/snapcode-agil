@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorEmpresas', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, ClasesTipo, Clases, Empresa, Empresas, ListaAplicacionesSistema) {
+	.controller('ControladorEmpresas', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'ClasesTipo', 'Clases', 'Empresa', 'Empresas', 'ListaAplicacionesSistema', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, ClasesTipo, Clases, Empresa, Empresas, ListaAplicacionesSistema) {
 		blockUI.start();
 
 		$scope.idModalWizardEmpresaEdicion = 'modal-wizard-empresa';
@@ -117,7 +117,7 @@ angular.module('agil.controladores')
 						} else {
 							var xhr = new XMLHttpRequest();
 							xhr.open('PUT', res.signedRequest);
-							xhr.onreadystatechange = () => {
+							xhr.onreadystatechange = function() {
 								if (xhr.readyState === 4) {
 									if (xhr.status === 200) {
 										blockUI.stop();
@@ -153,7 +153,7 @@ angular.module('agil.controladores')
 						} else {
 							var xhr = new XMLHttpRequest();
 							xhr.open('PUT', res.signedRequest);
-							xhr.onreadystatechange = () => {
+							xhr.onreadystatechange = function() {
 								if (xhr.readyState === 4) {
 									if (xhr.status === 200) {
 										blockUI.stop();
@@ -240,7 +240,7 @@ angular.module('agil.controladores')
 		});
 
 		$scope.inicio();
-	});
+	}]);
 
 
 

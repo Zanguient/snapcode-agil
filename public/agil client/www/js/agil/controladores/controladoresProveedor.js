@@ -1,6 +1,8 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorProveedores', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, Proveedor, Proveedores, Empresas, ProveedoresEmpresa, ProveedoresPaginador, EliminarProveedor) {
+	.controller('ControladorProveedores', ['$scope', '$window', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'Proveedor', 'Proveedores', 'Empresas',
+		'ProveedoresEmpresa', 'ProveedoresPaginador', 'EliminarProveedor',function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, Proveedor, Proveedores, Empresas,
+		ProveedoresEmpresa, ProveedoresPaginador, EliminarProveedor) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -474,7 +476,7 @@ angular.module('agil.controladores')
 		});
 
 		$scope.inicio();
-	});
+	}]);
 
 
 

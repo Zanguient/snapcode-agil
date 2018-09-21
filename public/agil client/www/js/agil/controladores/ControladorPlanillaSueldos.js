@@ -1,6 +1,8 @@
 angular.module('agil.controladores')
 
-.controller('ControladorPlanillaSueldos', function($scope,$localStorage,$location,$templateCache,$route,blockUI, Parametro, Parametros, RecursosHumanosEmpleados, ClasesTipo, RecursosHumanosEmpleadosHorasExtras, RecursosHumanosPlanillaSueldos, RRHHlistaPlanillaSueldos){
+.controller('ControladorPlanillaSueldos', ['$scope','$localStorage','$location','$templateCache','$route,blockUI', 'Parametro', 'Parametros', 'RecursosHumanosEmpleados', 'ClasesTipo',
+    'RecursosHumanosEmpleadosHorasExtras', 'RecursosHumanosPlanillaSueldos', 'RRHHlistaPlanillaSueldos', function($scope,$localStorage,$location,$templateCache,$route,blockUI, Parametro, Parametros, RecursosHumanosEmpleados, ClasesTipo,
+    RecursosHumanosEmpleadosHorasExtras, RecursosHumanosPlanillaSueldos, RRHHlistaPlanillaSueldos){
     $scope.$on('$viewContentLoaded', function () {
         // resaltarPestaña($location.path().substring(1));
         $scope.idModalNuevaPlanillaSueldos = 'dialog-nueva-planilla-sueldos';
@@ -377,4 +379,4 @@ angular.module('agil.controladores')
 
     $scope.obtenerParametros($scope.usuario.id_empresa);
 
-});
+}]);

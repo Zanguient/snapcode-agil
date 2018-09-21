@@ -1,7 +1,7 @@
 angular.module('agil.servicios')
-.factory('PedidosEmpresa', function ($resource) {
+.factory('PedidosEmpresa',  ['$resource',function ($resource) {
     return $resource(restServer + "pedidos/empresa/:id_empresa/desde/:desde/hasta/:hasta/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/tipo_pedido/:id_tipo/proveedor/:id_proveedor/nit/:nit/sucursal/:id_sucursal/estado/:estado/usuario/:usuario");
-})
+}])
 
 .factory('PedidosFiltro', ['PedidosEmpresa', '$q', function (PedidosEmpresa, $q) {
     var res = function (idEmpresa, paginador) {
@@ -29,9 +29,9 @@ angular.module('agil.servicios')
     return res;
 }])
 
-.factory('Pedido', function ($resource) {
+.factory('Pedido',  ['$resource',function ($resource) {
     return $resource(restServer + "pedidos/:id_empresa/:id_usuario");
-})
+}])
 
 .factory('GuardarPedido', ['Pedido', '$q', function (Pedido, $q) {
     var res = function (idEmpresa, pedido, usuario) {
@@ -46,9 +46,9 @@ angular.module('agil.servicios')
     return res;
 }])
 
-.factory('ProveedoresOperaciones', function ($resource) {
+.factory('ProveedoresOperaciones',  ['$resource',function ($resource) {
     return $resource(restServer + "proveedores/:id_empresa");
-})
+}])
 
 .factory('ListaProveedores', ['ProveedoresOperaciones', '$q', function (ProveedoresOperaciones, $q) {
     var res = function (idEmpresa) {
@@ -62,9 +62,9 @@ angular.module('agil.servicios')
     };
     return res;
 }])
-.factory('EliminarPedido', function ($resource) {
+.factory('EliminarPedido',  ['$resource',function ($resource) {
     return $resource(restServer + "pedido/:id_pedido");
-})
+}])
 
 .factory('EliminarPedidoEmpresa', ['EliminarPedido', '$q', function (EliminarPedido, $q) {
     var res = function (idPedido) {
@@ -78,9 +78,9 @@ angular.module('agil.servicios')
     };
     return res;
 }])
-.factory('EliminarDetallePedido', function ($resource) {
+.factory('EliminarDetallePedido',  ['$resource',function ($resource) {
     return $resource(restServer + "pedido/detalle/:id_detalle");
-})
+}])
 
 .factory('EliminarDetallePedidoEmpresa', ['EliminarDetallePedido', '$q', function (EliminarDetallePedido, $q) {
     var res = function (idDetalle) {

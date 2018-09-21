@@ -1,7 +1,7 @@
 angular.module('agil.servicios')
-.factory('BusquedaPacientesNit', function($resource) {
+.factory('BusquedaPacientesNit',  ['$resource',function ($resource) {
 		return $resource(restServer+"pacientes/empresa/:id_empresa/texto/:texto");
-})
+}])
 
 .factory('PacientesNit', ['BusquedaPacientesNit','$q',function(BusquedaPacientesNit, $q) 
   {
@@ -254,12 +254,12 @@ angular.module('agil.servicios')
 		}
 		return res;
 	}])
-.factory('VentaFarmaciaFiltro', function($resource) {
+.factory('VentaFarmaciaFiltro',  ['$resource',function ($resource) {
 		return $resource(restServer+"ventas-farmacia/:idsSucursales/inicio/:inicio/fin/:fin/codigo/:codigo/nombreCompleto/:nombreCompleto/ci/:ci/tipo-venta/:tipo_venta/campo/:campo/cargo/:cargo/empresa/:empresa/numero_receta/:numero_receta", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('VentasFarmacia', ['VentaFarmaciaFiltro','$q',function(VentaFiltro, $q) 
   {
@@ -278,19 +278,19 @@ angular.module('agil.servicios')
     return res;
   }])
 
-.factory('VentaFarmacia', function($resource) {
+.factory('VentaFarmacia',  ['$resource',function ($resource) {
 		return $resource(restServer+"ventas-farmacia/:id",  { id: '@id' },
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('VentaEmpresaDatosFarmacia', function($resource) {
+.factory('VentaEmpresaDatosFarmacia',  ['$resource',function ($resource) {
 		return $resource(restServer+"ventas-farmacia/:id/empresa/:id_empresa", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('DatosVentaFarmacia', ['VentaEmpresaDatosFarmacia','$q',function(VentaEmpresaDatosFarmacia, $q) 
 	{

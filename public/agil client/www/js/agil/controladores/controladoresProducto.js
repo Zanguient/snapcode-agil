@@ -1,6 +1,10 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorProductos', function ($scope, $timeout, $filter, $window, $localStorage, $location, $templateCache,
+	.controller('ControladorProductos', ['$scope', '$timeout', '$filter', '$window', '$localStorage', '$location', '$templateCache',
+		'$route', 'blockUI', 'Producto', 'Productos', 'ProductosPaginador', 'ProductosEmpresa',
+		'ClasesTipo', 'Clases', 'ProductoKardex', 'ProductosEmpresaCreacion', 'DatoCodigoSiguienteProductoEmpresa', 'ListaProductosEmpresa',
+		'Paginator', 'ListaCuentasComprobanteContabilidad', 'DatosProducto', 'CatalogoProductos',
+		'ListaGruposProductoEmpresa', 'Tipos', 'ClasesTipoEmpresa','FieldViewer', 'ListaSubGruposProductoEmpresa', 'ListaGruposProductoUsuario', 'ReporteProductosKardex', 'GuardarProductosFormulacion',function ($scope, $timeout, $filter, $window, $localStorage, $location, $templateCache,
 		$route, blockUI, Producto, Productos, ProductosPaginador, ProductosEmpresa,
 		ClasesTipo, Clases, ProductoKardex, ProductosEmpresaCreacion, DatoCodigoSiguienteProductoEmpresa, ListaProductosEmpresa,
 		Paginator, ListaCuentasComprobanteContabilidad, DatosProducto, CatalogoProductos,
@@ -779,6 +783,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.modificarProducto = function (producto) {
+			$scope.tipoDePrecio = {eliminado:false}
 			$scope.steps = [{ cabeza: "cabeza-datos-producto", cuerpo: "cuerpo-datos-producto" },
 			{ cabeza: "cabeza-datos-adicionales", cuerpo: "cuerpo-datos-adicionales" },
 			{ cabeza: "cabeza-tipo-producto", cuerpo: "cuerpo-tipo-producto" }]
@@ -881,7 +886,7 @@ angular.module('agil.controladores')
 					} else {
 						var xhr = new XMLHttpRequest();
 						xhr.open('PUT', res.signedRequest);
-						xhr.onreadystatechange = () => {
+						xhr.onreadystatechange = function() {
 							if (xhr.readyState === 4) {
 								if (xhr.status === 200) {
 									blockUI.stop();
@@ -921,7 +926,7 @@ angular.module('agil.controladores')
 					} else {
 						var xhr = new XMLHttpRequest();
 						xhr.open('PUT', res.signedRequest);
-						xhr.onreadystatechange = () => {
+						xhr.onreadystatechange = function() {
 							if (xhr.readyState === 4) {
 								if (xhr.status === 200) {
 									blockUI.stop();
@@ -1342,7 +1347,7 @@ angular.module('agil.controladores')
 		});
 
 		$scope.inicio();
-	});
+	}]);
 
 
 

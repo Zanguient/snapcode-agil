@@ -1,11 +1,11 @@
 angular.module('agil.servicios')
 
-    .factory('obtenerPersonal', function ($resource) {
+    .factory('obtenerPersonal',  ['$resource',function ($resource) {
         return $resource(restServer + "todo/personal/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ObtenerTodoPersonal', ['obtenerPersonal', '$q', function (obtenerPersonal, $q) {
         var res = function (id_empresa) {
@@ -20,12 +20,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('filtroEvaluaciones', function ($resource) {
+    .factory('filtroEvaluaciones',  ['$resource',function ($resource) {
         return $resource(restServer + "personal/filtro/:id_empresa/:mes/:anio/:desempenio/:mas_campo/:campo/:cargo/:estado/:codigo/:nombre/:apellido/:pagina/:items_pagina/:columna/:direccion/fiu", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ObtenerEvaluaciones', ['filtroEvaluaciones', '$q', function (filtroEvaluaciones, $q) {
         var res = function (paginador) {
@@ -57,12 +57,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('EvaluacionPersonal', function ($resource) {
+    .factory('EvaluacionPersonal',  ['$resource',function ($resource) {
         return $resource(restServer + "evaluacion/personal/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('GuardarEvaluacionPersonal', ['EvaluacionPersonal', '$q', function (EvaluacionPersonal, $q) {
         var res = function (id_empresa, evaluacion) {
@@ -90,12 +90,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('ReporteMeses', function ($resource) {
+    .factory('ReporteMeses',  ['$resource',function ($resource) {
         return $resource(restServer + "reportes/:desde_mes/:desde_anio/:hasta_mes/:hasta_anio/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ObtenerReportePorMeses', ['ReporteMeses', '$q', function (ReporteMeses, $q) {
         var res = function (fromMonth, fromYear, untilMonth, untilYear, id_empresa) {
@@ -110,12 +110,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('ReporteAnual', function ($resource) {
+    .factory('ReporteAnual',  ['$resource',function ($resource) {
         return $resource(restServer + "reportes/anual/:anio/campos/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ObtenerReportePorAnio', ['ReporteAnual', '$q', function (ReporteAnual, $q) {
         var res = function (year, id_empresa) {
@@ -130,12 +130,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('ReporteAnualCampo', function ($resource) {
+    .factory('ReporteAnualCampo',  ['$resource',function ($resource) {
         return $resource(restServer + "reportes/anual/:anio/:campo/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ObtenerReporteGeneralPorAnio', ['ReporteAnualCampo', '$q', function (ReporteAnualCampo, $q) {
         var res = function (year, campo, id_empresa) {
@@ -151,12 +151,12 @@ angular.module('agil.servicios')
     }])
 
 
-    .factory('configuracionCalificacion', function ($resource) {
+    .factory('configuracionCalificacion',  ['$resource',function ($resource) {
         return $resource(restServer + "evaluacion/configuracion/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('GuardarConfiguracionCalificacion', ['configuracionCalificacion', '$q', function (configuracionCalificacion, $q) {
         var res = function (idEmpresa, configuracion) {
@@ -184,12 +184,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('configuracionDesempenio', function ($resource) {
+    .factory('configuracionDesempenio',  ['$resource',function ($resource) {
         return $resource(restServer + "desempenio/configuracion/:id_empresa/sufra", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('GuardarConfiguracionDesempenio', ['configuracionDesempenio', '$q', function (configuracionDesempenio, $q) {
         var res = function (idEmpresa, configuracion) {

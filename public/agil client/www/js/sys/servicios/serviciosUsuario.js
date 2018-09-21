@@ -57,20 +57,20 @@ angular.module('agil.servicios')
     }
 ])
 
-.factory('Usuario', function($resource) {
+.factory('Usuario', ['$resource',function($resource) {
 		return $resource(restServer+"usuarios/:id_usuario", { id_usuario: '@id' },
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 
-.factory('validarUsuario', function($resource) {
+.factory('validarUsuario', ['$resource',function($resource) {
 		return $resource(restServer+"/validar",
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('Usuarios', ['Usuario','$q',function(Usuario, $q) 
   {
@@ -88,9 +88,9 @@ angular.module('agil.servicios')
 	};
     return res;
   }])
- .factory('UsuarioEmpresaPaginador', function($resource) {
+ .factory('UsuarioEmpresaPaginador', ['$resource',function($resource) {
 		return $resource(restServer+"usuario/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
-})
+}])
   
 .factory('UsuariosEmpresaPaginador', ['UsuarioEmpresaPaginador','$q',function(UsuarioEmpresaPaginador, $q) 
   {
@@ -113,9 +113,9 @@ angular.module('agil.servicios')
     return res;
   }]) 
 
-.factory('UsuarioEmpresa', function($resource) {
+.factory('UsuarioEmpresa', ['$resource',function($resource) {
 		return $resource(restServer+"usuarios/empresa/:id_empresa");
-})
+}])
   
 .factory('UsuariosEmpresa', ['UsuarioEmpresa','$q',function(UsuarioEmpresa, $q) 
   {
@@ -137,19 +137,19 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('UsuarioRutas', function($resource) {
+.factory('UsuarioRutas', ['$resource',function($resource) {
 		return $resource(restServer+"usuarios-rutas/:id_usuario", { id_usuario: '@id' },
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('UsuarioComision', function($resource) {
+.factory('UsuarioComision', ['$resource',function($resource) {
 		return $resource(restServer+"comision-productos-vendedor/empresa/:id_empresa/usuario/:id_usuario", { id_usuario: '@id_usuario', id_usuario: '@id_empresa'},
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
   
 .factory('UsuarioComisiones', ['UsuarioComision','$q',function(UsuarioComision, $q) 
   {
@@ -171,9 +171,9 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('UsuarioSucursalAutenticacion', function($resource) {
+.factory('UsuarioSucursalAutenticacion', ['$resource',function($resource) {
 		return $resource(restServer+"autenticar-sucursales/:id_usuario");
-})
+}])
   
 .factory('UsuarioSucursalesAutenticacion', ['UsuarioSucursalAutenticacion','$q',function(UsuarioSucursalAutenticacion, $q) 
   {
@@ -192,9 +192,9 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('UsuarioRutaSeguimiento', function($resource) {
+.factory('UsuarioRutaSeguimiento', ['$resource',function($resource) {
 		return $resource(restServer+"rutas/seguimiento/usuario/:id_usuario/dia/:dia");
-})
+}])
   
 .factory('UsuarioRutasSeguimiento', ['UsuarioRutaSeguimiento','$q',function(UsuarioRutaSeguimiento, $q) 
   {
@@ -213,9 +213,9 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('UsuarioRutaReporte', function($resource) {
+.factory('UsuarioRutaReporte', ['$resource',function($resource) {
 		return $resource(restServer+"rutas/reporte/usuario/:id_usuario/ruta/:id_ruta/inicio/:inicio/fin/:fin/detalles-venta/:tipo");
-})
+}])
   
 .factory('UsuarioRutaReporteDatos', ['UsuarioRutaReporte','$q',function(UsuarioRutaReporte, $q) 
   {
@@ -234,9 +234,9 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('UsuarioRutaGrafico', function($resource) {
+.factory('UsuarioRutaGrafico', ['$resource',function($resource) {
 		return $resource(restServer+"rutas/grafico/usuario/:id_usuario/ruta/:id_ruta/inicio/:inicio/fin/:fin");
-})
+}])
   
 .factory('UsuarioRutaGraficoDatos', ['UsuarioRutaGrafico','$q',function(UsuarioRutaGrafico, $q) 
   {
@@ -255,9 +255,9 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('UsuarioComisionReporte', function($resource) {
+.factory('UsuarioComisionReporte', ['$resource',function($resource) {
 		return $resource(restServer+"usuarios-comisiones-reporte/empresa/:id_empresa/inicio/:inicio/fin/:fin");
-})
+}])
   
 .factory('UsuariosComisionesReporte', ['UsuarioComisionReporte','$q',function(UsuarioComisionReporte, $q) 
   {
@@ -276,9 +276,9 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('CierreCajaRutaUsuario', function($resource) {
+.factory('CierreCajaRutaUsuario', ['$resource',function($resource) {
 		return $resource(restServer+"cierre-usuario-ruta/usuario/:id_usuario/dia/:dia");
-})
+}])
   
 .factory('CierreCajaRutaUsuarioDatos', ['CierreCajaRutaUsuario','$q',function(CierreCajaRutaUsuario, $q) 
   {
@@ -297,24 +297,24 @@ angular.module('agil.servicios')
     return res;
 	}])
 	
-.factory('VistaColumnasAplicacion', function($resource) {
+.factory('VistaColumnasAplicacion', ['$resource',function($resource) {
 		return $resource(restServer+"columnnas-aplicacion/aplicacion/:id_aplicacion", { id_aplicacion: '@id' },
 		{
 			'update': { method:'PUT' }
 		});
-})
-.factory('VerificarUsuarioEmpresa', function($resource) {
+}])
+.factory('VerificarUsuarioEmpresa', ['$resource',function($resource) {
 		return $resource(restServer+"verificar/usuarios/empresa/:id_empresa", { id_empresa: '@id_empresa' },
 		{
 			'update': { method:'PUT' }
 		});
-})
-.factory('VerificarAutorizacionUsuarioEmpresa', function($resource) {
+}])
+.factory('VerificarAutorizacionUsuarioEmpresa', ['$resource',function($resource) {
 	return $resource(restServer+"verificar-autorizacion/usuarios/empresa/:id_empresa", { id_empresa: '@id_empresa' },
 	{
 		'update': { method:'PUT' }
 	});
-})
+}])
 	.factory('VerificarUsuarioEmpresaCaja', ['VerificarAutorizacionUsuarioEmpresa','$q',function(VerificarAutorizacionUsuarioEmpresa, $q) 
   {
 	var res = function(id_empresa,usuario) 
@@ -335,12 +335,12 @@ angular.module('agil.servicios')
     return res;
   }])
   
-	.factory('UsarLectorDeBarra', function($resource) {
+	.factory('UsarLectorDeBarra', ['$resource',function($resource) {
 		return $resource(restServer+"usar-lector-de-barra/usuario",null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 	.factory('GuardarUsuarLectorDeBarra', ['UsarLectorDeBarra','$q',function(UsarLectorDeBarra, $q) 
   {
 	var res = function(usuario) 
@@ -358,12 +358,12 @@ angular.module('agil.servicios')
     return res;
 	}])
 	
-	.factory('UsuarioSeleccionado', function($resource) {
+	.factory('UsuarioSeleccionado', ['$resource',function($resource) {
 		return $resource(restServer+"usuario/:id_usuario", { id_usuario: '@id' },
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ObtenerUsuario', ['UsuarioSeleccionado','$q',function(UsuarioSeleccionado, $q) 
   {

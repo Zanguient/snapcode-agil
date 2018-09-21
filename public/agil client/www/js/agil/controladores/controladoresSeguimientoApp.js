@@ -1,6 +1,9 @@
 angular.module('agil.controladores')
 
-.controller('ControladorSeguimientoApp', function($scope,$window,$localStorage,$location,$templateCache,$route,blockUI,
+.controller('ControladorSeguimientoApp', ['$scope','$window','$localStorage','$location','$templateCache','$route','blockUI',
+	'UsuariosRutasLista','Rutas','uiGmapGoogleMapApi','UsuarioRutasSeguimiento',
+	'UsuarioRutaReporteDatos','UsuarioRutaGraficoDatos','UsuariosComisionesReporte',
+	'CierreCajaRutaUsuarioDatos',function($scope,$window,$localStorage,$location,$templateCache,$route,blockUI,
 													UsuariosRutasLista,Rutas,uiGmapGoogleMapApi,UsuarioRutasSeguimiento,
 													UsuarioRutaReporteDatos,UsuarioRutaGraficoDatos,UsuariosComisionesReporte,
 													CierreCajaRutaUsuarioDatos){
@@ -600,7 +603,7 @@ angular.module('agil.controladores')
 	});
 	
 	$scope.inicio();
-});
+}]);
 
 
 

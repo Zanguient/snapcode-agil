@@ -1,6 +1,10 @@
 angular.module('agil.controladores')
 
-.controller('ControladorMesa', function($scope,$localStorage,$location,$templateCache,$route,blockUI,ListaSalas,
+.controller('ControladorMesa', ['$scope','$localStorage','$location','$templateCache','$route','blockUI','ListaSalas',
+	'ListaGruposProductoEmpresa','ProductosPanel','Sala','Mesa','ClasesTipo','MesaPedidoRestaurante',
+'PedidoRestaurante','PedidoRestauranteActualizacion','MesaActualizacion','$timeout',
+'Venta','ImprimirSalida','ListaInventariosProducto','InactivarPedido','ClientesNit','ActualizarGarzon','CrearGarzon','Garzon','ListaGarzones',
+'EliminacionMesaPedidoRestaurante',function($scope,$localStorage,$location,$templateCache,$route,blockUI,ListaSalas,
 										ListaGruposProductoEmpresa,ProductosPanel,Sala,Mesa,ClasesTipo,MesaPedidoRestaurante,
 									PedidoRestaurante,PedidoRestauranteActualizacion,MesaActualizacion,$timeout,
 								Venta,ImprimirSalida,ListaInventariosProducto,InactivarPedido,ClientesNit,ActualizarGarzon,CrearGarzon,Garzon,ListaGarzones,
@@ -615,7 +619,7 @@ angular.module('agil.controladores')
 					}else{
 						var xhr = new XMLHttpRequest();
 						xhr.open('PUT', res.signedRequest);
-						xhr.onreadystatechange = () => {
+						xhr.onreadystatechange = function() {
 							if(xhr.readyState === 4){
 							  if(xhr.status === 200){
 								$scope.obtenerGarzones();
@@ -651,7 +655,7 @@ angular.module('agil.controladores')
 					}else{
 						var xhr = new XMLHttpRequest();
 						xhr.open('PUT', res.signedRequest);
-						xhr.onreadystatechange = () => {
+						xhr.onreadystatechange = function() {
 							if(xhr.readyState === 4){
 							  if(xhr.status === 200){
 								$scope.verGarzon();
@@ -942,7 +946,7 @@ angular.module('agil.controladores')
 	});
 
 	$scope.inicio();
-});
+}]);
 
 
 

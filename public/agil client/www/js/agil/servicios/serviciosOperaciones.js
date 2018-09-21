@@ -1,11 +1,11 @@
 angular.module('agil.servicios')
 
-    .factory('SolicitudReposicion', function ($resource) {
+    .factory('SolicitudReposicion',  ['$resource',function ($resource) {
         return $resource(restServer + "operaciones/empresa/:id_empresa/vintage/:id_usuario/capo/:rol/desde/:desde/hasta/:hasta/suc/:sucursal/alm/:almacen/mov/:movimiento/est/:estado/val/:valuado/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('SolicitudesReposicion', ['SolicitudReposicion', '$q', function (SolicitudReposicion, $q) {
         // :desde/:hasta/:sucursal/:almacen/:movimimento/:estado/:valuado
@@ -25,9 +25,9 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('BusquedaProductosOperaciones', function ($resource) {
+    .factory('BusquedaProductosOperaciones',  ['$resource',function ($resource) {
         return $resource(restServer + "productos-operaciones/empresa/:id_empresa/almacen/:id_almacen/user/:id_usuario");
-    })
+    }])
 
     .factory('ProductosOperaciones', ['BusquedaProductosOperaciones', '$q', function (BusquedaProductosOperaciones, $q) {
         var res = function (idEmpresa, idAlmacen, id_usuario) {
@@ -42,12 +42,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('Ingrediente', function ($resource) {
+    .factory('Ingrediente',  ['$resource',function ($resource) {
         return $resource(restServer + "operaciones/producto/:id_producto", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('SolicitudesFormulacionProducto', ['Ingrediente', '$q', function (Ingrediente, $q) {
         var res = function (idProducto) {
@@ -65,12 +65,12 @@ angular.module('agil.servicios')
 
 
 
-    .factory('EliminarSolicitud', function ($resource) {
+    .factory('EliminarSolicitud',  ['$resource',function ($resource) {
         return $resource(restServer + "operaciones/eliminar/:id_solicitud", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('EliminarSolicitudReposicion', ['EliminarSolicitud', '$q', function (EliminarSolicitud, $q) {
         var res = function (solicitud) {
@@ -85,12 +85,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('DatosImpresion', function ($resource) {
+    .factory('DatosImpresion',  ['$resource',function ($resource) {
         return $resource(restServer + "operaciones/impresion/:id_solicitud", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ImpresionSolicitudDatos', ['DatosImpresion', '$q', function (DatosImpresion, $q) {
         var res = function (idProducto) {
@@ -105,12 +105,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('CerrarSolicitudViveres', function ($resource) {
+    .factory('CerrarSolicitudViveres',  ['$resource',function ($resource) {
         return $resource(restServer + "productos-operaciones/empresa/:id_empresa/cerrar", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('CerrarSolicitud', ['CerrarSolicitudViveres', '$q', function (CerrarSolicitudViveres, $q) {
         var res = function (solicitud, id_empresa) {
@@ -125,12 +125,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('SolicitudReposicionEmpresa', function ($resource) {
+    .factory('SolicitudReposicionEmpresa',  ['$resource',function ($resource) {
         return $resource(restServer + "solicitud/empresa/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('Solicitud', ['SolicitudReposicionEmpresa', '$q', function (SolicitudReposicionEmpresa, $q) {
         var res = function (solicitud, id_empresa, actualizar) {
             var delay = $q.defer();

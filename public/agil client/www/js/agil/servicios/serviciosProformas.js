@@ -1,17 +1,17 @@
 angular.module('agil.servicios')
 
-    .factory('Proformas', function ($resource) {
+    .factory('Proformas',  ['$resource',function ($resource) {
         return $resource(restServer + "proformas/empresa/:id_empresa/mes/:mes/anio/:anio/suc/:sucursal/act/:actividad/ser/:servicio/monto/:monto/razon/:razon/usuario/:usuario/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/num/:numero/facturas/:id_opcion", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
-    .factory('GenerarProformas', function ($resource) {
+    }])
+    .factory('GenerarProformas',  ['$resource',function ($resource) {
         return $resource(restServer + "guardar/proforma/:id_empresa/:usuario",
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     
 
     .factory('FiltroProformas', ['Proformas', '$q', function (Proformas, $q) {
@@ -46,12 +46,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('ActividadEmpresa', function ($resource) {
+    .factory('ActividadEmpresa',  ['$resource',function ($resource) {
         return $resource(restServer + "actividades/empresa/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ActividadesEmpresa', ['ActividadEmpresa', '$q', function (ActividadEmpresa, $q) {
         // :desde/:hasta/:sucursal/:almacen/:movimimento/:estado/:valuado
@@ -81,12 +81,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('ActividadServicio', function ($resource) {
+    .factory('ActividadServicio',  ['$resource',function ($resource) {
         return $resource(restServer + "actividades/servicios/empresa/:id_empresa/:id_actividad", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ServiciosEmpresa', ['ActividadServicio', '$q', function (ActividadServicio, $q) {
         // :desde/:hasta/:sucursal/:almacen/:movimimento/:estado/:valuado
@@ -115,18 +115,18 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('Proforma', function ($resource) {
+    .factory('Proforma',  ['$resource',function ($resource) {
         return $resource(restServer + "proforma/:id", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
-    .factory('ProformasDetail', function ($resource) {
+    }])
+    .factory('ProformasDetail',  ['$resource',function ($resource) {
         return $resource(restServer + "proformas/:ids", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ActualizarProforma', ['Proforma', '$q', function (Proforma, $q) {
         var res = function (id, proforma) {
@@ -167,19 +167,19 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('fechasProforma', function ($resource) {
+    .factory('fechasProforma',  ['$resource',function ($resource) {
         return $resource(restServer + "fechas/proforma/:id", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
-    .factory('eliminarProforma', function ($resource) {
+    .factory('eliminarProforma',  ['$resource',function ($resource) {
         return $resource(restServer + "eliminar/proforma/:id", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ProformaEliminar', ['eliminarProforma', '$q', function (eliminarProforma, $q) {
         var res = function (proforma) {
@@ -207,12 +207,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('alertas', function ($resource) {
+    .factory('alertas',  ['$resource',function ($resource) {
         return $resource(restServer + "alertas/proformas/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('alertasProformasLista', ['alertas', '$q', function (alertas, $q) {
         var res = function (idEmpresa) {
@@ -227,14 +227,14 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('FacturarProformas', function ($resource) {
+    .factory('FacturarProformas',  ['$resource',function ($resource) {
         return $resource(restServer + "proforma/facturar/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
-    // .factory('FacturarProformas', function ($resource) {
+    // .factory('FacturarProformas',  ['$resource',function ($resource) {
     //     return $resource(restServer + "ventas/factura/proformas", {},
     //         {
     //             'update': { method: 'PUT' }
@@ -254,12 +254,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('DetallesProformasAFacturar', function ($resource) {
+    .factory('DetallesProformasAFacturar',  ['$resource',function ($resource) {
         return $resource(restServer + "detalles/proforma/facturar/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ListaDetallesProformasAFacturar', ['DetallesProformasAFacturar', '$q', function (DetallesProformasAFacturar, $q) {
         var res = function (idEmpresa, idproformas) {
@@ -274,17 +274,17 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('listaProformasFacturadas', function ($resource) {
+    .factory('listaProformasFacturadas',  ['$resource',function ($resource) {
         return $resource(restServer + "factura/:id_factura/proforma/facturada/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ProformasFacturadas', ['listaProformasFacturadas', '$q', function (listaProformasFacturadas, $q) {
         var res = function (idEmpresa, id_factura) {
             var delay = $q.defer();
-            listaProformasFacturadas.get({ id_empresa: idEmpresa, id_factura }, function (entidades) {
+            listaProformasFacturadas.get({ id_empresa: idEmpresa, id_factura: id_factura }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -294,12 +294,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('configuracionFacturaEmpresa', function ($resource) {
+    .factory('configuracionFacturaEmpresa',  ['$resource',function ($resource) {
         return $resource(restServer + "configuracion/proforma/facturar/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ConfiguracionesFacturasProformas', ['configuracionFacturaEmpresa', '$q', function (configuracionFacturaEmpresa, $q) {
         var res = function (idEmpresa) {
@@ -316,12 +316,12 @@ angular.module('agil.servicios')
 
     // sucursales/empresa/:id_empresa
 
-    .factory('sucursalesEmpresa', function ($resource) {
+    .factory('sucursalesEmpresa',  ['$resource',function ($resource) {
         return $resource(restServer + "sucursales/empresa/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ListaSucursalesEmpresa', ['sucursalesEmpresa', '$q', function (sucursalesEmpresa, $q) {
         var res = function (idEmpresa, idproformas) {
@@ -337,12 +337,12 @@ angular.module('agil.servicios')
     }])
 
 
-    .factory('ActividadesServiciosEmpresa', function ($resource) {
+    .factory('ActividadesServiciosEmpresa',  ['$resource',function ($resource) {
         return $resource(restServer + "actividades/servicios/:id_empresa", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ListaSucursalesActividadesDosificacionEmpresa', ['ActividadesServiciosEmpresa', '$q', function (ActividadesServiciosEmpresa, $q) {
         var res = function (idEmpresa, idproformas) {
@@ -358,12 +358,12 @@ angular.module('agil.servicios')
     }])
 
 
-    .factory('proformaSucursalesUsuario', function ($resource) {
+    .factory('proformaSucursalesUsuario',  ['$resource',function ($resource) {
         return $resource(restServer + "proforma-sucursales/:id_usuario", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ListaSucursalesUsuario', ['proformaSucursalesUsuario', '$q', function (proformaSucursalesUsuario, $q) {
         var res = function (id_usuario) {
@@ -378,12 +378,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('actividadesHistorial', function ($resource) {
+    .factory('actividadesHistorial',  ['$resource',function ($resource) {
         return $resource(restServer + "actividades/historial/:id/:id_sucursal", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ListaHistorialActividad', ['actividadesHistorial', '$q', function (actividadesHistorial, $q) {
         var res = function (id, id_sucursal) {
@@ -398,12 +398,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('asignacionCentroCostosCliente', function ($resource) {
+    .factory('asignacionCentroCostosCliente',  ['$resource',function ($resource) {
         return $resource(restServer + "clientes/centroCostos/:id_cliente",
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('obtenerAsignacionCentroCosto', ['asignacionCentroCostosCliente', '$q', function (asignacionCentroCostosCliente, $q) {
         // :desde/:hasta/:sucursal/:almacen/:movimimento/:estado/:valuado
         var res = function (clienteId) {

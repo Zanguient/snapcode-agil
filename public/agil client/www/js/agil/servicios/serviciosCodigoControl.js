@@ -1,5 +1,5 @@
 angular.module('agil.servicios')
 
-.factory('CodigoControl', function($resource) {
+.factory('CodigoControl',  ['$resource',function ($resource) {
 		return $resource(restServer+"pruebas-codigo-control");
-});
+}]);

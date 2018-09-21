@@ -1,8 +1,8 @@
 angular.module('agil.servicios')
 
-.factory('Tipo', function($resource) {
+.factory('Tipo', ['$resource',function($resource) {
 		return $resource(restServer+"tipos/:nombre_corto");
-})
+}])
 
 .factory('ClasesTipo', ['Tipo','$q',function(Tipo, $q) 
   {
@@ -20,9 +20,9 @@ angular.module('agil.servicios')
 	};
     return res;
 	}])
-	.factory('ClaseNombre', function($resource) {
+	.factory('ClaseNombre', ['$resource',function($resource) {
 		return $resource(restServer+"clase/:nombre");
-})
+}])
 
 .factory('ClaseTexto', ['ClaseNombre','$q',function(ClaseNombre, $q) 
   {
@@ -41,9 +41,9 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('Clase', function($resource) {
+.factory('Clase', ['$resource',function($resource) {
 		return $resource(restServer+"clases/:nombre_corto");
-})
+}])
 
 .factory('Clases', ['Clase','$q',function(Clase, $q) 
   {
@@ -61,9 +61,9 @@ angular.module('agil.servicios')
 	};
     return res;
 	}])
-	.factory('ClaseEmpresa', function($resource) {
+	.factory('ClaseEmpresa', ['$resource',function($resource) {
 		return $resource(restServer+"clases/:nombre_corto/:id_empresa");
-})
+}])
 	.factory('ClasesEmpresa', ['ClaseEmpresa','$q',function(ClaseEmpresa, $q) 
   {
 	var res = function(nombre_corto,id_empresa) 
@@ -80,9 +80,9 @@ angular.module('agil.servicios')
 	};
     return res;
   }])
-	.factory('Pais', function($resource) {
+	.factory('Pais', ['$resource',function($resource) {
 		return $resource(restServer+"paises/:nombre_corto");
-})
+}])
 
 .factory('Paises', ['Pais','$q',function(Pais, $q) 
   {
@@ -101,12 +101,12 @@ angular.module('agil.servicios')
     return res;
 	}])
 	
-.factory('Tipos', function($resource) {
+.factory('Tipos', ['$resource',function($resource) {
 		return $resource(restServer+"tipos/:id_tipo", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ListaTipos', ['Tipos','$q',function(Tipos, $q) 
   {
@@ -125,12 +125,12 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('TiposEmpresa', function($resource) {
+.factory('TiposEmpresa', ['$resource',function($resource) {
 		return $resource(restServer+"tipos/empresa/:id_empresa", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ListaTiposEmpresa', ['TiposEmpresa','$q',function(TiposEmpresa, $q) 
   {
@@ -150,9 +150,9 @@ angular.module('agil.servicios')
   }])
   
   
-.factory('VencimientoCreditoEmpresa', function($resource) {
+.factory('VencimientoCreditoEmpresa', ['$resource',function($resource) {
 		return $resource(restServer+"vencimientos-creditos/:id_empresa");
-})
+}])
 
 .factory('VencimientosCreditosEmpresa', ['VencimientoCreditoEmpresa','$q',function(VencimientoCreditoEmpresa, $q) 
   {
@@ -171,9 +171,9 @@ angular.module('agil.servicios')
     return res;
 	}])
 	
-.factory('VentasComprobantes', function($resource) {
+.factory('VentasComprobantes', ['$resource',function($resource) {
 		return $resource(restServer+"ventas/empresa/:id_empresa");
-})
+}])
 	.factory('VentasComprobantesEmpresa', ['VentasComprobantes','$q',function(VentasComprobantes, $q) 
   {
 	var res = function(id_empresa) 
@@ -190,9 +190,9 @@ angular.module('agil.servicios')
 	};
     return res;
   }])
-	.factory('ComprasComprobantes', function($resource) {
+	.factory('ComprasComprobantes', ['$resource',function($resource) {
 		return $resource(restServer+"compras/empresa/:id_empresa");
-})
+}])
 	.factory('ComprasComprobantesEmpresa', ['ComprasComprobantes','$q',function(ComprasComprobantes, $q) 
   {
 	var res = function(id_empresa) 
@@ -210,9 +210,9 @@ angular.module('agil.servicios')
     return res;
 	}])
 	
-.factory('VencimientoDeudaEmpresa', function($resource) {
+.factory('VencimientoDeudaEmpresa', ['$resource',function($resource) {
 		return $resource(restServer+"vencimientos-deudas/:id_empresa");
-})
+}])
 
 .factory('VencimientosDeudasEmpresa', ['VencimientoDeudaEmpresa','$q',function(VencimientoDeudaEmpresa, $q) 
   {
@@ -232,9 +232,9 @@ angular.module('agil.servicios')
 	}])
 	
 
-.factory('TipoEmpresa', function($resource) {
+.factory('TipoEmpresa', ['$resource',function($resource) {
 	return $resource(restServer+"tipos/:nombre_corto/empresa/:id_empresa");
-})
+}])
 
 .factory('ClasesTipoEmpresa', ['TipoEmpresa','$q',function(TipoEmpresa, $q) 
 {

@@ -1,6 +1,7 @@
 angular.module('agil.controladores')
 
-    .controller('ControladorActivosFijos', function ($scope, $timeout, Paginator, $localStorage, $location, blockUI, ListaSubGruposProductoEmpresa, FieldViewer, GuardarConfiguracionActivosFijos, ObtenerConfiguracionActivosFijos,
+    .controller('ControladorActivosFijos', ['$scope', '$timeout', 'Paginator', '$localStorage', '$location', 'blockUI', 'ListaSubGruposProductoEmpresa', 'FieldViewer', 'GuardarConfiguracionActivosFijos', 'ObtenerConfiguracionActivosFijos',
+        'ActivosFijosEmpresa', 'RevaluarActivo',function ($scope, $timeout, Paginator, $localStorage, $location, blockUI, ListaSubGruposProductoEmpresa, FieldViewer, GuardarConfiguracionActivosFijos, ObtenerConfiguracionActivosFijos,
         ActivosFijosEmpresa, RevaluarActivo) {
 
         $scope.idModalconfiguracionActivos = 'modal-configuracion-activos';
@@ -305,4 +306,4 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalRevaluarActivo);
         }
         $scope.inicio();
-    });
+    }]);

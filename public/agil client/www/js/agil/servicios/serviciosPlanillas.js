@@ -1,11 +1,11 @@
 angular.module('agil.servicios')
 
-.factory('Parametro', function($resource) {
+.factory('Parametro',  ['$resource',function ($resource) {
 		return $resource(restServer+"rrhh-parametros/:idEmpresa", { idEmpresa: '@id' },
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('Parametros', ['Parametro','$q',function(Parametro, $q) 
   {
@@ -24,9 +24,9 @@ angular.module('agil.servicios')
     return res;
   }])
 
-.factory('RecursosHumanosFichasEmpleados', function ($resource) {
+.factory('RecursosHumanosFichasEmpleados',  ['$resource',function ($resource) {
     return $resource(restServer + "recursos-humanos-fichas/empleados/:idEmpresa", { idEmpresa: '@id' });
-})
+}])
 
 .factory('RecursosHumanosEmpleados', ['RecursosHumanosFichasEmpleados', '$q', function (RecursosHumanosFichasEmpleados, $q) {
     var res = function(idEmpresa) 
@@ -44,9 +44,9 @@ angular.module('agil.servicios')
     return res;
 }])
 
-.factory('RecursosHumanosHorasEmpleados', function ($resource) {
+.factory('RecursosHumanosHorasEmpleados',  ['$resource',function ($resource) {
     return $resource(restServer + "recursos-humanos/horas-extra/empleado-sueldo/:id_ficha/gestion/:gestion/mes/:mes/empleado/:id_empleado");
-})
+}])
 
 .factory('RecursosHumanosEmpleadosHorasExtras', ['RecursosHumanosHorasEmpleados', '$q', function (RecursosHumanosHorasEmpleados, $q) {
     var res = function(idFicha, gestion, mes, idEmpleado) 
@@ -64,15 +64,15 @@ angular.module('agil.servicios')
     return res;
 }])
 
-.factory('RecursosHumanosPlanillaSueldos', function($resource) {
+.factory('RecursosHumanosPlanillaSueldos',  ['$resource',function ($resource) {
 		return $resource(restServer+"rrhh-planilla-sueldos/:id_empresa", { id_empresa: '@id_empresa' },{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('RRHHPlanillaSueldos', function($resource) {
+.factory('RRHHPlanillaSueldos',  ['$resource',function ($resource) {
 		return $resource(restServer+"rrhh-planilla-sueldos/:id_empresa/gestion/:gestion/mes/:mes");
-})
+}])
 
 .factory('RRHHlistaPlanillaSueldos', ['RRHHPlanillaSueldos', '$q', function (RRHHPlanillaSueldos, $q) {
     var res = function(id_empresa, gestion, mes) 
@@ -90,15 +90,15 @@ angular.module('agil.servicios')
     return res;
 }])
 
-.factory('RecursosHumanosPlanillaRCIVA', function($resource) {
+.factory('RecursosHumanosPlanillaRCIVA',  ['$resource',function ($resource) {
 		return $resource(restServer+"rrhh-planilla-rc-iva/:id_empresa", { id_empresa: '@id_empresa' },{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('RRHHPlanillaRCIVARuta', function($resource) {
+.factory('RRHHPlanillaRCIVARuta',  ['$resource',function ($resource) {
 		return $resource(restServer+"rrhh-planilla-rc-iva/valid/:id_empresa/gestion/:gestion/mes/:mes");
-})
+}])
 
 .factory('RRHHlistaPlanillaRCIVA', ['RRHHPlanillaRCIVARuta', '$q', function (RRHHPlanillaRCIVARuta, $q) {
     var res = function(id_empresa, gestion, mes) 
@@ -116,9 +116,9 @@ angular.module('agil.servicios')
     return res;
 }])
 
-.factory('RutaRRHHPlanillaRCIVA', function($resource) {
+.factory('RutaRRHHPlanillaRCIVA',  ['$resource',function ($resource) {
 		return $resource(restServer+"rrhh-planilla-rc-iva/:id_empresa/gestion/:gestion/mes/:mes");
-})
+}])
 
 .factory('ListaRRHHPlanillaRCIVA', ['RutaRRHHPlanillaRCIVA', '$q', function (RutaRRHHPlanillaRCIVA, $q) {
     var res = function(id_empresa, gestion, mes) 

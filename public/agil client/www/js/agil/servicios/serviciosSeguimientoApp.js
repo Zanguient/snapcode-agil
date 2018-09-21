@@ -1,7 +1,7 @@
 angular.module('agil.servicios')
-.factory('UsuariosRutas', function($resource) {
+.factory('UsuariosRutas',  ['$resource',function ($resource) {
 		return $resource(restServer+"usuarios-rutas/empresa/:id_empresa/inicio/:inicio/fin/:fin/usuario/:usuario/ruta/:ruta");
-})
+}])
 
 .factory('UsuariosRutasLista', ['UsuariosRutas','$q',function(UsuariosRutas, $q) 
   {

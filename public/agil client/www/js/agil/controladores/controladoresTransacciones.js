@@ -1,6 +1,8 @@
 angular.module('agil.controladores')
 
-    .controller('controladorTransacciones', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, ObtenerTodoPersonal, TransaccionBancoPaginador, $timeout,
+    .controller('controladorTransacciones', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'ObtenerTodoPersonal', 'TransaccionBancoPaginador', '$timeout',
+        'Paginator', 'ListaBancos', 'ClasesTipo', 'TransaccionIngresoBanco', 'FieldViewer', 'TransaccionEgresoBanco', 'TransaccionSeguimientoBanco', 'TransaccionSeguimientoEstado', 'TransaccionRevisionEstado',
+        'SaldoCuenta', 'SaldoDisponibleCuenta', 'SaldoProformas',function ($scope, $localStorage, $location, $templateCache, $route, blockUI, ObtenerTodoPersonal, TransaccionBancoPaginador, $timeout,
         Paginator, ListaBancos, ClasesTipo, TransaccionIngresoBanco, FieldViewer, TransaccionEgresoBanco, TransaccionSeguimientoBanco, TransaccionSeguimientoEstado, TransaccionRevisionEstado,
         SaldoCuenta, SaldoDisponibleCuenta, SaldoProformas) {
 
@@ -63,7 +65,7 @@ angular.module('agil.controladores')
             var promesa = ClasesTipo("CONTRAN");
             promesa.then(function (entidad) {
                 $scope.conceptosTransaccion = entidad.clases;
-                $scope.conceptosTransaccion.forEach(concepto => {
+                $scope.conceptosTransaccion.forEach(function(concepto)  {
                     if (concepto.nombre_corto === 'CTRANS') {
                         $scope.TRAN_COBRO = concepto
                     }
@@ -87,7 +89,7 @@ angular.module('agil.controladores')
                 if (res.hasErr) {
                     $scope.mostrarMensaje(res.mensaje)
                 } else {
-                    res.proformas.forEach(element => {
+                    res.proformas.forEach(function(element) {
                         var proforma = { id: element.id, factura: element.factura, total: element.monto, cliente: { razon_social: element.razon_social }, a_cuenta: element.a_cuenta, saldo: element.saldo, es_proforma: true }
                         proformas.push(proforma)
                     });
@@ -173,7 +175,7 @@ angular.module('agil.controladores')
 
         $scope.seleccionarCuenta = function (cuentaBanco) {
             $scope.cuentaSeleccionada = undefined
-            $scope.bancos.forEach(cuenta => {
+            $scope.bancos.forEach(function(cuenta) {
                 if (cuenta.id === cuentaBanco.id) {
                     $scope.cuentaSeleccionada = cuenta
                     $scope.filtro.cuenta = $scope.cuentaSeleccionada
@@ -192,7 +194,7 @@ angular.module('agil.controladores')
 
         $scope.calcularIngresosTransito = function () {
             $scope.ingresosEnTransito = 0
-            $scope.transacciones.forEach(transaccion => {
+            $scope.transacciones.forEach(function(transaccion) {
                 if (transaccion.haber !== null && transaccion.id_estado === $scope.EN_TRANSITO.id) {
                     $scope.ingresosEnTransito += transaccion.haber
                 }
@@ -201,7 +203,7 @@ angular.module('agil.controladores')
 
         $scope.calcularEgresosTransito = function () {
             $scope.egresosEnTransito = 0
-            $scope.transacciones.forEach(transaccion => {
+            $scope.transacciones.forEach(function(transaccion) {
                 if (transaccion.debe !== null && transaccion.id_estado === $scope.EN_TRANSITO.id) {
                     $scope.egresosEnTransito += transaccion.debe
                 }
@@ -251,7 +253,7 @@ angular.module('agil.controladores')
 
         $scope.calcularSaldoPignorado = function () {
             $scope.saldoPignorado = 0
-            $scope.transacciones.forEach(transaccion => {
+            $scope.transacciones.forEach(function(transaccion) {
                 if (transaccion.debe !== null && transaccion.id_estado === $scope.EN_TRANSITO.id) {
                     $scope.saldoPignorado -= transaccion.debe
                 }
@@ -353,7 +355,7 @@ angular.module('agil.controladores')
                     $scope.mostrarMensaje(res.mensaje)
                 } else {
                     $scope.transacciones = res.transacciones
-                    $scope.transacciones.forEach(transaccion => {
+                    $scope.transacciones.forEach(function(transaccion) {
                         $scope.verificarSeguimiento(transaccion)
                     });
                     $scope.paginator.setPages(res.paginas)
@@ -893,4 +895,4 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.modalVencimientoCreditos)
         }
         $scope.inicio()
-    });
+    }]);

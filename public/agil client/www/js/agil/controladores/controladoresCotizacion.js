@@ -1,6 +1,9 @@
 angular.module('agil.controladores')
-	.controller('ControladorCotizacion', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, ListaCotizacion, Cotizaciones, Cotizacion, filtroCotizaciones, Diccionario,
-		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator, DatosImpresionCotizacion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit, CotizacionRechazo) {
+	.controller('ControladorCotizacion', ['$scope', 'blockUI', '$localStorage', '$location', '$templateCache', '$route', '$timeout', 'ListaCotizacion', 'Cotizaciones', 'Cotizacion', 'filtroCotizaciones', 'Diccionario',
+		'ListaInventariosProducto', 'ClasesTipo', '$window', 'ListaProductosEmpresa', 'InventarioPaginador', 'ConfiguracionCotizacionVista', 'ConfiguracionCotizacionVistaDatos', 'FiltroCotizacionPaginador', 'Paginator',
+		'DatosImpresionCotizacion', 'ultimaCotizacion', 'ListaSucursalesUsuario', 'ClientesNit', 'CotizacionRechazo', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, ListaCotizacion, Cotizaciones, Cotizacion, filtroCotizaciones, Diccionario,
+		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator,
+		DatosImpresionCotizacion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit, CotizacionRechazo) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		$scope.idModalWizardCotizacionNueva = 'modal-wizard-cotizacion-nueva';
@@ -930,4 +933,4 @@ angular.module('agil.controladores')
 
 
 		$scope.inicio();
-	});
+	}]);

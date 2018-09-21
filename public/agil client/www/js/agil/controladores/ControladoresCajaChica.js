@@ -1,6 +1,10 @@
 angular.module('agil.controladores')
 
-    .controller('ControladorCajaChica', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
+    .controller('ControladorCajaChica',['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI',
+        'ClasesTipoEmpresa', 'ClasesTipo', 'GuardarSolicitudCajaChica', 'GuardarConceptoMovimientoCajaChica',
+        'ObtenerConceptoMovimientoCajaChica', 'SolicitudesCajaPaginador', 'SolicitudesCajaChicaPaginador', 'ObtenerTodoPersonal', '$filter', 'Paginator', 'VerificarUsuarioEmpresa',
+        'NuevoComprobante', 'ConfiguracionCompraVista', 'ConfiguracionesCuentasEmpresa', 'ConfiguracionCompraVistaDatos', 'ProveedoresNit', 'GuardarCajaChica', 'ListaProductosEmpresaUsuario', 'VerificarUsuarioEmpresaCaja', 'IngresosCajaPaginador', 'ObtenerDatosCierreCaja', 'CierreCajaCPaginador',
+        'FieldViewer', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
         ClasesTipoEmpresa, ClasesTipo, GuardarSolicitudCajaChica, GuardarConceptoMovimientoCajaChica,
         ObtenerConceptoMovimientoCajaChica, SolicitudesCajaPaginador, SolicitudesCajaChicaPaginador, ObtenerTodoPersonal, $filter, Paginator, VerificarUsuarioEmpresa,
         NuevoComprobante, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ConfiguracionCompraVistaDatos, ProveedoresNit, GuardarCajaChica, ListaProductosEmpresaUsuario, VerificarUsuarioEmpresaCaja, IngresosCajaPaginador, ObtenerDatosCierreCaja, CierreCajaCPaginador,
@@ -444,7 +448,7 @@ angular.module('agil.controladores')
                     movimiento: "",
                     id_usuario_no_autorizado: ($scope.usuario.encargado_caja_chica) ? "" : ($scope.usuario.encargado_rendicion_caja_chica) ? "" : $scope.usuario.id,
                     id_sucursal: $scope.sucursalPrincipal.id,
-                    rendiciones:($scope.usuario.encargado_rendicion_caja_chica) ? 1 : "",
+                    rendiciones: ($scope.usuario.encargado_rendicion_caja_chica) ? 1 : "",
                 }
             }
 
@@ -1101,13 +1105,13 @@ angular.module('agil.controladores')
                 detalleCompra.fecha_vencimiento = new Date($scope.convertirFecha(detalleCompra.fechaVencimientoTexto));
             }
             if ($scope.cajaChica.compra.descuento_general) {
-                detalleCompra.descuento=$scope.cajaChica.compra.descuento
-                detalleCompra.ice=$scope.cajaChica.compra.ice
-                detalleCompra.recargo=$scope.cajaChica.compra.recargo
-                detalleCompra.excento=$scope.cajaChica.compra.excento
+                detalleCompra.descuento = $scope.cajaChica.compra.descuento
+                detalleCompra.ice = $scope.cajaChica.compra.ice
+                detalleCompra.recargo = $scope.cajaChica.compra.recargo
+                detalleCompra.excento = $scope.cajaChica.compra.excento
             }
-            
-            
+
+
             $scope.cajaChica.compra.detallesCompra.push(detalleCompra);
             $scope.sumarTotal();
             $scope.sumarTotalImporte();
@@ -1325,16 +1329,16 @@ angular.module('agil.controladores')
                     $scope.detalleCompra.total = $scope.detalleCompra.importe - descuento + recargo - $scope.cajaChica.compra.ice - $scope.cajaChica.compra.excento;
                 }
             }
-            importe=($scope.cajaChica.compra.importe)?$scope.cajaChica.compra.importe:0
-            $scope.totalRestante=$scope.cajaChica.solicitud.monto-importe
+            importe = ($scope.cajaChica.compra.importe) ? $scope.cajaChica.compra.importe : 0
+            $scope.totalRestante = $scope.cajaChica.solicitud.monto - importe
             if ($scope.cajaChica.solicitud) {
-                if ($scope.detalleCompra.importe >   $scope.totalRestante){
-                    $scope.detalleCompra.importe =NaN
-                    $scope.ErrorImporte=true
-                }else{
-                    $scope.ErrorImporte=false
+                if ($scope.detalleCompra.importe > $scope.totalRestante) {
+                    $scope.detalleCompra.importe = NaN
+                    $scope.ErrorImporte = true
+                } else {
+                    $scope.ErrorImporte = false
                 }
-        }
+            }
         }
 
         $scope.calcularImporteDetalleEdicion = function (detalleCompra) {
@@ -1548,7 +1552,7 @@ angular.module('agil.controladores')
         });
 
         $scope.inicio();
-    })
+    }])
 
 
 
@@ -1563,7 +1567,9 @@ angular.module('agil.controladores')
 
 
 
-    .controller('ControladorSolicitudCajaChica', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
+    .controller('ControladorSolicitudCajaChica',['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI',
+        'ClasesTipoEmpresa', 'ClasesTipo', 'GuardarSolicitudCajaChica', 'GuardarConceptoMovimientoCajaChica',
+        'ObtenerConceptoMovimientoCajaChica', 'VerificarUsuarioEmpresaCaja', 'SolicitudesCajaPaginador', 'ObtenerTodoPersonal', '$filter', 'Paginator', 'VerificarUsuarioEmpresa', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
         ClasesTipoEmpresa, ClasesTipo, GuardarSolicitudCajaChica, GuardarConceptoMovimientoCajaChica,
         ObtenerConceptoMovimientoCajaChica, VerificarUsuarioEmpresaCaja, SolicitudesCajaPaginador, ObtenerTodoPersonal, $filter, Paginator, VerificarUsuarioEmpresa) {
 
@@ -1828,7 +1834,7 @@ angular.module('agil.controladores')
         });
 
         $scope.inicio();
-    });
+    }]);
 
 
 

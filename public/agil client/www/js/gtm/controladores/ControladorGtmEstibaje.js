@@ -1,6 +1,7 @@
 angular.module('agil.controladores')
 
-    .controller('ControladorGtmEstibaje', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
+    .controller('ControladorGtmEstibaje', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'Paginator', 'FieldViewer',
+        'GtmEstibaje','GtmEstibajes','GtmEstibajeItem',function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
         GtmEstibaje,GtmEstibajes,GtmEstibajeItem) {
 
         blockUI.start();
@@ -101,7 +102,7 @@ angular.module('agil.controladores')
 
 
         $scope.inicio();
-    });
+    }]);
 
 
 

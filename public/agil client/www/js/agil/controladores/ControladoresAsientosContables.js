@@ -1,5 +1,8 @@
 angular.module('agil.controladores')
-    .controller('ControladorComprobantes', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl, Paginator, ComprobantePaginador, ClasesTipo, ListaCuentasComprobanteContabilidad, ListaAsientosComprobanteContabilidad, NuevoComprobanteContabilidad, ClasesTipo, LibroMayorCuenta, ComprobanteRevisarPaginador,
+    .controller('ControladorComprobantes', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI','CodigoControl', 'Paginator', 'ComprobantePaginador', 'ClasesTipo', 'ListaCuentasComprobanteContabilidad',
+    'ListaAsientosComprobanteContabilidad', 'NuevoComprobanteContabilidad', 'ClasesTipo', 'LibroMayorCuenta', 'ComprobanteRevisarPaginador','AsignarComprobanteFavorito', 'Diccionario', 'ObtenerCambioMoneda', 'ImprimirComprobante',
+    'ComprasComprobante', 'VerificarUsuarioEmpresa', 'FieldViewer', 'DatosComprobante', 'EliminarComprobante', 'ListaCambioMoneda', 'ActualizarCambioMoneda', 'GuardarComprobantesImportados',
+        'ComprobanteTotalGeneralEmpresa', 'EdicionComprobanteContabilidad', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl, Paginator, ComprobantePaginador, ClasesTipo, ListaCuentasComprobanteContabilidad, ListaAsientosComprobanteContabilidad, NuevoComprobanteContabilidad, ClasesTipo, LibroMayorCuenta, ComprobanteRevisarPaginador,
         AsignarComprobanteFavorito, Diccionario, ObtenerCambioMoneda, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante, ListaCambioMoneda, ActualizarCambioMoneda, GuardarComprobantesImportados,
         ComprobanteTotalGeneralEmpresa, EdicionComprobanteContabilidad) {
         blockUI.start();
@@ -488,7 +491,7 @@ angular.module('agil.controladores')
 
         $scope.inicio();
 
-    });
+    }]);
 
 
 

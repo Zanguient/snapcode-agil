@@ -1,5 +1,10 @@
 angular.module('agil.controladores')
-	.controller('ControladorContabilidadCuenta', function ($scope, blockUI, $localStorage,
+	.controller('ControladorContabilidadCuenta',['$scope', 'blockUI', '$localStorage',
+		'$location', '$templateCache', '$window', 'CuentasPaginador', 'ContabilidadCuenta',
+		'CuentasClasificaciones', 'ClasesTipo', 'lasClasificaciones', 'losSaldos', 'losMovimientos',
+		'losTiposDeCuentas', 'lasOperacionesCalculos', 'CuentaContabilidad', 'Paginator', 'CuentasEmpresaCreacion',
+		'ClientesNit', 'ProveedoresNit', '$timeout', 'Tipos', 'ConfiguracionCuentaEmpresa', 'ListaContabilidadCuentas', 'ListaCuentasComprobanteContabilidad', 'ConfiguracionCuentas',
+		'CuentasClasificacionesEdicion', 'Diccionario', 'VistaColumnasAplicacion', 'FieldViewer', 'ValidarCodigoCuenta', 'ClaseTexto','ClasesTipoEmpresa', function ($scope, blockUI, $localStorage,
 		$location, $templateCache, $window, CuentasPaginador, ContabilidadCuenta,
 		CuentasClasificaciones, ClasesTipo, lasClasificaciones, losSaldos, losMovimientos,
 		losTiposDeCuentas, lasOperacionesCalculos, CuentaContabilidad, Paginator, CuentasEmpresaCreacion,
@@ -854,4 +859,4 @@ angular.module('agil.controladores')
 		});
 
 		$scope.inicio();
-	});
+	}]);

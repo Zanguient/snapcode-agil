@@ -1,6 +1,8 @@
 angular.module('agil.controladores')
 
-    .controller('ControladorGtmDestino', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
+    .controller('ControladorGtmDestino', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'Paginator', 'FieldViewer',
+        'GtmDestino', 'GtmDestinos', 'GtmDestinoItem', 'GtmDestinosEmpresa', 'ClasesTipoEmpresa', 'Diccionario', 'Tipos', 'ClasesTipo',
+        'VerificarUsuarioEmpresa', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
         GtmDestino, GtmDestinos, GtmDestinoItem, GtmDestinosEmpresa, ClasesTipoEmpresa, Diccionario, Tipos, ClasesTipo,
         VerificarUsuarioEmpresa) {
 
@@ -253,7 +255,7 @@ angular.module('agil.controladores')
             })
         }
         $scope.inicio();
-    });
+    }]);
 
 
 

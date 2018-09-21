@@ -1,6 +1,9 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorClientes', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
+	.controller('ControladorClientes',['$scope', '$window', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', '$timeout',
+		'ClientesPaginador', 'Cliente', 'Clientes', 'Empresas', 'ClientesEmpresa', 'uiGmapGoogleMapApi', '$cordovaGeolocation',
+		'DatoCodigoSiguienteClienteEmpresa', 'DestinosCliente', 'RazonesSocialesCliente', 'ClasesTipoEmpresa', 'Diccionario', 'Tipos', 'ClasesTipo',
+		'VerificarUsuarioEmpresa', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
 		ClientesPaginador, Cliente, Clientes, Empresas, ClientesEmpresa, uiGmapGoogleMapApi, $cordovaGeolocation,
 		DatoCodigoSiguienteClienteEmpresa, DestinosCliente, RazonesSocialesCliente, ClasesTipoEmpresa, Diccionario, Tipos, ClasesTipo,
 		VerificarUsuarioEmpresa) {
@@ -822,7 +825,7 @@ angular.module('agil.controladores')
 		});
 
 		$scope.inicio();
-	});
+	}]);
 
 
 

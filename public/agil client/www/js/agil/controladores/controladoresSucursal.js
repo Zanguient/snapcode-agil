@@ -1,6 +1,8 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorSucursales', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Sucursal, Sucursales, SucursalesEmpresa, ClasesTipo, Clases, DosificacionesDisponibles, Sucursalupdate) {
+	.controller('ControladorSucursales', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'Sucursal', 'Sucursales', 'SucursalesEmpresa', 'ClasesTipo', 'Clases',
+		'DosificacionesDisponibles', 'Sucursalupdate',function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Sucursal, Sucursales, SucursalesEmpresa, ClasesTipo, Clases,
+		DosificacionesDisponibles, Sucursalupdate) {
 		blockUI.start();
 
 		$scope.idModalWizardSucursalCorrelativoEdicion = 'modal-wizard-sucursal-correlativo-edicion';
@@ -260,4 +262,4 @@ angular.module('agil.controladores')
 		});
 
 		$scope.inicio();
-	});
+	}]);

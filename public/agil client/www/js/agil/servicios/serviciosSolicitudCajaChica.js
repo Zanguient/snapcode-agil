@@ -1,12 +1,12 @@
 angular.module('agil.servicios')
 
 
-.factory('SolicitudCajaChica', function ($resource) {
+.factory('SolicitudCajaChica',  ['$resource',function ($resource) {
     return $resource(restServer + "solicitud-caja-chica", null,
         {
             'update': { method: 'PUT' }
         });
-})
+}])
 .factory('GuardarSolicitudCajaChica', ['SolicitudCajaChica', '$q', function (SolicitudCajaChica, $q) {
     var res = function (datos)//idEmpresa, xxx
     {
@@ -20,12 +20,12 @@ angular.module('agil.servicios')
     };
     return res;
 }])
-.factory('ConceptoMovimientoCajaChica', function ($resource) {
+.factory('ConceptoMovimientoCajaChica',  ['$resource',function ($resource) {
     return $resource(restServer + "solicitud-conceptos-caja-chica/empresa/:id_empresa", null,
         {
             'update': { method: 'PUT' }
         });
-})
+}])
 .factory('GuardarConceptoMovimientoCajaChica', ['ConceptoMovimientoCajaChica', '$q', function (ConceptoMovimientoCajaChica, $q) {
     var res = function (idEmpleado, conceptos)//idEmpresa, xxx
     {
@@ -56,9 +56,9 @@ angular.module('agil.servicios')
     };
     return res;
 }])
-.factory('SolicitudCajaChicaPaginador', function ($resource) {
+.factory('SolicitudCajaChicaPaginador',  ['$resource',function ($resource) {
     return $resource(restServer + "solocitudes-caja-chica/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/solicitante/:solicitante/usuario/:usuario/estado/:estado/concepto/:concepto/movimiento/:movimiento/usuario-no-autorizado/:id_usuario_no_autorizado");
-})
+}])
 
 .factory('SolicitudesCajaPaginador', ['SolicitudCajaChicaPaginador', '$q', function (SolicitudCajaChicaPaginador, $q) {
     var res = function (paginator)//idEmpresa, xxx
@@ -87,9 +87,9 @@ angular.module('agil.servicios')
     return res;
 }])
 
-.factory('CajaChicaPaginador', function ($resource) {
+.factory('CajaChicaPaginador',  ['$resource',function ($resource) {
     return $resource(restServer + "caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/solicitante/:solicitante/usuario/:usuario/estado/:estado/concepto/:concepto/movimiento/:movimiento/usuario-no-autorizado/:id_usuario_no_autorizado/rendiciones/:rendiciones");
-})
+}])
 
 .factory('SolicitudesCajaChicaPaginador', ['CajaChicaPaginador', '$q', function (CajaChicaPaginador, $q) {
     var res = function (paginator)//idEmpresa, xxx
@@ -119,9 +119,9 @@ angular.module('agil.servicios')
     };
     return res;
 }])
-.factory('IngresosCajaChicaPaginador', function ($resource) {
+.factory('IngresosCajaChicaPaginador',  ['$resource',function ($resource) {
     return $resource(restServer + "caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
-})
+}])
 
 .factory('IngresosCajaPaginador', ['IngresosCajaChicaPaginador', '$q', function (IngresosCajaChicaPaginador, $q) {
     var res = function (paginator)//idEmpresa, xxx
@@ -144,12 +144,12 @@ angular.module('agil.servicios')
     };
     return res;
 }])
-.factory('DatosGuardarCajaChica', function ($resource) {
+.factory('DatosGuardarCajaChica',  ['$resource',function ($resource) {
     return $resource(restServer + "caja-chica/:id_empresa", null,
         {
             'update': { method: 'PUT' }
         });
-})
+}])
 .factory('GuardarCajaChica', ['DatosGuardarCajaChica', '$q', function (DatosGuardarCajaChica, $q) {
     var res = function (cajachica,idEmpresa)//idEmpresa, xxx
     {
@@ -164,12 +164,12 @@ angular.module('agil.servicios')
     return res;
 }])
 
-.factory('DatosCierreCaja', function ($resource) {
+.factory('DatosCierreCaja',  ['$resource',function ($resource) {
     return $resource(restServer + "caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/fecha/:fecha/saldoInicial/:saldo", null,
         {
             'update': { method: 'PUT' }
         });
-})
+}])
 .factory('ObtenerDatosCierreCaja', ['DatosCierreCaja', '$q', function (DatosCierreCaja, $q) {
     var res = function (idEmpleado,fecha,saldo,idSucursal)//idEmpresa, xxx
     {
@@ -185,9 +185,9 @@ angular.module('agil.servicios')
     };
     return res;
 }])
-.factory('CierreCajaChicaPaginador', function ($resource) {
+.factory('CierreCajaChicaPaginador',  ['$resource',function ($resource) {
     return $resource(restServer + "cierre-caja-chica/sucursal/:id_sucursal/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
-})
+}])
 
 .factory('CierreCajaCPaginador', ['CierreCajaChicaPaginador', '$q', function (CierreCajaChicaPaginador, $q) {
     var res = function (paginator)//idEmpresa, xxx
@@ -210,12 +210,12 @@ angular.module('agil.servicios')
     };
     return res;
 }])
-.factory('AlertasCajaChica', function ($resource) {
+.factory('AlertasCajaChica',  ['$resource',function ($resource) {
     return $resource(restServer + "alertas-solicitud-caja-chica/empresa/:id_empresa/historico/:historico/mes/:mes/anio/:anio/verificador/:id_verificador", null,
         {
             'update': { method: 'PUT' }
         });
-})
+}])
 .factory('ObtenerAlertasCajaChica', ['AlertasCajaChica', '$q', function (AlertasCajaChica, $q) {
     var res = function (filtro,idUsuario)//idEmpresa, xxx
     {
@@ -235,12 +235,12 @@ angular.module('agil.servicios')
     };
     return res;
 }])
-.factory('VerificacionCajaChica', function ($resource) {
+.factory('VerificacionCajaChica',  ['$resource',function ($resource) {
     return $resource(restServer + "verificar-solicitudes-caja-chica", null,
         {
             'update': { method: 'PUT' }
         });
-})
+}])
 
 .factory('GuardarVerificadorSolicitud', ['VerificacionCajaChica', '$q', function (VerificacionCajaChica, $q) {
     var res = function (idEmpleado,datos)//idEmpresa, xxx

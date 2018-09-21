@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-.controller('ControladorIncrementoSalarial', function($scope,$localStorage,$location,$templateCache,$route,blockUI){
+.controller('ControladorIncrementoSalarial', ['$scope','$localStorage','$location','$templateCache','$route','blockUI',function($scope,$localStorage,$location,$templateCache,$route,blockUI){
 	$scope.$on('$viewContentLoaded', function () {
         // resaltarPestaña($location.path().substring(1));
         
@@ -21,4 +21,4 @@ angular.module('agil.controladores')
     }
     
 
-});
+}]);

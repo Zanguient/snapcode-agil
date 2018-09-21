@@ -1,6 +1,7 @@
 angular.module('agil.controladores')
 
-.controller('ControladorPantallaCliente', function($scope,$localStorage,$location,$templateCache,$route,blockUI,$timeout,Clases,
+.controller('ControladorPantallaCliente', ['$scope','$localStorage','$location','$templateCache','$route','blockUI','$timeout','Clases',
+	'ProductosPanel','socket',function($scope,$localStorage,$location,$templateCache,$route,blockUI,$timeout,Clases,
 											ProductosPanel,socket){
 	blockUI.start();
 	
@@ -169,9 +170,10 @@ angular.module('agil.controladores')
 	});
 	
 	$scope.inicio();
-})
+}])
 
-.controller('ControladorPantallaDespacho', function($scope,$localStorage,$location,$templateCache,$route,blockUI,$timeout,Clases,
+.controller('ControladorPantallaDespacho', ['$scope','$localStorage','$location','$templateCache','$route','blockUI','$timeout','Clases',
+	'VentasNoDespachadasLista','DespachoVenta',function($scope,$localStorage,$location,$templateCache,$route,blockUI,$timeout,Clases,
 											VentasNoDespachadasLista,DespachoVenta){
 	blockUI.start();
 	
@@ -251,7 +253,7 @@ angular.module('agil.controladores')
 	});
 	
 	$scope.inicio();
-});
+}]);
 
 
 

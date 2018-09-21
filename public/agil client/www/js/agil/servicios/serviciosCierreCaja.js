@@ -1,24 +1,24 @@
 angular.module('agil.servicios')
-.factory('CierreCaja', function($resource) {
+.factory('CierreCaja', ['$resource',function ($resource) {
 		return $resource(restServer+"cierres-caja/empresa/:idEmpresa/:idUsuario",{id: '@idEmpresa'},
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('CierreCajaDatos', function($resource) {
+.factory('CierreCajaDatos', ['$resource',function ($resource) {
 		return $resource(restServer+"cierres-caja/:id_cierre_caja",{id: '@id_cierre_caja'},
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('CierreCajaPaginador', function($resource) {
+.factory('CierreCajaPaginador', ['$resource',function ($resource) {
 	return $resource(restServer+"cierres-caja/empresa/:idEmpresa/:idUsuario/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/columna/:columna/direccion/:direccion",{id: '@idEmpresa'},
 	{
 		'update': { method:'PUT' }
 	});
-})
+}])
 
 .factory('CierreCajaDatosItem', ['CierreCajaDatos','$q',function(CierreCajaDatos, $q) 
 {
@@ -63,9 +63,9 @@ var res = function(id_cierre)
     return res;
   }])
 
-.factory('CierreCajaPendiente', function($resource) {
+.factory('CierreCajaPendiente', ['$resource',function ($resource) {
 		return $resource(restServer+"cierre-caja-pendiente/:idsSucursales");
-})
+}])
 
 .factory('CierresCajaPendiente', ['CierreCajaPendiente','$q',function(CierreCajaPendiente, $q) 
   {

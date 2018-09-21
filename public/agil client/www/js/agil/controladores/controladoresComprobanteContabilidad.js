@@ -1,5 +1,5 @@
 angular.module('agil.controladores')
-	.controller('ControladorComprobanteContabilidad', function ($scope, blockUI, $localStorage, $location, $templateCache, $window, CuentasPaginador, ContabilidadCuenta, CuentasClasificaciones, ClasesTipo, lasClasificaciones, losSaldos, losMovimientos, losTiposDeCuentas, lasOperacionesCalculos, CuentaContabilidad) {
+	.controller('ControladorComprobanteContabilidad',['$scope', 'blockUI', '$localStorage', '$location', '$templateCache', '$window', 'CuentasPaginador', 'ContabilidadCuenta', 'CuentasClasificaciones', 'ClasesTipo', 'lasClasificaciones', 'losSaldos', 'losMovimientos', 'losTiposDeCuentas', 'lasOperacionesCalculos', 'CuentaContabilidad', function ($scope, blockUI, $localStorage, $location, $templateCache, $window, CuentasPaginador, ContabilidadCuenta, CuentasClasificaciones, ClasesTipo, lasClasificaciones, losSaldos, losMovimientos, losTiposDeCuentas, lasOperacionesCalculos, CuentaContabilidad) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		// $scope.idModalWizardCuentaEdicion = "modal-wizard-cuenta-edicion"
@@ -31,4 +31,4 @@ angular.module('agil.controladores')
 			$scope.comprobantes = ListaComprobanteContabilidad($scope.usuario.id)
 			
 		}
-	})
+	}])

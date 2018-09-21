@@ -1,6 +1,8 @@
 angular.module('agil.controladores')
 
-.controller('ControladoresRCIVA', function($scope,$localStorage,$location,$templateCache,$route,blockUI, RecursosHumanosEmpleados, RecursosHumanosEmpleadosHorasExtras, ClasesTipo, Parametros, ObtenerCambioMoneda, RecursosHumanosPlanillaRCIVA, RRHHlistaPlanillaRCIVA, ListaRRHHPlanillaRCIVA){
+.controller('ControladoresRCIVA', ['$scope','$localStorage','$location','$templateCache','$route','blockUI', 'RecursosHumanosEmpleados', 'RecursosHumanosEmpleadosHorasExtras', 'ClasesTipo',
+    'Parametros', 'ObtenerCambioMoneda', 'RecursosHumanosPlanillaRCIVA', 'RRHHlistaPlanillaRCIVA', 'ListaRRHHPlanillaRCIVA',function($scope,$localStorage,$location,$templateCache,$route,blockUI, RecursosHumanosEmpleados, RecursosHumanosEmpleadosHorasExtras, ClasesTipo,
+    Parametros, ObtenerCambioMoneda, RecursosHumanosPlanillaRCIVA, RRHHlistaPlanillaRCIVA, ListaRRHHPlanillaRCIVA){
 	$scope.$on('$viewContentLoaded', function () {
         
         $scope.idModalNuevoPlanillaRCIVA = 'dialog-nueva-planilla-rc-iva';
@@ -939,4 +941,4 @@ angular.module('agil.controladores')
     $scope.obtenerParametros($scope.usuario.id_empresa);
     
 
-});
+}]);

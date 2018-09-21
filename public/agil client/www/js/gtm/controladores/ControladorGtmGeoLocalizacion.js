@@ -1,6 +1,7 @@
 angular.module('agil.controladores')
 
-    .controller('ControladorGtmGeoLocalizacion', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
+    .controller('ControladorGtmGeoLocalizacion', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'Paginator', 'FieldViewer',
+        'ClasesTipo','ClasesTipoEmpresa','GtmDespachosUbicacion','uiGmapGoogleMapApi','$timeout','BuscarDespachosVendedor','FiltrarVendedorEmpresa',function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
        ClasesTipo,ClasesTipoEmpresa,GtmDespachosUbicacion,uiGmapGoogleMapApi,$timeout,BuscarDespachosVendedor,FiltrarVendedorEmpresa) {
 
         blockUI.start();
@@ -172,7 +173,7 @@ angular.module('agil.controladores')
         });
 
         $scope.inicio();
-    });
+    }]);
 
 
 

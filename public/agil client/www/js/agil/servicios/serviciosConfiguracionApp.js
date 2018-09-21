@@ -1,18 +1,18 @@
 angular.module('agil.servicios')
 
-.factory('ConfiguracionApp', function($resource) {
+.factory('ConfiguracionApp',  ['$resource',function ($resource) {
 		return $resource(restServer+"configuraciones-app/empresa/:id_empresa", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('ConfiguracionAppVendedor', function($resource) {
+.factory('ConfiguracionAppVendedor',  ['$resource',function ($resource) {
 		return $resource(restServer+"configuraciones-app/:id_configuracion", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ConfiguracionesApp', ['ConfiguracionApp','$q',function(ConfiguracionApp, $q) 
   {
@@ -31,19 +31,19 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('ConfiguracionGeneralApp', function($resource) {
+.factory('ConfiguracionGeneralApp',  ['$resource',function ($resource) {
 		return $resource(restServer+"configuracion-general-app/empresa/:id_empresa", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('ConfiguracionAppEmpresa', function($resource) {
+.factory('ConfiguracionAppEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"configuracion-general-app/:id_configuracion", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ConfiguracionGeneralAppDato', ['ConfiguracionGeneralApp','$q',function(ConfiguracionGeneralApp, $q) 
   {

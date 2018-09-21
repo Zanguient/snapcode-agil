@@ -1,7 +1,7 @@
 angular.module('agil.servicios')
-    .factory('ActivosPaginador', function ($resource) {
+    .factory('ActivosPaginador',['$resource',function ($resource) {
         return $resource(restServer + "activos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/subgrupo/:subgrupo/mes/:mes/year/:anio/codigo/:codigo/activo/:activo/vida/:vida_util");
-    })
+    }])
 
     .factory('ActivosFijosEmpresa', ['ActivosPaginador', '$q', function (ActivosPaginador, $q) {
         var res = function (idEmpresa, paginador) {
@@ -27,9 +27,9 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('ConfiguracionActivos', function ($resource) {
+    .factory('ConfiguracionActivos', ['$resource',function ($resource) {
         return $resource(restServer + "activos/configuracion/empresa/:id_empresa/:id_usuario");
-    })
+    }])
 
     .factory('GuardarConfiguracionActivosFijos', ['ConfiguracionActivos', '$q', function (ConfiguracionActivos, $q) {
         var res = function (idEmpresa, usuario, configuracion) {
@@ -57,12 +57,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('Revaluacion', function ($resource) {
+    .factory('Revaluacion', ['$resource',function ($resource) {
         return $resource(restServer + "activos/revaluacion/:id_empresa/user/:id_usuario", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('RevaluarActivo', ['Revaluacion', '$q', function (Revaluacion, $q) {
         var res = function (activo, idEmpresa, usuario) {
@@ -77,12 +77,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('ActualizacionMensualActivos', function ($resource) {
+    .factory('ActualizacionMensualActivos', ['$resource',function ($resource) {
         return $resource(restServer + "activos/mensual/:id_empresa", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('VerificacionMensualActivos', ['ActualizacionMensualActivos', '$q', function (ActualizacionMensualActivos, $q) {
         var res = function (idEmpresa) {

@@ -1,15 +1,15 @@
 angular.module('agil.servicios')
 
-.factory('Dosificacion', function($resource) {
+.factory('Dosificacion',  ['$resource',function ($resource) {
 		return $resource(restServer+"dosificaciones/:idDosificacion", { idDosificacion: '@id' },
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('DosificacionesEmpresa', function($resource) {
+.factory('DosificacionesEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"dosificaciones/empresa/:idEmpresa");
-})
+}])
 
 .factory('Dosificaciones', ['DosificacionesEmpresa','$q',function(DosificacionesEmpresa, $q) 
   {
@@ -28,9 +28,9 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('DosificacionesDisponiblesEmpresa', function($resource) {
+.factory('DosificacionesDisponiblesEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"dosificaciones-disponibles/empresa/:idEmpresa");
-})
+}])
 
 .factory('DosificacionesDisponibles', ['DosificacionesDisponiblesEmpresa','$q',function(DosificacionesDisponiblesEmpresa, $q) 
   {
@@ -49,9 +49,9 @@ angular.module('agil.servicios')
     return res;
 	}])
 	
-	.factory('VerificarDosificacionesExpiradas', function($resource) {
+	.factory('VerificarDosificacionesExpiradas',  ['$resource',function ($resource) {
 		return $resource(restServer+"actualizacion-dosificaciones-expiradas/:id_empresa");
-})
+}])
 
 .factory('VencimientoDosificaciones', ['VerificarDosificacionesExpiradas','$q',function(VerificarDosificacionesExpiradas, $q) 
   {

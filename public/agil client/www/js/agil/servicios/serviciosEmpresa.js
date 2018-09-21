@@ -1,11 +1,11 @@
 angular.module('agil.servicios')
 
-	.factory('Empresa', function ($resource) {
+	.factory('Empresa',  ['$resource',function ($resource) {
 		return $resource(restServer + "empresas/:idEmpresa", { idEmpresa: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('Empresas', ['Empresa', '$q', function (Empresa, $q) {
 		var res = function (idEmpresa) {
@@ -32,12 +32,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('AplicacionesSistema', function ($resource) {
+	.factory('AplicacionesSistema',  ['$resource',function ($resource) {
 		return $resource(restServer + "sistema/aplicaciones", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 	.factory('ListaAplicacionesSistema', ['AplicacionesSistema', '$q', function (AplicacionesSistema, $q) {
 		var res = function (app) {
 			var delay = $q.defer();
@@ -50,12 +50,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('AplicacionesSistemaEmpresa', function ($resource) {
+	.factory('AplicacionesSistemaEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer + "sistema/aplicaciones/empresa/:id_empresa", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 	.factory('ListaAplicacionesSistemaEmpresa', ['AplicacionesSistemaEmpresa', '$q', function (AplicacionesSistemaEmpresa, $q) {
 		var res = function (idEmpresa) {
 			var delay = $q.defer();

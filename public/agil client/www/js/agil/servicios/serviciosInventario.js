@@ -1,18 +1,18 @@
 angular.module('agil.servicios')
 
 
-	.factory('Compra', function ($resource) {
+	.factory('Compra',  ['$resource',function ($resource) {
 		return $resource(restServer + "compras/:id", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
-	.factory('ActualizarDetalleMovimiento', function ($resource) {
+	}])
+	.factory('ActualizarDetalleMovimiento',  ['$resource',function ($resource) {
 		return $resource(restServer + "actualizar-movimiento-detalle/:id", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('CompraDatos', ['Compra', '$q', function (Compra, $q) {
 		var res = function (id_compra) {
@@ -40,12 +40,12 @@ angular.module('agil.servicios')
 	}])
 
 
-	.factory('Venta', function ($resource) {
+	.factory('Venta',  ['$resource',function ($resource) {
 		return $resource(restServer + "ventas/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 	
 	.factory('EliminarVentaServicio', ['Venta', '$q', function (Venta, $q) {
 		var res = function (venta) {
@@ -71,12 +71,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('CompraEmpresaDatos', function ($resource) {
+	.factory('CompraEmpresaDatos',  ['$resource',function ($resource) {
 		return $resource(restServer + "compras/:id/empresa/:id_empresa", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('DatosCompra', ['CompraEmpresaDatos', '$q', function (CompraEmpresaDatos, $q) {
 		var res = function (id_compra, id_empresa) {
@@ -91,12 +91,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('CompraFiltro', function ($resource) {
+	.factory('CompraFiltro',  ['$resource',function ($resource) {
 		return $resource(restServer + "compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario/tipo/:tipo", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('Compras', ['CompraFiltro', '$q', function (CompraFiltro, $q) {
 		var res = function (sucursales, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, usuario, id_usuario, tipo) {
@@ -111,9 +111,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('InventarioEmpresaPaginador', function ($resource) {
+	.factory('InventarioEmpresaPaginador',  ['$resource',function ($resource) {
 		return $resource(restServer + "inventarios/empresa/:id_empresa/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/cantidad/:cantidad/grupo/:id_grupo/user/:id_usuario");
-	})
+	}])
 
 	.factory('InventarioPaginador', ['InventarioEmpresaPaginador', '$q', function (InventarioEmpresaPaginador, $q) {
 		var res = function (idEmpresa, idAlmacen, pagina, itemsPagina, texto, columna, direccion, cantidad, grupo, id_usuario) {
@@ -128,18 +128,18 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('Inventario', function ($resource) {
+	.factory('Inventario',  ['$resource',function ($resource) {
 		return $resource(restServer + "inventarios/:id_empresa", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
-	.factory('InventariosIncial', function ($resource) {
+	}])
+	.factory('InventariosIncial',  ['$resource',function ($resource) {
 		return $resource(restServer + "inventarios", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('Inventarios', ['Inventario', '$q', function (Inventario, $q) {
 		var res = function (id_empresa) {
@@ -167,12 +167,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('Venta', function ($resource) {
+	.factory('Venta',  ['$resource',function ($resource) {
 		return $resource(restServer + "ventas/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	/*.factory('ActualizarVenta', ['Venta', '$q', function (Venta, $q) {
 		var res = function (venta) {
@@ -187,12 +187,12 @@ angular.module('agil.servicios')
 		return res;
 	}])*/
 	
-	.factory('VentaEmpresaDatos', function ($resource) {
+	.factory('VentaEmpresaDatos',  ['$resource',function ($resource) {
 		return $resource(restServer + "ventas/:id/empresa/:id_empresa", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('DatosVenta', ['VentaEmpresaDatos', '$q', function (VentaEmpresaDatos, $q) {
 		var res = function (id_venta, id_empresa) {
@@ -207,12 +207,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('VentaFiltro', function ($resource) {
+	.factory('VentaFiltro',  ['$resource',function ($resource) {
 		return $resource(restServer + "ventas/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-venta/:tipo_venta/sucursal/:sucursal/transaccion/:transaccion/usuario/:usuario/estado/:estado", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('Ventas', ['VentaFiltro', '$q', function (VentaFiltro, $q) {
 		var res = function (sucursales, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, transaccion, usuario, estado) {
@@ -227,12 +227,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('VentaFiltroProducto', function ($resource) {
+	.factory('VentaFiltroProducto',  ['$resource',function ($resource) {
 		return $resource(restServer + "ventasProductos/:idsSucursales/inicio/:inicio/fin/:fin/sucursal/:sucursal/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('VentasProductos', ['VentaFiltroProducto', '$q', function (VentaFiltro, $q) {
 		var res = function (paginador) {
@@ -256,12 +256,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('detalleVentaEmpresa', function($resource) {
+	.factory('detalleVentaEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer + "ventasDetalleEmpresa/:idsSucursales/inicio/:inicio/fin/:fin/sucursal/:sucursal/idEmpresa/:idEmpresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ventasDetalleEmpresa',['detalleVentaEmpresa','$q',function(detalleEmpresa, $q){
 		var res = function(paginador){
@@ -289,12 +289,12 @@ angular.module('agil.servicios')
 	}])
 
 	
-	.factory('detalleProductos', function ($resource) {
+	.factory('detalleProductos',  ['$resource',function ($resource) {
 		return $resource(restServer + "detalle/:inicio/:fin/:idEmpresa/:id", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('detalle', ['detalleProductos', '$q', function (detalle, $q) {
 		var res = function (inicio, fin,idEmpresa, id) {
@@ -309,12 +309,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('detalleEmpresas', function ($resource) {
+	.factory('detalleEmpresas',  ['$resource',function ($resource) {
 		return $resource(restServer + "detalleEmpresa/:inicio/:fin/:idEmpresa/:id", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('detalleEmpresa', ['detalleEmpresas', '$q', function (detalle, $q) {
 		var res = function (inicio, fin,idEmpresa, id) {
@@ -329,12 +329,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('VentaContado', function ($resource) {
+	.factory('VentaContado',  ['$resource',function ($resource) {
 		return $resource(restServer + "ventas-contado/:idsSucursales/inicio/:inicio/fin/:fin/usuario/:id_usuario/cierre-caja/:id_cierre_caja", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('VentasContado', ['VentaContado', '$q', function (VentaContado, $q) {
 		var res = function (sucursales, inicio, fin, id_usuario, id_cierre_caja) {
@@ -349,12 +349,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('VentaCredito', function ($resource) {
+	.factory('VentaCredito',  ['$resource',function ($resource) {
 		return $resource(restServer + "ventas-credito/:idsSucursales/inicio/:inicio/fin/:fin/usuario/:id_usuario/cierre-caja/:id_cierre_caja", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('VentasCredito', ['VentaCredito', '$q', function (VentaCredito, $q) {
 		var res = function (sucursales, inicio, fin, id_usuario, id_cierre_caja) {
@@ -369,12 +369,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('PagoVenta', function ($resource) {
+	.factory('PagoVenta',  ['$resource',function ($resource) {
 		return $resource(restServer + "pagos-venta/:idsSucursales/inicio/:inicio/fin/:fin/usuario/:id_usuario/cierre-caja/:id_cierre_caja", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('PagosVenta', ['PagoVenta', '$q', function (PagoVenta, $q) {
 		var res = function (sucursales, inicio, fin, id_usuario, id_cierre_caja) {
@@ -389,12 +389,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('PagoCompra', function ($resource) {
+	.factory('PagoCompra',  ['$resource',function ($resource) {
 		return $resource(restServer + "pagos-compra/:idsSucursales/inicio/:inicio/fin/:fin/usuario/:id_usuario/cierre-caja/:id_cierre_caja", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('PagosCompra', ['PagoCompra', '$q', function (PagoCompra, $q) {
 		var res = function (sucursales, inicio, fin, id_usuario, id_cierre_caja) {
@@ -409,12 +409,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('VentaEmpresa', function ($resource) {
+	.factory('VentaEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer + "ventas/:id_empresa/inicio/:inicio/fin/:fin", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('VentasEmpresa', ['VentaEmpresa', '$q', function (VentaEmpresa, $q) {
 		var res = function (idEmpresa, inicio, fin) {
@@ -429,12 +429,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('GastosVarios', function ($resource) {
+	.factory('GastosVarios',  ['$resource',function ($resource) {
 		return $resource(restServer + "detalles_compra/:id_empresa/inicio/:inicio/fin/:fin", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('GastosVariosLista', ['GastosVarios', '$q', function (GastosVarios, $q) {
 		var res = function (idEmpresa, inicio, fin) {
@@ -449,12 +449,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('IngresosPorInventario', function ($resource) {
+	.factory('IngresosPorInventario',  ['$resource',function ($resource) {
 		return $resource(restServer + "ingreso-por-inventario/:id_empresa", { id_empresa: '@idEmpresa' },
 			{
 				get: { method: 'GET', isArray: true }
 			});
-	})
+	}])
 	.factory('IngPorInventario', ['IngresosPorInventario','$q',function(IngresosPorInventario, $q) 
 		{
 		var res = function(idEmpresa) 
@@ -494,19 +494,19 @@ angular.module('agil.servicios')
 		};
 			return res;
 		}])*/
-	.factory('ActualizacionInventario', function ($resource) {
+	.factory('ActualizacionInventario',  ['$resource',function ($resource) {
 		return $resource(restServer + "inventario/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
-	.factory('CompraContado', function ($resource) {
+	.factory('CompraContado',  ['$resource',function ($resource) {
 		return $resource(restServer + "compras-contado/:idsSucursales/inicio/:inicio/fin/:fin/usuario/:id_usuario/cierre-caja/:id_cierre_caja", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ComprasContado', ['CompraContado', '$q', function (CompraContado, $q) {
 		var res = function (sucursales, inicio, fin, id_usuario, id_cierre_caja) {
@@ -521,12 +521,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('CompraCredito', function ($resource) {
+	.factory('CompraCredito',  ['$resource',function ($resource) {
 		return $resource(restServer + "compras-credito/:idsSucursales/inicio/:inicio/fin/:fin/usuario/:id_usuario/cierre-caja/:id_cierre_caja", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ComprasCredito', ['CompraCredito', '$q', function (CompraCredito, $q) {
 		var res = function (sucursales, inicio, fin, id_usuario, id_cierre_caja) {
@@ -541,12 +541,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('VerificarExesoCredito', function ($resource) {
+	.factory('VerificarExesoCredito',  ['$resource',function ($resource) {
 		return $resource(restServer + "cliente/verificar-credito/:id_cliente/tipo/:id_tipo", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('VerificarLimiteCredito', ['VerificarExesoCredito', '$q', function (VerificarExesoCredito, $q) {
 		var res = function (venta) {
@@ -560,12 +560,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('CompraPedidosEmpresa', function ($resource) {
+	.factory('CompraPedidosEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer + "compra/pedido/empresa/:id_empresa", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ListaCompraPedidosEmpresa', ['CompraPedidosEmpresa', '$q', function (CompraPedidosEmpresa, $q) {
 		var res = function (idEmpresa) {
@@ -579,12 +579,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ServiciosVentas', function ($resource) {
+	.factory('ServiciosVentas',  ['$resource',function ($resource) {
 		return $resource(restServer + "servicios-venta/empresa/:id_empresa", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ListaServiciosVentas', ['ServiciosVentas', '$q', function (ServiciosVentas, $q) {
 		var res = function (idEmpresa) {
@@ -610,12 +610,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('VentasServicioImportados', function ($resource) {
+	.factory('VentasServicioImportados',  ['$resource',function ($resource) {
 		return $resource(restServer + "importacion-ventas-servicio", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 	.factory('GuardarVentasImportados', ['VentasServicioImportados', '$q', function (VentasServicioImportados, $q) {
 		var res = function (ventas,arregloServicios,arregloClientes) {
 			var delay = $q.defer();
@@ -628,12 +628,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('EliminarDetalleVentaEdicionVenta', function ($resource) {
+	.factory('EliminarDetalleVentaEdicionVenta',  ['$resource',function ($resource) {
 		return $resource(restServer + "eliminar-detalle-venta/movimiento/:id_movimiento", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 	.factory('EliminarDetalleVentaEdicion', ['EliminarDetalleVentaEdicionVenta', '$q', function (EliminarDetalleVentaEdicionVenta, $q) {
 		var res = function (detalleVenta,idMov,venta) {
 			var delay = $q.defer();
@@ -647,7 +647,7 @@ angular.module('agil.servicios')
 		return res;
 	}]);
 	
-	/* .factory('VentaServico', function ($resource) {
+	/* .factory('VentaServico',  ['$resource',function ($resource) {
 		return $resource(restServer + "venta/servicios/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }

@@ -1,5 +1,6 @@
 angular.module('agil.controladores')
-	.controller('ControladorEstadoCuentasProveedores', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
+	.controller('ControladorEstadoCuentasProveedores', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', '$timeout',
+		'uiGmapGoogleMapApi', '$cordovaGeolocation', 'ReportEstadoCuentasProveedoresDatos', 'InventariosCosto',function ($scope, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
 		uiGmapGoogleMapApi, $cordovaGeolocation, ReportEstadoCuentasProveedoresDatos, InventariosCosto) {
 		blockUI.start();
 
@@ -141,8 +142,10 @@ angular.module('agil.controladores')
 
 
 		$scope.inicio();
-	})
-	.controller('ControladorEstadoCuentasClientes', function ($scope, $window, $localStorage, $location,
+	}])
+	.controller('ControladorEstadoCuentasClientes', ['$scope', '$window', '$localStorage', '$location',
+		'$templateCache', '$route', 'blockUI', '$timeout', 'Paginator',
+		'uiGmapGoogleMapApi', '$cordovaGeolocation', 'ReportEstadoCuentasClientesDatos', 'InventariosCosto', 'ReporteClientesPaginador',function ($scope, $window, $localStorage, $location,
 		$templateCache, $route, blockUI, $timeout, Paginator,
 		uiGmapGoogleMapApi, $cordovaGeolocation, ReportEstadoCuentasClientesDatos, InventariosCosto, ReporteClientesPaginador) {
 		blockUI.start();
@@ -532,9 +535,10 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalTablaEstadoCuenta);
 		});
 		$scope.inicio();
-	})
+	}])
 
-	.controller('ControladorLibroVentas', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
+	.controller('ControladorLibroVentas', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI',
+		'ClasesTipo', 'ReporteLibroVentasDatos', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
 		ClasesTipo, ReporteLibroVentasDatos) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -794,9 +798,10 @@ angular.module('agil.controladores')
 		$scope.inicio();
 
 
-	})
+	}])
 
-	.controller('ControladorLibroCompras', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
+	.controller('ControladorLibroCompras', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI',
+		'ClasesTipo', 'ReporteLibroComprasDatos', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
 		ClasesTipo, ReporteLibroComprasDatos) {
 
 
@@ -1049,9 +1054,10 @@ angular.module('agil.controladores')
 		}
 
 		$scope.inicio();
-	})
+	}])
 
-	.controller('ControladorReporteAlmacenes', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI,
+	.controller('ControladorReporteAlmacenes', ['$scope', '$window', '$localStorage', '$location', '$templateCache', '$route', 'blockUI',
+		'InventariosCosto', 'InventarioPaginadorAlmacen', 'InventarioReporteAlmacen', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI,
 		InventariosCosto, InventarioPaginadorAlmacen, InventarioReporteAlmacen) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -1463,9 +1469,10 @@ angular.module('agil.controladores')
 		$scope.inicio();
 
 
-	})
+	}])
 
-	.controller('ControladorVentasMensuales', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
+	.controller('ControladorVentasMensuales', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI',
+		'ClasesTipo', 'ReporteVentasMensualesDatos',function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
 		ClasesTipo, ReporteVentasMensualesDatos) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -1688,9 +1695,10 @@ angular.module('agil.controladores')
 		$scope.inicio();
 
 
-	})
+	}])
 
-	.controller('ControladorEstadoResultadosNoContable', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
+	.controller('ControladorEstadoResultadosNoContable', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI',
+		'GastosVariosLista', 'ReporteEstadoResultadosNoContableDatos',function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
 		GastosVariosLista, ReporteEstadoResultadosNoContableDatos) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -1916,9 +1924,10 @@ angular.module('agil.controladores')
 		$scope.inicio();
 
 
-	})
+	}])
 
-	.controller('ControladorComprasMensuales', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
+	.controller('ControladorComprasMensuales', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI',
+		'ClasesTipo', 'ReporteComprasMensualesDatos', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
 		ClasesTipo, ReporteComprasMensualesDatos) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -2148,4 +2157,4 @@ angular.module('agil.controladores')
 		$scope.inicio();
 
 
-	})
+	}])

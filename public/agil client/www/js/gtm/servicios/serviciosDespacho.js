@@ -1,15 +1,15 @@
 angular.module('agil.servicios')
 
-	.factory('GtmTransportista', function ($resource) {
+	.factory('GtmTransportista', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-transportistas/empresa/:id_empresa");
-	})
+	}])
 
-	.factory('GtmTransportistaItem', function ($resource) {
+	.factory('GtmTransportistaItem', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-transportistas/:id_transportista", { id_transportista: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('GtmTransportistas', ['GtmTransportista', '$q', function (GtmTransportista, $q) {
 		var res = function (id_empresa) {
@@ -24,16 +24,16 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('GtmEstibaje', function ($resource) {
+	.factory('GtmEstibaje', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-estibajes/empresa/:id_empresa");
-	})
+	}])
 
-	.factory('GtmEstibajeItem', function ($resource) {
+	.factory('GtmEstibajeItem', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-estibajes/:id_estibaje", { id_estibaje: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('GtmEstibajes', ['GtmEstibaje', '$q', function (GtmEstibaje, $q) {
 		var res = function (id_empresa) {
@@ -48,16 +48,16 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('GtmGrupoEstibaje', function ($resource) {
+	.factory('GtmGrupoEstibaje', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-grupo-estibajes/empresa/:id_empresa");
-	})
+	}])
 
-	.factory('GtmGrupoEstibajeItem', function ($resource) {
+	.factory('GtmGrupoEstibajeItem', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-grupo-estibajes/:id_grupo_estibaje", { id_grupo_estibaje: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('GtmGrupoEstibajes', ['GtmGrupoEstibaje', '$q', function (GtmGrupoEstibaje, $q) {
 		var res = function (id_empresa) {
@@ -72,16 +72,16 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('GtmDestino', function ($resource) {
+	.factory('GtmDestino', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-destinos/empresa/:id_empresa");
-	})
+	}])
 
-	.factory('GtmDestinoItem', function ($resource) {
+	.factory('GtmDestinoItem', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-destinos/:id_destino", { id_destino: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('GtmDestinos', ['GtmDestino', '$q', function (GtmDestino, $q) {
 		var res = function (id_empresa) {
@@ -96,12 +96,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('GtmDetalleDespachoAlerta', function ($resource) {
+	.factory('GtmDetalleDespachoAlerta', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-detalle-despacho/empresa/:id_empresa/inicio/:inicio/fin/:fin/empleado/:empleado/cliente/:cliente", { id_empresa: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 	.factory('GtmDetallesDespachoAlerta', ['GtmDetalleDespachoAlerta', '$q', function (GtmDetalleDespachoAlerta, $q) {
 		var res = function (id_empresa,filtro) {
 			var filtro2={}
@@ -125,19 +125,19 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('GuardarGtmDetalleDespachoAlerta', function ($resource) {
+	.factory('GuardarGtmDetalleDespachoAlerta', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-detalle-despacho/empresa/:id_empresa/fecha/:fecha", { id_empresa: '@id',fecha:'@fecha' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 	
-	.factory('GtmDespacho', function ($resource) {
+	.factory('GtmDespacho', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-detalle-despacho-despachado/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/inicio/:inicio/fin/:fin/transportista/:transportista/tipo/:tipo/grupo/:grupo/estado/:estado/vendedor/:vendedor/admin/:admin", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('GtmDespachos', ['GtmDespacho', '$q', function (GtmDespacho, $q) {
 		var res = function (paginator) {
@@ -167,18 +167,18 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('GtmDetalleDespacho', function ($resource) {
+	.factory('GtmDetalleDespacho', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-detalle-despacho/:id_detalle_despacho", { id_detalle_despacho: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
-	.factory('GtmDetalleDespachoKardex', function ($resource) {
+	}])
+	.factory('GtmDetalleDespachoKardex', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-detalle-kardex/:id_detalle_kardex", { id_detalle_kardex: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 	
 	.factory('GtmDestinosEmpresa', ['GtmDestino', '$q', function (GtmDestino, $q) {
 		var res = function (id_empresa, destinos) {
@@ -206,12 +206,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('GtmDetalleDespachoHijos', function ($resource) {
+	.factory('GtmDetalleDespachoHijos', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-detalle-despacho/:id_detalle_despacho/padre/:id_padre", { id_detalle_despacho: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('GetGtmDetalleDespachoHijos', ['GtmDetalleDespachoHijos', '$q', function (GtmDetalleDespachoHijos, $q) {
 		var res = function (DetalleDespacho) {
@@ -225,12 +225,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('GtmDetalleKardexFactura', function ($resource) {
+	.factory('GtmDetalleKardexFactura', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-despacho-kardex-factura/empresa/:id_empresa/inicio/:inicio/fin/:fin/pendiente/:pendiente", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ListaDetalleKardexFactura', ['GtmDetalleKardexFactura', '$q', function (GtmDetalleKardexFactura, $q) {
 		var res = function (idEmpresa,filtro) {
@@ -244,12 +244,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('GtmDespachoResivo', function ($resource) {
+	.factory('GtmDespachoResivo', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-despacho-detalle-resivo/:id_despacho", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	}).factory('CrearDespachoResivo', ['GtmDespachoResivo', '$q', function (GtmDespachoResivo, $q) {
+	}]).factory('CrearDespachoResivo', ['GtmDespachoResivo', '$q', function (GtmDespachoResivo, $q) {
 		var res = function (idDespacho, datos) {
 			var delay = $q.defer();
 			GtmDespachoResivo.save({ id_despacho: idDespacho }, datos, function (entidad) {
@@ -261,12 +261,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('GtmDespachoUbicacion', function ($resource) {
+	.factory('GtmDespachoUbicacion', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-detalle-despacho-ubicacion/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/inicio/:inicio/fin/:fin/cliente/:cliente/vendedor/:vendedor", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('GtmDespachosUbicacion', ['GtmDespachoUbicacion', '$q', function (GtmDespachoUbicacion, $q) {
 		var res = function (paginator) {
@@ -291,12 +291,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('DespachosVendedor', function ($resource) {
+	.factory('DespachosVendedor', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-detalle-despacho-ubicacion/vendedor/:id_vendedor/fecha/:fecha", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('BuscarDespachosVendedor', ['DespachosVendedor', '$q', function (DespachosVendedor, $q) {
 		var res = function (filtro) {
@@ -313,12 +313,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('FiltrarVendedor', function ($resource) {
+	.factory('FiltrarVendedor', ['$resource',function ($resource) {
 		return $resource(restServer + "gtm-detalle-despacho-ubicacion/empresa/:id_empresa/vendedor/:nombre", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('FiltrarVendedorEmpresa', ['FiltrarVendedor', '$q', function (FiltrarVendedor, $q) {
 		var res = function (idEmpresa,texto) {
@@ -336,40 +336,40 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('Pedidos', function ($resource) {
+	.factory('Pedidos', ['$resource',function ($resource) {
 		return $resource(restServer + "/gtm-despacho/empresa/:id_empresa", { id_empresa: '@id_empresa' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
-	.factory('ClientePedido', function ($resource) {
+	.factory('ClientePedido', ['$resource',function ($resource) {
 		return $resource(restServer + "clientes-pedido/:id_empresa", { id_empresa: '@id_empresa' },
 		{
 			'update': { method: 'PUT' }
 		});
-	})
+	}])
 
-	.factory('ClientePedidoRazonSocial', function ($resource) {
+	.factory('ClientePedidoRazonSocial', ['$resource',function ($resource) {
 		return $resource(restServer + "clientes-razon/:id_cliente", { id_cliente: '@id_cliente' },
 		{
 			'update': { method: 'PUT' }
 		});
-	})
+	}])
 
-	.factory('ClientePedidoDestino', function ($resource) {
+	.factory('ClientePedidoDestino', ['$resource',function ($resource) {
 		return $resource(restServer + "clientes-destino/:id_cliente", { id_cliente: '@id_cliente' },
 		{
 			'update': { method: 'PUT' }
 		});
-	})
+	}])
 
-	.factory('ModificarDatosDespachoDetalle', function ($resource) {
+	.factory('ModificarDatosDespachoDetalle', ['$resource',function ($resource) {
 		return $resource(restServer + "actualizar-gtm-detalle-despacho/despacho/:id_despacho", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ActualizarDatosDespachoDetalle', ['ModificarDatosDespachoDetalle', '$q', function (ModificarDatosDespachoDetalle, $q) {
 		var res = function (datos) {

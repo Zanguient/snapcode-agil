@@ -1,16 +1,16 @@
 angular.module('agil.servicios')
-	.factory('ProveedorVencimientoCredito', function ($resource) {
+	.factory('ProveedorVencimientoCredito',  ['$resource',function ($resource) {
 		return $resource(restServer + "proveedor-vencimiento-Deudas/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
-	.factory('Proveedor', function ($resource) {
+	}])
+	.factory('Proveedor',  ['$resource',function ($resource) {
 		return $resource(restServer + "proveedores/:idProveedor", { idProveedor: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 	.factory('EliminarProveedor', ['Proveedor', '$q', function (Proveedor, $q) {
 		var res = function (proveedor) {
 			var delay = $q.defer();
@@ -23,9 +23,9 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ProveedoresEmpresaPaginador', function ($resource) {
+	.factory('ProveedoresEmpresaPaginador',  ['$resource',function ($resource) {
 		return $resource(restServer + "proveedor/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda");
-	})
+	}])
 
 	.factory('ProveedoresPaginador', ['ProveedoresEmpresaPaginador', '$q', function (ProveedoresEmpresaPaginador, $q) {
 		var res = function (idEmpresa, pagina, itemsPagina, texto) {
@@ -39,9 +39,9 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ProveedoresEmpresa', function ($resource) {
+	.factory('ProveedoresEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer + "proveedores/empresa/:idEmpresa");
-	})
+	}])
 
 	.factory('Proveedores', ['ProveedoresEmpresa', '$q', function (ProveedoresEmpresa, $q) {
 		var res = function (idEmpresa) {
@@ -56,9 +56,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('BusquedaProveedoresNit', function ($resource) {
+	.factory('BusquedaProveedoresNit',  ['$resource',function ($resource) {
 		return $resource(restServer + "proveedores/empresa/:idEmpresa/texto/:texto");
-	})
+	}])
 
 	.factory('ProveedoresNit', ['BusquedaProveedoresNit', '$q', function (BusquedaProveedoresNit, $q) {
 		var res = function (idEmpresa, texto) {
@@ -73,9 +73,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('ObtenerProductosProveedor', function ($resource) {
+	.factory('ObtenerProductosProveedor',  ['$resource',function ($resource) {
 		return $resource(restServer + "proveedores/productos/empresa/:id_empresa/:id_proveedor", null)
-	})
+	}])
 
 	.factory('ListaProductosProveedores', ['ObtenerProductosProveedor', '$q', function (ObtenerProductosProveedor, $q) {
 		var res = function (idEmpresa, proveedor) {
@@ -90,9 +90,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('AsignarProductosProveedor', function ($resource) {
+	.factory('AsignarProductosProveedor',  ['$resource',function ($resource) {
 		return $resource(restServer + "proveedores/productos/empresa/:id_empresa", null)
-	})
+	}])
 
 	.factory('ActualizarProductosProveedor', ['AsignarProductosProveedor', '$q', function (AsignarProductosProveedor, $q) {
 		var res = function (idEmpresa, info, proveedor) {

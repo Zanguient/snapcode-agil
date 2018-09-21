@@ -1,8 +1,8 @@
 angular.module('agil.servicios')
 
-.factory('VentasNoDespachadas', function($resource) {
+.factory('VentasNoDespachadas',  ['$resource',function ($resource) {
 		return $resource(restServer+"ventas-no-despachadas/sucursal/:id_sucursal");
-})
+}])
 
 .factory('VentasNoDespachadasLista', ['VentasNoDespachadas','$q',function(VentasNoDespachadas, $q) 
   {
@@ -21,9 +21,9 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('DespachoVenta', function($resource) {
+.factory('DespachoVenta',  ['$resource',function ($resource) {
 		return $resource(restServer+"venta/:id_venta/despachar", null,
 		{
 			'update': { method:'PUT' }
 		});
-});
+}]);

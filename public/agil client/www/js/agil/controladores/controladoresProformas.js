@@ -1,5 +1,8 @@
 angular.module('agil.controladores')
-    .controller('controladorProformas', function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage, Paginator, $timeout,
+    .controller('controladorProformas', ['$scope', '$filter', '$rootScope', '$route', '$templateCache', '$location', '$window', '$localStorage', 'Paginator', '$timeout',
+        'blockUI', 'ClasesTipo', 'socket', 'ObtenerCambioMoneda', 'ClientesNit', 'FiltroProformas', 'ActividadServicio', 'ActividadesEmpresa',
+        'ServiciosEmpresa', 'ProformaInfo', 'Clientes', 'fechasProforma', 'ListaSucursalesActividadesDosificacionEmpresa', 'DosificacionesDisponibles', 'ListaSucursalesUsuario', 'ListaHistorialActividad', 'ImprimirSalida', 'ConfiguracionesFacturasProformas', 'ProformasFacturadas',
+        'ActualizarProforma', 'GuardarProformas', 'ProformaEliminar', 'GuardarActividadesEmpresa', 'obtenerAsignacionCentroCosto', 'GuardarAsignacionCentroCosto',function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage, Paginator, $timeout,
         blockUI, ClasesTipo, socket, ObtenerCambioMoneda, ClientesNit, FiltroProformas, ActividadServicio, ActividadesEmpresa,
         ServiciosEmpresa, ProformaInfo, Clientes, fechasProforma, ListaSucursalesActividadesDosificacionEmpresa, DosificacionesDisponibles, ListaSucursalesUsuario, ListaHistorialActividad, ImprimirSalida, ConfiguracionesFacturasProformas, ProformasFacturadas,
         ActualizarProforma, GuardarProformas, ProformaEliminar, GuardarActividadesEmpresa, obtenerAsignacionCentroCosto, GuardarAsignacionCentroCosto) {
@@ -1807,4 +1810,4 @@ angular.module('agil.controladores')
             doc.text("Nota: La aprobación de la proforma deberá realizarse dentro de los próximos 7 días a partir de la fecha de recepción", 0, 750, { align: "center" })
         }
         $scope.inicio()
-    })
+    }])

@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorCodigoControl', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl) {
+	.controller('ControladorCodigoControl', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'CodigoControl',function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -55,7 +55,7 @@ angular.module('agil.controladores')
 			if (fechaArreglo.length == 3) {
 				if (fechaArreglo[0].length > 2) {
 					var fechaFormateada = fechaArreglo[0] + fechaArreglo[1] + fechaArreglo[2];
-					
+
 				} else {
 					var fechaFormateada = fechaArreglo[2] + fechaArreglo[1] + fechaArreglo[0];
 				}
@@ -89,7 +89,7 @@ angular.module('agil.controladores')
 
 		$scope.inicio();
 
-	});
+	}]);
 
 
 

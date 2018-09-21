@@ -1,10 +1,10 @@
 angular.module('agil.servicios')
-.factory('Cotizaciones', function($resource) {
+.factory('Cotizaciones',  ['$resource',function ($resource) {
 		return $resource(restServer+"cotizaciones/empresa/:id_empresa",{id_empresa:'@id_empresa'},
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 .factory('ListaCotizacion', ['Cotizaciones','$q',function(Cotizaciones, $q) 
   {
 	var res = function(idEmpresa) 
@@ -21,14 +21,14 @@ angular.module('agil.servicios')
 	};
     return res;
   }])
-.factory('Cotizacion', function($resource) {
+.factory('Cotizacion',  ['$resource',function ($resource) {
 		return $resource(restServer+"cotizacion/:id",  { id: '@id' },
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-// .factory('Roles', function($resource) {
+// .factory('Roles',  ['$resource',function ($resource) {
 // 	return $resource(restServer+"cotizaciones/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
 // })
 
@@ -49,9 +49,9 @@ angular.module('agil.servicios')
 // 	return res;
 // }])
 
-.factory('FiltroCotizacionEmpresaPaginador', function($resource) {
+.factory('FiltroCotizacionEmpresaPaginador',  ['$resource',function ($resource) {
 	return $resource(restServer+"cotizaciones/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion");
-})
+}])
 
 .factory('FiltroCotizacionPaginador', ['FiltroCotizacionEmpresaPaginador','$q',function(CotizacionEmpresaPaginador, $q) 
 {
@@ -72,12 +72,12 @@ var res = function(idEmpresa,paginator,inicio,fin)
 
 
 ///////
-.factory('CotizacionesFiltro', function ($resource) {
+.factory('CotizacionesFiltro',  ['$resource',function ($resource) {
 	return $resource(restServer + "cotizaciones/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/importe/:importe/busqueda/:busqueda/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion/estado/:estado/sucursal/:sucursal/usuario/:usuario/razon-social/:razon_social/nit/:nit", null,
 		{
 			'update': { method: 'PUT' }
 		});
-})
+}])
 
 .factory('filtroCotizaciones', ['CotizacionesFiltro', '$q', function (CotizacionesFiltro, $q) {
 	var res = function (paginator) {
@@ -105,12 +105,12 @@ var res = function(idEmpresa,paginator,inicio,fin)
 	return res;
 }])
 
-.factory('CotizacionesPendientesFiltro', function ($resource) {
+.factory('CotizacionesPendientesFiltro',  ['$resource',function ($resource) {
 	return $resource(restServer + "cotizaciones-pendientes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/importe/:importe/busqueda/:busqueda/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion", null,
 		{
 			'update': { method: 'PUT' }
 		});
-})
+}])
 
 .factory('filtroCotizacionesPendientes', ['CotizacionesPendientesFiltro', '$q', function (CotizacionesPendientesFiltro, $q) {
 	var res = function (paginator) {
@@ -133,7 +133,7 @@ var res = function(idEmpresa,paginator,inicio,fin)
 	return res;
 }])
 
-// .factory('CotizacionEmpresaPaginador', function($resource) {
+// .factory('CotizacionEmpresaPaginador',  ['$resource',function ($resource) {
 // 	return $resource(restServer+"cotizaciones/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion");
 // })
 
@@ -154,12 +154,12 @@ var res = function(idEmpresa,paginator,inicio,fin)
 // 	return res;
 // }])
 
-.factory('ConfiguracionCotizacionVista', function($resource) {
+.factory('ConfiguracionCotizacionVista',  ['$resource',function ($resource) {
 		return $resource(restServer+"empresas/:id_empresa/configuracion-cotizacion-vista", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ConfiguracionCotizacionVistaDatos', ['ConfiguracionCotizacionVista','$q',function(ConfiguracionCotizacionVista, $q) 
   {
@@ -177,12 +177,12 @@ var res = function(idEmpresa,paginator,inicio,fin)
 	};
     return res;
   }])
-  	.factory('DatosConfiguracionCotizacion', function($resource) {
+  	.factory('DatosConfiguracionCotizacion',  ['$resource',function ($resource) {
 		return $resource(restServer+"cotizacion/:id/empresa/:id_empresa", null,
 		{
 			'update': { method:'PUT' }
 		});
-	})
+	}])
 	.factory('DatosImpresionCotizacion', ['DatosConfiguracionCotizacion','$q',function(DatosConfiguracionCotizacion, $q) 
 		{
 		var res = function(id_cotizacion,id_empresa) 
@@ -200,12 +200,12 @@ var res = function(idEmpresa,paginator,inicio,fin)
 		return res;
 	}])
 	
-	.factory('lastIdCotizacion', function($resource) {
+	.factory('lastIdCotizacion',  ['$resource',function ($resource) {
 		return $resource(restServer+"cotizacion/ultima",
 		{
 			'update': { method:'PUT' }
 		});
-	})
+	}])
 	.factory('ultimaCotizacion', ['lastIdCotizacion','$q',function(lastIdCotizacion, $q) 
 		{
 		var res = function() 
@@ -223,9 +223,9 @@ var res = function(idEmpresa,paginator,inicio,fin)
 		return res;
 	}])
 
-	.factory('CotizacionRechazo', function ($resource) {
+	.factory('CotizacionRechazo',  ['$resource',function ($resource) {
         return $resource(restServer + "cotizacion-rechazo/:id_cotizacion", { id_cotizacion: '@id_cotizacion' },
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])

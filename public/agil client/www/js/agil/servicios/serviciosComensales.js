@@ -1,83 +1,83 @@
 angular.module('agil.servicios')
 
-    .factory('Alias', function ($resource) {
+    .factory('Alias',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/empresa/alias/:id_empresa/:id_usuario");
-    })
+    }])
 
-    .factory('Gerencia', function ($resource) {
+    .factory('Gerencia',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/empresa/gerencias/:id_empresa/:id_usuario/:id_cliente");
-    })
+    }])
 
-    .factory('Comensal', function ($resource) {
+    .factory('Comensal',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/empresa/comensales/:id_empresa/:id_usuario/:id_cliente");
-    })
+    }])
 
-    .factory('Comida', function ($resource) {
+    .factory('Comida',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/empresa/horarios/comida/:id_empresa/:id_usuario/:id_cliente");
-    })
+    }])
 
-    .factory('PrecioComida', function ($resource) {
+    .factory('PrecioComida',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/empresa/precio/comida/:id_empresa/:id_usuario/:id_cliente");
-    })
+    }])
 
-    .factory('HistorialExcel', function ($resource) {
+    .factory('HistorialExcel',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/empresa/excel/historial/:id_empresa/:id_usuario/:id_cliente");
-    })
+    }])
 
-    .factory('Historial', function ($resource) {
+    .factory('Historial',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/empresa/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado/:pagina/:items_pagina");
-    })
+    }])
 
-    .factory('ComensalesExcel', function ($resource) {
+    .factory('ComensalesExcel',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/empresa/excel/comensal/:id_empresa/:id_usuario");
-    })
+    }])
 
-    .factory('AliasExcel', function ($resource) {
+    .factory('AliasExcel',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/empresa/excel/alias/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta");
-    })
+    }])
 
-    .factory('GerenciasExcel', function ($resource) {
+    .factory('GerenciasExcel',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/empresa/excel/gerencias/:id_empresa/:id_usuario/:id_cliente");
-    })
+    }])
 
-    .factory('ComidasExcel', function ($resource) {
+    .factory('ComidasExcel',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/empresa/excel/comidas/:id_empresa/:id_usuario/:id_cliente");
-    })
+    }])
 
-    .factory('PreciosExcel', function ($resource) {
+    .factory('PreciosExcel',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/empresa/excel/precios/:id_empresa/:id_usuario/:id_cliente");
-    })
+    }])
 
-    .factory('BuscarComensal', function ($resource) {
+    .factory('BuscarComensal',  ['$resource',function ($resource) {
         return $resource(restServer + "comensal/empresa/busqueda/:busqueda/:id_empresa/:id_usuario/:id_cliente");
-    })
+    }])
 
-    .factory('ReporteComedor', function ($resource) {
+    .factory('ReporteComedor',  ['$resource',function ($resource) {
         return $resource(restServer + "reporte/comedor/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado");
-    })
+    }])
 
-    .factory('ReporteEmpresa', function ($resource) {
+    .factory('ReporteEmpresa',  ['$resource',function ($resource) {
         return $resource(restServer + "reporte/empresa/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado");
-    })
+    }])
 
-    .factory('ReporteComensal', function ($resource) {
+    .factory('ReporteComensal',  ['$resource',function ($resource) {
         return $resource(restServer + "reporte/comensal/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado");
-    })
+    }])
 
-    .factory('AlertaMarcacion', function ($resource) {
+    .factory('AlertaMarcacion',  ['$resource',function ($resource) {
         return $resource(restServer + "alertas/marcaciones/:id_empresa/:id_usuario/:id_cliente/:mes/:anio");
-    })
+    }])
 
-    .factory('AgregarMarcacion', function ($resource) {
+    .factory('AgregarMarcacion',  ['$resource',function ($resource) {
         return $resource(restServer + "agregar/marcaciones/:id_empresa/:id_usuario/:id_cliente/:comensal");
-    })
+    }])
 
-    .factory('HistorialDocumentos', function ($resource) {
+    .factory('HistorialDocumentos',  ['$resource',function ($resource) {
         return $resource(restServer + "cliente/documentos/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado/:pagina/:items_pagina");
-    })
-    .factory('Documentos', function ($resource) {
+    }])
+    .factory('Documentos',  ['$resource',function ($resource) {
         return $resource(restServer + "obtener/documentos/historial/:id_empresa/:id_usuario/:id_cliente/:documento");
-    })
+    }])
 
     .factory('GuardarAlias', ['Alias', '$q', function (Alias, $q) {
         var res = function (idEmpresa, alias, usuario) {

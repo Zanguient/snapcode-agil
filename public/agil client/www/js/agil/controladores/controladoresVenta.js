@@ -1,10 +1,17 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorVentas', function ($scope, $filter, $localStorage, $location, $templateCache, $route, blockUI, $timeout, $window, InventarioPaginador,
+	.controller('ControladorVentas', ['$scope', '$filter', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', '$timeout', '$window', 'InventarioPaginador',
+		'Venta', 'Ventas', 'VentasProductos', 'detalle', 'detalleEmpresa', 'Clientes', 'ClientesNit', 'ProductosNombre', 'ClasesTipo', 'VentasContado', 'VentasCredito',
+		'PagosVenta', 'DatosVenta', 'VentaEmpresaDatos', 'ProductosPanel', 'ListaProductosEmpresaUsuario', 'ListaInventariosProducto', 'Paginator',
+		'socket', 'ConfiguracionVentaVistaDatos', 'ConfiguracionVentaVista', 'ListaGruposProductoEmpresa', 'ReporteVentasMensualesDatos',
+		'ConfiguracionImpresionEmpresaDato', 'VerificarUsuarioEmpresa', 'GuardarVentasImportados', 'ImprimirSalida', 'ModificarVenta', 'ListaVendedorVenta', 'VendedorVenta', 'VendedorVentaActualizacion',
+		'GuardarUsuarLectorDeBarra', 'VerificarLimiteCredito', 'ListaSucursalesUsuario', 'ListaGruposProductoUsuario', 'ListaServiciosVentas', 'GuardarListaServiciosVentas',
+		'EliminarVentaServicio', 'ventasDetalleEmpresa', 'EliminarDetalleVentaEdicion', 'filtroCotizacionesPendientes', 'CotizacionRechazo', 'ListaInventariosProductoVentaEdicion',function ($scope, $filter, $localStorage, $location, $templateCache, $route, blockUI, $timeout, $window, InventarioPaginador,
 		Venta, Ventas, VentasProductos, detalle, detalleEmpresa, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
 		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto, Paginator,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa, ReporteVentasMensualesDatos,
-		ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, GuardarVentasImportados, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion, GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario, ListaServiciosVentas, GuardarListaServiciosVentas,
+		ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, GuardarVentasImportados, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion,
+		GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario, ListaServiciosVentas, GuardarListaServiciosVentas,
 		EliminarVentaServicio, ventasDetalleEmpresa, EliminarDetalleVentaEdicion, filtroCotizacionesPendientes, CotizacionRechazo, ListaInventariosProductoVentaEdicion) {
 		blockUI.start();
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -545,10 +552,10 @@ angular.module('agil.controladores')
 				}
 				for (var j = 0; j < $scope.venta.detallesVenta.length; j++) {
 					if ($scope.venta.detallesVenta[j].producto.tipoProducto.nombre_corto == $scope.diccionario.TIPO_PRODUCTO_FINAL || $scope.venta.detallesVenta[j].producto.tipoProducto.nombre_corto == $scope.diccionario.TIPO_PRODUCTO_INTER) {
-						for (let x = 0; x < $scope.venta.detallesVenta[j].producto.productosBase.length; x++) {
+						for (var x = 0; x < $scope.venta.detallesVenta[j].producto.productosBase.length; x++) {
 							var productoBase = $scope.venta.detallesVenta[j].producto.productosBase[x];
 							if (productoBase.productoBase.tipoProducto.nombre_corto == $scope.diccionario.TIPO_PRODUCTO_INTER) {
-								for (let z = 0; z < productoBase.productoBase.productosBase.length; z++) {
+								for (var z = 0; z < productoBase.productoBase.productosBase.length; z++) {
 									var productoBase2 = productoBase.productoBase.productosBase[z];
 									if (productoBase2.productoBase.id == producto.id && !$scope.venta.detallesVenta[j].id) {
 										cantidadTotal = cantidadTotal - parseInt(productoBase2.formulacion);
@@ -2756,7 +2763,7 @@ angular.module('agil.controladores')
 
 					var cabecera = ["Producto", "Unidad Medida", "Cantidad", "Monto"];
 					data.push(cabecera)
-					for (let i = 0; i < $scope.ventasExcelDetalle.length; i++) {
+					for (var i = 0; i < $scope.ventasExcelDetalle.length; i++) {
 						columns = [];
 
 						columns.push($scope.ventasExcelDetalle[i].nombre);
@@ -3111,7 +3118,7 @@ angular.module('agil.controladores')
 					return b.total - a.total;
 				});
 
-				for (let i = 0; i < $scope.datosProductosGrafico.length; i++) {
+				for (var i = 0; i < $scope.datosProductosGrafico.length; i++) {
 					var columns = [];
 					columns.push($scope.datosProductosGrafico[i].nombre);
 					columns.push($scope.datosProductosGrafico[i].unidad_medida);
@@ -3249,7 +3256,7 @@ angular.module('agil.controladores')
 					return b.total - a.total;
 				});
 
-				for (let i = 0; i < $scope.datosReporteGraficoEmpresa.length; i++) {
+				for (var i = 0; i < $scope.datosReporteGraficoEmpresa.length; i++) {
 					var columns = []
 					columns.push($scope.datosReporteGraficoEmpresa[i].razon_social);
 					columns.push($scope.datosReporteGraficoEmpresa[i].total);
@@ -3471,7 +3478,7 @@ angular.module('agil.controladores')
 					columns = [];
 
 					$scope.producto = $scope.detallePorEmpresa[i];
-					for (let j = 0; j < $scope.producto.detallesVenta.length; j++) {
+					for (var j = 0; j < $scope.producto.detallesVenta.length; j++) {
 						$scope.DetalleVenta = $scope.producto.detallesVenta[j];
 						doc.font('Helvetica');
 						indice = i + 1;
@@ -4017,4 +4024,4 @@ angular.module('agil.controladores')
 
 
 		$scope.inicio();
-	});
+	}]);

@@ -1,6 +1,7 @@
 angular.module('agil.controladores')
 
-.controller('ControladorDosificaciones', function($scope,$localStorage,$location,$templateCache,$route,blockUI,Dosificacion,Dosificaciones,
+.controller('ControladorDosificaciones', ['$scope','$localStorage','$location','$templateCache','$route','blockUI','Dosificacion','Dosificaciones',
+	'DosificacionesEmpresa','ClasesTipo',function($scope,$localStorage,$location,$templateCache,$route,blockUI,Dosificacion,Dosificaciones,
 												DosificacionesEmpresa,ClasesTipo){
 	
 	
@@ -131,7 +132,7 @@ angular.module('agil.controladores')
 	});
 	
 	$scope.inicio();
-});
+}]);
 
 
 

@@ -1,12 +1,13 @@
 angular.module('agil.controladores')
-    .controller('ControladorMantenimientos', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, Usuario,Paginator) {
-    $scope.$on('$viewContentLoaded', function () {
-        // resaltarPestaña($location.path().substring(1));
+    .controller('ControladorMantenimientos', ['$scope', 'blockUI', '$localStorage', '$location', '$templateCache', '$route', 'Usuario','Paginator', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, Usuario,Paginator) {
+        
         $scope.idModalInicioMantenimiento = 'dialog-iniciar-mantenimiento';
         $scope.idModalOTNuevo = 'dialog-ot-nuevo';
         $scope.idModalFacturaServicioExterno = 'dialog-factura-servicioExterno';
         $scope.idModaRepuestosOT = 'panel-repuestos-ot';
         $scope.idModalwizardContainerOTNuevo = 'modal-wizard-ot-nuevo-container';
+        $scope.$on('$viewContentLoaded', function () {
+        // resaltarPestaña($location.path().substring(1));
         ejecutarScriptsMantenimientos($scope.idModalInicioMantenimiento, $scope.idModalOTNuevo, $scope.idModalwizardContainerOTNuevo, $scope.idModalFacturaServicioExterno, $scope.idModaRepuestosOT);
     });
 
@@ -40,4 +41,4 @@ angular.module('agil.controladores')
     }
 
 
-});
+}]);

@@ -1,26 +1,26 @@
 angular.module('agil.servicios')
 
-.factory('Sucursal', function($resource) {
+.factory('Sucursal',  ['$resource',function ($resource) {
 		return $resource(restServer+"sucursales/:idSucursal", { idSucursal: '@id' },
 		{
 			'update': { method:'PUT' }
 		});
-})
-.factory('Sucursalupdate', function($resource) {
+}])
+.factory('Sucursalupdate',  ['$resource',function ($resource) {
 	return $resource(restServer+"configuracion/factura/sucursal/:idSucursal", { idSucursal: '@id' },
 	{
 		'update': { method:'PUT' }
 	});
-})
-.factory('ConfiguracionFacturaSucursal', function($resource) {
+}])
+.factory('ConfiguracionFacturaSucursal',  ['$resource',function ($resource) {
 	return $resource(restServer+"sucursal/:idSucursal", { idSucursal: '@id' },
 	{
 		'update': { method:'PUT' }
 	});
-})
-.factory('SucursalesEmpresa', function($resource) {
+}])
+.factory('SucursalesEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"sucursales/empresa/:idEmpresa");
-})
+}])
 
 .factory('Sucursales', ['SucursalesEmpresa','$q',function(SucursalesEmpresa, $q) 
   {
@@ -38,12 +38,12 @@ angular.module('agil.servicios')
 	};
     return res;
   }])
-  .factory('Sucursalesupdate', function($resource) {
+  .factory('Sucursalesupdate',  ['$resource',function ($resource) {
 	return $resource(restServer+"configuracion/factura/sucursales/empresa/:id_empresa", { id_empresa: '@id_empresa' },
 	{
 		'update': { method:'PUT' }
 	});
-})
+}])
 
   .factory('VerificarCorrelativosSucursale', ['Sucursalesupdate','$q',function(Sucursalesupdate, $q) 
   {
@@ -61,12 +61,12 @@ angular.module('agil.servicios')
 	};
     return res;
   }])
-  .factory('ReiniciarCorrelativo', function($resource) {
+  .factory('ReiniciarCorrelativo',  ['$resource',function ($resource) {
 	return $resource(restServer+"reiniciar-correlativo/sucursales",null,
 	{
 		'update': { method:'PUT' }
 	});
-})
+}])
 
   .factory('ReiniciarCorrelativoSucursales', ['ReiniciarCorrelativo','$q',function(ReiniciarCorrelativo, $q) 
   {

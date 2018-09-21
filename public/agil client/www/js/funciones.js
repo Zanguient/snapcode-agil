@@ -369,7 +369,7 @@ function ejecutarScriptsMantenimientos(idModalInicioMantenimiento, idModalOTNuev
 	crearPopup(idModalFacturaServicioExterno, "50%", 'auto');
 	crearPopup(idModaRepuestosOT, "75%", 'auto');
 	aplicarDatePickers();
-	aplicarHoras();
+	// aplicarHoras();
 	aplicarTiempos();
 }
 

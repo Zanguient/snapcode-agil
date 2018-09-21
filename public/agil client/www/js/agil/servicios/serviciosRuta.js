@@ -1,15 +1,15 @@
 angular.module('agil.servicios')
 
-.factory('Ruta', function($resource) {
+.factory('Ruta',  ['$resource',function ($resource) {
 		return $resource(restServer+"rutas/:idRuta", { idRuta: '@id' },
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('RutasEmpresa', function($resource) {
+.factory('RutasEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"rutas/empresa/:idEmpresa");
-})
+}])
 
 .factory('Rutas', ['RutasEmpresa','$q',function(RutasEmpresa, $q) 
   {

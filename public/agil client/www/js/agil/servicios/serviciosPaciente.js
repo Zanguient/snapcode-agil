@@ -1,23 +1,23 @@
 angular.module('agil.servicios')
 
-    .factory('PacienteActivo', function ($resource) {
+    .factory('PacienteActivo',  ['$resource',function ($resource) {
         return $resource(restServer + "pacientes/:id_paciente/activo/:activo", { id_paciente: '@id_paciente', activo: '@activo' },
             {
                 'update': { method: 'PUT' }
             });
-    })
-    .factory('Paciente', function ($resource) {
+    }])
+    .factory('Paciente',  ['$resource',function ($resource) {
         return $resource(restServer + "pacientes/:id_paciente", { id_paciente: '@id_paciente' },
             {
                 'update': { method: 'PUT' }
             });
-    })
-    .factory('Comentario', function ($resource) {
+    }])
+    .factory('Comentario',  ['$resource',function ($resource) {
         return $resource(restServer + "pacientes/:id_paciente/comentario", { id_paciente: '@id_paciente' },
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('DatosPacientes', ['Paciente', '$q', function (Paciente, $q) {
         var res = function () {
             var delay = $q.defer();
@@ -31,9 +31,9 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('PacientesEmpresaPaginador', function ($resource) {
+    .factory('PacientesEmpresaPaginador',  ['$resource',function ($resource) {
         return $resource(restServer + "pacientes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido");
-    })
+    }])
 
     .factory('PacientesPaginador', ['PacientesEmpresaPaginador', '$q', function (PacientesEmpresaPaginador, $q) {
         var res = function (paginator)//idEmpresa, xxx
@@ -68,34 +68,34 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('aplicacionVacunasPacientes', function ($resource) {
+    .factory('aplicacionVacunasPacientes',  ['$resource',function ($resource) {
         return $resource(restServer + "pacientes/Vacunas/excel/upload")
-    })
+    }])
 
-    .factory('SOAPlistaPacientes', function ($resource) {
+    .factory('SOAPlistaPacientes',  ['$resource',function ($resource) {
         return $resource(restServer + "pacientes/SOAP/excel/upload")
-    })
+    }])
 
-    .factory('SignosVitalesPacientes', function ($resource) {
+    .factory('SignosVitalesPacientes',  ['$resource',function ($resource) {
         return $resource(restServer + "pacientes/signos_vitales/excel/upload")
-    })
+    }])
 
-    .factory('FichasTecnicasPacientes', function ($resource) {
+    .factory('FichasTecnicasPacientes',  ['$resource',function ($resource) {
         return $resource(restServer + "pacientes/ficha_tecnica/excel/upload")
-    })
+    }])
 
-    .factory('PacientesEmpresa', function ($resource) {
+    .factory('PacientesEmpresa',  ['$resource',function ($resource) {
         return $resource(restServer + "pacientes/empresa/excel/upload")
-    })
+    }])
 
-    .factory('ListaPrerequisitos', function ($resource) {
+    .factory('ListaPrerequisitos',  ['$resource',function ($resource) {
         return $resource(restServer + "prerequisitos",
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
-    // .factory('Paciente', function ($resource) {
+    // .factory('Paciente',  ['$resource',function ($resource) {
     //     return $resource(restServer + "paciente/:id_paciente", { id_paciente: '@id_paciente' },
     //         {
     //             'update': { method: 'PUT' }
@@ -127,12 +127,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ListaGeneros', function ($resource) {
+    .factory('ListaGeneros',  ['$resource',function ($resource) {
         return $resource(restServer + "generos",
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('ListaDatosGenero', ['ListaGeneros', '$q', function (ListaGeneros, $q) {
         var res = function () {
             var delay = $q.defer();
@@ -145,12 +145,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ListaTiposControl', function ($resource) {
+    .factory('ListaTiposControl',  ['$resource',function ($resource) {
         return $resource(restServer + "tipo-control",
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('ListaDatosTiposControl', ['ListaTiposControl', '$q', function (ListaTiposControl, $q) {
         var res = function () {
             var delay = $q.defer();
@@ -163,12 +163,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('Prerequisito', function ($resource) {
+    .factory('Prerequisito',  ['$resource',function ($resource) {
         return $resource(restServer + "prerequisitos",
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('Prerequisitos', ['Prerequisito', '$q', function (Prerequisito, $q) {
         var res = function () {
             var delay = $q.defer();
@@ -181,9 +181,21 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('PrerequisitoHistorial', function ($resource) {
+    .factory('PrerequisitosSave', ['Prerequisito', '$q', function (Prerequisito, $q) {
+        var res = function (prerequisito) {
+            var delay = $q.defer();
+            Prerequisito.save(prerequisito, function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('PrerequisitoHistorial',  ['$resource',function ($resource) {
         return $resource(restServer + "prerequisito/:id_pre/historial/:id_pac/inicio/:inicio/fin/:fin",{});
-    })
+    }])
 
     .factory('PrerequisitosHistorial', ['PrerequisitoHistorial', '$q', function (PrerequisitoHistorial, $q) {
         var res = function (datos) {
@@ -198,12 +210,12 @@ angular.module('agil.servicios')
         return res;
     }])
     
-    .factory('PrerequisitoPaciente', function ($resource) {
+    .factory('PrerequisitoPaciente',  ['$resource',function ($resource) {
         return $resource(restServer + "prerequisito/paciente")
             // {
             //     'update': { method: 'PUT' }
             // });
-    })
+    }])
 
     .factory('CrearPrerequisito', ['Prerequisito', '$q', function (Prerequisito, $q) {
         var res = function (id_paciente) {
@@ -229,12 +241,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('listaPrarequisitos', function ($resource) {
+    .factory('listaPrarequisitos',  ['$resource',function ($resource) {
         return $resource(restServer + "medico-paciente-pre-requisito/empresa/:id_empresa/inicio/:inicio/fin/:fin", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('ListaPrerequisitosEmpresa', ['listaPrarequisitos', '$q', function (listaPrarequisitos, $q) {
         var res = function (idEmpresa, filtro) {
             var delay = $q.defer();
@@ -247,12 +259,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('listaAlertasPrarequisitosPaciente', function ($resource) {
+    .factory('listaAlertasPrarequisitosPaciente',  ['$resource',function ($resource) {
         return $resource(restServer + "medico-paciente-pre-requisito-alertas/empresa/:id_empresa/inicio/:inicio/fin/:fin", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('ListaAlertasPrerequisitosPaciente', ['listaAlertasPrarequisitosPaciente', '$q', function (listaAlertasPrarequisitosPaciente, $q) {
         var res = function (idEmpresa, filtro) {
             var delay = $q.defer();
@@ -266,12 +278,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('listaAlertasVacunas', function ($resource) {
+    .factory('listaAlertasVacunas',  ['$resource',function ($resource) {
         return $resource(restServer + "medico-paciente-vacunas-alertas/empresa/:id_empresa/inicio/:inicio/fin/:fin/opcion/:opcion", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('ListaAlertasVacunasEmpresa', ['listaAlertasVacunas', '$q', function (listaAlertasVacunas, $q) {
         var res = function (idEmpresa, filtro) {
             var delay = $q.defer();
@@ -284,12 +296,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('listaVacunas', function ($resource) {
+    .factory('listaVacunas',  ['$resource',function ($resource) {
         return $resource(restServer + "medico-paciente-vacunas/empresa/:id_empresa/inicio/:inicio/fin/:fin", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('ListaVacunasEmpresa', ['listaVacunas', '$q', function (listaVacunas, $q) {
         var res = function (idEmpresa, filtro) {
             var delay = $q.defer();
@@ -303,12 +315,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('listaPrarequisitosPaciente', function ($resource) {
+    .factory('listaPrarequisitosPaciente',  ['$resource',function ($resource) {
         return $resource(restServer + "medico-paciente-pre-requisito/paciente/:id_paciente/inicio/:inicio/fin/:fin", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('ListaPrerequisitosPaciente', ['listaPrarequisitosPaciente', '$q', function (listaPrarequisitosPaciente, $q) {
         var res = function (idPaciente, filtro) {
             var delay = $q.defer();
@@ -321,12 +333,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('MedicoPacientepatologia', function ($resource) {
+    .factory('MedicoPacientepatologia',  ['$resource',function ($resource) {
         return $resource(restServer + "medico-paciente-patologia/paciente/:id_paciente", { id_paciente: '@id_paciente' },
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('ActualizarPatologiaPaciente', ['MedicoPacientepatologia', '$q', function (MedicoPacientepatologia, $q) {
         var res = function (idPaciente, ficha) {
             var delay = $q.defer();
@@ -340,12 +352,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('MedicoPacienteFicha', function ($resource) {
+    .factory('MedicoPacienteFicha',  ['$resource',function ($resource) {
         return $resource(restServer + "medico-paciente-ficha/paciente/:id_paciente", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('CrearMedicoPacienteFicha', ['MedicoPacienteFicha', '$q', function (MedicoPacienteFicha, $q) {
         var res = function (ficha) {
@@ -371,12 +383,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('FichasMedicoPaciente', function ($resource) {
+    .factory('FichasMedicoPaciente',  ['$resource',function ($resource) {
         return $resource(restServer + "historial-ficha-medico-paciente/paciente/:id_paciente/inicio/:inicio/fin/:fin/tipo-control/:tipo_control", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('HistorialFichaMedicoPaciente', ['FichasMedicoPaciente', '$q', function (FichasMedicoPaciente, $q) {
         var res = function (idPaciente, filtro) {
             var delay = $q.defer();
@@ -389,12 +401,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('MedicoPacienteConsulta', function ($resource) {
+    .factory('MedicoPacienteConsulta',  ['$resource',function ($resource) {
         return $resource(restServer + "medico-paciente-consulta", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('CrearMedicoPacienteConsulta', ['MedicoPacienteConsulta', '$q', function (MedicoPacienteConsulta, $q) {
         var res = function (consulta) {
@@ -430,12 +442,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('ListaConsultaPaciente', function ($resource) {
+    .factory('ListaConsultaPaciente',  ['$resource',function ($resource) {
         return $resource(restServer + "medico-paciente-consulta/paciente/:id_paciente/inicio/:inicio/fin/:fin", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ListaConsultasMedicoPaciente', ['ListaConsultaPaciente', '$q', function (ListaConsultaPaciente, $q) {
         var res = function (id_paciente, filtro) {
@@ -453,12 +465,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('prerequisitoFiltro', function ($resource) {
+    .factory('prerequisitoFiltro',  ['$resource',function ($resource) {
         return $resource(restServer + "cotizacion/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/importe/:importe/busqueda/:busqueda/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('filtroPrerequisitos', ['prerequisitoFiltro', '$q', function (prerequisitoFiltro, $q) {
         var res = function (paginator) {
@@ -482,19 +494,19 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('asignacionPacienteVacuna', function ($resource) {
+    .factory('asignacionPacienteVacuna',  ['$resource',function ($resource) {
         return $resource(restServer + "paciente/vacuna/asignacion/:id/:asignar", { id: '@id', asignar: '@asignar' },
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
-    .factory('aplicacionPacienteVacuna', function ($resource) {
+    .factory('aplicacionPacienteVacuna',  ['$resource',function ($resource) {
         return $resource(restServer + "paciente/aplicacion/vacuna/:id", { id: '@id' },
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
     .factory('VacunasPacientedosis', ['aplicacionPacienteVacuna', '$q', function (aplicacionPacienteVacuna, $q) {
         var res = function (vacuna) {
             var delay = $q.defer();
@@ -507,14 +519,14 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('PacienteVacuna', function ($resource) {
+    .factory('PacienteVacuna',  ['$resource',function ($resource) {
         return $resource(restServer + "paciente/vacuna/:id_paciente", { id_paciente: '@id_paciente' },
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
-    // .factory('PacienteVacunaAsignar', function ($resource) {
+    // .factory('PacienteVacunaAsignar',  ['$resource',function ($resource) {
     //     return $resource(restServer + "/paciente/vacuna/", { id_paciente: '@id_paciente' },
     //         {
     //             'update': { method: 'PUT' }
@@ -534,18 +546,18 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('Vacunas', function ($resource) {
+    .factory('Vacunas',  ['$resource',function ($resource) {
         return $resource(restServer + "vacunas/:id", { id: '@id' },
             {
                 'update': { method: 'PUT' }
             });
-    })
-    .factory('Vacuna', function ($resource) {
+    }])
+    .factory('Vacuna',  ['$resource',function ($resource) {
         return $resource(restServer + "vacunas", {},
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('ltsVacunas', ['Vacunas', '$q', function (Vacunas, $q) {
         var res = function () {
@@ -574,12 +586,12 @@ angular.module('agil.servicios')
     // }])
 
     // rutas laboratorio inicio
-    .factory('MedicoLaboratorio', function ($resource) {
+    .factory('MedicoLaboratorio',  ['$resource',function ($resource) {
         return $resource(restServer + "nuevo-laboratorio/empresa/:id_empresa", { id_empresa: '@id_empresa' },
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('CrearLaboratorio', ['MedicoLaboratorio', '$q', function (MedicoLaboratorio, $q) {
         var res = function (idEmpresa, laboratorio) {
@@ -629,12 +641,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('MedicoLaboratorioExamen', function ($resource) {
+    .factory('MedicoLaboratorioExamen',  ['$resource',function ($resource) {
         return $resource(restServer + "nuevo-laboratorio-examen/laboratorio/:id_laboratorio", { id_laboratorio: '@id_laboratorio' },
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('CrearLaboratorioExamen', ['MedicoLaboratorioExamen', '$q', function (MedicoLaboratorioExamen, $q) {
         var res = function (idLaboratorio, examen) {
@@ -684,12 +696,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('MedicoLaboratorioExamenResultado', function ($resource) {
+    .factory('MedicoLaboratorioExamenResultado',  ['$resource',function ($resource) {
         return $resource(restServer + "nuevo-laboratorio-resultado/laboratorio/:id_laboratorio/paciente/:id_paciente", { id_laboratorio: '@id_laboratorio', id_paciente: '@id_paciente' },
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('CrearLaboratorioExamenResultado', ['MedicoLaboratorioExamenResultado', '$q', function (MedicoLaboratorioExamenResultado, $q) {
         var res = function (idLaboratorio, idPaciente, datos) {
@@ -704,12 +716,12 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('LaboratorioExamenHistorial', function ($resource) {
+    .factory('LaboratorioExamenHistorial',  ['$resource',function ($resource) {
         return $resource(restServer + "laboratorio-resultado/laboratorio/:id_laboratorio/paciente/:id_paciente/inicio/:inicio/fin/:fin", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('LaboratorioExamenListaHistorial', ['LaboratorioExamenHistorial', '$q', function (LaboratorioExamenHistorial, $q) {
         var res = function (idLaboratorio, idPaciente, filtro) {
@@ -724,12 +736,12 @@ angular.module('agil.servicios')
         return res;
     }])
     // rutas laboratorio fin
-    .factory('MedicoDiagnostico', function ($resource) {
+    .factory('MedicoDiagnostico',  ['$resource',function ($resource) {
         return $resource(restServer + "nuevo-diagnostico/empresa/:id_empresa", { id_empresa: '@id_empresa' },
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('CrearDiagnostico', ['MedicoDiagnostico', '$q', function (MedicoDiagnostico, $q) {
         var res = function (idEmpresa, diagnostico) {
@@ -779,12 +791,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('MedicoDiagnosticoExamen', function ($resource) {
+    .factory('MedicoDiagnosticoExamen',  ['$resource',function ($resource) {
         return $resource(restServer + "nuevo-diagnostico-examen/diagnostico/:id_diagnostico", { id_diagnostico: '@id_diagnostico' },
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('CrearDiagnosticoExamen', ['MedicoDiagnosticoExamen', '$q', function (MedicoDiagnosticoExamen, $q) {
         var res = function (idDiagnostico, examen) {
@@ -834,12 +846,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('MedicoDiagnosticoExamenResultado', function ($resource) {
+    .factory('MedicoDiagnosticoExamenResultado',  ['$resource',function ($resource) {
         return $resource(restServer + "nuevo-diagnostico-resultado/diagnostico/:id_diagnostico/paciente/:id_paciente", { id_diagnostico: '@id_diagnostico', id_paciente: '@id_paciente' },
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('CrearDiagnosticoExamenResultado', ['MedicoDiagnosticoExamenResultado', '$q', function (MedicoDiagnosticoExamenResultado, $q) {
         var res = function (idDiagnostico, idPaciente, datos) {
@@ -853,12 +865,12 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('DiagnosticoExamenHistorial', function ($resource) {
+    .factory('DiagnosticoExamenHistorial',  ['$resource',function ($resource) {
         return $resource(restServer + "diagnostico-resultado/diagnostico/:id_diagnostico/paciente/:id_paciente/inicio/:inicio/fin/:fin", null,
             {
                 'update': { method: 'PUT' }
             });
-    })
+    }])
 
     .factory('DiagnosticoExamenListaHistorial', ['DiagnosticoExamenHistorial', '$q', function (DiagnosticoExamenHistorial, $q) {
         var res = function (idDiagnostico, idPaciente, filtro) {

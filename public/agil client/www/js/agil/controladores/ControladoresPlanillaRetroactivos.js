@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-.controller('ControladoresPlanillaRetroactivos', function($scope,$localStorage,$location,$templateCache,$route,blockUI){
+.controller('ControladoresPlanillaRetroactivos', ['$scope','$localStorage','$location','$templateCache','$route','blockUI',function($scope,$localStorage,$location,$templateCache,$route,blockUI){
 	$scope.$on('$viewContentLoaded', function () {
         
         $scope.idModalNuevoPlanillaRetroactivo = 'dialog-nueva-planilla-retroactivo';
@@ -20,4 +20,4 @@ angular.module('agil.controladores')
     }
    
 
-});
+}]);

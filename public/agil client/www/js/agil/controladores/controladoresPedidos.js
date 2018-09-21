@@ -1,5 +1,7 @@
 angular.module('agil.controladores')
-	.controller('ControladorPedidos', function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage,
+	.controller('ControladorPedidos', ['$scope', '$filter', '$rootScope', '$route', '$templateCache', '$location', '$window', '$localStorage',
+		'blockUI', 'ClasesTipo', 'socket', 'Paginator', 'PedidosFiltro', 'ListaGruposProductoUsuario', 'ProveedoresNit', 'ListaProductosEmpresaUsuario', 'GuardarPedido', 'ListaProveedores', 'InventarioPaginador',
+		'ProductosPaginador', 'ListaProductosProveedores', 'ActualizarProductosProveedor', 'ListaSubGruposProductoEmpresa', 'ProductosPaginadorSubgrupos', 'ProductosPaginadorAsignados',function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage,
 		blockUI, ClasesTipo, socket, Paginator, PedidosFiltro, ListaGruposProductoUsuario, ProveedoresNit, ListaProductosEmpresaUsuario, GuardarPedido, ListaProveedores, InventarioPaginador,
 		ProductosPaginador, ListaProductosProveedores, ActualizarProductosProveedor, ListaSubGruposProductoEmpresa, ProductosPaginadorSubgrupos, ProductosPaginadorAsignados) {
 
@@ -781,7 +783,7 @@ angular.module('agil.controladores')
 			doc.font('Helvetica-Bold', 8);
 			if ($scope.imprimir.detalle) {
 				px = 50;
-				for (let i = 0; i < reporte[0].length; i++) {
+				for (var i = 0; i < reporte[0].length; i++) {
 					doc.text(reporte[0][i], px, 90);
 					if (i == 0) {
 						px += reporte[0][i].length * 4 + 5;
@@ -798,7 +800,7 @@ angular.module('agil.controladores')
 				}
 			} else {
 				px = 65
-				for (let i = 0; i < reporte[0].length; i++) {
+				for (var i = 0; i < reporte[0].length; i++) {
 					doc.text(reporte[0][i], px, 90);
 					if (i == 0) {
 						px += 20;
@@ -1277,4 +1279,4 @@ angular.module('agil.controladores')
 			$scope.cerrarPopup($scope.idDialogProductosAsigandosProveedor);
 		};
 		$scope.inicio();
-	});
+	}]);

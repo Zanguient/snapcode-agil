@@ -1,5 +1,9 @@
 angular.module('agil.controladores')
-	.controller('ControladorOperaciones', function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage,
+	.controller('ControladorOperaciones', ['$scope', '$filter', '$rootScope', '$route', '$templateCache', '$location', '$window', '$localStorage',
+		'blockUI', 'ConfiguracionVentaVistaDatos', 'ClasesTipo', 'ListaGruposProductoEmpresa', 'ProductosOperaciones', 'socket', 'ListaGruposProductoEmpresa', 'SolicitudesReposicion',
+		'SolicitudesFormulacionProducto', 'SolicitudReposicion', 'EliminarSolicitudReposicion', 'Paginator', 'ImpresionSolicitudDatos', 'ListaInventariosProducto', 'ListaSucursalesUsuario',
+		'ListaGruposProductoUsuario', 'CerrarSolicitud', 'Solicitud', 'ProveedoresNit', 'ListaProductosEmpresaUsuario', '$timeout', 'GuardarPedido', 'ListaProveedores',
+		'ProductosPaginadorSubgrupos', 'ListaProductosProveedores', 'ProductosPaginadorAsignados', 'ActualizarProductosProveedor', 'ListaSubGruposProductoEmpresa',function ($scope, $filter, $rootScope, $route, $templateCache, $location, $window, $localStorage,
 		blockUI, ConfiguracionVentaVistaDatos, ClasesTipo, ListaGruposProductoEmpresa, ProductosOperaciones, socket, ListaGruposProductoEmpresa, SolicitudesReposicion,
 		SolicitudesFormulacionProducto, SolicitudReposicion, EliminarSolicitudReposicion, Paginator, ImpresionSolicitudDatos, ListaInventariosProducto, ListaSucursalesUsuario,
 		ListaGruposProductoUsuario, CerrarSolicitud, Solicitud, ProveedoresNit, ListaProductosEmpresaUsuario, $timeout, GuardarPedido, ListaProveedores,
@@ -576,7 +580,7 @@ angular.module('agil.controladores')
 					indx += 1
 				}
 			})
-			toDrop.forEach(element => {
+			toDrop.forEach(function(element) {
 				delete xArr[element]
 			});
 			xArr.map(function (itm) {
@@ -927,7 +931,7 @@ angular.module('agil.controladores')
 						var ingredientes = []
 						formulacion.then(function (formula) {
 							if (formula.productosBase) {
-								formula.productosBase.forEach(element => {
+								formula.productosBase.forEach(function(element) {
 									ingrediente = {
 										cantidad_ideal: parseFloat(element.formulacion),
 										cantidad_real: parseFloat(element.formulacion),
@@ -994,7 +998,7 @@ angular.module('agil.controladores')
 					var ingredientes = []
 					formulacion.then(function (formula) {
 						if (formula.productosBase) {
-							formula.productosBase.forEach(element => {
+							formula.productosBase.forEach(function(element) {
 								ingrediente = {
 									cantidad_ideal: parseFloat(element.formulacion),
 									cantidad_real: parseFloat(element.formulacion),
@@ -1682,7 +1686,7 @@ angular.module('agil.controladores')
 			doc.font('Helvetica-Bold', 8);
 			if ($scope.imprimir.detalle) {
 				px = 50
-				for (let i = 0; i < reporte[0].length; i++) {
+				for (var i = 0; i < reporte[0].length; i++) {
 					doc.text(reporte[0][i], px, 90);
 					if (i == 0) {
 						px += reporte[0][i].length * 4 + 5
@@ -1699,7 +1703,7 @@ angular.module('agil.controladores')
 				}
 			} else {
 				px = 65
-				for (let i = 0; i < reporte[0].length; i++) {
+				for (var i = 0; i < reporte[0].length; i++) {
 					doc.text(reporte[0][i], px, 90);
 					if (i == 0) {
 						px += 20
@@ -2034,4 +2038,4 @@ angular.module('agil.controladores')
 		}
 
 		$scope.inicio()
-	})
+	}])

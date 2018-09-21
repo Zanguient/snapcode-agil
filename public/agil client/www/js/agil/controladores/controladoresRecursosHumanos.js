@@ -1,12 +1,19 @@
 angular.module('agil.controladores')
-    .controller('ControladorRecursosHumanos', function ($scope, $sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
+    .controller('ControladorRecursosHumanos', ['$scope', '$sce', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'ListaDatosGenero', 'NuevoRecursoHumano', 'RecursosHumanosPaginador', 'Paginator',
+        'FieldViewer', 'EmpleadoEmpresa', 'obtenerEmpleadoRh', 'UsuarioRecursosHUmanosActivo', 'Prerequisito', 'ListaDatosPrerequisito', 'Prerequisitos', 'ListaPrerequisitosPaciente', 'ActualizarPrerequisito', 'UsuarioRecursosHumanosFicha',
+        'ClasesTipo', 'Clases', 'Paises', 'CrearEmpleadoFicha', 'EliminarOtroSeguroRh', 'EliminarFamiliarRh', 'PrerequisitoPaciente', 'PrerequisitosHistorial', 'UsuarioRhHistorialFicha', 'ObtenerEmpleadoHojaVida', 'GuardarEmpleadoHojaVida', 'CrearPrestamo',
+        'ObtenerListaPrestamo', 'CrearRolTurno', 'CrearPagoPrestamo', 'VerificarUsuarioEmpresa', 'EditarPrestamo', 'ListaEmpleadosRrhh', 'CrearHorasExtra', 'HistorialHorasExtra', 'ListaRolTurnos', 'ValidarCodigoCuentaEmpleado', '$timeout', 'DatosCapacidadesImpresion', 'NuevoAnticipoEmpleado',
+        'ListaAnticiposEmpleado', 'CrearNuevosAnticiposEmpleados', 'ActualizarAnticipoEmpleado', 'NuevaAusenciaEmpleado', 'HistorialEmpleadoAusencias', 'HistorialEmpresaEmpleadosAusencias', 'NuevaVacacionEmpleado', 'HistorialEmpleadoVacaciones', 'HistorialEmpresaVacaciones', 'NuevoFeriado',
+        'ListaFeriados', 'GuardarClasesAusencias', 'Tipos', 'ListaBancos', 'ConfiguracionesVacacion', 'HistorialGestionesVacacion', 'GuardarTr3', 'ListaTr3Empresa', 'GuardarHistorialVacacion', 'CrearBeneficioSocial', 'ListaBeneficiosEmpleado', 'GuardarBitacoraFicha', 'VerBitacoraFicha', 'ObtenerFiniquitoEmpleado',
+        'ClasesTipoEmpresa', 'GuardarConfiguracionRopaCargo', 'ListaConfiguracionRopaCargo', 'DatosReporteConfiguracionRopa', 'FichasEmpleadoEmpresa', 'ListaCargosEmpleado', 'ListaRopaTrabajoProductos', 'GuardarDotacionRopa', 'ListaDotacionRopa', 'EliminarDotacionRopa', 'ListaDotacionRopaEmpresa', 'ActualizarDotacionRopa',
+        'FamiliaresEmpleadoEmpresa', 'ListaRolTurnosEmpresa', 'ClasesEmpresa', 'ListaChoferesViaje', 'GuardarViajeRrhh', 'ListaViajeRrhh', 'ListaRolTurnosCalendario', 'ViajeRrhhLista', 'BeneficioEmpresa', 'GuardarConductoresEmpresa', 'ListaHijosEmpleadosEmpresa', 'GuardarImportacionFichaEmpleados', 'GuardarImportacionRolTurnoEmpleados', 'PrerequisitosSave',function ($scope, $sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
         FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
         ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
         ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
         ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
         ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
         ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa, ActualizarDotacionRopa,
-        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ClasesEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa, GuardarImportacionFichaEmpleados, GuardarImportacionRolTurnoEmpleados) {
+        FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ClasesEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa, GuardarImportacionFichaEmpleados, GuardarImportacionRolTurnoEmpleados, PrerequisitosSave) {
         $scope.usuario = JSON.parse($localStorage.usuario);
         $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
         $scope.idModalEmpleado = 'dialog-empleado';
@@ -1605,7 +1612,7 @@ angular.module('agil.controladores')
                         $scope.prestamos = { total_montos: 0, pagos_acuenta: 0, saldo: 0 }
                         if (index === (array.length - 1)) {
 
-                            datos.prestamos.forEach((prestamo, index, array) => {
+                            datos.prestamos.forEach(function (prestamo, index, array) {
                                 if (prestamo.prestamoPagos.length > 0) {
                                     if (prestamo.prestamoPagos[(prestamo.prestamoPagos.length - 1)].saldo_anterior == prestamo.total) {
                                         prestamo.pagadoTotal = true
@@ -2907,30 +2914,41 @@ angular.module('agil.controladores')
             // nuevoPrerequisito.fecha_inicio = nuevoPrerequisito.fecha_inicio.setFullYear(nuevoPrerequisito.fecha_inicio.getFullYear(), nuevoPrerequisito.fecha_inicio.getMonth(), nuevoPrerequisito.fecha_inicio.getDate());
             // nuevoPrerequisito.fecha_vencimiento = nuevoPrerequisito.fechav.setFullYear(nuevoPrerequisito.fechav.getFullYear(), nuevoPrerequisito.fechav.getMonth(), nuevoPrerequisito.fechav.getDate())
             if (nuevoPrerequisito.nombre != undefined && nuevoPrerequisito.vencimiento_mes != undefined) {
-                if (nuevoPrerequisito.id != undefined) {
-                    nuevoPrerequisito.$save(nuevoPrerequisito, function (res) {
+                var prom = PrerequisitosSave(nuevoPrerequisito)
+                    prom.then(function (res) {
+                        $scope.mostrarMensaje(res.mensaje);
+                        $scope.cerrarPopupPrerequisitoNuevo();
+                        blockUI.stop();
+                        $scope.verificarAsignacionPrerequisitos()
+                    }).catch(function (err) {
+                        blockUI.stop()
+                        var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                        $scope.mostrarMensaje(msg)
+                    })
+                // if (nuevoPrerequisito.id != undefined) {
+                //     nuevoPrerequisito.$save(nuevoPrerequisito, function (res) {
 
-                        $scope.mostrarMensaje(res.mensaje);
-                        $scope.cerrarDialogPrerequisitoNuevo();
-                        blockUI.stop();
-                        $scope.verificarAsignacionPrerequisitos()
-                    }, function (error) {
-                        $scope.cerrarDialogPrerequisitoNuevo();
-                        $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-                        blockUI.stop();
-                    });
-                } else {
-                    nuevoPrerequisito.$save({ nuevoPrerequisito }, function (res) {
-                        $scope.mostrarMensaje(res.mensaje);
-                        $scope.cerrarDialogPrerequisitoNuevo();
-                        blockUI.stop();
-                        $scope.verificarAsignacionPrerequisitos()
-                    }, function (error) {
-                        $scope.cerrarDialogPrerequisitoNuevo();
-                        $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-                        blockUI.stop();
-                    });
-                }
+                //         $scope.mostrarMensaje(res.mensaje);
+                //         $scope.cerrarDialogPrerequisitoNuevo();
+                //         blockUI.stop();
+                //         $scope.verificarAsignacionPrerequisitos()
+                //     }, function (error) {
+                //         $scope.cerrarDialogPrerequisitoNuevo();
+                //         $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+                //         blockUI.stop();
+                //     });
+                // } else {
+                //     nuevoPrerequisito.$save({ nuevoPrerequisito }, function (res) {
+                //         $scope.mostrarMensaje(res.mensaje);
+                //         $scope.cerrarDialogPrerequisitoNuevo();
+                //         blockUI.stop();
+                //         $scope.verificarAsignacionPrerequisitos()
+                //     }, function (error) {
+                //         $scope.cerrarDialogPrerequisitoNuevo();
+                //         $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
+                //         blockUI.stop();
+                //     });
+                // }
             } else {
                 $scope.mostrarMensaje('Los campos Prerequisito Nombre y vencimiento mes son requeridos.')
                 blockUI.stop();
@@ -3719,7 +3737,7 @@ angular.module('agil.controladores')
             //Day 0 is the last day in the previous month
             var dias = new Date(year, month + 1, 0).getDate();
             var listaDias = []
-            for (let i = 1; i <= dias; i++) {
+            for (var i = 1; i <= dias; i++) {
                 listaDias.push(i)
                 if (i == dias) {
                     $scope.listaDias = listaDias
@@ -3808,7 +3826,7 @@ angular.module('agil.controladores')
                                 var arreglo = {}
                                 var cant = 0
                                 var tamaño = Object.keys(dato.fichaActual).length
-                                for (const key in dato.fichaActual) {
+                                for (var key in dato.fichaActual) {
                                     var texto = key.substr(0, 3)
                                     if (texto != "id_" && key != "updatedAt" && key != "createdAt" && key != "id" && key != "nombre_corto") {
                                         if (dato.fichaActual[key] instanceof Object) {
@@ -3860,11 +3878,11 @@ angular.module('agil.controladores')
                                                     ArregloCambios.push(arreglo)
                                                 }
                                             } else {
-                                                for (const key2 in dato.fichaActual[key]) {
+                                                for (var key2 in dato.fichaActual[key]) {
                                                     texto = key2.substr(0, 3)
                                                     if (texto != "id_" && key2 != "updatedAt" && key2 != "createdAt" && key2 != "id" && key2 != "nombre_corto") {
                                                         if (dato.fichaActual[key][key2] instanceof Object) {
-                                                            for (const key3 in dato.fichaActual[key][key2]) {
+                                                            for (var key3 in dato.fichaActual[key][key2]) {
                                                                 texto = key3.substr(0, 3)
                                                                 if (texto != "id_" && key3 != "updatedAt" && key3 != "createdAt" && key3 != "id" && key3 != "nombre_corto") {
                                                                     if (dato.fichaActual[key][key2][key3] instanceof Object) {
@@ -3995,7 +4013,7 @@ angular.module('agil.controladores')
                                 var arreglo = {}
                                 var cant = 0
                                 var tamaño = Object.keys(dato.fichaActual).length
-                                for (const key in dato.fichaActual) {
+                                for (var key in dato.fichaActual) {
                                     var texto = key.substr(0, 3)
                                     if (texto != "id_" && key != "updatedAt" && key != "createdAt" && key != "id" && key != "nombre_corto") {
                                         if (dato.fichaActual[key] instanceof Object) {
@@ -4047,11 +4065,11 @@ angular.module('agil.controladores')
                                                     ArregloCambios.push(arreglo)
                                                 }
                                             } else {
-                                                for (const key2 in dato.fichaActual[key]) {
+                                                for (var key2 in dato.fichaActual[key]) {
                                                     texto = key2.substr(0, 3)
                                                     if (texto != "id_" && key2 != "updatedAt" && key2 != "createdAt" && key2 != "id" && key2 != "nombre_corto") {
                                                         if (dato.fichaActual[key][key2] instanceof Object) {
-                                                            for (const key3 in dato.fichaActual[key][key2]) {
+                                                            for (var key3 in dato.fichaActual[key][key2]) {
                                                                 texto = key3.substr(0, 3)
                                                                 if (texto != "id_" && key3 != "updatedAt" && key3 != "createdAt" && key3 != "id" && key3 != "nombre_corto") {
                                                                     if (dato.fichaActual[key][key2][key3] instanceof Object) {
@@ -4672,8 +4690,8 @@ angular.module('agil.controladores')
             var texto = "EMSERSO SA., certifica que " + $scope.ficha.empleado.persona.nombre_completo + " con CI." + $scope.ficha.empleado.persona.ci + " " + $scope.ficha.empleado.extension.nombre + ", trabajó (a) como " + textocargos + ", durante los siguientes periodos:"
             doc.text(texto, 100, 230, { width: 412, align: 'left', indent: 0, columns: 1, height: 300, ellipsis: true });
             var f = 250;
-            for (let i = 0; i < certificado.historialContratos.length; i++) {
-                const element = certificado.historialContratos[i].nombre;
+            for (var i = 0; i < certificado.historialContratos.length; i++) {
+                var element = certificado.historialContratos[i].nombre;
                 var textoFecha = element.split("-")
                 doc.text("Desde el " + textoFecha[0] + " al " + textoFecha[1], 100, f, { width: 412, align: 'left', indent: 0, columns: 1, height: 300, ellipsis: true });
                 f = f + 20
@@ -4703,8 +4721,8 @@ angular.module('agil.controladores')
                 }
 
             });
-            for (let i = 0; i < certificado.historialContratos.length; i++) {
-                const element = certificado.historialContratos[i].nombre;
+            for (var i = 0; i < certificado.historialContratos.length; i++) {
+                var element = certificado.historialContratos[i].nombre;
                 var textoFecha = element.split("-")
                 var ini = textoFecha[0].split("/")
                 var fin = textoFecha[1].split("/")
@@ -5341,11 +5359,11 @@ angular.module('agil.controladores')
                             datos.anticipos.extraordinarios.push(anticipo)
                         }
                         if (index === (array.length - 1)) {
-                            for (let i = 0; i < datos.anticipos.ordinarios.length; i++) {
-                                const ordi = datos.anticipos.ordinarios[i];
+                            for (var i = 0; i < datos.anticipos.ordinarios.length; i++) {
+                                var ordi = datos.anticipos.ordinarios[i];
                                 if (datos.anticipos.extraordinarios.length > 0) {
-                                    for (let j = 0; j < datos.anticipos.extraordinarios.length; j++) {
-                                        const anticipo = datos.anticipos.extraordinarios[j];
+                                    for (var j = 0; j < datos.anticipos.extraordinarios.length; j++) {
+                                        var anticipo = datos.anticipos.extraordinarios[j];
                                         if (anticipo.id_empleado == ordi.id_empleado) {
                                             if (ordi.anticipo_ordinaro) {
                                                 ordi.anticipo_ordinaro += anticipo.monto
@@ -5478,8 +5496,8 @@ angular.module('agil.controladores')
                 anticipo.anticipo_ordinaro = 0
                 if ($scope.anticiposDatos) {
                     if ($scope.anticiposDatos.ordinarios.length > 0) {
-                        for (let i = 0; i < $scope.anticiposDatos.ordinarios.length; i++) {
-                            const ordi = $scope.anticiposDatos.ordinarios[i];
+                        for (var i = 0; i < $scope.anticiposDatos.ordinarios.length; i++) {
+                            var ordi = $scope.anticiposDatos.ordinarios[i];
                             if (anticipo.empleado.id == ordi.id_empleado) {
                                 anticipo.anticipo_ordinaro += ordi.monto
                             }
@@ -5489,8 +5507,8 @@ angular.module('agil.controladores')
 
 
                     if ($scope.anticiposDatos.extraordinarios.length > 0) {
-                        for (let i = 0; i < $scope.anticiposDatos.extraordinarios.length; i++) {
-                            const ordi = $scope.anticiposDatos.extraordinarios[i];
+                        for (var i = 0; i < $scope.anticiposDatos.extraordinarios.length; i++) {
+                            var ordi = $scope.anticiposDatos.extraordinarios[i];
                             if (anticipo.empleado.id == ordi.id_empleado) {
                                 anticipo.anticipo_extraordinaro += ordi.monto
                             }
@@ -5596,8 +5614,8 @@ angular.module('agil.controladores')
             anticipo.anticipo_ordinaro = 0
             if ($scope.anticiposDatos) {
                 if ($scope.anticiposDatos.ordinarios.length > 0) {
-                    for (let i = 0; i < $scope.anticiposDatos.ordinarios.length; i++) {
-                        const ordi = $scope.anticiposDatos.ordinarios[i];
+                    for (var i = 0; i < $scope.anticiposDatos.ordinarios.length; i++) {
+                        var ordi = $scope.anticiposDatos.ordinarios[i];
                         if (anticipo.empleado.id == ordi.id_empleado && anticipo.id != ordi.id) {
                             anticipo.anticipo_ordinaro += ordi.monto
                         }
@@ -5758,7 +5776,7 @@ angular.module('agil.controladores')
                         $scope.bancos.push(banco)
                     }
                     var bandera = false
-                    for (let i = 0; i < $scope.bancos.length; i++) {
+                    for (var i = 0; i < $scope.bancos.length; i++) {
                         var banco2 = $scope.bancos[i]
                         if (banco2.nombre == banco.nombre) {
                             bandera = true
@@ -5772,7 +5790,7 @@ angular.module('agil.controladores')
                     }
                     if (index === (array.length - 1)) {
                         dato.forEach(function (banco, index, array) {
-                            for (let i = 0; i < $scope.bancos.length; i++) {
+                            for (var i = 0; i < $scope.bancos.length; i++) {
                                 var banco2 = $scope.bancos[i]
                                 if (banco2.nombre == banco.nombre) {
                                     bandera = true
@@ -5791,8 +5809,8 @@ angular.module('agil.controladores')
             var mes = fecha.getMonth()
             var dia = fecha.getDate()
             var mesActual = ""
-            for (let i = 0; i < $scope.meses.length; i++) {
-                const element = $scope.meses[i];
+            for (var i = 0; i < $scope.meses.length; i++) {
+                var element = $scope.meses[i];
                 if (mes == element.id) {
                     mesActual = element.nombre
                 }
@@ -5824,8 +5842,8 @@ angular.module('agil.controladores')
             var mes = fecha.getMonth() + 1
             var dia = fecha.getDate()
             var mesActual = ""
-            for (let i = 0; i < $scope.meses.length; i++) {
-                const element = $scope.meses[i];
+            for (var i = 0; i < $scope.meses.length; i++) {
+                var element = $scope.meses[i];
                 if (mes == element.id) {
                     mesActual = element.nombre
                 }
@@ -5869,8 +5887,8 @@ angular.module('agil.controladores')
                             var mes2 = fecha.getMonth()
                             var dia = fecha.getDate()
                             var mesActual = ""
-                            for (let i = 0; i < $scope.meses.length; i++) {
-                                const element = $scope.meses[i];
+                            for (var i = 0; i < $scope.meses.length; i++) {
+                                var element = $scope.meses[i];
                                 if (mes2 == element.id) {
                                     mesActual = element.nombre
                                 }
@@ -5919,8 +5937,8 @@ angular.module('agil.controladores')
             var mes = fecha.getMonth() + 1
             var dia = fecha.getDate()
             var mesActual = ""
-            for (let i = 0; i < $scope.meses.length; i++) {
-                const element = $scope.meses[i];
+            for (var i = 0; i < $scope.meses.length; i++) {
+                var element = $scope.meses[i];
                 if ((mes - 1) === element.id) {
                     mesActual = element.nombre
                 }
@@ -6035,8 +6053,8 @@ angular.module('agil.controladores')
                 var mes2 = fecha.getMonth()
                 var dia = fecha.getDate()
                 var mesActual = ""
-                for (let i = 0; i < $scope.meses.length; i++) {
-                    const element = $scope.meses[i];
+                for (var i = 0; i < $scope.meses.length; i++) {
+                    var element = $scope.meses[i];
                     if (mes2 == element.id) {
                         mesActual = element.nombre
                     }
@@ -7090,8 +7108,8 @@ angular.module('agil.controladores')
                             arregloIndex.push(index)
                         }
                         if (index === (array.length - 1)) {
-                            for (let i = (arregloIndex.length - 1); i >= 0; i--) {
-                                const element = arregloIndex[i];
+                            for (var i = (arregloIndex.length - 1); i >= 0; i--) {
+                                var element = arregloIndex[i];
                                 beneficio.ingresos.splice(element, 1)
                                 $scope.sumartotalOtrosIngresos(beneficio)
                             }
@@ -7311,8 +7329,8 @@ angular.module('agil.controladores')
                                             $scope.DibujarCabeceraPDFConfigRopa(doc, pagina, totalPaginas, ropas, imagen);
                                             doc.font('Helvetica', 10);
                                         }
-                                        for (let j = 0; j < ropaTrabajo.detalle.length; j++) {
-                                            const element = ropaTrabajo.detalle[j];
+                                        for (var j = 0; j < ropaTrabajo.detalle.length; j++) {
+                                            var element = ropaTrabajo.detalle[j];
                                             doc.text(element.ropaTrabajo.nombre, 80, y);
                                             doc.text(element.cantidad, 250, y, { width: 70 });
                                             y += 30
@@ -7526,8 +7544,8 @@ angular.module('agil.controladores')
                                                             if (index3 === (array3.length - 1)) {
                                                                 var arregloid = []
                                                                 $scope.dotacionItems.forEach(function (dotacion, index, array) {
-                                                                    for (let i = 0; i < dotacionItems2.length; i++) {
-                                                                        const element = dotacionItems2[i];
+                                                                    for (var i = 0; i < dotacionItems2.length; i++) {
+                                                                        var element = dotacionItems2[i];
                                                                         if (dotacion.id_ropa_trabajo == element.id_ropa_trabajo) {
                                                                             dotacion.producto = element.producto
                                                                             dotacion.cantidad = element.cantidad
@@ -9722,4 +9740,4 @@ angular.module('agil.controladores')
 
         }
         $scope.inicio()
-    });
+    }]);

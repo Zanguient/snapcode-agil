@@ -1,6 +1,8 @@
 angular.module('agil.controladores')
 
-    .controller('ControladorGtmDespacho', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
+    .controller('ControladorGtmDespacho', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'Paginator', 'FieldViewer',
+        'GtmDespachos', 'GtmDetalleDespacho', 'GetGtmDetalleDespachoHijos', 'ImprimirPdfDespachos', 'ExportarExelDespachos', 'ListaDetalleKardexFactura', 'GtmDetalleDespachoKardex',
+        'VerificarUsuarioEmpresa', 'CrearDespachoResivo', 'ClasesTipo', 'ListaBancos', 'ClasesTipoEmpresa','ActualizarDatosDespachoDetalle', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
         GtmDespachos, GtmDetalleDespacho, GetGtmDetalleDespachoHijos, ImprimirPdfDespachos, ExportarExelDespachos, ListaDetalleKardexFactura, GtmDetalleDespachoKardex,
         VerificarUsuarioEmpresa, CrearDespachoResivo, ClasesTipo, ListaBancos, ClasesTipoEmpresa,ActualizarDatosDespachoDetalle) {
 
@@ -1392,7 +1394,7 @@ angular.module('agil.controladores')
         });
 
         $scope.inicio();
-    });
+    }]);
 
 
 

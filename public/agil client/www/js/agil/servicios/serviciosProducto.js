@@ -1,11 +1,11 @@
 angular.module('agil.servicios')
 
-	.factory('Producto', function ($resource) {
+	.factory('Producto',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos/:idProducto", { idProducto: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('DatosProducto', ['Producto', '$q', function (Producto, $q) {
 		var res = function (idProducto) {
@@ -19,9 +19,9 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ListaProductosKardex', function ($resource) {
+	.factory('ListaProductosKardex',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos/kardex/empresa/:id_empresa/almacen/:id_almacen/grupo/:grupo");
-	})
+	}])
 
 	.factory('ReporteProductosKardex', ['ListaProductosKardex', '$q', function (ListaProductosKardex, $q) {
 		var res = function (idEmpresa, filtro) {
@@ -37,12 +37,12 @@ angular.module('agil.servicios')
 	}])
 
 	
-	.factory('ProductosKardex', function ($resource) {
+	.factory('ProductosKardex',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion",null,
 		{
 			'update': { method: 'PUT' }
 		});
-	})
+	}])
 
 	.factory('ProductoKardex', ['ProductosKardex', '$q', function (ProductosKardex, $q) {
 		/*var res = function (idProducto, idAlmacen, fechaInicio, fechaFin, lote) {
@@ -77,13 +77,13 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ProductosEmpresaCreacion', function ($resource) {
+	.factory('ProductosEmpresaCreacion',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos/empresa");
-	})
+	}])
 
-	.factory('ProductosEmpresaCreacionFormulacion', function ($resource) {
+	.factory('ProductosEmpresaCreacionFormulacion',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos/formulacion/empresa/:id_empresa");
-	})
+	}])
 
 	.factory('GuardarProductosFormulacion', ['ProductosEmpresaCreacionFormulacion', '$q', function (ProductosEmpresaCreacionFormulacion, $q) {
 		var res = function (idEmpresa, productos) {
@@ -100,13 +100,13 @@ angular.module('agil.servicios')
 
 
 
-	.factory('ProductosEmpresa', function ($resource) {
+	.factory('ProductosEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos/empresa/:idEmpresa");
-	})
+	}])
 
-	.factory('ProductosEmpresaUsuario', function ($resource) {
+	.factory('ProductosEmpresaUsuario',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos/empresa/:idEmpresa/user/:id_usuario");
-	})
+	}])
 
 	.factory('Productos', ['ProductosEmpresa', '$q', function (ProveedoresEmpresa, $q) {
 		var res = function (idEmpresa) {
@@ -132,9 +132,9 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ProductosEmpresaPaginador', function ($resource) {
+	.factory('ProductosEmpresaPaginador',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:id_grupo/user/:id_usuario");
-	})
+	}])
 
 	.factory('ProductosPaginador', ['ProductosEmpresaPaginador', '$q', function (ProductosEmpresaPaginador, $q) {
 		var res = function (idEmpresa, paginator, id_usuario) {
@@ -158,9 +158,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('BusquedaProductos', function ($resource) {
+	.factory('BusquedaProductos',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos/empresa/:idEmpresa/almacen/:idAlmacen/texto/:texto");
-	})
+	}])
 
 	.factory('ProductosNombre', ['BusquedaProductos', '$q', function (BusquedaProductos, $q) {
 		var res = function (idEmpresa, idAlmacen, texto) {
@@ -175,9 +175,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('BusquedaProductosPanel', function ($resource) {
+	.factory('BusquedaProductosPanel',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos-panel/empresa/:idEmpresa/almacen/:idAlmacen/user/:id_usuario");
-	})
+	}])
 
 	.factory('ProductosPanel', ['BusquedaProductosPanel', '$q', function (BusquedaProductosPanel, $q) {
 		var res = function (idEmpresa, idAlmacen, id_usuario) {
@@ -192,9 +192,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('VencimientoProductoEmpresa', function ($resource) {
+	.factory('VencimientoProductoEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer + "vencimientos-productos/:id_empresa");
-	})
+	}])
 
 	.factory('VencimientosProductosEmpresa', ['VencimientoProductoEmpresa', '$q', function (VencimientoProductoEmpresa, $q) {
 		var res = function (id_empresa) {
@@ -209,9 +209,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('CodigoSiguienteProductoEmpresa', function ($resource) {
+	.factory('CodigoSiguienteProductoEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer + "producto/empresa/:id_empresa/siguiente-codigo");
-	})
+	}])
 
 	.factory('DatoCodigoSiguienteProductoEmpresa', ['CodigoSiguienteProductoEmpresa', '$q', function (CodigoSiguienteProductoEmpresa, $q) {
 		var res = function (id_empresa) {
@@ -226,9 +226,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('CatalogoProductosEmpresa', function ($resource) {
+	.factory('CatalogoProductosEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer + "catalogo-productos/empresa/:id_empresa/grupo/:id_grupo/user/:id_usuario");
-	})
+	}])
 
 	.factory('CatalogoProductos', ['CatalogoProductosEmpresa', '$q', function (CatalogoProductosEmpresa, $q) {
 		var res = function (idEmpresa, grupo, id_usuario) {
@@ -249,9 +249,9 @@ angular.module('agil.servicios')
 
 
 	///busqueda por subgrupos de producto.
-	.factory('ProductosEmpresaPaginadorSubgrupos', function ($resource) {
+	.factory('ProductosEmpresaPaginadorSubgrupos',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos/asignacion/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_usuario");
-	})
+	}])
 
 	.factory('ProductosPaginadorSubgrupos', ['ProductosEmpresaPaginadorSubgrupos', '$q', function (ProductosEmpresaPaginadorSubgrupos, $q) {
 		var res = function (idEmpresa, paginator, id_usuario) {
@@ -275,9 +275,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('ProductosAsignadosPaginadorProveedor', function ($resource) {
+	.factory('ProductosAsignadosPaginadorProveedor',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos/asignados/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_usuario/:ids");
-	})
+	}])
 
 	.factory('ProductosPaginadorAsignados', ['ProductosAsignadosPaginadorProveedor', '$q', function (ProductosAsignadosPaginadorProveedor, $q) {
 		var res = function (idEmpresa, paginator, id_usuario, proveedorIds, todos) {
@@ -302,7 +302,7 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	// .factory('ProductosAsignadosPaginadorProveedor', function ($resource) {
+	// .factory('ProductosAsignadosPaginadorProveedor',  ['$resource',function ($resource) {
 	// 	return $resource(restServer + "productos/asignados/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_usuario");
 	// })
 

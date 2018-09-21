@@ -1,18 +1,18 @@
 angular.module('agil.servicios')
 
-.factory('ConfiguracionFactura', function($resource) {
+.factory('ConfiguracionFactura',  ['$resource',function ($resource) {
 		return $resource(restServer+"configuraciones-factura/empresa/:id_empresa", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('ConfiguracionFacturaSucursal', function($resource) {
+.factory('ConfiguracionFacturaSucursal',  ['$resource',function ($resource) {
 		return $resource(restServer+"configuraciones-factura/:id_configuracion", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ConfiguracionesFactura', ['ConfiguracionFactura','$q',function(ConfiguracionFactura, $q) 
   {
@@ -31,19 +31,19 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('ConfiguracionGeneralFactura', function($resource) {
+.factory('ConfiguracionGeneralFactura',  ['$resource',function ($resource) {
 		return $resource(restServer+"configuracion-general-factura/empresa/:id_empresa", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('ConfiguracionFacturaEmpresa', function($resource) {
+.factory('ConfiguracionFacturaEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"configuracion-general-factura/:id_configuracion", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ConfiguracionGeneralFacturaDato', ['ConfiguracionGeneralFactura','$q',function(ConfiguracionGeneralFactura, $q) 
   {
@@ -62,12 +62,12 @@ angular.module('agil.servicios')
     return res;
   }])
 
-.factory('ConfiguracionImpresionEmpresa', function($resource) {
+.factory('ConfiguracionImpresionEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"configuracion-impresion/empresa/:id_empresa/sucursal/:id_sucursal", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ConfiguracionImpresionEmpresaDato', ['ConfiguracionImpresionEmpresa','$q',function(ConfiguracionImpresionEmpresa, $q) 
   {

@@ -1,18 +1,18 @@
 angular.module('agil.servicios')
-.factory('ReportEstadoCuentasProveedoresDatos', function($resource) {
+.factory('ReportEstadoCuentasProveedoresDatos',  ['$resource',function ($resource) {
 		return $resource(restServer+"reportes/estado-cuentas-proveedores/:id_empresa", {}, {
         show: { method: 'GET', isArray: true }       
     })
-})
+}])
 
-.factory('ReportEstadoCuentasClientesDatos', function($resource) {
+.factory('ReportEstadoCuentasClientesDatos',  ['$resource',function ($resource) {
 		return $resource(restServer+"reportes/estado-cuentas-clientes/:id_empresa", {}, {
         show: { method: 'GET', isArray: true }       
     })
-})
-.factory('ReportEstadoCuentasClientesPaginador', function($resource) {
+}])
+.factory('ReportEstadoCuentasClientesPaginador',  ['$resource',function ($resource) {
 		return $resource(restServer+"reportes/estado-cuentas-clientes/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/cuentas-liquidadas/:cuentas_liquidadas");
-})
+}])
 .factory('ReporteClientesPaginador', ['ReportEstadoCuentasClientesPaginador','$q',function(ReportEstadoCuentasClientesPaginador, $q) 
   {
 	var res = function(paginator) 
@@ -35,9 +35,9 @@ angular.module('agil.servicios')
     return res;
 }])
 
-.factory('ReporteLibroCompras', function($resource) {
+.factory('ReporteLibroCompras',  ['$resource',function ($resource) {
 		return $resource(restServer+"reportes/libro-compras/:id_empresa/gestion/:gestion/mes/:mes");
-})
+}])
 
 .factory('ReporteLibroComprasDatos', ['ReporteLibroCompras','$q',function(ReporteLibroCompras, $q) 
   {
@@ -56,9 +56,9 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('ReporteLibroVentas', function($resource) {
+.factory('ReporteLibroVentas',  ['$resource',function ($resource) {
 		return $resource(restServer+"reportes/libro-ventas/:id_empresa/gestion/:gestion/mes/:mes/movimiento/:id_movimiento");
-})
+}])
 
 .factory('ReporteLibroVentasDatos', ['ReporteLibroVentas','$q',function(ReporteLibroVentas, $q) 
   {
@@ -80,13 +80,13 @@ angular.module('agil.servicios')
     return res;
   }])
   
-.factory('InventarioCosto', function($resource) {
+.factory('InventarioCosto',  ['$resource',function ($resource) {
 		return $resource(restServer+"reportes/inventario/empresa/:id_empresa/sucursal/:id_sucursal/almacen/:id_almacen", null,
 		{
 
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('InventariosCosto', ['InventarioCosto','$q',function(InventarioCosto, $q) 
   {
@@ -105,9 +105,9 @@ angular.module('agil.servicios')
     return res;
   }])
 
-.factory('InventarioAlmacenPaginador', function($resource) {
+.factory('InventarioAlmacenPaginador',  ['$resource',function ($resource) {
 		return $resource(restServer+"reportes/empresa/:id_empresa/sucursal/:id_sucursal/almacen/:id_almacen/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/user/:id_usuario");
-})
+}])
 
 .factory('InventarioPaginadorAlmacen', ['InventarioAlmacenPaginador','$q',function(InventarioAlmacenPaginador, $q) 
   {
@@ -126,9 +126,9 @@ angular.module('agil.servicios')
     return res;
 }])
 
-.factory('InventarioAlmacenReporte', function($resource) {
+.factory('InventarioAlmacenReporte',  ['$resource',function ($resource) {
 	return $resource(restServer+"reportes/empresa/:id_empresa/sucursal/:id_sucursal/almacen/:id_almacen/user/:id_usuario");
-})
+}])
 
 .factory('InventarioReporteAlmacen', ['InventarioAlmacenReporte','$q',function(InventarioAlmacenReporte, $q) 
 {
@@ -147,9 +147,9 @@ var res = function(idEmpresa,idSucursal,idAlmacen, id_usuario)
 	return res;
 }])
 
-.factory('ReporteVentasMensuales', function($resource) {
+.factory('ReporteVentasMensuales',  ['$resource',function ($resource) {
 		return $resource(restServer+"reportes/ventas-mensuales/:id_empresa/sucursal/:id_sucursal/inicio/:inicio/fin/:fin");
-})
+}])
 
 .factory('ReporteVentasMensualesDatos', ['ReporteVentasMensuales','$q',function(ReporteVentasMensuales, $q) 
   {
@@ -168,9 +168,9 @@ var res = function(idEmpresa,idSucursal,idAlmacen, id_usuario)
     return res;
   }])
 
-.factory('ReporteComprasMensuales', function($resource) {
+.factory('ReporteComprasMensuales',  ['$resource',function ($resource) {
 		return $resource(restServer+"reportes/compras-mensuales/:id_empresa/sucursal/:id_sucursal/inicio/:inicio/fin/:fin");
-})
+}])
 
 .factory('ReporteComprasMensualesDatos', ['ReporteComprasMensuales','$q',function(ReporteComprasMensuales, $q) 
   {
@@ -189,12 +189,12 @@ var res = function(idEmpresa,idSucursal,idAlmacen, id_usuario)
     return res;
   }])
   
-.factory('ReporteEstadoResultadosNoContable', function($resource) {
+.factory('ReporteEstadoResultadosNoContable',  ['$resource',function ($resource) {
 		return $resource(restServer+"ventas/:id_empresa/inicio/:inicio/fin/:fin", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('ReporteEstadoResultadosNoContableDatos', ['ReporteEstadoResultadosNoContable','$q',function(ReporteEstadoResultadosNoContable, $q) 
   {

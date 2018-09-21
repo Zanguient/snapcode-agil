@@ -1,11 +1,11 @@
 angular.module('agil.servicios')
 
-.factory('datosVehiculo', function ($resource) {
+.factory('datosVehiculo',  ['$resource',function ($resource) {
 		return $resource(restServer + "mantenimiento-vehiculo/empresa/:id_empresa/Mantenimiento/:id_mantenimiento", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ObtenerDatosVehiculo', ['datosVehiculo', '$q', function (datosVehiculo, $q) {
 		var res = function (idEmpresa,idMantenimiento) {
@@ -19,12 +19,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('NuevaOrdenDeTrabajo', function ($resource) {
+	.factory('NuevaOrdenDeTrabajo',  ['$resource',function ($resource) {
 		return $resource(restServer + "orden-de-trabajo/empresa", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('GuardarNuevaOrdendeTrabajo', ['NuevaOrdenDeTrabajo', '$q', function (NuevaOrdenDeTrabajo, $q) {
 		var res = function (ordentrabajo) {
@@ -51,18 +51,18 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('Vehiculos', function ($resource) {
+	.factory('Vehiculos',  ['$resource',function ($resource) {
 		return $resource(restServer + "vehiculos/empresa/:id_empresa", { id_empresa: '@id_empresa' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
-	.factory('ListaFechasVehiculos', function ($resource) {
+	}])
+	.factory('ListaFechasVehiculos',  ['$resource',function ($resource) {
 		return $resource(restServer + "orden-de-trabajo/empresa/:id_empresa/correctivo/:correctivo/preventivo/:preventivo/rutina/:rutina/entrega/:entrega", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('DatosFechasVehiculos', ['ListaFechasVehiculos', '$q', function (ListaFechasVehiculos, $q) {
 		var res = function (dato) {
@@ -85,12 +85,12 @@ angular.module('agil.servicios')
 
 	//paginador
 
-	.factory('VehiculosEmpresaPaginador', function ($resource) {
+	.factory('VehiculosEmpresaPaginador',  ['$resource',function ($resource) {
 		return $resource(restServer + "mantenimiento/vehiculo/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/inicio/:inicio/fin/:fin/tipo_activo/:tipo_activo/placa/:placa/marca/:marca/modelo/:modelo/anio/:anio/tipo_mantenimiento/:tipo_mantenimiento/numero_ot/:numero_ot/estado_ot/:estado_ot/campamento/:campamento", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('VehiculosPaginador', ['VehiculosEmpresaPaginador', '$q', function (ProductosEmpresaPaginador, $q) {
 		var res = function (paginator) {
@@ -123,12 +123,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 	// autocompletar numero placa
-	.factory('MantenimientoVehiculo', function ($resource) {
+	.factory('MantenimientoVehiculo',  ['$resource',function ($resource) {
 		return $resource(restServer + "mantenimiento-vehiculo/empresa/:id_empresa/busqueda/:buscar", { id_empresa: '@id_empresa', buscar: '@buscar' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ListaMantenimientoVehiculo', ['MantenimientoVehiculo', '$q', function (MantenimientoVehiculo, $q) {
 		var res = function (id_empresa, buscar) {
@@ -143,12 +143,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 	// autocompletar encargado
-	.factory('MantenimientoEncargado', function ($resource) {
+	.factory('MantenimientoEncargado',  ['$resource',function ($resource) {
 		return $resource(restServer + "mantenimiento-encargado/empresa/:id_empresa/busqueda/:buscar", { id_empresa: '@id_empresa', buscar: '@buscar' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ListaMantenimientoEncargado', ['MantenimientoEncargado', '$q', function (MantenimientoEncargado, $q) {
 		var res = function (id_empresa, buscar) {

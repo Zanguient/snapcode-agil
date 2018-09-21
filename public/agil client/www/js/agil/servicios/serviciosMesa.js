@@ -1,8 +1,8 @@
 angular.module('agil.servicios')
 
-.factory('Sala', function($resource) {
+.factory('Sala',  ['$resource',function ($resource) {
 		return $resource(restServer+"sala/sucursal/:id_sucursal",null);
-})
+}])
 
 .factory('ListaSalas', ['Sala','$q',function(Sala, $q) 
   {
@@ -21,27 +21,27 @@ angular.module('agil.servicios')
     return res;
 	}])
 	
-.factory('Mesa', function($resource) {
+.factory('Mesa',  ['$resource',function ($resource) {
 		return $resource(restServer+"mesa/sala/:id_sala",null);
-})
+}])
 
-.factory('MesaActualizacion', function($resource) {
+.factory('MesaActualizacion',  ['$resource',function ($resource) {
 		return $resource(restServer+"mesa/:id_mesa", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 	
-.factory('PedidoRestaurante', function($resource) {
+.factory('PedidoRestaurante',  ['$resource',function ($resource) {
 		return $resource(restServer+"pedido-restaurante/mesa/:id_mesa/almacen/:id_almacen",null);
-})
+}])
 
-.factory('PedidoRestauranteActualizacion', function($resource) {
+.factory('PedidoRestauranteActualizacion',  ['$resource',function ($resource) {
 		return $resource(restServer+"pedido-restaurante/:id_pedido_restaurante", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 	
 .factory('MesaPedidoRestaurante', ['PedidoRestaurante','$q',function(PedidoRestaurante, $q) 
   {
@@ -60,34 +60,34 @@ angular.module('agil.servicios')
     return res;
 	}])
 
-.factory('InactivarPedido', function($resource) {
+.factory('InactivarPedido',  ['$resource',function ($resource) {
 		return $resource(restServer+"inactivacion-pedido-restaurante/:id", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('CrearGarzon', function($resource) {
+.factory('CrearGarzon',  ['$resource',function ($resource) {
 		return $resource(restServer+"sala/garzon", null,
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
-.factory('Garzon', function($resource) {
+.factory('Garzon',  ['$resource',function ($resource) {
 		return $resource(restServer+"garzon/:id_empresa",null,
 		{
 			'update': { method:'PUT' }
 		});
-})
-.factory('ActualizarGarzon', function($resource) {
+}])
+.factory('ActualizarGarzon',  ['$resource',function ($resource) {
 		return $resource(restServer+"garzon/:id_garzon",{
 			id_garzon:'@id'
 		},
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 .factory('ListaGarzones', ['Garzon','$q',function(Garzon, $q) 
   {
 	var res = function(idEmpresa) 
@@ -105,11 +105,11 @@ angular.module('agil.servicios')
     return res;
 	}])
 
-.factory('EliminacionMesaPedidoRestaurante', function($resource) {
+.factory('EliminacionMesaPedidoRestaurante',  ['$resource',function ($resource) {
 		return $resource(restServer+"mesa-pedido-restaurante/:id",{
 			id:'@id'
 		},
 		{
 			'update': { method:'PUT' }
 		});
-});
+}]);

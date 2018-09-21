@@ -1,5 +1,7 @@
 angular.module('agil.controladores')
-	.controller('ControladorVehiculos', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, Diccionario, ClasesTipo, $window, Paginator, VehiculosPaginador, FieldViewer,
+	.controller('ControladorVehiculos', ['$scope', 'blockUI', '$localStorage', '$location', '$templateCache', '$route', '$timeout', 'Diccionario', 'ClasesTipo', '$window', 'Paginator', 'VehiculosPaginador', 'FieldViewer',
+		'ListaMantenimientoVehiculo', 'ClasesTipo', 'ListaMantenimientoEncargado', 'ProductosPanel', 'ListaProductosEmpresa', 'ListaInventariosProducto', 'GuardarNuevaOrdendeTrabajo', 'ActualizarOrdendeTrabajo', 'DatosFechasVehiculos',
+		'ObtenerDatosVehiculo', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, Diccionario, ClasesTipo, $window, Paginator, VehiculosPaginador, FieldViewer,
 		ListaMantenimientoVehiculo, ClasesTipo, ListaMantenimientoEncargado, ProductosPanel, ListaProductosEmpresa, ListaInventariosProducto, GuardarNuevaOrdendeTrabajo, ActualizarOrdendeTrabajo, DatosFechasVehiculos,
 		ObtenerDatosVehiculo) {
 
@@ -993,4 +995,4 @@ angular.module('agil.controladores')
 			});
 		}
 		$scope.inicio();
-	})
+	}])

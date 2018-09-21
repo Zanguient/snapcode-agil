@@ -1,6 +1,7 @@
 angular.module('agil.controladores')
 
-    .controller('ControladorGtmTransportista', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
+    .controller('ControladorGtmTransportista', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'Paginator', 'FieldViewer',
+        'GtmTransportista', 'GtmTransportistas', 'GtmTransportistaItem', 'GtmTransportistasEmpresa',function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
         GtmTransportista, GtmTransportistas, GtmTransportistaItem, GtmTransportistasEmpresa) {
 
         blockUI.start();
@@ -139,7 +140,7 @@ angular.module('agil.controladores')
 
 
         $scope.inicio();
-    });
+    }]);
 
 
 

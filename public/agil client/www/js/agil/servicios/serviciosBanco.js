@@ -1,17 +1,17 @@
 angular.module('agil.servicios')
-	.factory('Banco', function ($resource) {
+	.factory('Banco', ['$resource',function ($resource) {
 		return $resource(restServer + "bancos/empresa/:idEmpresa", { id: '@idEmpresa' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
-	.factory('BancoDatos', function ($resource) {
+	.factory('BancoDatos', ['$resource',function ($resource) {
 		return $resource(restServer + "bancos/:id_banco", { id: '@id_banco' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ListaBancos', ['Banco', '$q', function (Banco, $q) {
 		var res = function (idEmpresa) {
@@ -26,9 +26,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('BancoEmpresaPaginador', function ($resource) {
+	.factory('BancoEmpresaPaginador',['$resource',function ($resource) {
 		return $resource(restServer + "bancos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda");
-	})
+	}])
 
 	.factory('BancoPaginador', ['BancoEmpresaPaginador', '$q', function (BancoEmpresaPaginador, $q) {
 		var res = function (idEmpresa, pagina, itemsPagina, texto) {
@@ -43,9 +43,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('TransaccionBancoEmpresaPaginador', function ($resource) {
+	.factory('TransaccionBancoEmpresaPaginador', ['$resource',function ($resource) {
 		return $resource(restServer + "transacciones/bancos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/nombre/:texto_nombre/cta/:id_cuenta/desde/:desde/hasta/:hasta/concepto/:concepto/ref_doc/:ref_doc/tipo_doc/:tipo_doc/estado/:estado");
-	})
+	}])
 
 	.factory('TransaccionBancoPaginador', ['TransaccionBancoEmpresaPaginador', '$q', function (TransaccionBancoEmpresaPaginador, $q) {
 		var res = function (idEmpresa, filtro) {
@@ -72,9 +72,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('TransaccionIngresoBancoEmpresa', function ($resource) {
+	.factory('TransaccionIngresoBancoEmpresa', ['$resource',function ($resource) {
 		return $resource(restServer + "transacciones/ingreso/bancos/empresa/:id_empresa/:id_ususario");
-	})
+	}])
 
 	.factory('TransaccionIngresoBanco', ['TransaccionIngresoBancoEmpresa', '$q', function (TransaccionIngresoBancoEmpresa, $q) {
 		var res = function (idEmpresa, transaccion, id_ususario) {
@@ -89,9 +89,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('TransaccionEgresoBancoEmpresa', function ($resource) {
+	.factory('TransaccionEgresoBancoEmpresa', ['$resource',function ($resource) {
 		return $resource(restServer + "transacciones/egreso/bancos/empresa/:id_empresa/:id_ususario");
-	})
+	}])
 
 	.factory('TransaccionEgresoBanco', ['TransaccionEgresoBancoEmpresa', '$q', function (TransaccionEgresoBancoEmpresa, $q) {
 		var res = function (idEmpresa, transaccion, id_ususario) {
@@ -106,9 +106,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('TransaccionSeguimientoBancoEmpresa', function ($resource) {
+	.factory('TransaccionSeguimientoBancoEmpresa', ['$resource',function ($resource) {
 		return $resource(restServer + "transacciones/seguimiento/bancos/empresa/:id_empresa/:id_usuario");
-	})
+	}])
 
 	.factory('TransaccionSeguimientoBanco', ['TransaccionSeguimientoBancoEmpresa', '$q', function (TransaccionSeguimientoBancoEmpresa, $q) {
 		var res = function (idEmpresa, seguimiento, id_usuario) {
@@ -123,12 +123,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('TransaccionSeguimientoEstadoEmpresa', function ($resource) {
+	.factory('TransaccionSeguimientoEstadoEmpresa', ['$resource',function ($resource) {
 		return $resource(restServer + "transacciones/seguimiento/Estados/empresa", null, ///:id_empresa/:id_usuario/:id_estado
 		{
 			'update': { method: 'PUT' }
 		})
-	})
+	}])
 
 	.factory('TransaccionSeguimientoEstado', ['TransaccionSeguimientoEstadoEmpresa', '$q', function (TransaccionSeguimientoEstadoEmpresa, $q) {
 		var res = function (idEmpresa, id_estado, id_usuario, id_trans) {
@@ -143,12 +143,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('TransaccionRevisionEstadoEmpresa', function ($resource) {
+	.factory('TransaccionRevisionEstadoEmpresa', ['$resource',function ($resource) {
 		return $resource(restServer + "transacciones/revision/Estados/empresa", null, ///:id_empresa/:id_usuario/:id_trans
 		{
 			'update': { method: 'PUT' }
 		})
-	})
+	}])
 
 	.factory('TransaccionRevisionEstado', ['TransaccionRevisionEstadoEmpresa', '$q', function (TransaccionRevisionEstadoEmpresa, $q) {
 		var res = function (idEmpresa, id_usuario, id_trans) {
@@ -163,12 +163,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('SaldoCuentaEmpresa', function ($resource) {
+	.factory('SaldoCuentaEmpresa', ['$resource',function ($resource) {
 		return $resource(restServer + "transacciones/saldo/cuenta/empresa/:id_empresa/:id_cuenta/:fecha_desde/:fecha_hasta", null, ///:id_empresa/:id_usuario/:id_trans
 		{
 			'update': { method: 'PUT' }
 		})
-	})
+	}])
 
 	.factory('SaldoCuenta', ['SaldoCuentaEmpresa', '$q', function (SaldoCuentaEmpresa, $q) {
 		var res = function (idEmpresa, cuenta, desde, hasta) {
@@ -183,12 +183,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('SaldoDisponibleCuentaEmpresa', function ($resource) {
+	.factory('SaldoDisponibleCuentaEmpresa', ['$resource',function ($resource) {
 		return $resource(restServer + "transacciones/saldo/disponible/empresa/:id_empresa/:id_cuenta/:fecha_desde/:fecha_hasta", null, ///:id_empresa/:id_usuario/:id_trans
 		{
 			'update': { method: 'PUT' }
 		})
-	})
+	}])
 
 	.factory('SaldoDisponibleCuenta', ['SaldoDisponibleCuentaEmpresa', '$q', function (SaldoDisponibleCuentaEmpresa, $q) {
 		var res = function (idEmpresa, cuenta, desde, hasta) {
@@ -203,12 +203,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('SaldoProformasEmpresa', function ($resource) {
+	.factory('SaldoProformasEmpresa', ['$resource',function ($resource) {
 		return $resource(restServer + "transacciones/saldo/proformas/empresa/:id_empresa", null, ///:id_empresa/:id_usuario/:id_trans
 		{
 			'update': { method: 'PUT' }
 		})
-	})
+	}])
 
 	.factory('SaldoProformas', ['SaldoProformasEmpresa', '$q', function (SaldoProformasEmpresa, $q) {
 		var res = function (idEmpresa) {

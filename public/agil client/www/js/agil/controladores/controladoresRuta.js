@@ -1,6 +1,7 @@
 angular.module('agil.controladores')
 
-.controller('ControladorRutas', function($scope,$localStorage,$location,$templateCache,$route,blockUI,$timeout,Clases,
+.controller('ControladorRutas', ['$scope','$localStorage','$location','$templateCache','$route','blockUI','$timeout','Clases',
+	'Clientes','Rutas','Ruta','uiGmapGoogleMapApi','$cordovaGeolocation','ClasesTipo','ClientesEmpresa',function($scope,$localStorage,$location,$templateCache,$route,blockUI,$timeout,Clases,
 											Clientes,Rutas,Ruta,uiGmapGoogleMapApi,$cordovaGeolocation,ClasesTipo,ClientesEmpresa){
 	blockUI.start();
 	
@@ -393,7 +394,7 @@ angular.module('agil.controladores')
 	});
 	
 	$scope.inicio();
-});
+}]);
 
 
 

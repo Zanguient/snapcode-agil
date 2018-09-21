@@ -1,13 +1,13 @@
 angular.module('agil.servicios')
-.factory('ClienteVencimientoCredito', function($resource) {
+.factory('ClienteVencimientoCredito',  ['$resource',function ($resource) {
 		return $resource(restServer+"cliente-vencimiento-credito/:id",{id: '@id'},
 		{
 			'update': { method:'PUT' }
 		});
-})
-.factory('ClientesEmpresaPaginador', function($resource) {
+}])
+.factory('ClientesEmpresaPaginador',  ['$resource',function ($resource) {
 		return $resource(restServer+"cliente/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda");
-})
+}])
 
 .factory('ClientesPaginador', ['ClientesEmpresaPaginador','$q',function(ClientesEmpresaPaginador, $q) 
   {
@@ -25,12 +25,12 @@ angular.module('agil.servicios')
 	};
     return res;
 }])
-.factory('Cliente', function($resource) {
+.factory('Cliente',  ['$resource',function ($resource) {
 		return $resource(restServer+"clientes/:idCliente", { idCliente: '@id' },
 		{
 			'update': { method:'PUT' }
 		});
-})
+}])
 
 .factory('GetCliente', ['Cliente','$q',function(Cliente, $q) 
   {
@@ -51,9 +51,9 @@ angular.module('agil.servicios')
 
 
 
-.factory('ClientesEmpresa', function($resource) {
+.factory('ClientesEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"clientes/empresa/:idEmpresa");
-})
+}])
 
 .factory('Clientes', ['ClientesEmpresa','$q',function(ClientesEmpresa, $q) 
   {
@@ -71,12 +71,12 @@ angular.module('agil.servicios')
 	};
     return res;
 	}])
-	.factory('RazonSocialClientesEmpresa', function($resource) {
+	.factory('RazonSocialClientesEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"clientes-upload-razonsocial/empresa/:idEmpresa", {},
 		{
 			'update': { method: 'PUT' }
 		});
-})
+}])
 .factory('RazonesSocialesCliente', ['RazonSocialClientesEmpresa','$q',function(RazonSocialClientesEmpresa, $q) 
   {
 	var res = function(clientes,idEmpresa) 
@@ -95,9 +95,9 @@ angular.module('agil.servicios')
 	}])
 
   
-.factory('BusquedaClientesNit', function($resource) {
+.factory('BusquedaClientesNit',  ['$resource',function ($resource) {
 		return $resource(restServer+"clientes/empresa/:idEmpresa/texto/:texto");
-})
+}])
 
 .factory('ClientesNit', ['BusquedaClientesNit','$q',function(BusquedaClientesNit, $q) 
   {
@@ -116,9 +116,9 @@ angular.module('agil.servicios')
     return res;
 	}])
 	
-	.factory('CodigoSiguienteClienteEmpresa', function($resource) {
+	.factory('CodigoSiguienteClienteEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"cliente/empresa/:id_empresa/siguiente-codigo");
-})
+}])
 
 .factory('DatoCodigoSiguienteClienteEmpresa', ['CodigoSiguienteClienteEmpresa','$q',function(CodigoSiguienteClienteEmpresa, $q) 
   {
@@ -137,9 +137,9 @@ angular.module('agil.servicios')
     return res;
 	}])
 	
-.factory('DestinoEmpresa', function($resource) {
+.factory('DestinoEmpresa',  ['$resource',function ($resource) {
 		return $resource(restServer+"gtm-destinos/empresa/:id_empresa");
-})
+}])
 	
 .factory('DestinosCliente', ['DestinoEmpresa','$q',function(DestinoEmpresa, $q) 
   {

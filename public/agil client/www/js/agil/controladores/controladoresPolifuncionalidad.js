@@ -1,5 +1,7 @@
 angular.module('agil.controladores')
-    .controller('controladorPolifuncionalidad', function ($scope, $location, $localStorage, $templateCache, $route, blockUI, Paginator, FieldViewer, $timeout,
+    .controller('controladorPolifuncionalidad', ['$scope', '$location', '$localStorage', '$templateCache', '$route', 'blockUI', 'Paginator', 'FieldViewer', '$timeout',
+        '$filter', 'ClasesTipo', 'ObtenerTodoPersonal', 'ObtenerEvaluaciones', 'GuardarEvaluacionPersonal', 'ObtenerReportePorMeses', 'ObtenerReportePorAnio', 'ObtenerReporteGeneralPorAnio', 'GuardarConfiguracionCalificacion',
+        'ObtenerConfiguracionCalificacion', 'GuardarConfiguracionDesempenio', 'ObtenerConfiguracionDesempenio', 'ActualizarEvaluacionPersonal',function ($scope, $location, $localStorage, $templateCache, $route, blockUI, Paginator, FieldViewer, $timeout,
         $filter, ClasesTipo, ObtenerTodoPersonal, ObtenerEvaluaciones, GuardarEvaluacionPersonal, ObtenerReportePorMeses, ObtenerReportePorAnio, ObtenerReporteGeneralPorAnio, GuardarConfiguracionCalificacion,
         ObtenerConfiguracionCalificacion, GuardarConfiguracionDesempenio, ObtenerConfiguracionDesempenio, ActualizarEvaluacionPersonal) {
 
@@ -59,7 +61,7 @@ angular.module('agil.controladores')
         $scope.obtenerConfiguracionnotas = function () {
             var prom = ObtenerConfiguracionCalificacion($scope.usuarioSesion.empresa.id)
             prom.then(function (res) {
-                for (const key in res.configuracion) {
+                for (var key in res.configuracion) {
                     if (res.configuracion[key].encargados) {
                         $scope.encargados = res.configuracion[key];
                     } else {
@@ -303,13 +305,13 @@ angular.module('agil.controladores')
                 encargados.nota_total = 0
             }
 
-            for (const key in empleados) {
+            for (var key in empleados) {
                 if (key !== "createdAt" && key !== "updatedAt" && key !== "id_empresa" && key !== "id" && key !== "activo" && key !== "encargados") {
                     notaEmpleados += empleados[key]
                 }
 
             }
-            for (const key in encargados) {
+            for (var key in encargados) {
                 if (key !== "createdAt" && key !== "updatedAt" && key !== "id_empresa" && key !== "id" && key !== "activo" && key !== "encargados") {
                     notaEncargados += encargados[key]
                 }
@@ -338,7 +340,7 @@ angular.module('agil.controladores')
             } else {
 
                 var count = 0
-                for (const key in evaluacion) {
+                for (var key in evaluacion) {
                     if (evaluacion.hasOwnProperty(key)) {
                         count += 1;
                     }
@@ -583,7 +585,7 @@ angular.module('agil.controladores')
                             doc.text("DESDE " + mesDesde.nombre.toUpperCase() + "-" + anioDesde.id + " HASTA " + mesHasta.nombre.toUpperCase() + "-" + anioHasta.id, 50, 45, { align: "center" });
                             doc.text(" TODOS LOS CAMPOS " + " TODOS LOS EMPLEADOS", 50, 60, { align: "center" });
                         }
-                        for (let j = 0; j < reporte[i].length; j++) {
+                        for (var j = 0; j < reporte[i].length; j++) {
                             if (i > 0) {
                                 doc.font('Helvetica', 8);
                             } else {
@@ -621,7 +623,7 @@ angular.module('agil.controladores')
                             doc.text("DESDE " + mesDesde.nombre + "-" + anioDesde.id + " HASTA " + mesHasta.nombre + "-" + anioHasta.id, 50, 45, { align: "center" });
                             doc.text(" TODOS LOS CAMPOS " + " TODOS LOS EMPLEADOS", 50, 60, { align: "center" });
                         }
-                        for (let j = 0; j < reporte[i].length; j++) {
+                        for (var j = 0; j < reporte[i].length; j++) {
                             if (i > 0) {
                                 doc.font('Helvetica', 6);
                             } else {
@@ -669,7 +671,7 @@ angular.module('agil.controladores')
                         doc.text("DESDE " + mesDesde.nombre + "-" + anioDesde.id + " HASTA " + mesHasta.nombre + "-" + anioHasta.id, 50, 45, { align: "center" });
                         doc.text(" TODOS LOS CAMPOS " + " TODOS LOS EMPLEADOS", 50, 60, { align: "center" });
 
-                        for (let k = 0; k < reporte[0].length; k++) {
+                        for (var k = 0; k < reporte[0].length; k++) {
                             doc.font('Helvetica-Bold', 8);
                             doc.text(reporte[0][k], x, y-625, { width: limiteChar });
 
@@ -862,7 +864,7 @@ angular.module('agil.controladores')
                         doc.text("GESTIÓN " + year.id, 50, 55, { align: "center" });
                         doc.text(" " + campo.toUpperCase() + " ", 50, 70, { align: "center" });
                     }
-                    for (let j = 0; j < reporte[i].length; j++) {
+                    for (var j = 0; j < reporte[i].length; j++) {
                         if (j > 0) {
                             if (i == 0) {
                                 doc.font('Helvetica-Bold', 7);
@@ -1053,7 +1055,7 @@ angular.module('agil.controladores')
                         // doc.text(" " + campo.toUpperCase() + " ", 50, 70, { align: "center" });
                     }
 
-                    for (let j = 0; j < reporte[i].length; j++) {
+                    for (var j = 0; j < reporte[i].length; j++) {
                         if (j > 0) {
                             if (i == 0) {
 
@@ -1105,7 +1107,7 @@ angular.module('agil.controladores')
                         taa = 20
                         y = 120
                         doc.font('Helvetica-Bold', 7);
-                        for (let k = 0; k < reporte[0].length; k++) {
+                        for (var k = 0; k < reporte[0].length; k++) {
                             if (k >= reporte[0].length - 2) {
                                 doc.text(reporte[0][k], x - taa, y - 40, { width: limiteChar, align: "center" });
                                 taa = taa + 20
@@ -1358,7 +1360,7 @@ angular.module('agil.controladores')
         $scope.comprobarConfiguracion = function () {
             if ($scope.empleados) {
                 var countempleado = 0
-                for (const key in $scope.empleados) {
+                for (var key in $scope.empleados) {
                     if ($scope.empleados.hasOwnProperty(key)) {
                         countempleado += 1
                     }
@@ -1366,7 +1368,7 @@ angular.module('agil.controladores')
             }
             if ($scope.encargados) {
                 var countencargado = 0
-                for (const key in $scope.encargados) {
+                for (var key in $scope.encargados) {
                     if ($scope.encargados.hasOwnProperty(key)) {
                         countencargado += 1
                     }
@@ -1415,4 +1417,4 @@ angular.module('agil.controladores')
             }
         }
         $scope.inicio();
-    });
+    }]);

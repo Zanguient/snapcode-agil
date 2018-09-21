@@ -1,28 +1,28 @@
 angular.module('agil.servicios')
-.factory('ValidarCodigoCuenta', function($resource) {
+.factory('ValidarCodigoCuenta', ['$resource',function ($resource) {
 	return $resource(restServer+"/validar-codigo",
 	{
 		'update': { method:'PUT' }
 	});
-})
-	.factory('ConfigCuentas', function ($resource) {
+}])
+	.factory('ConfigCuentas', ['$resource',function ($resource) {
 		return $resource(restServer + "configuracion-cuentas/:id_empresa", { id_empresa: '@id_empresa' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
-	.factory('AsignarCuentaCiente', function ($resource) {
+	}])
+	.factory('AsignarCuentaCiente', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/asignar-cuenta-cliente",
 			{
 				'update': { method: 'PUT' }
 			});
-	})
-	.factory('AsignarCuentaProveedor', function ($resource) {
+	}])
+	.factory('AsignarCuentaProveedor', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/asignar-cuenta-proveedor",
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 	.factory('ConfiguracionesCuentasEmpresa', ['ConfigCuentas', '$q', function (ConfigCuentas, $q) {
 		var res = function (idEmpresa) {
 			var delay = $q.defer();
@@ -35,12 +35,12 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ConfiguracionCuentas', function ($resource) {
+	.factory('ConfiguracionCuentas', ['$resource',function ($resource) {
 		return $resource(restServer + "configuracion-cuentas/empresa/:id_empresa", { id_empresa: '@id_empresa' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ConfiguracionCuentaEmpresa', ['ConfiguracionCuentas', '$q', function (ConfiguracionCuentas, $q) {
 		var res = function (idEmpresa) {
@@ -55,12 +55,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('ContabilidadCuentas', function ($resource) {
+	.factory('ContabilidadCuentas', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/empresa/:id_empresa", { id_empresa: '@id_empresa' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('ListaContabilidadCuentas', ['ContabilidadCuentas', '$q', function (ContabilidadCuentas, $q) {
 		var res = function (idEmpresa) {
@@ -75,19 +75,19 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('ContabilidadCuenta', function ($resource) {
+	.factory('ContabilidadCuenta', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuenta/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			})
-	})
+	}])
 
-	.factory('CuentaContabilidadFiltro', function ($resource) {
+	.factory('CuentaContabilidadFiltro', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/empresa/:id_empresa/clasificacion/:id_clasificacion/tipo/:id_tipo/monto/:monto/pagina/:pagina/items-pagina/:items_pagina/busqueda/:busqueda/columna/:columna/direccion/:direccion", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('CuentaContabilidad', ['CuentaContabilidadFiltro', '$q', function (CuentaContabilidadFiltro, $q) {
 		var res = function (paginator) {
@@ -112,28 +112,28 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('CuentasEmpresaPaginador', function ($resource) {
+	.factory('CuentasEmpresaPaginador', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda");
-	})
+	}])
 
-	.factory('CuentasClasificaciones', function ($resource) {
+	.factory('CuentasClasificaciones', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/clasificaciones/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
-	.factory('CuentasClasificaciones2', function ($resource) {
+	}])
+	.factory('CuentasClasificaciones2', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/clasificaciones/id/:id_empresa",null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
-	.factory('CuentasClasificacionesEdicion', function ($resource) {
+	}])
+	.factory('CuentasClasificacionesEdicion', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/clasificaciones/edicion/id/:id_empresa", null,
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('lasClasificaciones', ['CuentasClasificaciones2', '$q', function (CuentasClasificaciones2, $q) {
 		var res = function (idEmpresa) {
@@ -148,12 +148,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('TiposDeCuentas', function ($resource) {
+	.factory('TiposDeCuentas', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/tipos-cuenta/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('losTiposDeCuentas', ['TiposDeCuentas', '$q', function (TiposDeCuentas, $q) {
 		var res = function () {
@@ -168,12 +168,12 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('operaciones', function ($resource) {
+	.factory('operaciones', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/calculos/operaciones/:id", { id: '@id' },
 			{
 				'update': { method: 'PUT' }
 			});
-	})
+	}])
 
 	.factory('lasOperacionesCalculos', ['operaciones', '$q', function (operaciones, $q) {
 		var res = function () {
@@ -188,9 +188,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('saldosClasificaciones', function ($resource) {
+	.factory('saldosClasificaciones', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/clasificaciones/saldos");
-	})
+	}])
 
 	.factory('losSaldos', ['saldosClasificaciones', '$q', function (saldosClasificaciones, $q) {
 		var res = function () {
@@ -205,9 +205,9 @@ angular.module('agil.servicios')
 		return res;
 	}])
 
-	.factory('movimientosClasificaciones', function ($resource) {
+	.factory('movimientosClasificaciones', ['$resource',function ($resource) {
 		return $resource(restServer + "contabilidad-cuentas/clasificaciones/movimientos");
-	})
+	}])
 
 	.factory('losMovimientos', ['movimientosClasificaciones', '$q', function (movimientosClasificaciones, $q) {
 		var res = function () {
@@ -234,6 +234,6 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('CuentasEmpresaCreacion', function ($resource) {
+	.factory('CuentasEmpresaCreacion', ['$resource',function ($resource) {
 		return $resource(restServer + "cuentas/empresa");
-	})
+	}])

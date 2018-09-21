@@ -1,6 +1,9 @@
 angular.module('agil.controladores')
 
-    .controller('controladorComensalesEmpresa', function ($scope, $timeout, $localStorage, $filter, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias,
+    .controller('controladorComensalesEmpresa',['$scope', '$timeout', '$localStorage', '$filter', '$location', 'blockUI', 'Clientes', 'ClientesNit', 'GuardarAlias', 'ObtenerAlias', 'GuardarGerencias',
+        'ObtenerGerencias', 'GuardarComensales', 'ObtenerComensales', 'GuardarComidas', 'ObtenerComidas', 'GuardarPrecioComidas', 'ObtenerPrecioComidas', 'GuardarHistorialExcel', 'GuardarComensalesExcel',
+        'ObtenerHistorial', 'GuardarEmpresasExcel', 'GuardarGerenciasExcel', 'GuardarComidasExcel', 'GuardarPreciosExcel', 'Paginator', 'BusquedaComensales', 'ObtenerReporteComedor', 'ObtenerCambioMoneda',
+        'ObtenerReporteEmpresa', 'ObtenerReporteComensal', 'ObtenerAlertasMarcacion', 'EditarAlertasMarcacion', 'ObtenerHistorialDocumentos', 'ObtenerDocumento', function ($scope, $timeout, $localStorage, $filter, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias,
         ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel,
         ObtenerHistorial, GuardarEmpresasExcel, GuardarGerenciasExcel, GuardarComidasExcel, GuardarPreciosExcel, Paginator, BusquedaComensales, ObtenerReporteComedor, ObtenerCambioMoneda,
         ObtenerReporteEmpresa, ObtenerReporteComensal, ObtenerAlertasMarcacion, EditarAlertasMarcacion, ObtenerHistorialDocumentos, ObtenerDocumento) {
@@ -418,9 +421,9 @@ angular.module('agil.controladores')
                 } else {
                     $scope.alertaMarcaciones = res.alertas
                     $scope.Marcaciones = res.alertas
-                    for (let index = 0; index < $scope.alertaMarcaciones.length; index++) {
+                    for (var index = 0; index < $scope.alertaMarcaciones.length; index++) {
                         $scope.alertaMarcaciones[index].marcacionesFaltantes = []
-                        for (let _index = 0; _index < $scope.alertaMarcaciones[index].marcaciones.length; _index++) {
+                        for (var _index = 0; _index < $scope.alertaMarcaciones[index].marcaciones.length; _index++) {
                             var conteoIndex = -1
                             if ($scope.alertaMarcaciones[index].marcacionesFaltantes.some(function (dato) {
                                 conteoIndex += 1
@@ -473,8 +476,8 @@ angular.module('agil.controladores')
                         }
                     }
                     var marcasFaltantes = []
-                    for (let index = 0; index < $scope.alertaMarcaciones.length; index++) {
-                        for (let _index = 0; _index < $scope.alertaMarcaciones[index].marcacionesFaltantes.length; _index++) {
+                    for (var index = 0; index < $scope.alertaMarcaciones.length; index++) {
+                        for (var _index = 0; _index < $scope.alertaMarcaciones[index].marcacionesFaltantes.length; _index++) {
                             var desayuno = $scope.listaComidasclienteEmpresa.find(function (food) {
                                 return food.nombre.toLowerCase() === 'desayuno'
                             })
@@ -1287,7 +1290,7 @@ angular.module('agil.controladores')
                 }
                 var cabecera = ['TARJETA', 'EMPLEADO', 'FECHA / HORA', 'lectora', 'NAME']
                 var data = [cabecera]
-                for (let index = 0; index < res.documento.length; index++) {
+                for (var index = 0; index < res.documento.length; index++) {
                     var columns = []
                     columns.push(res.documento[index].tarjeta)
                     columns.push(res.documento[index].comensal.nombre)
@@ -1386,10 +1389,10 @@ angular.module('agil.controladores')
                                 return
                             }
                             var reportesGerencias = []
-                            for (let index = 0; index < res.reporte.length; index++) {
+                            for (var index = 0; index < res.reporte.length; index++) {
                                 var reporteGerencias = []
                                 if (res.reporte[index].historial.length > 0) {
-                                    for (let _index = 0; _index < res.reporte[index].historial.length; _index++) {
+                                    for (var _index = 0; _index < res.reporte[index].historial.length; _index++) {
                                         var conteoIndex = -1
                                         if (reporteGerencias.some(function (dato) {
                                             conteoIndex += 1
@@ -1443,12 +1446,12 @@ angular.module('agil.controladores')
                                 }
                             }
                             if (excel) {
-                                for (let _index = 0; _index < reportesGerencias.length; _index++) {
-                                    const repo = reportesGerencias[_index]
+                                for (var _index = 0; _index < reportesGerencias.length; _index++) {
+                                    var repo = reportesGerencias[_index]
                                     $scope.imprimirReporteComedorExcel(repo, repo[0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
                                 }
                             } else {
-                                for (let _index = 0; _index < reportesGerencias.length; _index++) {
+                                for (var _index = 0; _index < reportesGerencias.length; _index++) {
                                     $scope.imprimirReporteComedor(reportesGerencias[_index], reportesGerencias[_index][0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
                                 }
                             }
@@ -1617,9 +1620,9 @@ angular.module('agil.controladores')
                                 return
                             }
                             var reportesGerencias = []
-                            for (let index = 0; index < res.reporte.length; index++) {
+                            for (var index = 0; index < res.reporte.length; index++) {
                                 var reporteFechasPorComensal = []
-                                for (let _index = 0; _index < res.reporte[index].historial.length; _index++) {
+                                for (var _index = 0; _index < res.reporte[index].historial.length; _index++) {
                                     var conteoIndex = -1
                                     if (reporteFechasPorComensal.some(function (dato) {
                                         conteoIndex += 1
@@ -1661,7 +1664,7 @@ angular.module('agil.controladores')
                                 }
                                 res.reporte[index].reporte = reporteFechasPorComensal
                             }
-                            for (let _index = 0; _index < res.reporte.length; _index++) {
+                            for (var _index = 0; _index < res.reporte.length; _index++) {
                                 if (excel) {
                                     $scope.imprimirReporteComensalEXCEL(res.reporte[_index], null, cabecera, comidasEmpresa, tipoCambioDollar)
                                 } else {
@@ -1691,8 +1694,8 @@ angular.module('agil.controladores')
             var cubeX = 70
             var periodo = reporte[0].fecha + " al " + reporte[reporte.length - 1].fecha
             var totalPaginas = Math.ceil(reporte.length / itemsPorPagina);
-            $scope.cabeceraReporteAlertasMarcacionesLista(doc, $scope.usuario.empresa.razon_social, periodo, pagina, totalPaginas, );
-            for (let i = 0; i < reporte.length; i++) {
+            $scope.cabeceraReporteAlertasMarcacionesLista(doc, $scope.usuario.empresa.razon_social, periodo, pagina, totalPaginas);
+            for (var i = 0; i < reporte.length; i++) {
                 doc.text((i + 1), 70, y + 5);
                 doc.text(reporte[i].comensal.nombre, 120, y + 5);
                 doc.text(reporte[i].fecha, 320, y + 5);
@@ -1737,8 +1740,8 @@ angular.module('agil.controladores')
 
                 }
                 $scope.cabeceraReporteAlertasMarcacionesMatriz(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
-                for (let i = 0; i < reporte.length; i++) {
-                    for (let index = 0; index < reporte[i].alertas.length; index++) {
+                for (var i = 0; i < reporte.length; i++) {
+                    for (var index = 0; index < reporte[i].alertas.length; index++) {
                         // var total_comensal = 0
                         doc.font('Helvetica', 8);
                         // total_general_desayuno += reporte[i].desayuno.cantidad
@@ -1824,7 +1827,7 @@ angular.module('agil.controladores')
             var total_desayunos = 0;
             var total_almuerzos = 0;
             var total_cenas = 0;
-            for (let i = 0; i < reporte.length; i++) {
+            for (var i = 0; i < reporte.length; i++) {
                 var columns = []
                 columns.push(reporte[i].fecha)
                 if (reporte[i].desayuno.cantidad > 0) {
@@ -1897,7 +1900,7 @@ angular.module('agil.controladores')
             var total_desayunos = 0;
             var total_almuerzos = 0;
             var total_cenas = 0;
-            for (let i = 0; i < reporte.length; i++) {
+            for (var i = 0; i < reporte.length; i++) {
                 var total_comensal = 0
                 total_general_desayuno += reporte[i].desayuno.cantidad
                 total_general_almuerzo += reporte[i].almuerzo.cantidad
@@ -1944,20 +1947,20 @@ angular.module('agil.controladores')
         }
 
         $scope.imprimirReporteComensalEXCEL = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
-            let reporte = reporte
-            let gerencia = gerencia
-            let cabecera = cabecera
-            let comidasEmpresa = comidasEmpresa
-            let dollar = dollar
-            let data = [["REPORTE POR PERSONA"], ["EMPLEADO", reporte.nombre], ["EMPRESA", reporte.reporte[0].empresaCliente.razon_social], ["GERENCIA", ""], ["PERIODO", reporte.fecha], cabecera]
-            let total_general_desayuno = 0
-            let total_general_almuerzo = 0
-            let total_general_cena = 0
-            let total_desayunos = 0;
-            let total_almuerzos = 0;
-            let total_cenas = 0;
-            for (let i = 0; i < reporte.reporte.length; i++) {
-                let total_comensal = 0
+            var reporte = reporte
+            var gerencia = gerencia
+            var cabecera = cabecera
+            var comidasEmpresa = comidasEmpresa
+            var dollar = dollar
+            var data = [["REPORTE POR PERSONA"], ["EMPLEADO", reporte.nombre], ["EMPRESA", reporte.reporte[0].empresaCliente.razon_social], ["GERENCIA", ""], ["PERIODO", reporte.fecha], cabecera]
+            var total_general_desayuno = 0
+            var total_general_almuerzo = 0
+            var total_general_cena = 0
+            var total_desayunos = 0;
+            var total_almuerzos = 0;
+            var total_cenas = 0;
+            for (var i = 0; i < reporte.reporte.length; i++) {
+                var total_comensal = 0
                 total_general_desayuno += reporte.reporte[i].desayuno
                 total_general_almuerzo += reporte.reporte[i].almuerzo
                 total_general_cena += reporte.reporte[i].cena
@@ -1965,7 +1968,7 @@ angular.module('agil.controladores')
                 total_desayunos += reporte.reporte[i].desayuno
                 total_almuerzos += reporte.reporte[i].almuerzo
                 total_cenas += reporte.reporte[i].cena
-                let columns = []
+                var columns = []
 
                 columns.push(reporte.reporte[i].fecha.split('T')[0])
                 columns.push(reporte.reporte[i].desayuno)
@@ -1999,7 +2002,7 @@ angular.module('agil.controladores')
                 data.push(columns)
             }
             // data.push([""])
-            let columns = ["TOTAL General", total_general_desayuno, total_general_almuerzo, total_general_cena, (total_general_desayuno + total_general_almuerzo + total_general_cena)]
+            var columns = ["TOTAL General", total_general_desayuno, total_general_almuerzo, total_general_cena, (total_general_desayuno + total_general_almuerzo + total_general_cena)]
             // data.push(columns)
             // columns = [total_general_desayuno]
             // data.push(columns)
@@ -2007,9 +2010,9 @@ angular.module('agil.controladores')
             // data.push(columns)
             // columns = [total_general_cena]
             data.push(columns)
-            let ws_name = "SheetJS";
-            let wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
-            let wscols = [
+            var ws_name = "SheetJS";
+            var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+            var wscols = [
                 { wch: 20 },
                 { wch: 19 },
                 { wch: 20 },
@@ -2028,7 +2031,7 @@ angular.module('agil.controladores')
             /* add worksheet to workbook */
             wb.SheetNames.push(ws_name);
             wb.Sheets[ws_name] = ws;
-            let wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+            var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
             saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "REPORTE COMENSAL " + reporte.nombre.toUpperCase() + ".xlsx");
             blockUI.stop();
             // var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
@@ -2047,7 +2050,7 @@ angular.module('agil.controladores')
             // var total_desayunos = 0
             // var total_almuerzos = 0
             // var total_cenas = 0
-            // for (let i = 0; i < reporte.reporte.length; i++) {
+            // for (var i = 0; i < reporte.reporte.length; i++) {
             //     var total_comensal = 0
             //     doc.font('Helvetica', 8);
 
@@ -2119,7 +2122,7 @@ angular.module('agil.controladores')
             var total_desayunos = 0
             var total_almuerzos = 0
             var total_cenas = 0
-            for (let i = 0; i < reporte.length; i++) {
+            for (var i = 0; i < reporte.length; i++) {
                 cabecera.forEach(function (dato) {
                     doc.rect(cubeX + xSeparacion, y, 80, 20).stroke()
                     xSeparacion += 80
@@ -2234,7 +2237,7 @@ angular.module('agil.controladores')
             var total_almuerzos = 0
             var total_cenas = 0
             var total_fueraHorario = 0
-            for (let i = 0; i < reporte.length; i++) {
+            for (var i = 0; i < reporte.length; i++) {
                 var total_comensal = 0
                 doc.font('Helvetica', 8);
                 total_general_desayuno += reporte[i].desayuno.cantidad
@@ -2314,7 +2317,7 @@ angular.module('agil.controladores')
             var total_desayunos = 0
             var total_almuerzos = 0
             var total_cenas = 0
-            for (let i = 0; i < reporte.reporte.length; i++) {
+            for (var i = 0; i < reporte.reporte.length; i++) {
                 if (reporte.reporte[i].cena > 0) {
                     doc.font('Helvetica', 8).fill('black');
                     doc.text(reporte.reporte[i].cena, cubeX + 80 + 95 + 9, y + 7).fill('black');
@@ -2689,4 +2692,4 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.dialogHistorialDocumentos);
         }
         $scope.inicio()
-    });
+    }]);

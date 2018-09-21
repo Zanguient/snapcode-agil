@@ -1,6 +1,8 @@
 angular.module('agil.controladores')
 
-	.controller('ControladorFacturas', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
+	.controller('ControladorFacturas', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI',
+		'ConfiguracionesFactura', 'ConfiguracionGeneralFacturaDato', 'ClasesTipo',
+		'ConfiguracionFacturaSucursal', 'ConfiguracionFacturaEmpresa', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
 		ConfiguracionesFactura, ConfiguracionGeneralFacturaDato, ClasesTipo,
 		ConfiguracionFacturaSucursal, ConfiguracionFacturaEmpresa) {
 		blockUI.start();
@@ -180,7 +182,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.inicio();
-	});
+	}]);
 
 
 
