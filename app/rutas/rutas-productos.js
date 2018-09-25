@@ -542,11 +542,32 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					transaction: t
 				}).then(function (productoBase) {
 					if (productoBase) {
-						return ProductoBase.create({
-							id_producto: productoFinal.dataValues.id,
-							id_producto_base: productoBase.id,
-							formulacion: parseFloat(producto.formulacion)
-						}, { transaction: t });
+						return ProductoBase.findOrCreate({
+							where: {
+								id_producto: productoFinal.dataValues.id,
+								id_producto_base: productoBase.id
+							},
+							transaction: t,
+							lock: t.LOCK.UPDATE,
+							defaults: {
+								id_producto: productoFinal.dataValues.id,
+								id_producto_base: productoBase.id,
+								formulacion: parseFloat(producto.formulacion)
+							}
+						}).spread(function (ProductoCr, created) {
+							if (!created) {
+								return ProductoBase.update({
+									id_producto: productoFinal.dataValues.id,
+									id_producto_base: productoBase.id,
+									formulacion: parseFloat(producto.formulacion)
+								}, { transaction: t,where:{id:ProductoCr.id} }).then(function(dato){
+									return new Promise(function (fullfill, reject) {
+										fullfill()
+									})
+								});
+							}
+						})
+						
 					} else {
 						return new Promise(function (fullfill, reject) {
 							fullfill({ hasErr: true, mensaje: 'No se encuentra en la base de datos el producto: ' + producto.nombre_base + ' Código: ' + producto.codigo_base })
@@ -1278,8 +1299,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 
 				})
 				return Promise.all(promises);
-			}).then(function (result) {				
-					res.json({ mensaje: "¡Datos de Productos actualizados satisfactoriamente!" });				
+			}).then(function (result) {
+				res.json({ mensaje: "¡Datos de Productos actualizados satisfactoriamente!" });
 			}).catch(function (err) {
 				res.json({ hasError: true, mensaje: err.stack });
 			});
