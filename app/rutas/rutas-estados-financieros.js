@@ -525,20 +525,27 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
             fin.setHours(23)
             fin.setMinutes(59)
 
-            var queryFecha = { fecha: { $between: [inicio, fin] } }
-            var condicionSucursal = { id_empresa: req.params.empresa };
-            ComprobanteContabilidad.findAll({
-                // offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
-                where: queryFecha,
-                include: [
-                    { model: AsientoContabilidad, as: 'asientosContables', where: { eliminado: false }, include: [{ model: ContabilidadCuenta, as: 'cuenta' }] },
-                    { model: Sucursal, as: 'sucursal', where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }] },
-                    { model: MonedaTipoCambio, as: 'tipoCambio' }
-                ]
+        var queryFecha = {fecha: {$between: [inicio, fin]} }
+        var condicionSucursal = { id_empresa: req.params.empresa };
+        ComprobanteContabilidad.findAll({
+            // offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
+            where: queryFecha,
+            include:[
+                {model:AsientoContabilidad,as:'asientosContables',where: { eliminado: false }, include:[{ model: ContabilidadCuenta, as : 'cuenta'}]},
+                { model: Sucursal, as: 'sucursal',where: condicionSucursal, include: [{ model: Empresa, as: 'empresa' }]},
+                { model: MonedaTipoCambio, as: 'tipoCambio'}             
+            ]
+            
+        }).then(function (comprobantes) {
+            res.json({comprobantes});
+        });
+    })
+    
+    /*router.route('/comprobante-contabilidad/empresa/:empresa/inicio/:inicio/fin/:fin')
+    .get(function(req,res){
 
             }).then(function (comprobantes) {
                 res.json({ comprobantes });
             });
-        })
-
+        })*/
 }

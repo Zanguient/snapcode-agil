@@ -411,6 +411,7 @@
 									<th><b>FORMATO COLOR</b></th>
 									<th><b>COLORES IMP</b></th>
 									<th><b>NOTA</b></th>
+									<th><b>TIPO CONFIGURACION</b></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -441,6 +442,10 @@
 									</td>
 									<td>
 										<input type="text" class="form-control" placeholder="NOTA" ng-model="configuracion_general.nota_factura_bien">
+									</td>
+									<td>
+										<select class="form-control" required ng-options="tipoConfiguracion as tipoConfiguracion.nombre for tipoConfiguracion in tiposConfiguraciones track by tipoConfiguracion.id"
+										 ng-model="configuracion_general.tipoConfiguracion"><option value="0">SELECCIONAR TIPO CONFIG.</option></select>
 									</td>
 								</tr>
 								<tr>
@@ -890,6 +895,7 @@
 									<th><b>FORMATO COLOR</b></th>
 									<th><b>COLORES IMP</b></th>
 									<th><b>NOTA</b></th>
+									<th><b>TIPO CONFIGURACION</b></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -921,6 +927,10 @@
 									</td>
 									<td>
 										<input type="text" class="form-control" placeholder="NOTA" ng-model="sucursal.configuracionFactura.nota_factura_bien">
+									</td>
+									<td>
+										<select class="form-control" required ng-options="tipoConfiguracion as tipoConfiguracion.nombre for tipoConfiguracion in tiposConfiguraciones track by tipoConfiguracion.id"
+										 ng-model="configuracion_general.tipoConfiguracion"><option value="0">SELECCIONAR TIPO CONFIG.</option></select>
 									</td>
 								</tr>
 								<tr>

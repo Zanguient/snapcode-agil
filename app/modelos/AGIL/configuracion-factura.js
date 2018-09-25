@@ -127,6 +127,9 @@ module.exports = function (sequelize, Sequelize) {
 		color_detalle_factura_servicio: {
 			type: Sequelize.STRING,
 			field: 'color_detalle_factura_servicio'
+		},id_tipo_configuracion: {
+			type: Sequelize.INTEGER,
+			field: 'tipo_configuracion'
 		}
 	}, {
 			freezeTableName: true

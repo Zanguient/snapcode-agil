@@ -1,0 +1,2 @@
+ALTER TABLE agil_configuracion_general_factura DROP tipo_configuracion ;
+ALTER TABLE agil_configuracion_factura DROP tipo_configuracion ;

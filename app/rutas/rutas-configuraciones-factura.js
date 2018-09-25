@@ -38,6 +38,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				color_detalle_factura: req.body.configuracionFactura.color_detalle_factura,
 				color_cabecera_factura_servicio: req.body.configuracionFactura.color_cabecera_factura_servicio,
 				color_detalle_factura_servicio: req.body.configuracionFactura.color_detalle_factura_servicio,
+				id_tipo_configuracion:req.body.tipoConfiguracion.id
 			}, {
 					where: { id: req.params.id_configuracion }
 				}).then(function (score) {
@@ -111,7 +112,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				color_detalle_factura: req.body.color_detalle_factura,
 				color_cabecera_factura_servicio: req.body.color_cabecera_factura_servicio,
 				color_detalle_factura_servicio: req.body.color_detalle_factura_servicio,
-
+				id_tipo_configuracion:req.body.tipoConfiguracion.id
 			}, {
 					where: { id: req.params.id_configuracion }
 				}).then(function (score) {
@@ -145,7 +146,8 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				{ model: Clase, as: 'tamanoPapelCajaChicaIngreso' },
 				{ model: Clase, as: 'tamanoPapelCajaChicaEgreso' },
 				{ model: Clase, as: 'formatoPapelFacturaServicio' },
-				{ model: Clase, as: 'formatoColorFacturaServicio' }]
+				{ model: Clase, as: 'formatoColorFacturaServicio' },
+				{ model: Clase, as: 'tipoConfiguracion' }]
 
 			}]
 		});
@@ -372,7 +374,8 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 			{ model: Clase, as: 'formatoPapelFactura' },
 			{ model: Clase, as: 'formatoColorFactura' },
 			{ model: Clase, as: 'formatoPapelFacturaServicio' },
-			{ model: Clase, as: 'formatoColorFacturaServicio' }]
+			{ model: Clase, as: 'formatoColorFacturaServicio' },
+			{ model: Clase, as: 'tipoConfiguracion' }]
 		});
 	}
 
@@ -466,7 +469,8 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				{ model: Clase, as: 'formatoPapelFactura' },
 				{ model: Clase, as: 'formatoColorFactura' },
 				{ model: Clase, as: 'formatoPapelFacturaServicio' },
-				{ model: Clase, as: 'formatoColorFacturaServicio' }]
+				{ model: Clase, as: 'formatoColorFacturaServicio' },
+				{ model: Clase, as: 'tipoConfiguracion' }]
 
 			}).then(function (configuracion) {
 				if (configuracion.usar) {
@@ -495,7 +499,8 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 						{ model: Clase, as: 'formatoPapelFactura' },
 						{ model: Clase, as: 'formatoColorFactura' },
 						{ model: Clase, as: 'formatoPapelFacturaServicio' },
-						{ model: Clase, as: 'formatoColorFacturaServicio' }]
+						{ model: Clase, as: 'formatoColorFacturaServicio' },
+						{ model: Clase, as: 'tipoConfiguracion' }]
 					}).then(function (configuracionEspecifica) {
 						res.json(configuracionEspecifica);
 					});

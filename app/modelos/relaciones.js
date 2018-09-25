@@ -102,6 +102,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Clase.hasMany(ConfiguracionFactura, { foreignKey: 'id_subtitulo_factura', as: 'subtitulosFactura' });
 	Clase.hasMany(ConfiguracionFactura, { foreignKey: 'id_pie_factura', as: 'piesFactura' });
 	//Clase.hasMany(ConfiguracionFactura, { foreignKey: 'id_formato_papel_factura', as: 'formatoPapelFactura' });
+	Clase.hasMany(ConfiguracionFactura, { foreignKey: 'id_tipo_configuracion', as: 'tipoConfiguracion' });
+
 
 	Clase.hasMany(ConfiguracionGeneralFactura, { foreignKey: 'id_impresion_factura', as: 'impresionesFactura' });
 	Clase.hasMany(ConfiguracionGeneralFactura, { foreignKey: 'id_tipo_facturacion', as: 'tiposFacturacion' });
@@ -111,6 +113,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Clase.hasMany(ConfiguracionGeneralFactura, { foreignKey: 'id_pie_factura', as: 'piesFactura' });
 	Clase.hasMany(ConfiguracionGeneralFactura, { foreignKey: 'id_formato_papel_factura', as: 'formatoPapelFactura' });
 	Clase.hasMany(ConfiguracionGeneralFactura, { foreignKey: 'id_formato_color_factura', as: 'formatoColorFactura' });
+	Clase.hasMany(ConfiguracionGeneralFactura, { foreignKey: 'id_tipo_configuracion', as: 'tiposConfiguraciones' });
 
 	Clase.hasMany(ConfiguracionGeneralApp, { foreignKey: 'id_tipo_venta', as: 'tiposVenta' });
 	Clase.hasMany(ConfiguracionGeneralApp, { foreignKey: 'id_cobro_habilitado', as: 'cobros' });
@@ -476,6 +479,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_factura', as: 'formatoColorFactura' });
 	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_factura_servicio', as: 'formatoPapelFacturaServicio' });
 	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_factura_servicio', as: 'formatoColorFacturaServicio' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_tipo_configuracion', as: 'tipoConfiguracion' });
+
 
 	ConfiguracionGeneralFactura.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_impresion_factura', as: 'impresionFactura' });
@@ -500,7 +505,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_factura', as: 'formatoColorFactura' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_factura_servicio', as: 'formatoPapelFacturaServicio' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_factura_servicio', as: 'formatoColorFacturaServicio' });
-
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tipo_configuracion', as: 'tipoConfiguracion' });
+	
 	ConfiguracionGeneralApp.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
 	ConfiguracionGeneralApp.belongsTo(Clase, { foreignKey: 'id_tipo_venta', as: 'tipoVenta' });
 	ConfiguracionGeneralApp.belongsTo(Clase, { foreignKey: 'id_cobro_habilitado', as: 'cobroHabilitado' });
