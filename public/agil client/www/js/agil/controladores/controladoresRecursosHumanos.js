@@ -4352,12 +4352,19 @@ angular.module('agil.controladores')
                 var promesa = DatosCapacidadesImpresion(a, $scope.hojaVida.id)
                 promesa.then(function (dato) {
                     $scope.capacidades = dato.capacidades
-                    convertUrlToBase64Image($scope.empleado.imagen, function (imagenEmpresa) {
-                        var imagen = imagenEmpresa;
-                        $scope.generarPdfHojaVida(imagen)
+                    var pormimg = ObtenerImagen($scope.empleado.imagen)
+                    pormimg.then(function (img) {
+                        // $scope.usuarioSesion.empresa.imagen = img
+                        $scope.generarPdfHojaVida(img)
                         a.inicio = ""
                         a.fin = ""
-                    });
+                    })
+                    // convertUrlToBase64Image($scope.empleado.imagen, function (imagenEmpresa) {
+                    //     var imagen = imagenEmpresa;
+                    //     $scope.generarPdfHojaVida(imagen)
+                    //     a.inicio = ""
+                    //     a.fin = ""
+                    // });
 
                 })
             } else {
@@ -4368,12 +4375,19 @@ angular.module('agil.controladores')
                 var promesa = DatosCapacidadesImpresion(a, $scope.hojaVida.id)
                 promesa.then(function (dato) {
                     $scope.capacidades = dato.capacidades
-                    convertUrlToBase64Image($scope.empleado.imagen, function (imagenEmpresa) {
-                        var imagen = imagenEmpresa;
-                        $scope.generarPdfHojaVida(imagen)
+                    var pormimg = ObtenerImagen($scope.empleado.imagen)
+                    pormimg.then(function (img) {
+                        // $scope.usuarioSesion.empresa.imagen = img
+                        $scope.generarPdfHojaVida(img)
                         a.inicio = ""
                         a.fin = ""
-                    });
+                    })
+                    // convertUrlToBase64Image($scope.empleado.imagen, function (imagenEmpresa) {
+                    //     var imagen = imagenEmpresa;
+                    //     $scope.generarPdfHojaVida(imagen)
+                    //     a.inicio = ""
+                    //     a.fin = ""
+                    // });
 
                 })
 
@@ -7293,8 +7307,9 @@ angular.module('agil.controladores')
                                 }
                             }
                             if (index2 === (array2.length - 1)) {
-                                convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-                                    var imagen = imagenEmpresa;
+                                var pormimg = ObtenerImagen($scope.usuario.empresa.imagen)
+                    pormimg.then(function (imagenEmpresa) {
+                        var imagen = imagenEmpresa;
                                     var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
                                     var stream = doc.pipe(blobStream());
                                     var totalCosto = 0, totalTransporte = 0;
@@ -7360,7 +7375,10 @@ angular.module('agil.controladores')
                                         window.open(fileURL, '_blank', 'location=no');
                                     });
                                     blockUI.stop();
-                                })
+                    })
+                                // convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                                    
+                                // })
                             }
                         })
 
@@ -7983,8 +8001,9 @@ angular.module('agil.controladores')
                         }
                     }
                     if (index === (array.length - 1)) {
-                        convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-                            var imagen = imagenEmpresa;
+                        var pormimg = ObtenerImagen($scope.usuario.empresa.imagen)
+				pormimg.then(function (imagenEmpresa) {
+					var imagen = imagenEmpresa;
                             if (filtro.inicio == 0) {
                                 filtro.inicio = ""
                                 filtro.fin = ""
@@ -7995,7 +8014,6 @@ angular.module('agil.controladores')
                             var totalCosto = 0, totalTransporte = 0;
                             var y = 110, itemsPorPagina = 20, items = 0, pagina = 1, totalPaginas = Math.ceil((datos.length + arregloNombres.length) / itemsPorPagina);
                             $scope.DibujarCabeceraPDFRopaTrabajoEmpleados(doc, pagina, totalPaginas, datos, imagen);
-
                             doc.font('Helvetica', 10);
                             for (var i = 0; i < datos.length && items <= itemsPorPagina; i++) {
                                 item = datos[i]
@@ -8070,7 +8088,10 @@ angular.module('agil.controladores')
                                 window.open(fileURL, '_blank', 'location=no');
                             });
                             blockUI.stop();
-                        })
+				})
+                        // convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                            
+                        // })
                     }
                 });
 
@@ -9117,7 +9138,8 @@ angular.module('agil.controladores')
             destinos.forEach(function (destino, index, array) {
                 destino.y = 215
                 if (index === (array.length - 1)) {
-                    convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                    var pormimg = ObtenerImagen($scope.usuario.empresa.imagen)
+                    pormimg.then(function (imagenEmpresa) {
                         var imagen = imagenEmpresa;
                         var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
                         var stream = doc.pipe(blobStream());
@@ -9150,15 +9172,17 @@ angular.module('agil.controladores')
                                 x += 91
 
                             }
-
                         }
                         doc.end();
                         stream.on('finish', function () {
                             var fileURL = stream.toBlobURL('application/pdf');
                             window.open(fileURL, '_blank', 'location=no');
                         });
-
                     })
+                    // convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                        
+
+                    // })
                 }
             })
 
@@ -9178,7 +9202,6 @@ angular.module('agil.controladores')
             doc.font('Helvetica', 10);
             doc.text("Revición:", 450, 50);
             doc.text("Fecha de aprobación:", 450, 72);
-
             doc.text("Código .", 0, 75, { align: "center" });
             doc.font('Helvetica-Bold', 10);
             doc.rect(30, 105, 550, 0).stroke();
@@ -9190,7 +9213,6 @@ angular.module('agil.controladores')
             doc.rect(30, 135, 550, 0).stroke();
             doc.text("Vehículo:", 35, 140);
             doc.text("Placa:", 345, 140);
-
             doc.rect(30, 150, 550, 0).stroke();
             doc.text("Fecha:", 35, 160);
             doc.font('Helvetica', 10);
@@ -9243,8 +9265,6 @@ angular.module('agil.controladores')
             }
             $scope.paginator.callBack = $scope.listaBeneficiosEmpresa;
             $scope.paginator.getSearch("", $scope.filtroBeneficioEmpresa, null);
-
-
         }
         $scope.listaBeneficiosEmpresa = function () {
             if ($scope.paginator.filter.inicio != 0) {
@@ -9262,9 +9282,10 @@ angular.module('agil.controladores')
             })
         }
         $scope.imprimirReciboVacacion = function (vacacion, nombre, fechaIngreso, gestion, restante) {
-
-            convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-                var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
+            var pormimg = ObtenerImagen($scope.usuario.empresa.imagen)
+				pormimg.then(function (imagenEmpresa) {
+                    
+                    var doc = new PDFDocument({ compress: false, size: 'letter', margin: 10 });
                 var stream = doc.pipe(blobStream());
                 var fechaActual = new Date(vacacion.createdAt);
                 var y = 30
@@ -9358,8 +9379,11 @@ angular.module('agil.controladores')
                     var fileURL = stream.toBlobURL('application/pdf');
                     window.open(fileURL, '_blank', 'location=no');
                 });
+				})
+            // convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                
 
-            });
+            // });
         }
 
         $scope.dibujarCabeceraPDFImpresionVacacion = function (doc, vacacion, imagenEmpresa, y, nombre) {

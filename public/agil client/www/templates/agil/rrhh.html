@@ -43,7 +43,7 @@
                         </div>
                         <div class="form-group col-sm-6 col-md-3 col-lg-2">
                             <label for="campo">Campo</label>
-                            <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                            <select required id="filtro-trabajadores-campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
                                 ng-model="filtro.campo">
                                 <option value="">--selecionar--</option>
                             </select>
@@ -53,7 +53,7 @@
                     <div class="form-row">
                         <div class="form-group col-sm-6 col-md-3 col-lg-2">
                             <label for="cargo">Cargo</label>
-                            <select ng-change="paginator.getSearch(paginator.search,filtro,null)" name="fecha" id="tipo-contrato" class="form-control"
+                            <select ng-change="paginator.getSearch(paginator.search,filtro,null)" name="fecha" id="tipo-cargo-contrato" class="form-control"
                                 required style="width:150px" ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
                                 ng-model="filtro.cargo">
                                 <option value="">--Ninguno--</option>
@@ -83,7 +83,7 @@
                         </div> -->
                         <div class="form-group col-sm-6 col-md-3 col-lg-2">
                             <label for="contrato">Contrato</label>
-                            <select name="fecha" id="tipo-contrato" ng-change="paginator.getSearch(paginator.search,filtro,null)" class="form-control"
+                            <select name="fecha" id="tipo-grupo-sanguineo" ng-change="paginator.getSearch(paginator.search,filtro,null)" class="form-control"
                                 required style="width:150px" ng-options="tipoContrato.id as tipoContrato.nombre for tipoContrato in tiposContratos.clases track by tipoContrato.id"
                                 ng-model="filtro.grupo_sanguineo">
                                 <option value="">--Ninguno--</option>
@@ -393,7 +393,7 @@
                                     {{empleado.designacion_empresa}}
                                 </td>
                                 <td data-label="Imagen:" ng-if="fieldViewer.getConfiguration().imagen.show">
-                                    <img src="{{empleado.imagen}}" width="50">
+                                    <img ng-src="{{empleado.imagen}}" width="50">
                                 </td>
                                 <td data-label="CI:" ng-if="fieldViewer.getConfiguration().ci.show">
                                     {{empleado.ci}}
@@ -497,7 +497,7 @@
     <!-- =========== panel Pre-requisitos ==================== -->
     <div id="dialog-pre-requisitos" class="modal">
         <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle">
-            <span id="ui-id-1" class="ui-dialog-title">
+            <span id="ui-id-prerequisitos" class="ui-dialog-title">
                 <div>
                     <h4 class="smaller">
                         <i class="ace-icon icono-prerequisito"></i>
@@ -554,7 +554,7 @@
                             <i class="ace-icon fa fa-print bigger-160"></i>
                             PDF
                         </button>
-                        <button id="pdf" class="btn btn-sm btn-success">
+                        <button id="excel-filtro-descarga" class="btn btn-sm btn-success">
                             <i class="ace-icon fa fa-print bigger-160"></i>
                             Excel
                         </button>
@@ -688,7 +688,7 @@
     <div id="dialog-pre-requisito-nuevo" class="wizard-posicion ">
         <!-- TOPBAR -->
         <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle">
-            <span id="ui-id-1" class="ui-dialog-title">
+            <span id="ui-id-nuevo-prerequisito" class="ui-dialog-title">
                 <div>
                     <h4 class="smaller">
                         <i class="ace-icon icono-prerequisito"></i>
@@ -777,7 +777,7 @@
     <div id="dialog-historico-preRequisito" class="modal wizard-posicion">
         <!-- TOPBAR -->
         <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle">
-            <span id="ui-id-1" class="ui-dialog-title">
+            <span id="ui-id-historico-prerequisito" class="ui-dialog-title">
                 <div>
                     <h4 class="smaller">
                         <i class="ace-icon icono-prerequisito"></i>
@@ -883,7 +883,7 @@
     <div id="dialog-editar-preRequisito" class="wizard-posicion">
         <!-- TOPBAR -->
         <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle">
-            <span id="ui-id-1" class="ui-dialog-title">
+            <span id="ui-id-edicion-prerequisito" class="ui-dialog-title">
                 <div>
                     <h4 class="smaller">
                         <i class="ace-icon icono-prerequisito"></i>
@@ -938,7 +938,7 @@
                         <div class="modal-header ">
                             <div class="foto-paciente">
                                 <span class="profile-picture">
-                                    <img id="avatar" class="editable img-responsive editable-click editable-empty" alt="Alex's Avatar" src="{{ficha.empleado.persona.imagen}}">
+                                    <img id="avatar" class="editable img-responsive editable-click editable-empty" alt="{{ficha.empleado.persona.nombre}}'s Avatar" ng-src="{{ficha.empleado.persona.imagen}}">
                                 </span>
                                 <div class="width-85 label label-Light label-xlg arrowed-in arrowed-in-right">
                                     <span class="titulo-foto red">DADO DE BAJA</span>
@@ -1220,7 +1220,7 @@
                                         </div>
                                         <div ng-if="ficha.discapacidad" class="col-sm-3 col-lg-2">
                                             <!-- <input type="text" class="form-control" ng-model="ficha.empleado.persona.detalle_discapacidad"> -->
-                                            <textarea class="form-control" ng-update-hidden ng-model="ficha.detalle_discapacidades" id="form-field-8" placeholder="Default Text"></textarea>
+                                            <textarea class="form-control" ng-update-hidden ng-model="ficha.detalle_discapacidades" id="discapacidad-ficha" placeholder="Default Text"></textarea>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -1789,14 +1789,14 @@
                     <div class="form-group">
                         <label for="ciudad">Departamento/Estado/Otro</label>
                         <input type="text" ng-model="clase.nombre" type="text" capitalize style="text-transform:uppercase;" class="form-control"
-                            id="ciudad" name="ciudad" placeholder="Bolivia">
+                         placeholder="Bolivia">
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label for="ciudad">Nombre Corto</label>
                         <input type="text" ng-model="clase.nombre_corto2" type="text" capitalize style="text-transform:uppercase;" class="form-control"
-                            id="ciudad" name="ciudad" placeholder="CBBA">
+                         placeholder="CBBA">
                     </div>
                 </div>
                 <div class="col-sm-2">
@@ -1877,7 +1877,7 @@
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label for="ciudad">Provincia/Localidad/Otro</label>
-                        <input type="text" class="form-control" capitalize ng-model-options="{updateOn: 'submit'}" ng-model="clase.nombre" id="ciudad"
+                        <input type="text" class="form-control" capitalize ng-model-options="{updateOn: 'submit'}" ng-model="clase.nombre" id="provincia-localidad"
                             name="ciudad" placeholder="Cochabamba">
                     </div>
                 </div>
@@ -1885,7 +1885,7 @@
                     <div class="form-group">
                         <label for="ciudad">nombre_corto</label>
                         <input type="text" class="form-control" capitalize ng-model-options="{updateOn: 'submit'}" ng-model="clase.nombre_corto2"
-                            id="ciudad" name="ciudad" placeholder="arzeto">
+                         placeholder="arzeto">
                     </div>
                 </div>
                 <div class="col-sm-2">
@@ -1968,7 +1968,7 @@
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label for="ciudad">Localidad o Sección</label>
-                        <input type="text" capitalize ng-model="clase.nombre" ng-model-options="{updateOn: 'submit'}" class="form-control" id="ciudad"
+                        <input type="text" capitalize ng-model="clase.nombre" ng-model-options="{updateOn: 'submit'}" class="form-control" id="localidad-seccion"
                             name="ciudad" placeholder="Localidad">
                     </div>
                 </div>
@@ -1976,7 +1976,7 @@
                     <div class="form-group">
                         <label for="ciudad">Nombre corto</label>
                         <input type="text" capitalize ng-model="clase.nombre_corto2" ng-model-options="{updateOn: 'submit'}" class="form-control"
-                            id="ciudad" name="ciudad" placeholder="Localidad">
+                         placeholder="Localidad">
                     </div>
                 </div>
                 <div class="col-sm-2">
@@ -2052,7 +2052,7 @@
                     <div class="modal-header">
                         <div class="foto-paciente">
                             <span class="profile-picture">
-                                <img id="avatar" class="editable img-responsive editable-click editable-empty" alt="Alex's Avatar" src="{{empleado.imagen}}">
+                                <img id="avatar" class="editable img-responsive editable-click editable-empty" alt="Avatar" ng-src="{{empleado.imagen}}">
                             </span>
                             <div class="width-85 label label-Light label-xlg arrowed-in arrowed-in-right">
                                 <span class="titulo-foto red"></span>
@@ -2531,7 +2531,7 @@
 
                     <label for="sexo">Genero</label>
                     <label>
-                        <select class="ace ace-switch ace-switch-5 big-switch" style="width:250px" name="genero_nuevoRH" id="genero_nuevoRH" ng-model="familiar.persona.genero"
+                        <select class="ace ace-switch ace-switch-5 big-switch" style="width:250px" name="genero_nuevoRH" id="genero_nuevoRH-persona" ng-model="familiar.persona.genero"
                             ng-options="genero as genero.nombre for genero in generos track by genero.id">
                             <option value="">--Ninguno--</option>
                         </select>
@@ -2540,19 +2540,19 @@
                 <div class="form-group col-sm-6">
                     <label for="afiliado">Afiliado</label>
                     <label>
-                        <input id="afiliado" name="afiliado" ng-model="familiar.persona.afiliado" class="ace ace-switch ace-switch-5" type="checkbox">
+                        <input id="personaFamiliarafiliado"  ng-model="familiar.persona.afiliado" class="ace ace-switch ace-switch-5" type="checkbox">
                         <span class="lbl check-espaniol"></span>
                     </label>
                 </div>
             </div>
             <div class="">
                 <div class="form-group col-sm-6">
-                    <label for="nombres">Nombres</label>
-                    <input type="text" class="form-control" id="nombres" ng-model="familiar.persona.nombres" name="nombres" placeholder="Juan">
+                    <label>Nombres</label>
+                    <input type="text" class="form-control" id="nombres-familiar" ng-model="familiar.persona.nombres" name="nombres" placeholder="Juan">
                 </div>
                 <div class="form-group col-sm-6">
-                    <label for="ap-paterno">Apellido Paterno</label>
-                    <input type="text" class="form-control" id="ap-paterno" ng-model="familiar.persona.apellido_paterno" name="ap-paterno" placeholder="Valdez">
+                    <label>Apellido Paterno</label>
+                    <input type="text" class="form-control" id="ap-paterno" ng-model="familiar.persona.apellido_paterno" placeholder="Valdez">
                 </div>
             </div>
             <div class="">
@@ -2706,7 +2706,7 @@
                             <div class="form-group col-sm-6 col-md-3">
                                 <label for="fecha">Fecha de Elaboración:</label>
                                 <input required type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off"
-                                    ng-model="beneficio.fecha_elaboracion" id="fecha" name="fecha">
+                                    ng-model="beneficio.fecha_elaboracion" id="fecha-elaboracion-beneficio" name="fecha">
                             </div>
                             <div class="form-group col-sm-6 col-md-3">
                                 <label for="se-presento-el">Se presentó el:</label>
@@ -2747,7 +2747,7 @@
                                     <label class="col-sm-3" for="motivo-retiro">Motivo de Retiro</label>
                                     <div class="input-group col-sm-9">
                                         <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion(tipoMotivo)"></span>
-                                        <select required ng-model="beneficio.motivo" class="form-control" id="motivo-retiro" name="motivo-retiro" ng-options="motivo as motivo.nombre for motivo in tipoMotivo.clases | filter:{habilitado:true} track by motivo.id">
+                                        <select required ng-model="beneficio.motivo" class="form-control" id="motivo-beneficio" ng-options="motivo as motivo.nombre for motivo in tipoMotivo.clases | filter:{habilitado:true} track by motivo.id">
                                             <option value="">Ninguno</option>
                                         </select>
                                     </div>
@@ -2822,9 +2822,9 @@
 
                                 <div class="row">
                                     <div class="form-group col-sm-3">
-                                        <label for="1-mes">1er Mes</label>
+                                        <label for="primer-mes">1er Mes</label>
                                         <input required type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.primer_mes" class="form-control"
-                                            id="1-mes" name="1-mes">
+                                            id="primer-mes">
                                         <select tabindex="-1" ng-change="seleccionarMesesFiniquito(beneficio)" ng-options="mes  as mes.nombre for mes in meses track by mes.id"
                                             ng-model="beneficio.mes_uno" class="form-control" ng-change="buscarAnticiposExtraoridnario(filtroAnticipo)">
                                         </select>
@@ -2832,7 +2832,7 @@
                                     <div class="form-group col-sm-3">
                                         <label for="2-mes">2er Mes</label>
                                         <input required type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.segundo_mes" class="form-control"
-                                            id="2-mes" name="2-mes">
+                                            id="segundo-mes" name="2-mes">
                                         <select disabled ng-options="mes  as mes.nombre for mes in meses track by mes.id" ng-model="beneficio.mes_dos" class="form-control"
                                             ng-change="buscarAnticiposExtraoridnario(filtroAnticipo)">
                                         </select>
@@ -2840,7 +2840,7 @@
                                     <div class="form-group col-sm-3">
                                         <label for="3-mes">3er Mes</label>
                                         <input required type="number" min="0" ng-change="calcularPromedioFiniquito(beneficio)" ng-model="beneficio.tercer_mes" class="form-control"
-                                            id="3-mes" name="3-mes">
+                                            id="tercer-mes">
                                         <select disabled ng-options="mes  as mes.nombre for mes in meses track by mes.id" ng-model="beneficio.mes_tres" class="form-control"
                                             ng-change="buscarAnticiposExtraoridnario(filtroAnticipo)">
                                         </select>
@@ -2860,15 +2860,15 @@
                                     <div class="form-group col-sm-3">
                                         <label for="3-mes">Cantidad quinqueneo</label>
                                         <input type="number" max="{{quienquenioRestante}}" min="0" ng-change="calcularTotalQuiquenio(beneficio)" ng-model="beneficio.numero_quinquenio"
-                                            class="form-control" id="3-mes" name="3-mes">
+                                            class="form-control" id="beneficioquinquenio">
                                     </div>
                                     <div class="form-group col-sm-3">
                                         <label for="3-mes">Total por Quinquenio</label>
-                                        <input disabled type="number" ng-model="beneficio.total_por_quinquenio" class="form-control" id="3-mes" name="3-mes">
+                                        <input disabled type="number" ng-model="beneficio.total_por_quinquenio" class="form-control" id="beneficioTotalPorQuinquenio">
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="3-mes">Total Quinquenios a Pagar</label>
-                                        <input disabled type="number" ng-model="beneficio.total_quinquenio" class="form-control" id="3-mes" name="3-mes">
+                                        <input disabled type="number" ng-model="beneficio.total_quinquenio" class="form-control" id="total-quinquenios-pagar">
                                     </div>
                                 </div>
                                 <div class="form-group row" ng-if="beneficio.tipo_beneficio">
@@ -2899,13 +2899,13 @@
                                             <div class="col-md-4">
                                                 <label for="monto">Monto</label>
                                                 <div class="input-group">
-                                                    <input type="number" min="0" ng-model="ingreso.monto" class="form-control" id="monto" name="monto" placeholder="0.0">
+                                                    <input type="number" min="0" ng-model="ingreso.monto" class="form-control" id="montoIngreso" name="monto" placeholder="0.0">
                                                     <span class="input-group-addon">Bs</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="Motivo">Motivo</label>
-                                                <input type="text" ng-model="ingreso.motivo" class="form-control" id="Motivo" name="Motivo" placeholder="">
+                                                <input type="text" ng-model="ingreso.motivo" class="form-control" id="MotivoIngreso"  placeholder="">
                                             </div>
                                             <div class="col-md-2">
                                                 <button type="button" ng-click="agregarOtroIngreso(ingreso)" class="btn btn-primary btn-xs">
@@ -2957,13 +2957,13 @@
                                             <div class="col-md-4">
                                                 <label for="monto">Monto</label>
                                                 <div class="input-group">
-                                                    <input type="number" min="0" ng-model="deduccion.monto" class="form-control" id="monto" name="monto" placeholder="0.0">
+                                                    <input type="number" min="0" ng-model="deduccion.monto" class="form-control" id="montoDeduccion" name="monto" placeholder="0.0">
                                                     <span class="input-group-addon">Bs</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="Motivo">Motivo</label>
-                                                <input type="text" class="form-control" ng-model="deduccion.motivo" id="Motivo" name="Motivo" placeholder="">
+                                                <input type="text" class="form-control" ng-model="deduccion.motivo" id="MotivoDeduccion" name="deduccionMotivo" placeholder="">
                                             </div>
                                             <div class="col-md-2">
                                                 <br>
@@ -3021,7 +3021,7 @@
                                 </label>
                             </div>
                             <div class="col-md-4 pull-left">
-                                <select required ng-if="beneficio.tipo_pago" ng-model="beneficio.cuenta" class="form-control" id="motivo-retiro" name="motivo-retiro"
+                                <select required ng-if="beneficio.tipo_pago" ng-model="beneficio.cuenta" class="form-control" id="beneficioCuenta"
                                     ng-options="cuenta as (cuenta.nombre+'- cuenta: '+cuenta.numero) for cuenta in cuentasBancos track by cuenta.id">
                                     <option value="">Ninguno</option>
                                 </select>
@@ -3295,7 +3295,7 @@
                     <div class="form-group row">
                         <label class="col-sm-6" for="monto">Monto</label>
                         <div class="input-group col-sm-6">
-                            <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="monto" name="monto" placeholder="1000"
+                            <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="montoPrestado" name="monto" placeholder="1000"
                                 ng-model="prestamo.monto" required>
                             <span class="input-group-addon">Bs</span>
                         </div>
@@ -3303,7 +3303,7 @@
                     <div class="form-group row">
                         <label class="col-sm-6" for="interes-pactado">Interes Pactado</label>
                         <div class="input-group col-sm-6">
-                            <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="interes-pactado" ng-model="prestamo.interes_pactado"
+                            <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="calculo-interes-pactado" ng-model="prestamo.interes_pactado"
                                 name="interes-pactado" value="0" required>
                             <span class="input-group-addon">%</span>
                         </div>
@@ -3311,7 +3311,7 @@
                     <div class="form-group row">
                         <label class="col-sm-6" for="fecha-inicial">Fecha Inicial</label>
                         <div class="input-group col-sm-6">
-                            <input type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" id="fecha-inicial" ng-update-hidden
+                            <input type="text" data-date-format="dd/mm/yyyy" class="form-control date-picker" autocomplete="off" id="fecha-inicial-prestamo" ng-update-hidden
                                 ng-model="prestamo.fecha_inicial" name="fecha-inicial" required>
                             <span class="input-group-addon"></span>
                         </div>
@@ -3319,7 +3319,7 @@
                     <div class="form-group row">
                         <label class="col-sm-6" for="plazo">Plazo</label>
                         <div class="input-group col-sm-6">
-                            <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="plazoP" name="plazo" ng-model="prestamo.plazo"
+                            <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="plazoPrestamos" name="plazo" ng-model="prestamo.plazo"
                                 placeholder="6" required>
                             <span class="input-group-addon">Meses</span>
                         </div>
@@ -3327,7 +3327,7 @@
                     <div class="form-group row">
                         <label class="col-sm-6" for="observaciones">Observaciones</label>
                         <div class="input-group col-sm-6">
-                            <input required type="text" class="form-control" id="observaciones" name="observaciones" ng-model="prestamo.observacion"
+                            <input required type="text" class="form-control" id="observaciones-prestamo-empleado" name="observaciones" ng-model="prestamo.observacion"
                                 placeholder="Desc. Planilla">
                             <span class="input-group-addon"></span>
                         </div>
@@ -3400,7 +3400,7 @@
                                     <div class="form-group col-sm-3">
                                         <label for="afiliado">1era Baja</label>
                                         <label class="checkbox-align">
-                                            <input id="afiliado" name="afiliado" ng-model="ausencia.primera_baja" ng-change="CalcularDiferenciaDias(ausencia)" class="ace ace-switch ace-switch-5"
+                                            <input id="primera_baja-diferencia"  ng-model="ausencia.primera_baja" ng-change="CalcularDiferenciaDias(ausencia)" class="ace ace-switch ace-switch-5"
                                                 type="checkbox">
                                             <span class="lbl check-espaniol"></span>
                                         </label>
@@ -3416,19 +3416,19 @@
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-sm-5">
-                                        <label for="nombres">Desde</label>
+                                        <label>Desde</label>
                                         <input required type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="ausencia.fecha_inicio"
                                             data-date-format="dd/mm/yyyy" id="inicio-a" name="nombres" placeholder="Desde" ng-change="CalcularDiferenciaDias(ausencia)">
                                     </div>
                                     <div class="form-group col-sm-5">
-                                        <label for="ap-paterno">Hasta</label>
+                                        <label>Hasta</label>
                                         <input required type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="ausencia.fecha_fin"
-                                            data-date-format="dd/mm/yyyy" id="fin-a" name="ap-paterno" placeholder="Hasta" ng-change="CalcularDiferenciaDias(ausencia)">
+                                            data-date-format="dd/mm/yyyy" id="fin-a" placeholder="Hasta" ng-change="CalcularDiferenciaDias(ausencia)">
                                     </div>
                                     <div class="form-group col-sm-2">
                                         <div>
-                                            <label for="ap-paterno">Dias</label>
-                                            <input required disabled min="1" type="number" class="form-control" id="dias-a" name="ap-paterno" ng-model="ausencia.dias"
+                                            <label>Dias</label>
+                                            <input required disabled min="1" type="number" class="form-control" id="dias-a" ng-model="ausencia.dias"
                                                 placeholder="Dias">
                                         </div>
                                         <div ng-if="ausencia.primera_baja">
@@ -3473,7 +3473,7 @@
                                     <div class="form-group col-sm-4">
                                         <label for="afiliado">Sábado</label>
                                         <label class="checkbox-align">
-                                            <input id="afiliado" name="afiliado" ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.sabado" class="ace ace-switch ace-switch-5"
+                                            <input id="vacacion-sabado"  ng-change="CalcularDiferenciaDiasVacacion(vacacion)" ng-model="vacacion.sabado" class="ace ace-switch ace-switch-5"
                                                 type="checkbox">
                                             <span class="lbl check-espaniol"></span>
                                         </label>
@@ -3495,10 +3495,10 @@
                                 <div class="row">
                                     <div class="form-group col-sm-5">
                                         <div>
-                                            <label for="nombres">Fecha Inicio</label>
+                                            <label>Fecha Inicio</label>
                                             <input required ng-change="CalcularDiferenciaDiasVacacion(vacacion)" type="text" class="form-control date-picker" autocomplete="off"
                                                 ng-update-hidden ng-model="vacacion.fecha_inicio" data-date-format="dd/mm/yyyy"
-                                                id="nombres" name="nombres" placeholder="Desde">
+                                                id="calculo-vacacion-desde" name="nombres" placeholder="Desde">
                                         </div>
                                         <div>
                                             <label class="checkbox-align">
@@ -3510,10 +3510,10 @@
                                     </div>
                                     <div class="form-group col-sm-5">
                                         <div>
-                                            <label for="ap-paterno">Fecha Final</label>
+                                            <label>Fecha Final</label>
                                             <input required ng-change="CalcularDiferenciaDiasVacacion(vacacion)" type="text" class="form-control date-picker" autocomplete="off"
                                                 ng-update-hidden ng-model="vacacion.fecha_fin" data-date-format="dd/mm/yyyy"
-                                                id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                                                id="calculo-vacacion-hasta" placeholder="Hasta">
                                         </div>
                                         <div>
                                             <label class="checkbox-align">
@@ -3525,8 +3525,8 @@
                                     </div>
                                     <div class="form-group col-sm-2">
                                         <div>
-                                            <label for="ap-paterno">Dias</label>
-                                            <input type="text" required disabled class="form-control" ng-model="vacacion.dias" id="ap-paterno" name="ap-paterno" placeholder="Dias">
+                                            <label>Dias</label>
+                                            <input type="text" required disabled class="form-control" ng-model="vacacion.dias" id="dias-vacaciones-disabled" placeholder="Dias">
                                         </div>
                                     </div>
                                 </div>
@@ -3534,7 +3534,7 @@
                                     <div class="form-group col-sm-12">
                                         <label for="ap-materno">Observación </label>
                                         <label for="" class="pull-right text-muted">Retorno el {{vacacion.fecha_Retorno}}</label>
-                                        <textarea class="form-control" required ng-model="vacacion.observacion" id="form-field-8" placeholder="Observación"></textarea>
+                                        <textarea class="form-control" required ng-model="vacacion.observacion" id="observacion-vacacion" placeholder="Observación"></textarea>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -3572,40 +3572,40 @@
                                     <div class="form-group col-sm-4">
                                         <label for="afiliado">Planilla</label>
                                         <label class="checkbox-align">
-                                            <input id="afiliado" name="afiliado" ng-model="otraAusencia.planilla" class="ace ace-switch ace-switch-5" type="checkbox">
+                                            <input id="otra-ausencia-planilla"  ng-model="otraAusencia.planilla" class="ace ace-switch ace-switch-5" type="checkbox">
                                             <span class="lbl check-espaniol"></span>
                                         </label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-sm-3">
-                                        <label for="nombres">Desde</label>
+                                        <label>Desde</label>
                                         <input required type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy"
-                                            id="nombres" name="nombres" placeholder="Desde" ng-model="otraAusencia.fecha_inicio"
+                                            id="otra-ausencia-fecha-inicio" name="nombres" placeholder="Desde" ng-model="otraAusencia.fecha_inicio"
                                             ng-change="CalcularDiferenciaDias(otraAusencia,true)">
                                     </div>
                                     <div class="form-group col-sm-2">
-                                        <label for="nombres">Hrs</label>
-                                        <input required type="time" class="form-control" id="nombres" name="nombres" placeholder="Desde" ng-model="otraAusencia.fecha_inicio_hora"
+                                        <label>Hrs</label>
+                                        <input required type="time" class="form-control" id="otra-ausencia-fecha-final" name="nombres" placeholder="Desde" ng-model="otraAusencia.fecha_inicio_hora"
                                             ng-change="CalcularDiferenciaDias(otraAusencia,true)">
                                         <!--  <input required ng-update-hidden class="form-control date-timepicker" data-date-format="DD/MM/YYYY HH:mm" type="text" id="fechafin" ng-model="otraAusencia.fecha_inicio" ng-change="CalcularDiferenciaDias(otraAusencia,true)"> -->
                                     </div>
                                     <div class="form-group col-sm-3">
 
-                                        <label for="ap-paterno">Hasta</label>
+                                        <label>Hasta</label>
                                         <!-- <input required ng-update-hidden class="form-control date-timepicker" data-date-format="DD/MM/YYYY HH:mm" type="text" id="fechafin" ng-model="otraAusencia.fecha_fin " ng-change="CalcularDiferenciaDias(otraAusencia,true)"> -->
                                         <input required type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy"
-                                            id="ap-paterno" name="ap-paterno" placeholder="Hasta" ng-model="otraAusencia.fecha_fin"
+                                            id="otra-ausensia-fecha-final" placeholder="Hasta" ng-model="otraAusencia.fecha_fin"
                                             ng-change="CalcularDiferenciaDias(otraAusencia,true)">
                                     </div>
                                     <div class="form-group col-sm-2">
-                                        <label for="nombres">Hrs</label>
-                                        <input required type="time" class="form-control" id="nombres" name="nombres" placeholder="Desde" ng-change="CalcularDiferenciaDias(otraAusencia,true)"
+                                        <label>Hrs</label>
+                                        <input required type="time" class="form-control" id="otra-ausencia-horas-final" name="nombres" placeholder="Desde" ng-change="CalcularDiferenciaDias(otraAusencia,true)"
                                             ng-model="otraAusencia.fecha_fin_hora">
                                     </div>
                                     <div class="form-group col-sm-2">
-                                        <label for="ap-paterno">Hrs</label>
-                                        <input required disabled type="text" class="form-control" id="ap-paterno" name="ap-paterno" ng-model="otraAusencia.horas"
+                                        <label>Hrs</label>
+                                        <input required disabled type="text" class="form-control" id="otra-ausencia-horas-disabled" ng-model="otraAusencia.horas"
                                             required placeholder="Dias">
                                     </div>
                                 </div>
@@ -3618,7 +3618,7 @@
                                     </div>
                                     <div class="form-group col-sm-12">
                                         <label for="ap-materno">Observación</label>
-                                        <textarea class="form-control" id="form-field-8" placeholder="Observación" required ng-model="otraAusencia.observacion"></textarea>
+                                        <textarea class="form-control" id="otra-ausencia-observacion" placeholder="Observación" required ng-model="otraAusencia.observacion"></textarea>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -3662,14 +3662,14 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="ciudad">Tipo de baja</label>
-                            <input type="text" required class="form-control" ng-model-options="{updateOn: 'submit'}" ng-model="clase.nombre" id="ciudad"
+                            <input type="text" required class="form-control" ng-model-options="{updateOn: 'submit'}" ng-model="clase.nombre" id="tipo-baja"
                                 name="ciudad" placeholder="tipo de baja" capitalize>
                         </div>
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="ciudad">Porcentaje</label>
-                            <input type="number" required class="form-control" ng-model-options="{updateOn: 'submit'}" ng-model="clase.porcentaje" id="ciudad"
+                            <input type="number" required class="form-control" ng-model-options="{updateOn: 'submit'}" ng-model="clase.porcentaje" id="-porcentaje"
                                 name="ciudad" placeholder="Porcentaje">
                         </div>
                     </div>
@@ -3677,7 +3677,7 @@
                         <div class="form-group">
                             <label for="dias">Dias desc.</label>
                             <input type="number" required class="form-control" ng-model-options="{updateOn: 'submit'}" ng-model="clase.dias_descuento"
-                                id="ciudad" name="dias" placeholder="Dias">
+                                id="dias-descuento" name="dias" placeholder="Dias">
                         </div>
                     </div>
                     <div class="col-sm-2">
@@ -3779,14 +3779,14 @@
             <form ng-submit="obtenerHistorialEmpleadVacacion(filtroVacacion)">
                 <div class="row">
                     <div class="form-group col-sm-3">
-                        <label for="nombres">Desde</label>
+                        <label>Desde</label>
                         <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVacacion.inicio"
-                            data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
+                            data-date-format="dd/mm/yyyy" id="filtro-vacacion-inico" name="nombres" placeholder="Desde">
                     </div>
                     <div class="form-group col-sm-3">
-                        <label for="ap-paterno">Hasta</label>
+                        <label>Hasta</label>
                         <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVacacion.fin" data-date-format="dd/mm/yyyy"
-                            id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                            id="filtro-vacacion-final" placeholder="Hasta">
                     </div>
                     <div class="form-group col-sm-6">
                         <div class="buttons-align">
@@ -3909,14 +3909,14 @@
             <form ng-submit="obtenerHistorialEmpleadoOtrasAusencias(filtroOtrasAusencias)">
                 <div class="row">
                     <div class="form-group col-sm-3">
-                        <label for="nombres">Desde</label>
+                        <label>Desde</label>
                         <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroOtrasAusencias.inicio"
-                            data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
+                            data-date-format="dd/mm/yyyy" id="filtro-ausencias-fecha-inicio" placeholder="Desde">
                     </div>
                     <div class="form-group col-sm-3">
-                        <label for="ap-paterno">Hasta</label>
+                        <label>Hasta</label>
                         <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroOtrasAusencias.fin"
-                            data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                            data-date-format="dd/mm/yyyy" id="filtro-ausencias-fecha-final" placeholder="Hasta">
                     </div>
                     <div class="form-group col-sm-2">
                         <label for="sexo">Tipo</label>
@@ -3997,14 +3997,14 @@
             <form ng-submit="obtenerHistorialEmpleadoAusenciasMedicas(filtroAusencias)">
                 <div class="row">
                     <div class="form-group col-sm-3">
-                        <label for="nombres">Desde</label>
-                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="nombres"
+                        <label>Desde</label>
+                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="filtro-asusencias-medicas-fecha-inicio"
                             name="nombres" placeholder="Desde" ng-model="filtroAusencias.inicio">
                     </div>
                     <div class="form-group col-sm-3">
-                        <label for="ap-paterno">Hasta</label>
-                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="ap-paterno"
-                            name="ap-paterno" placeholder="Hasta" ng-model="filtroAusencias.fin">
+                        <label>Hasta</label>
+                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="filtro-asusencias-medicas-fecha-final"
+                         placeholder="Hasta" ng-model="filtroAusencias.fin">
                     </div>
                     <div class="form-group col-sm-2">
                         <label for="sexo">Tipo de Baja</label>
@@ -4082,14 +4082,14 @@
             <form ng-submit="obtenerHistorialEmpleadoAusenciasMedicas(filtroAusencias)">
                 <div class="row">
                     <div class="form-group col-sm-3">
-                        <label for="nombres">Desde</label>
-                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="nombres"
-                            name="nombres" placeholder="Desde" ng-model="filtroAusencias.inicio">
+                        <label>Desde</label>
+                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="filtro-historico-beneficios-sociales-fecha-inicio"
+                            placeholder="Desde" ng-model="filtroAusencias.inicio">
                     </div>
                     <div class="form-group col-sm-3">
-                        <label for="ap-paterno">Hasta</label>
-                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="ap-paterno"
-                            name="ap-paterno" placeholder="Hasta" ng-model="filtroAusencias.fin">
+                        <label>Hasta</label>
+                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="filtro-historico-beneficios-sociales-fecha-final"
+                         placeholder="Hasta" ng-model="filtroAusencias.fin">
                     </div>
                     <!-- <div class="form-group col-sm-2">
                             <label for="sexo">Tipo de Baja</label>
@@ -4168,14 +4168,14 @@
                     <div class="col-sm-5">
                         <div class="form-group">
                             <label for="ciudad">Tipo</label>
-                            <input type="text" ng-model-options="{updateOn: 'submit'}" class="form-control" ng-model="clase.nombre" id="ciudad" name="ciudad"
+                            <input type="text" ng-model-options="{updateOn: 'submit'}" class="form-control" ng-model="clase.nombre"
                                 placeholder="tipo de ausencia" capitalize>
                         </div>
                     </div>
                     <div class="col-sm-5">
                         <div class="form-group">
                             <label for="ciudad">Descontar %</label>
-                            <input type="number" ng-model-options="{updateOn: 'submit'}" class="form-control" ng-model="clase.porcentaje" id="ciudad"
+                            <input type="number" ng-model-options="{updateOn: 'submit'}" class="form-control" ng-model="clase.porcentaje" id="clase-porcentaje"
                                 name="ciudad" placeholder="Porcentaje">
                         </div>
                     </div>
@@ -4246,7 +4246,7 @@
                     <div class="form-group col-sm-6">
                         <label for="sexo">Campo</label>
                         <div class="input-group">
-                            <select required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                            <select required id="filtro-rol-turnos-campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
                                 ng-model="rolTurno.campo">
                                 <option value="">--selecionar--</option>
                             </select>
@@ -4271,27 +4271,27 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-sm-6">
-                        <label for="nombres">Desde</label>
+                        <label>Desde</label>
                         <input ng-disabled="rolTurno.blokearDatos" ng-change="calcularDatosRolTurno(rolTurno)" name="fecha" required ng-update-hidden
-                            class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy" id="desde"
+                            class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy" id="rol-turno-fecha-inicio"
                             ng-model="rolTurno.fecha_inicio" placeholder="Desde" />
                     </div>
                     <div class="form-group col-sm-6">
-                        <label for="ap-paterno">Hasta</label>
+                        <label>Hasta</label>
                         <input type="text" ng-update-hidden ng-model="rolTurno.fecha_fin" data-date-format="dd/mm/yyyy" class="form-control date-picker"
-                            autocomplete="off" ng-disabled="rolTurno.tipo" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                            autocomplete="off" ng-disabled="rolTurno.tipo" id="rol-turno-fecha-final" placeholder="Hasta">
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-sm-6">
-                        <label for="nombres">D. Trabajo</label>
+                        <label>D. Trabajo</label>
                         <input ng-disabled="rolTurno.blokearDatos" required type="number" ng-model="rolTurno.dias_trabajado" class="form-control"
-                            id="nombres" name="nombres" placeholder="D. Trabajo">
+                            id="rol-turno-dias-trabajados"  placeholder="D. Trabajo">
                     </div>
                     <div class="form-group col-sm-6">
-                        <label for="ap-paterno">D. Descanso</label>
+                        <label>D. Descanso</label>
                         <input ng-disabled="rolTurno.blokearDatos" required type="number" ng-model="rolTurno.dias_descanso" class="form-control"
-                            id="ap-paterno" name="ap-paterno" placeholder="D. Descanso">
+                            id="rol-turno-dias-descanso" placeholder="D. Descanso">
                     </div>
                 </div>
                 <div class="row">
@@ -4329,16 +4329,16 @@
         <div class="modal-body">
             <div class="row">
                 <div class="form-group col-sm-3">
-                    <label for="nombres">Desde</label>
-                    <input type="text" class="form-control date-picker" autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
+                    <label>Desde</label>
+                    <input type="text" class="form-control date-picker" autocomplete="off" id="filtro-rol-turnos-desde" placeholder="Desde">
                 </div>
                 <div class="form-group col-sm-3">
-                    <label for="ap-paterno">Hasta</label>
-                    <input type="text" class="form-control date-picker" autocomplete="off" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                    <label>Hasta</label>
+                    <input type="text" class="form-control date-picker" autocomplete="off" id="filtro-rol-turnos-hasta" placeholder="Hasta">
                 </div>
                 <div class="form-group col-sm-2">
                     <label for="sexo">Grupo</label>
-                    <input type="text" class="form-control" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                    <input type="text" class="form-control" id="filtro-rol-turno-grupo" placeholder="Hasta">
                 </div>
                 <div class="form-group col-sm-4">
                     <div class="buttons-align">
@@ -4416,7 +4416,7 @@
                     <div class="form-group col-sm-6">
                         <label for="sexo">Fecha</label>
                         <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" ng-model="horaExtra.fecha"
-                            id="nombres" name="nombres" placeholder="Desde" required>
+                            id="hrs-extra-fecha" name="nombres" placeholder="Desde" required>
                     </div>
                     <div class="form-group col-sm-6">
                         <label for="">Historial</label>
@@ -4429,24 +4429,24 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-sm-5">
-                        <label for="nombres">Hora Inicio</label>
-                        <input type="time" autofocus name="time" ng-change="calcularTiempoHorasExtra(horaExtra)" class="form-control" id="nombres"
+                        <label>Hora Inicio</label>
+                        <input type="time" autofocus name="time" ng-change="calcularTiempoHorasExtra(horaExtra)" class="form-control" id="horas-extras-hora-inicio"
                             name="nombres" placeholder="Desde" ng-model="horaExtra.hora_inicio" required>
                     </div>
                     <div class="form-group col-sm-5">
-                        <label for="ap-paterno">Hora Fin</label>
-                        <input type="time" ng-change="calcularTiempoHorasExtra(horaExtra)" class="form-control" id="ap-paterno" name="ap-paterno"
+                        <label>Hora Fin</label>
+                        <input type="time" ng-change="calcularTiempoHorasExtra(horaExtra)" class="form-control" id="horas-extras-hora-final"
                             placeholder="Hasta" ng-model="horaExtra.hora_fin" required>
                     </div>
                     <div class="form-group col-sm-2">
-                        <label for="ap-paterno">Horas</label>
-                        <input disabled type="text" class="form-control" step="0" id="ap-paterno" name="ap-paterno" placeholder="Hasta" ng-model="horaExtra.tiempo"
+                        <label>Horas</label>
+                        <input disabled type="text" class="form-control" step="0" id="horas-extras-hora-tiempo" placeholder="Hasta" ng-model="horaExtra.tiempo"
                             required>
                     </div>
                 </div>
                 <div>
                     <div class="form-group">
-                        <label for="nombres">Observaciónes</label>
+                        <label>Observaciónes</label>
                         <textarea class="form-control" id="form-field-8" placeholder="Observación" ng-model="horaExtra.observacion" required></textarea>
                     </div>
                 </div>
@@ -4475,14 +4475,14 @@
         <div class="modal.body">
             <div>
                 <div class="form-group col-sm-3">
-                    <label for="nombres">Desde</label>
+                    <label>Desde</label>
                     <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroHorasExtra.inicio" class="form-control date-picker"
-                        autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
+                        autocomplete="off" id="filtro-horas-extras-desde" placeholder="Desde">
                 </div>
                 <div class="form-group col-sm-3">
-                    <label for="ap-paterno">Hasta</label>
+                    <label>Hasta</label>
                     <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroHorasExtra.fin" class="form-control date-picker"
-                        autocomplete="off" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                        autocomplete="off" id="filtro-horas-extras-hasta" placeholder="Hasta">
                 </div>
                 <div class="form-group col-sm-2">
                     <div class="buttons-align">
@@ -4759,12 +4759,12 @@
                     <div class="form-group col-sm-2">
                         <label for="desde">Desde</label>
                         <input ng-update-hidden ng-change="paginator.getSearch(paginator.search,filtro,null)" ng-model="filtro.inicio" type="text"
-                            class="form-control date-picker" autocomplete="off" id="desde" name="desde">
+                            class="form-control date-picker" autocomplete="off" id="filtro-lista-desde" name="desde">
                     </div>
                     <div class="form-group col-sm-2">
                         <label for="hasta">Hasta</label>
                         <input ng-update-hidden ng-change="paginator.getSearch(paginator.search,filtro,null)" ng-model="filtro.fin" type="text" class="form-control date-picker"
-                            autocomplete="off" id="hasta" name="hasta">
+                            autocomplete="off" id="filtro-lista-hasta" name="hasta">
                     </div>
 
                     <div class="form-group col-sm-2">
@@ -4967,7 +4967,7 @@
                         <div class="form-group">
                             <label class="col-sm-6" for="monto">Monto</label>
                             <div class="input-group col-sm-6">
-                                <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="monto" name="monto" placeholder="1000"
+                                <input ng-change="calcularCuota(prestamo)" type="number" class="form-control" id="montoprestamo" name="monto" placeholder="1000"
                                     ng-model="prestamo.monto" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                                     required>
                                 <span class="input-group-addon">Bs</span>
@@ -5169,11 +5169,11 @@
                     <div class="form-group col-sm-3">
                         <label for="hasta">Hasta</label>
                         <input type="text" class="form-control date-picker" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroBeneficioEmpresa.fin"
-                            autocomplete="off" id="hasta" name="hasta">
+                            autocomplete="off" id="filtroBeneficiohasta" name="hasta">
                     </div>
                     <div class="form-group col-sm-3" ng-if="filtroBeneficioEmpresa.tipo">
                         <label for="motivo">Motivo</label>
-                        <select ng-model="filtroBeneficioEmpresa.motivo" class="form-control" id="motivo-retiro" name="motivo-retiro" ng-options="motivo.id as motivo.nombre for motivo in tipoMotivo.clases | filter:{habilitado:true} track by motivo.id">
+                        <select ng-model="filtroBeneficioEmpresa.motivo" class="form-control" id="filtro-motivo-beneficio" ng-options="motivo.id as motivo.nombre for motivo in tipoMotivo.clases | filter:{habilitado:true} track by motivo.id">
                             <option value="">Ninguno</option>
                         </select>
                     </div>
@@ -5322,17 +5322,17 @@
             <form ng-submit="obtenerHistorialEmpresaVacacion(filtroVacacion)">
                 <div class="row">
                     <div class="form-group col-sm-3">
-                        <p for="nombres">Desde</p>
+                        <p>Desde</p>
                         <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVacacion.inicio"
-                            data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
+                            data-date-format="dd/mm/yyyy" id="filtro-vacacion-desde" placeholder="Desde">
                     </div>
                     <div class="form-group col-sm-3">
-                        <p for="ap-paterno">Hasta</p>
+                        <p>Hasta</p>
                         <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVacacion.fin" data-date-format="dd/mm/yyyy"
-                            id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                            id="filtro-horas-extras-hasta-reporte" placeholder="Hasta">
                     </div>
                     <div class="form-group col-sm-2">
-                        <p for="ap-paterno">Estado</p>
+                        <p>Estado</p>
                         <select name="estado" id="estado-empleado" ng-model="filtroVacacion.estado">
                             <option value="2">Todos</option>
                             <option value="1">Activo</option>
@@ -5488,14 +5488,14 @@
             <form ng-submit="obtenerHistorialEmpresaAusenciasMedicas(filtroAusencias)">
                 <div class="row">
                     <div class="form-group col-sm-3">
-                        <label for="nombres">Desde</label>
-                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="nombres"
+                        <label>Desde</label>
+                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="filtro-ausencias-baja-medica-desde"
                             name="nombres" placeholder="Desde" ng-model="filtroAusencias.inicio">
                     </div>
                     <div class="form-group col-sm-3">
-                        <label for="ap-paterno">Hasta</label>
-                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="ap-paterno"
-                            name="ap-paterno" placeholder="Hasta" ng-model="filtroAusencias.fin">
+                        <label>Hasta</label>
+                        <input type="text" ng-update-hidden class="form-control date-picker" autocomplete="off" data-date-format="dd/mm/yyyy" id="filtro-ausencias-baja-medica-hasta"
+                         placeholder="Hasta" ng-model="filtroAusencias.fin">
                     </div>
                     <div class="form-group col-sm-2">
                         <label for="sexo">Tipo de Baja</label>
@@ -5577,14 +5577,14 @@
             <div class="row">
                 <form ng-submit="paginator.getSearch(paginator.search,filtroRol,null)">
                     <div class="form-group col-sm-3">
-                        <label for="nombres">Desde</label>
+                        <label>Desde</label>
                         <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-model="filtroRol.inicio"
-                            autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
+                            autocomplete="off" id="filtro-rol-turno-desde" name="nombres" placeholder="Desde">
                     </div>
                     <div class="form-group col-sm-3">
-                        <label for="ap-paterno">Hasta</label>
+                        <label>Hasta</label>
                         <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-model="filtroRol.fin"
-                            autocomplete="off" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                            autocomplete="off" id="filtro-rol-turno-hasta" placeholder="Hasta">
                     </div>
                     <div class="form-group col-sm-2">
                         <label for="sexo">Grupo</label>
@@ -5596,8 +5596,8 @@
                         </div>
                     </div>
                     <div class="form-group col-sm-2">
-                        <label for="ap-paterno">Campamento</label>
-                        <select  id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                        <label>Campamento</label>
+                        <select  id="filtro-rol-turno-campo" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
                             ng-model="filtroRol.campo">
                             <option value="">--seleccionar--</option>
                         </select>
@@ -5680,14 +5680,14 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group col-sm-2">
-                            <label for="nombres">Desde</label>
+                            <label>Desde</label>
                             <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-change="cambiarFecha(filtroRolCal)"
-                                ng-model="filtroRolCal.inicio2" autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
+                                ng-model="filtroRolCal.inicio2" autocomplete="off" id="filtro-rol-turno-cal-desde" placeholder="Desde">
                         </div>
                         <div class="form-group col-sm-2">
-                            <label for="ap-paterno">Hasta</label>
+                            <label>Hasta</label>
                             <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-model="filtroRolCal.fin2"
-                                autocomplete="off" id="ap-paterno" name="ap-paterno" ng-change="cambiarFecha(filtroRolCal)" placeholder="Hasta">
+                                autocomplete="off" id="filtro-rol-turno-cal-hasta" ng-change="cambiarFecha(filtroRolCal)" placeholder="Hasta">
                         </div>
                         <div class="form-group col-sm-2">
                             <label for="sexo">Grupo</label>
@@ -5698,13 +5698,13 @@
                             </div>
                         </div>
                         <div class="form-group col-sm-2">
-                            <label for="ap-paterno">Empleado</label>
-                            <input type="text" class="form-control" ng-model="filtroRolCal.nombre" autocomplete="off" id="ap-paterno" name="ap-paterno"
+                            <label>Empleado</label>
+                            <input type="text" class="form-control" ng-model="filtroRolCal.nombre" autocomplete="off" id="filtro-rol-turno-cal-nombre"
                                 placeholder="nombre">
                         </div>
                         <div class="form-group col-sm-2">
-                            <label for="ap-paterno">Campamento</label>
-                            <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                            <label>Campamento</label>
+                            <select required id="filtro-reporte-detallado-campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
                                 ng-model="filtroRolCal.campo">
                                 <option value="">--seleccionar--</option>
                             </select>
@@ -6047,7 +6047,7 @@
                 <div class="row">
                     <div class="col-sm-4">
                         <label>Apellido Paterno</label>
-                        <input type="text" class="form-control" ng-model="visita.persona.apellido_paterno" name="ap-paterno" placeholder="Apellido Paterno">
+                        <input type="text" class="form-control" ng-model="visita.persona.apellido_paterno" placeholder="Apellido Paterno">
                     </div>
                     <div class="col-sm-4">
                         <label>Apellido Materno</label>
@@ -6059,18 +6059,18 @@
                     </div>
 
                     <div class="col-sm-4">
-                        <label for="nombres">C.I.</label>
-                        <input type="text" class="form-control" ng-model="visita.persona.ci" id="nombres" name="nombres" placeholder="C.I.">
+                        <label>C.I.</label>
+                        <input type="text" class="form-control" ng-model="visita.persona.ci" id="ci-persona" name="nombres" placeholder="C.I.">
                     </div>
                     <div class="col-sm-4">
-                        <label for="nombres">Exp.
+                        <label>Exp.
 
                             <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in tipoExpedido.clases | filter:{habilitado:true} track by expedido.id"
                                 ng-model="visita.persona.expedido"></select>
                     </div>
                     <div class="col-sm-4">
-                        <label for="nombres">Destino</label>
-                        <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                        <label>Destino</label>
+                        <select required id="campo-rol-destino" class="form-control" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
                             ng-model="visita.campo">
                             <option value="">--seleccionar--</option>
                         </select>
@@ -6105,32 +6105,32 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="form-group col-sm-4">
-                        <label for="ap-paterno">Apellido Paterno</label>
-                        <input type="text" class="form-control" ng-model="visita.persona.apellido_paterno" name="ap-paterno" placeholder="Apellido Paterno">
+                        <label>Apellido Paterno</label>
+                        <input type="text" class="form-control" ng-model="visita.persona.apellido_paterno" placeholder="Apellido Paterno">
                     </div>
                     <div class="form-group col-sm-4">
-                        <label for="ap-paterno">Apellido Materno</label>
+                        <label>Apellido Materno</label>
                         <input type="text" class="form-control" ng-model="visita.persona.apellido_materno" placeholder="Apellido Materno">
                     </div>
                     <div class="form-group col-sm-4">
-                        <label for="nombres">Nombre(s)</label>
+                        <label>Nombre(s)</label>
                         <input required type="text" class="form-control" ng-model="visita.persona.nombres" placeholder="Nombre(s)">
                     </div>
 
                     <div class="form-group col-sm-4">
-                        <label for="nombres">C.I.</label>
-                        <input required type="text" class="form-control" ng-model="visita.persona.ci" id="nombres" name="nombres" placeholder="C.I.">
+                        <label>C.I.</label>
+                        <input required type="text" class="form-control" ng-model="visita.persona.ci" id="ci-persona-visita" name="nombres" placeholder="C.I.">
                     </div>
 
                     <div class="form-group col-sm-4">
-                        <label for="nombres">Exp.
+                        <label>Exp.
 
                             <select required class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in tipoExpedido.clases | filter:{habilitado:true} track by expedido.id"
                                 ng-model="visita.persona.expedido"></select>
                     </div>
                     <div class="form-group col-sm-4">
-                        <label for="nombres">Destino</label>
-                        <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                        <label>Destino</label>
+                        <select required id="campo-rol-destino-visita" class="form-control" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
                             ng-model="visita.campo">
                             <option value="">--seleccionar--</option>
                         </select>
@@ -6164,19 +6164,19 @@
                 <div class="col-sm-5">
                     <div class="form-group">
                         <label for="ciudad">Vehículo</label>
-                        <input type="text" class="form-control" id="ciudad" ng-model="clase.vehiculo" name="ciudad" placeholder="Vehículo">
+                        <input type="text" class="form-control" id="clase-vehiculo" ng-model="clase.vehiculo" name="ciudad" placeholder="Vehículo">
                     </div>
                 </div>
                 <div class="col-sm-5">
                     <div class="form-group">
                         <label for="ciudad">Placa</label>
-                        <input type="text" class="form-control" id="ciudad" ng-model="clase.placa" name="ciudad" placeholder="Vehículo">
+                        <input type="text" class="form-control" id="clase-placa" ng-model="clase.placa" name="ciudad" placeholder="Vehículo">
                     </div>
                 </div>
                 <div class="col-sm-5">
                     <div class="form-group">
                         <label for="ciudad">Cap. Pasajeros</label>
-                        <input type="text" class="form-control" id="ciudad" ng-model="clase.nombre_corto" name="ciudad" placeholder="Pasajeros">
+                        <input type="text" class="form-control" id="clase-nombre-corto" ng-model="clase.nombre_corto" name="ciudad" placeholder="Pasajeros">
                     </div>
                 </div>
                 <div class="col-sm-2">
@@ -6338,24 +6338,24 @@
                 <div class="row">
                     <div class="space-6"></div>
                     <div class="form-group col-sm-1">
-                        <label for="nombres">Desde</label>
+                        <label>Desde</label>
                     </div>
                     <div class="form-group col-sm-2">
                         <input type="text" ng-update-hidden ng-model="filtroViaje.inicio" data-date-format="dd/mm/yyyy" class="form-control date-picker"
-                            autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
+                            autocomplete="off" id="filtro-viaje-desdes" placeholder="Desde">
                     </div>
                     <div class="form-group col-sm-1">
-                        <label for="ap-paterno">Hasta</label>
+                        <label>Hasta</label>
                     </div>
                     <div class="form-group col-sm-2">
                         <input type="text" ng-update-hidden ng-model="filtroViaje.fin" data-date-format="dd/mm/yyyy" class="form-control date-picker"
-                            autocomplete="off" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                            autocomplete="off" id="filtro-viaje-hasta" placeholder="Hasta">
                     </div>
                     <div class="form-group col-sm-1">
-                        <label for="ap-paterno">T.Pasajero</label>
+                        <label>T.Pasajero</label>
                     </div>
                     <div class="form-group col-sm-2">
-                        <select class="form-control" ng-model="filtroViaje.tipoPasajero" id="motivo-retiro" name="motivo-retiro">
+                        <select class="form-control" ng-model="filtroViaje.tipoPasajero" id="filtro-tipo-pasajero">
                             <option value="">--todos--</option>
                             <option value="E">Empleado</option>
                             <option value="V">Visita</option>
@@ -6378,16 +6378,16 @@
                 </div>
                 <div class="row" ng-if="!VerViajes">
                     <div class="form-group col-sm-1">
-                        <label for="nombres">Destino</label>
+                        <label>Destino</label>
                     </div>
                     <div class="form-group col-sm-2">
-                        <select id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                        <select id="filtro-viajes-destino-campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
                             ng-model="filtroViaje.destino">
                             <option value="">todos</option>
                         </select>
                     </div>
                     <div class="form-group col-sm-1">
-                        <label for="ap-paterno">Vehículo</label>
+                        <label>Vehículo</label>
                     </div>
                     <div class="form-group col-sm-2">
                         <select class="form-control" ng-options="vehiculo.id as vehiculo.nombre for vehiculo in vehiculosViaje.clases | filter:{habilitado:true} track by vehiculo.id"
@@ -6396,7 +6396,7 @@
                         </select>
                     </div>
                     <div class="form-group col-sm-1">
-                        <label for="ap-paterno">Conductor</label>
+                        <label>Conductor</label>
                     </div>
                     <div class="form-group col-sm-2">
                         <select class="form-control" ng-options="chofer.id as chofer.persona.nombre_completo for chofer in choferesViaje track by chofer.id"
@@ -6405,7 +6405,7 @@
                         </select>
                     </div>
                     <div class="form-group col-sm-1">
-                        <label for="ap-paterno">T Viaje</label>
+                        <label>T Viaje</label>
                     </div>
                     <div class="form-group col-sm-2">
                         <select class="form-control" ng-options="tipo.id as tipo.nombre for tipo in tiposViaje.clases track by tipo.id" ng-model="filtroViaje.tipoViaje">
@@ -6468,24 +6468,24 @@
                 <div class="row">
                     <div class="space-6"></div>
                     <div class="form-group col-sm-1">
-                        <label for="nombres">Desde</label>
+                        <label>Desde</label>
                     </div>
                     <div class="form-group col-sm-2">
                         <input type="text" ng-update-hidden ng-model="filtroViaje.inicio" data-date-format="dd/mm/yyyy" class="form-control date-picker"
-                            autocomplete="off" id="nombres" name="nombres" placeholder="Desde">
+                            autocomplete="off" id="filtro-dos-viaje-desde" placeholder="Desde">
                     </div>
                     <div class="form-group col-sm-1">
-                        <label for="ap-paterno">Hasta</label>
+                        <label>Hasta</label>
                     </div>
                     <div class="form-group col-sm-2">
                         <input type="text" ng-update-hidden ng-model="filtroViaje.fin" data-date-format="dd/mm/yyyy" class="form-control date-picker"
-                            autocomplete="off" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                            autocomplete="off" id="filtro-dos-viaje-hasta" placeholder="Hasta">
                     </div>
                     <div class="form-group col-sm-1">
-                        <label for="ap-paterno">destino</label>
+                        <label>destino</label>
                     </div>
                     <div class="form-group col-sm-2">
-                        <select id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                        <select id="viajes-destino-campo" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
                             ng-model="filtroViaje.destino">
                             <option value="">todos</option>
                         </select>
@@ -6508,7 +6508,7 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-sm-1">
-                        <label for="ap-paterno">Vehículo</label>
+                        <label>Vehículo</label>
                     </div>
                     <div class="form-group col-sm-2">
                         <select class="form-control" ng-options="vehiculo.id as vehiculo.nombre for vehiculo in vehiculosViaje.clases | filter:{habilitado:true} track by vehiculo.id"
@@ -6517,7 +6517,7 @@
                         </select>
                     </div>
                     <div class="form-group col-sm-1">
-                        <label for="ap-paterno">Conductor</label>
+                        <label>Conductor</label>
                     </div>
                     <div class="form-group col-sm-2">
                         <select class="form-control" ng-options="chofer.id as chofer.persona.nombre_completo for chofer in choferesViaje track by chofer.id"
@@ -6526,7 +6526,7 @@
                         </select>
                     </div>
                     <div class="form-group col-sm-1">
-                        <label for="ap-paterno">Relevo</label>
+                        <label>Relevo</label>
                     </div>
                     <div class="form-group col-sm-2">
                         <select class="form-control" ng-options="chofer.id as chofer.persona.nombre_completo for chofer in choferesViaje track by chofer.id"
@@ -6620,14 +6620,14 @@
             <form ng-submit="obtenerHistorialEmpresaOtrasAusencias(filtroOtrasAusencias)">
                 <div class="row">
                     <div class="form-group col-sm-3">
-                        <label for="nombres">Desde</label>
+                        <label>Desde</label>
                         <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroOtrasAusencias.inicio"
-                            data-date-format="dd/mm/yyyy" id="nombres" name="nombres" placeholder="Desde">
+                            data-date-format="dd/mm/yyyy" id="filtro-otras-ausencias-desde" placeholder="Desde">
                     </div>
                     <div class="form-group col-sm-3">
-                        <label for="ap-paterno">Hasta</label>
+                        <label>Hasta</label>
                         <input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroOtrasAusencias.fin"
-                            data-date-format="dd/mm/yyyy" id="ap-paterno" name="ap-paterno" placeholder="Hasta">
+                            data-date-format="dd/mm/yyyy" id="filtro-otras-ausencias-hasta" placeholder="Hasta">
                     </div>
                     <div class="form-group col-sm-2">
                         <label for="sexo">Tipo</label>
@@ -6801,8 +6801,8 @@
                                             <label class="control-label  col-sm-5 no-padding-right">Foto</label>
                                             <div class="col-sm-7">
                                                 <label class="ace-file-input ace-file-multiple">
-                                                    <img ng-if="nuevoRH.id" src="{{nuevoRH.persona.imagen}}" width="100" heigth=>
-                                                    <input type="file" id="imagen-persona" onchange="uploadImage(this,'imagen-persona-oculto')" />
+                                                    <img ng-if="nuevoRH.id" ng-src="{{nuevoRH.persona.imagen}}" width="100" heigth=100>
+                                                    <input type="file" id="imagen-persona-nuevorh" onchange="uploadImage(this,'imagen-persona-oculto')" />
                                                     <input id="imagen-persona-oculto" ng-model="nuevoRH.persona.imagen" name="imagen" type="hidden" ng-update-hidden form="datosPersonalesForm">
 
                                                 </label>
@@ -6829,10 +6829,10 @@
                                         </div>
                                         <div class="row form-group">
                                             <div class="col-lg-5">
-                                                <label for="nombres">Nombres</label>
+                                                <label>Nombres</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input required type="text" id="nombres" ng-model="nuevoRH.persona.nombres" placeholder="Nombres" class="form-control" form="datosPersonalesForm"
+                                                <input required type="text" id="nombres-nuevo-rh" ng-model="nuevoRH.persona.nombres" placeholder="Nombres" class="form-control" form="datosPersonalesForm"
                                                 />
                                             </div>
                                         </div>
@@ -6903,7 +6903,7 @@
                                             </div>
                                             <div class="input-group col-lg-7">
                                                 <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogConceptoEdicion()"></span>
-                                                <select name="fecha" id="tipo-contrato" class="form-control" required style="width:150px" ng-options="tipoContrato as tipoContrato.nombre for tipoContrato in tiposContratos.clases | filter:{habilitado:true} track by tipoContrato.id"
+                                                <select name="fecha" id="tipo-contrato-lista" class="form-control" required style="width:150px" ng-options="tipoContrato as tipoContrato.nombre for tipoContrato in tiposContratos.clases | filter:{habilitado:true} track by tipoContrato.id"
                                                     ng-model="nuevoRH.tipo_contrato"></select>
                                             </div>
                                         </div>
@@ -6913,7 +6913,7 @@
                                             </div>
                                             <div class="col-lg-7">
                                                 <input name="fecha" required ng-update-hidden class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy"
-                                                    id="fecha" ng-model="nuevoRH.persona.fecha_nacimiento" placeholder="Ingrese la fecha"
+                                                    id="fecha-nacimiento" ng-model="nuevoRH.persona.fecha_nacimiento" placeholder="Ingrese la fecha"
                                                 />
                                             </div>
 
@@ -6955,7 +6955,7 @@
                                                 <label for="empresa">Empresa</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input required type="text" id="designacion_empresa" ng-model="nuevoRH.designacion_empresa" placeholder="Empresa" class="form-control"
+                                                <input required type="text" id="designacion_empresa-datos-laborales" ng-model="nuevoRH.designacion_empresa" placeholder="Empresa" class="form-control"
                                                 />
                                             </div>
                                         </div>
@@ -6964,7 +6964,7 @@
                                                 <label for="campo">Campo</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <select required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                                <select required id="datos-laborales-campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
                                                     ng-model="nuevoRH.campo">
                                                     <option value="">--selecionar--</option>
                                                 </select>
@@ -7022,7 +7022,7 @@
     <div id="dialog-entrega-preRequisito" class="wizard-posicion">
         <!-- TOPBAR -->
         <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle">
-            <span id="ui-id-1" class="ui-dialog-title">
+            <span id="ui-id-entrega-prerequisito" class="ui-dialog-title">
                 <div>
                     <h4 class="smaller">
                         <i class="ace-icon icono-prerequisito"></i>
@@ -7088,13 +7088,13 @@
                     <div ng-hide="!filtroCap.capacidadInterna" class="col-md-6">
                         <label for="desde">Desde</label>
                         <input size="15" ng-update-hidden class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy"
-                            id="fechainicio" ng-model="filtroCap.inicio" placeholder="Fecha inicial">
+                            id="fechainicio-capacidad" ng-model="filtroCap.inicio" placeholder="Fecha inicial">
 
                     </div>
                     <div ng-hide="!filtroCap.capacidadInterna" class="col-md-6">
                         <label for="desde">Hasta </label>
                         <input size="15" ng-update-hidden class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy"
-                            id="fechainicio" ng-model="filtroCap.fin" placeholder="Fecha inicial">
+                            id="fechafinal-capacidad" ng-model="filtroCap.fin" placeholder="Fecha inicial">
 
                     </div>
                 </div>
@@ -7225,7 +7225,7 @@
                                             <label class="control-label  col-sm-5 no-padding-right">Foto</label>
                                             <div class="col-sm-7">
                                                 <label class="ace-file-input ace-file-multiple">
-                                                    <img ng-if="paciente.id" src="{{paciente.persona.imagen}}" width="100">
+                                                    <img ng-if="paciente.id" ng-src="{{paciente.persona.imagen}}" width="100">
                                                     <input disabled type="file" id="imagen-persona" onchange="uploadImage(this,'imagen-persona-oculto')" />
                                                     <input disabled id="imagen-persona-oculto" ng-model="paciente.persona.imagen" name="imagen" type="hidden" ng-update-hidden>
 
@@ -7237,7 +7237,7 @@
                                                 <label for="paterno">Apellido Paterno</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input disabled type="text" id="apellido_paterno" ng-model="paciente.persona.apellido_paterno" placeholder="Apellido Paterno"
+                                                <input disabled type="text" id="apellido_paterno-paciente" ng-model="paciente.persona.apellido_paterno" placeholder="Apellido Paterno"
                                                     class="form-control" />
                                             </div>
                                         </div>
@@ -7246,17 +7246,17 @@
                                                 <label for="materno">Apellido Materno</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input disabled type="text" id="apellido_materno" ng-model="paciente.persona.apellido_materno" placeholder="Apellido Materno"
+                                                <input disabled type="text" id="apellido_materno-paciente" ng-model="paciente.persona.apellido_materno" placeholder="Apellido Materno"
                                                     class="form-control" />
                                             </div>
 
                                         </div>
                                         <div class="row form-group">
                                             <div class="col-lg-5">
-                                                <label for="nombres">Nombres</label>
+                                                <label>Nombres</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <input disabled type="text" id="nombres" ng-model="paciente.persona.nombres" placeholder="Nombres" class="form-control" />
+                                                <input disabled type="text" id="nombres-paciente" ng-model="paciente.persona.nombres" placeholder="Nombres" class="form-control" />
                                             </div>
                                         </div>
                                         <div class="row form-group">
@@ -7265,7 +7265,7 @@
                                             </div>
                                             <div class="col-lg-7">
 
-                                                <input disabled type="text" id="ci" ng-model="paciente.persona.ci" placeholder="C.I" class="form-control" />
+                                                <input disabled type="text" id="ci-disabled" ng-model="paciente.persona.ci" placeholder="C.I" class="form-control" />
                                             </div>
                                         </div>
                                         <div class="row form-group">
@@ -7313,7 +7313,7 @@
                                             </div>
                                             <div class="col-lg-7">
                                                 <input disabled name="fecha" required ng-update-hidden class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy"
-                                                    id="fecha" ng-model="paciente.fecha_nacimiento_texto" placeholder="Ingrese la fecha"
+                                                    id="fecha-nacimiento-disabled" ng-model="paciente.fecha_nacimiento_texto" placeholder="Ingrese la fecha"
                                                 />
                                             </div>
 
@@ -7366,9 +7366,9 @@
                                                 <label for="campo">Campo</label>
                                             </div>
                                             <div class="col-lg-7">
-                                                <select disabled required id="campo-rol" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                                <select disabled required id="campo-rol-disabled" name="centroDeCostos" ng-options="centroCosto as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
                                                     ng-model="nuevoRH.campo">
-                                                    <option value="">--selecionar--</option>
+                                                    <option disabled value="">--selecionar--</option>
                                                 </select>
                                             </div>
 
@@ -7482,7 +7482,7 @@
                     <a href="javascript:void(0)" ng-click="abrirDialogConceptoEdicion(tipoMotivo)">
                         <i class="fa fa-pencil bigger-140"></i>
                     </a>
-                    <select required ng-model="cuenta.motivo_retiro" class="form-control" id="motivo-retiro" name="motivo-retiro" ng-options="motivo.id as motivo.nombre for motivo in tipoMotivo.clases | filter:{habilitado:true} track by motivo.id">
+                    <select required ng-model="cuenta.motivo_retiro" class="form-control" id="motivo-retiro-cuenta" ng-options="motivo.id as motivo.nombre for motivo in tipoMotivo.clases | filter:{habilitado:true} track by motivo.id">
                         <option value="">Ninguno</option>
                     </select>
                 </div>
@@ -7557,7 +7557,7 @@
                                         <label> Cargo</label>
                                     </div>
                                     <div class="col-md-6">
-                                        <select name="fecha" id="tipo-contrato" class="form-control" ng-change="listaRopaTrabajoPorCargo(cargo)" ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
+                                        <select name="fecha" id="tipo-cargo" class="form-control" ng-change="listaRopaTrabajoPorCargo(cargo)" ng-options="cargo.id as cargo.nombre for cargo in listaCargos.clases track by cargo.id"
                                             ng-model="cargo">
                                             <option value="">--Ninguno--</option>
                                         </select>
@@ -7566,7 +7566,7 @@
                                         <label> Ropa de Trabajo</label>
                                     </div>
                                     <div class="col-md-6">
-                                        <select name="fecha" id="tipo-contrato" class="form-control" ng-model-options="{updateOn: 'blur'}" required ng-options="ropa as ropa.nombre for ropa in ropasDeTrabajo track by ropa.id"
+                                        <select name="fecha" id="ropa-trabajp" class="form-control" ng-model-options="{updateOn: 'blur'}" required ng-options="ropa as ropa.nombre for ropa in ropasDeTrabajo track by ropa.id"
                                             ng-model="ropaTrabajo.ropaTrabajo">
                                             <option value="">--Ninguno--</option>
                                         </select>
@@ -7687,7 +7687,7 @@
 
                             <div class="form-group col-md-3">
                                 <label for="campo">CENTRO DE COSTO</label>
-                                <select required id="campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
+                                <select required id="filtro-reporte-campo-rol" class="form-control" name="centroDeCostos" ng-options="centroCosto.id as centroCosto.nombre for centroCosto in centrosDeCostos | filter:{habilitado:true} track by centroCosto.id"
                                     ng-model="filtroReporte.campo">
                                     <option value="">--selecionar--</option>
                                 </select>
@@ -7944,7 +7944,7 @@
 
                             <div class="col-md-12">
                                 <p for="codigo">Obs.</p>
-                                <input ng-disabled="verinformacionDOtacion" ng-update-hidden type="text" class="form-control" id="filtroCodigo" ng-model="dotacionRopa.observacion"
+                                <input ng-disabled="verinformacionDOtacion" ng-update-hidden type="text" class="form-control" id="dotacion-ropa-observacion" ng-model="dotacionRopa.observacion"
                                     placeholder="" />
                             </div>
                             <div class="form-inline col-md-4">

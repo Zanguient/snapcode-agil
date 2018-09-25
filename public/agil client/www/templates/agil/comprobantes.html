@@ -82,7 +82,7 @@
                                         PDF
                                     </button>
                                     <!-- ng-disabled="!ventas"-->
-                                    <button id="pdf" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio()">
+                                    <button id="excel" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio()">
                                         <i class="ace-icon fa fa-print bigger-160"></i>
                                         Excel
                                     </button>
@@ -129,7 +129,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select id="sucursal" name="sucursal" ng-model="filtro.sucursal" data-placeholder="Elija una sucursal" ng-options="sucursalFiltro.id as sucursalFiltro.nombre for sucursalFiltro in sucursales">
+                                    <select id="sucursalFiltroComprobantes" name="sucursalFiltroComprobantes" ng-model="filtro.sucursal" data-placeholder="Elija una sucursal" ng-options="sucursalFiltro.id as sucursalFiltro.nombre for sucursalFiltro in sucursales">
                                         <option value="">--ninguno--</option>
                                     </select>
                                 </td>

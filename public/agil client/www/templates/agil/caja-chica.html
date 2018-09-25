@@ -79,7 +79,7 @@
                                         <i class="ace-icon fa fa-print bigger-160"></i>
                                         PDF
                                     </button>
-                                    <button id="pdf" ng-disabled="!Cuentas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(Cuentas)">
+                                    <button id="excel" ng-disabled="!Cuentas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(Cuentas)">
                                         <i class="ace-icon fa fa-print bigger-160"></i>
                                         Excel
                                     </button>
@@ -478,7 +478,7 @@
                 <div class="form-group">
                     <label for="ciudad">Concepto</label>
                     <input type="text" ng-model="clase.nombre" type="text" ng-model-options="{updateOn: 'submit'}" capitalize style="text-transform:uppercase;"
-                        class="form-control" id="ciudad" name="ciudad" placeholder="Bolivia">
+                        class="form-control" id="concepto" name="ciudad" placeholder="Bolivia">
                 </div>
             </div>
             <div class="col-sm-4">
@@ -2260,14 +2260,14 @@
                     <div class="form-group">
                         <label for="ciudad">Servicio</label>
                         <input type="text" ng-model="clase.nombre" type="text" capitalize style="text-transform:uppercase;" class="form-control"
-                            id="ciudad" name="ciudad" placeholder="Bolivia">
+                            id="servicio" name="ciudad" placeholder="Servicio">
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label for="ciudad">Comentario</label>
                         <input type="text" ng-model="clase.nombre_corto" type="text" capitalize style="text-transform:uppercase;" class="form-control"
-                            id="ciudad" name="ciudad" placeholder="CBBA">
+                            id="comentario" name="ciudad" placeholder="Comentario">
                     </div>
                 </div>
                 <div class="col-sm-2">

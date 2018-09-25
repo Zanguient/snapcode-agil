@@ -76,7 +76,7 @@
 									<input type="number" step="0.01" ng-model="filtro.monto">
 								</td>
 								<td>
-									<select id="pago" name="pago" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago">
+									<select id="pagoCompra" name="pagoCompra" ng-model="filtro.tipo_pago" data-placeholder="Elija un tipo de pago">
 										<option value="0">TODOS</option>
 										<option ng-repeat="tipoPago in tiposPago" value="{{tipoPago.id}}">{{tipoPago.nombre}}</option>
 									</select>
@@ -110,7 +110,7 @@
 									<input type="text" ng-model="filtro.usuario">
 								</td>
 								<td>
-									<select id="sucursalFiltro" name="sucursalFiltro" ng-model="filtro.tipo" data-placeholder="Elija una sucursal">
+									<select id="tipoFiltro" name="tipoFiltro" ng-model="filtro.tipo" data-placeholder="Elija una sucursal">
 										<option value="0" selected>TODOS</option>
 										<option value="productos">PRODUCTOS</option>
 										<option value="servicios">SERVICIOS</option>
@@ -380,7 +380,7 @@
 									<td>
 										<label>FECHA</label>
 										<input data-validate="validate(required)" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-										 id="fecha" ng-model="compra.fechaTexto" placeholder="Ingrese la fecha" />
+										 id="fechaCompra" ng-model="compra.fechaTexto" placeholder="Ingrese la fecha" />
 										<span class="red">(*)</span>
 									</td>
 									<td ng-if="compra.movimiento.clase.nombre!=diccionario.MOVING_POR_COMPRA_SIN_FACTURA">
@@ -1796,7 +1796,7 @@
 		</div>
 		<p>
 			<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Ingrese el monto a pagar?</p>
-		<input required ng-model="pago" min="1" max="compra.saldo" type="number" step="0.001">
+		<input required ng-model="pagoCreditosCompra" min="1" max="compra.saldo" type="number" step="0.001">
 		<button type="submit" class="btn btn-success" ng-disabled="formularioPago.$invalid">Pagar</button>
 		<button type="button" class="btn btn-danger" ng-click="cerrarPopupPago()">Cancelar</button>
 	</form>
@@ -1817,16 +1817,16 @@
 
 				<div class="col-sm-4">
 					<div class="form-group">
-						<label for="ciudad">Servicio</label>
+						<label for="servicio">Servicio</label>
 						<input type="text" ng-model="clase.nombre" type="text" capitalize style="text-transform:uppercase;" class="form-control"
-						 id="ciudad" name="ciudad" placeholder="Bolivia">
+						 id="servicio" name="servicio" placeholder="Servicio">
 					</div>
 				</div>
 				<div class="col-sm-4">
 					<div class="form-group">
-						<label for="ciudad">Comentario</label>
+						<label for="comentario">Comentario</label>
 						<input type="text" ng-model="clase.nombre_corto" type="text" capitalize style="text-transform:uppercase;" class="form-control"
-						 id="ciudad" name="ciudad" placeholder="CBBA">
+						 id="comentario" name="comentario" placeholder="Comentario">
 					</div>
 				</div>
 				<div class="col-sm-2">

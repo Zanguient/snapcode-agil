@@ -525,41 +525,41 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			});;
 		});
 
-		function crearFormulacion(producto, req, t) {
-			return Producto.find({
-				where: {
-					codigo: producto.codigo_final.toString(),
-					id_empresa: req.params.id_empresa
-				},
-				transaction: t
-			}).then(function (productoFinal) {
-				if (productoFinal) {
-					return Producto.find({
-						where: {
-							codigo: producto.codigo_base.toString(),
-							id_empresa: req.params.id_empresa
-						},
-						transaction: t
-					}).then(function (productoBase) {
-						if (productoBase) {
-							return ProductoBase.create({
-								id_producto: productoFinal.dataValues.id,
-								id_producto_base: productoBase.id,
-								formulacion: parseFloat(producto.formulacion)
-							}, { transaction: t });
-						}else{
-							return new Promise(function (fullfill, reject) {
-								fullfill({hasErr: true, mensaje:'No se encuentra en la base de datos el producto: ' + producto.nombre_base + ' Código: ' + producto.codigo_base})
-							})
-						}
-					});
-				}else{
-					return new Promise(function (fullfill, reject) {
-						fullfill({hasErr: true, mensaje:'No se encuentra en la base de datos el producto: ' + producto.nombre_final + ' Código: ' + producto.codigo_final})
-					})
-				}
-			});
-		}
+	function crearFormulacion(producto, req, t) {
+		return Producto.find({
+			where: {
+				codigo: producto.codigo_final.toString(),
+				id_empresa: req.params.id_empresa
+			},
+			transaction: t
+		}).then(function (productoFinal) {
+			if (productoFinal) {
+				return Producto.find({
+					where: {
+						codigo: producto.codigo_base.toString(),
+						id_empresa: req.params.id_empresa
+					},
+					transaction: t
+				}).then(function (productoBase) {
+					if (productoBase) {
+						return ProductoBase.create({
+							id_producto: productoFinal.dataValues.id,
+							id_producto_base: productoBase.id,
+							formulacion: parseFloat(producto.formulacion)
+						}, { transaction: t });
+					} else {
+						return new Promise(function (fullfill, reject) {
+							fullfill({ hasErr: true, mensaje: 'No se encuentra en la base de datos el producto: ' + producto.nombre_base + ' Código: ' + producto.codigo_base })
+						})
+					}
+				});
+			} else {
+				return new Promise(function (fullfill, reject) {
+					fullfill({ hasErr: true, mensaje: 'No se encuentra en la base de datos el producto: ' + producto.nombre_final + ' Código: ' + producto.codigo_final })
+				})
+			}
+		});
+	}
 
 	router.route('/productos/formulacion/empresa/:id_empresa')
 		.post(function (req, res) {
@@ -571,26 +571,26 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				return Promise.all(promesas)
 			}).then(function (result) {
 				if (result.length > 0) {
-                    var mensajes = []
-                    result.forEach(function (dato) {
-                        if (dato !== undefined) {
-                            if (dato.hasErr) {
-                                mensajes.push(dato.mensaje)
-                            }
-                        }
-                    });
-                    if (mensajes.length === result.length) {
-                        mensajes.unshift('No se guardo')
-                        res.json({ hasErr: true, mensaje: 'No se guardo', mensajes: mensajes })
-                    } else if (mensajes.length === 0) {
-                        res.json({ mensaje: 'Guardado correctamente.' })
-                    } else {
-                        mensajes.unshift('Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length)
-                        res.json({ hasErr: true, mensaje: 'Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length, mensajes: mensajes })
-                    }
-                } else {
-                    res.json({ mensaje: 'No se guardo, ocurrio un error.' })
-                }
+					var mensajes = []
+					result.forEach(function (dato) {
+						if (dato !== undefined) {
+							if (dato.hasErr) {
+								mensajes.push(dato.mensaje)
+							}
+						}
+					});
+					if (mensajes.length === result.length) {
+						mensajes.unshift('No se guardo')
+						res.json({ hasErr: true, mensaje: 'No se guardo', mensajes: mensajes })
+					} else if (mensajes.length === 0) {
+						res.json({ mensaje: 'Guardado correctamente.' })
+					} else {
+						mensajes.unshift('Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length)
+						res.json({ hasErr: true, mensaje: 'Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length, mensajes: mensajes })
+					}
+				} else {
+					res.json({ mensaje: 'No se guardo, ocurrio un error.' })
+				}
 				// res.json({ mensaje: "¡Formulación de Productos actualizados satisfactoriamente!" });
 			}).catch(function (err) {
 				res.json({ hasError: true, mensaje: err.stack });
@@ -749,7 +749,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 								rango_negativo: tipoP.rango_negativo,
 								eliminado: tipoP.eliminado
 							}, {
-								where: { id: tipoP.id }
+									where: { id: tipoP.id }
 								}).then(function (actualizado) {
 									if (index === (array.length - 1)) {
 										res.json({ producto: productoCreado, url: imagen, signedRequest: signedRequest, image_name: 'producto-' + productoCreado.id + '.jpg' });
@@ -1219,4 +1219,70 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				res.json({ productos: [], hasError: true, mensaje: err.stack });
 			})
 		});
+	router.route('/importar-precios-productos/:id_empresa')
+		.post(function (req, res) {
+			var promises = []
+			sequelize.transaction(function (t) {
+				req.body.forEach(function (producto, index, array) {
+					promises.push(Producto.find({
+						where: { id_empresa: req.params.id_empresa, codigo: producto.codigo }, transaction: t
+					}).then(function (ProductoEncontrado) {
+						return ProductoTipoPrecio.findOrCreate({
+							where: {
+								id_producto: ProductoEncontrado.id,
+								id_tipo_precio: producto.tipoPrecio.id,
+							},
+							transaction: t,
+							lock: t.LOCK.UPDATE,
+							defaults: {
+								id_producto: ProductoEncontrado.id,
+								id_tipo_precio: producto.tipoPrecio.id,
+								precio_unitario: producto.precio_unitario,
+								rango_positivo: producto.rango_positivo,
+								rango_negativo: producto.rango_negativo,
+								eliminado: false
+							}
+						}).spread(function (precoProducto, created) {
+							if (!created) {
+								return ProductoTipoPrecio.update({
+									precio_unitario: producto.precio_unitario,
+									rango_positivo: producto.rango_positivo,
+									rango_negativo: producto.rango_negativo,
+									eliminado: false
+								}, {
+										where: { id: precoProducto.id }, transaction: t
+									}).then(function (actualizado) {
+										return new Promise(function (fulfill, reject) {
+											fulfill();
+										});
+									}).catch(function (err) {
+										return new Promise(function (fulfill, reject) {
+											reject((err.stack !== undefined) ? err.stack : err);
+										});
+									})
+							} else {
+								return new Promise(function (fulfill, reject) {
+									fulfill();
+								});
+							}
+						}).catch(function (err) {
+							return new Promise(function (fulfill, reject) {
+								reject((err.stack !== undefined) ? err.stack : err);
+							});
+						})
+					}).catch(function (err) {
+						return new Promise(function (fulfill, reject) {
+							reject((err.stack !== undefined) ? err.stack : err);
+						});
+					}))
+
+				})
+				return Promise.all(promises);
+			}).then(function (result) {				
+					res.json({ mensaje: "¡Datos de Productos actualizados satisfactoriamente!" });				
+			}).catch(function (err) {
+				res.json({ hasError: true, mensaje: err.stack });
+			});
+		})
+
 }

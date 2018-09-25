@@ -14,20 +14,10 @@ angular.module('agil.controladores')
 
         });
 
-        convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-            if (imagenEmpresa.length > 0 && imagenEmpresa !== "error") {
-                $scope.imagenEmpresa = imagenEmpresa;
-            } else {
-                convertUrlToBase64Image("img/agilsoftware.png", function (imagenEmpresa) {
-                    if (imagenEmpresa.length > 0 && imagenEmpresa !== "error") {
-                        $scope.mostrarMensaje('No se encuentra la imagen de la empresa.')
-                        $scope.imagenEmpresa = imagenEmpresa;
-                    } else {
-                        $scope.mostrarMensaje('No se encuentra imagenen de la empresa.')
-                    }
-                })
-            }
-        })
+        // var pormimg = ObtenerImagen($scope.usuarioSesion.empresa.imagen)
+			// 	pormimg.then(function (img) {
+			// 		$scope.usuarioSesion.empresa.imagen = img
+			// 	})
 
         $scope.usuario = JSON.parse($localStorage.usuario);
 

@@ -89,13 +89,13 @@
                                 FILTRO
                             </td>
                             <td>
-                                <select required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                <select required id="sucursal-filtro-operaciones" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
                                     ng-model="filtro.sucursal" ng-change="obtenerAlmacenes(filtro.sucursal.id)">
                                     <option value="" selected>TODOS</option>
                                 </select>
                             </td>
                             <td>
-                                <select data-validate="validate(required)" required id="almacen" name="almacen" ng-model="filtro.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
+                                <select data-validate="validate(required)" required id="almacen-filtro-operaciones" name="almacen" ng-model="filtro.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
                                     data-placeholder="Click para escoger">
                                     <option value="" selected>TODOS</option>
                                 </select>
@@ -295,7 +295,7 @@
                                                 <div class="col-sm-4">
                                                     <div class="col-sm-6">
                                                         <label>SUCURSAL</label>
-                                                        <select ng-disabled="solicitud.ver!==undefined" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                                        <select ng-disabled="solicitud.ver!==undefined" required id="sucursaldisabled" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
                                                             ng-model="solicitud.sucursal" ng-change="obtenerAlmacenes(solicitud.sucursal.id)">
                                                             <option value="" disabled selected>Selec. Sucursal</option>
                                                         </select>
@@ -589,7 +589,7 @@
                                                                 <div class="swiper-wrapper">
                                                                     <div ng-disabled="solicitud.ver!==undefined" ng-click="agregarDetalleVentaPanel(producto)" class="btn btn-success swiper-slide productos-button"
                                                                         ng-repeat="producto in productosProcesados | orderRankin | orderBy: '-rankin'">
-                                                                        <img src="{{producto.imagen}}" width="100%" style="height: 98px;max-height:98px">
+                                                                        <img ng-src="{{producto.imagen}}" width="100%" style="height: 98px;max-height:98px">
                                                                         <label class="panel-cantidad">{{producto.inventario_disponible}}</label>
                                                                         <h3 class="text-cut">{{producto.nombre}}</h3>
                                                                     </div>
@@ -733,7 +733,7 @@
                                         <b>Sucursal</b>
                                     </div>
                                     <div class="col-md-6">
-                                        <select required id="sucursal" name="sucursal" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                        <select required id="sucursalOperacion" name="sucursal" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
                                             ng-model="pedido.sucursal" ng-change="obtenerAlmacenes(pedido.sucursal)">
                                             <option value="" selected disabled>Seleccione una sucursal</option>
                                         </select>
@@ -805,7 +805,7 @@
                                         <b>Grupo producto</b>
                                     </div>
                                     <div class="col-md-6">
-                                        <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos" name="selectGruposProductos"
+                                        <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductosFiltro" name="selectGruposProductos"
                                             ng-model="pedido.grupo" ng-options="grupo.id as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                                             data-placeholder="Click para escoger">
                                             <option value="" selected>Todos</option>
@@ -1042,7 +1042,7 @@
                                         <b>Sucursal</b>
                                     </div>
                                     <div class="col-md-6">
-                                        <select required id="sucursal" name="sucursal" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                        <select required id="sucursal-pedido" name="sucursal" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
                                             ng-model="pedido.sucursal" ng-change="obtenerAlmacenes(pedido.sucursal)">
                                             <option value="" selected disabled>Seleccione una sucursal</option>
                                         </select>
@@ -1115,7 +1115,7 @@
                                         <b>Grupo producto</b>
                                     </div>
                                     <div class="col-md-6">
-                                        <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos" name="selectGruposProductos"
+                                        <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="filtroselectGruposProductos" name="selectGruposProductos"
                                             ng-model="pedido.grupo" ng-options="grupo.id as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                                             data-placeholder="Click para escoger">
                                             <option value="" selected>Todos</option>
@@ -1316,7 +1316,7 @@
                     </div>
                     <div class="col-md-6">
                         <label>Grupos</label>
-                        <select class="form-control" style="width:150px;"  ng-change="buscarProductos(1)" id="selectGruposProductos" name="selectGruposProductos"
+                        <select class="form-control" style="width:150px;"  ng-change="buscarProductos(1)" id="selectGruposProductosProveedor" name="selectGruposProductos"
                             ng-model="configuracionPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                             data-placeholder="Click para escoger">
                             <option value="" selected>Todos</option>
@@ -1422,7 +1422,7 @@
                                     {{producto.nombre}}
                                 </td>
                                 <td>
-                                    <img src="{{producto.imagen}}" width="50">
+                                    <img ng-src="{{producto.imagen}}" width="50">
                                 </td>
                                 <td>{{producto.unidad_medida}}</td>
                                 <td>{{producto.precio_unitario | number:2}}</td>
@@ -1596,7 +1596,7 @@
                     </div>
                     <div class="col-md-6">
                         <label>Grupos</label>
-                        <select class="form-control" style="width:150px;" ng-change="buscarProductosAsignados(1)" id="selectGruposProductos" name="selectGruposProductos"
+                        <select class="form-control" style="width:150px;" ng-change="buscarProductosAsignados(1)" id="selectGruposProductosAsignados" name="selectGruposProductos"
                             ng-model="productosAsignadosPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                             data-placeholder="Click para escoger">
                             <option value="" selected>Todos</option>
@@ -1702,7 +1702,7 @@
                                     {{producto.nombre}}
                                 </td>
                                 <td>
-                                    <img src="{{producto.imagen}}" width="50">
+                                    <img ng-src="{{producto.imagen}}" width="50">
                                 </td>
                                 <td>{{producto.unidad_medida}}</td>
                                 <td>{{producto.precio_unitario | number:2}}</td>

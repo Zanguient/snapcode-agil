@@ -85,7 +85,7 @@
                                     FILTRO
                                 </td>
                                 <td>
-                                    <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos"
+                                    <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectSubGruposProductos-filtro"
                                         name="selectGruposProductos" ng-model="filtro.subgrupo" ng-options="subGrupo as subGrupo.nombre for subGrupo in subGruposProducto track by subGrupo.id"
                                         data-placeholder="Click para escoger">
                                         <option value="" selected>Todos</option>
@@ -284,7 +284,7 @@
                                     <tr>
                                         <td>
                                             &nbsp; &nbsp;
-                                            <select class="form-control form-inline" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos"
+                                            <select class="form-control form-inline" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectSubGruposProductos-configuracion"
                                                 name="selectGruposProductos" ng-model="configuracion.subgrupo" ng-options="subgrupo as subgrupo.nombre for subgrupo in subGruposProducto track by subgrupo.id"
                                                 data-placeholder="Click para escoger">
                                                 <option disabled value="" selected>Seleccione subgrupo</option>

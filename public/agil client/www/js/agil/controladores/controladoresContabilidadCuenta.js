@@ -592,7 +592,7 @@ angular.module('agil.controladores')
 		$scope.guardarCuenta = function (valido, cuenta) {
 			// console.log(cuenta)
 			if (valido) {
-				var button = $('#siguiente').text().trim();
+				var button = $('#siguienteCuenta').text().trim();
 				if (button != "Siguiente") {
 					$scope.ocultarMensajesValidacion();
 					blockUI.start();

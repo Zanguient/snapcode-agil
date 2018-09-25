@@ -162,7 +162,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="nombre">Nombre Sucursal</label>
 
 									<div class="col-sm-9">
-										<input required type="text" id="nombre" ng-model="sucursal.nombre" placeholder="Nombre" class="col-xs-10 col-sm-5" />
+										<input required type="text" id="nombreSucursal" ng-model="sucursal.nombre" placeholder="Nombre" class="col-xs-10 col-sm-5" />
 									</div>
 								</div>
 							</div>
@@ -172,7 +172,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="numero">Número Sucursal</label>
 
 									<div class="col-sm-9">
-										<input required type="number" id="numero" ng-model="sucursal.numero" placeholder="Numero" class="form-control" />
+										<input required type="number" id="numeroSucursal" ng-model="sucursal.numero" placeholder="Numero" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -184,7 +184,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="sucursaldireccion">Dirección</label>
 
 									<div class="col-sm-9">
-										<input required type="text" id="sucursaldireccion" ng-model="sucursal.direccion" placeholder="dirección"
+										<input required type="text" id="sucursaldireccionSucursal" ng-model="sucursal.direccion" placeholder="dirección"
 										 class="form-control" />
 									</div>
 								</div>
@@ -194,7 +194,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="sucursaltelefono1">Teléfono 1</label>
 
 									<div class="col-sm-9">
-										<input type="text" id="sucursaltelefono1" ng-model="sucursal.telefono1" placeholder="telefono 1" class="form-control" />
+										<input type="text" id="sucursaltelefono1Sucursal" ng-model="sucursal.telefono1" placeholder="telefono 1" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -206,7 +206,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="sucursaltelefono2">Teléfono 2</label>
 
 									<div class="col-sm-9">
-										<input type="text" id="sucursaltelefono2" ng-model="sucursal.telefono2" placeholder="telefono 2" class="form-control" />
+										<input type="text" id="sucursaltelefono2Sucursal" ng-model="sucursal.telefono2" placeholder="telefono 2" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -215,7 +215,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="sucursaltelefono3">Teléfono 3</label>
 
 									<div class="col-sm-9">
-										<input type="text" id="sucursaltelefono3" ng-model="sucursal.telefono3" placeholder="telefono 3" class="form-control" />
+										<input type="text" id="sucursaltelefono3Sucursal" ng-model="sucursal.telefono3" placeholder="telefono 3" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -251,7 +251,7 @@
 									<label class="col-sm-6 control-label no-padding-right" for="nota_venta_correlativo">Número Correlativo Venta</label>
 
 									<div class="col-sm-6">
-										<input required type="number" id="nota_venta_correlativo" ng-model="sucursal.nota_venta_correlativo"
+										<input required type="number" id="nota_venta_correlativoSucursal" ng-model="sucursal.nota_venta_correlativo"
 										 placeholder="Correlativo nota de venta" class="form-control" />
 									</div>
 								</div>
@@ -272,7 +272,7 @@
 									<label class="col-sm-6 control-label no-padding-right" for="nota_baja_correlativo">Número Correlativo Baja</label>
 
 									<div class="col-sm-6">
-										<input required type="number" id="nota_baja_correlativo" ng-model="sucursal.nota_baja_correlativo"
+										<input required type="number" id="nota_baja_correlativoSucursal" ng-model="sucursal.nota_baja_correlativo"
 										 placeholder="Correlativo nota de baja" class="form-control" />
 									</div>
 								</div>
@@ -303,7 +303,7 @@
 										Cotizacion</label>
 
 									<div class="col-sm-6">
-										<input required type="number" id="cotizacion_correlativo" ng-model="sucursal.cotizacion_correlativo"
+										<input required type="number" id="cotizacion_correlativoSucursal" ng-model="sucursal.cotizacion_correlativo"
 										 placeholder="Correlativo cotizacion" class="form-control" />
 									</div>
 								</div>
@@ -314,7 +314,7 @@
 										Factura</label>
 
 									<div class="col-sm-6">
-										<input required type="number" id="pre_factura_correlativo" ng-model="sucursal.pre_factura_correlativo"
+										<input required type="number" id="pre_factura_correlativoSucursal" ng-model="sucursal.pre_factura_correlativo"
 										 placeholder="Correlativo pre factura" class="form-control" />
 									</div>
 								</div>
@@ -324,7 +324,7 @@
 									<label class="col-sm-6 control-label no-padding-right" for="correlativo_proforma">Número Correlativo Proforma</label>
 
 									<div class="col-sm-6">
-										<input required type="number" id="correlativo_proforma" ng-model="sucursal.correlativo_proforma" placeholder="Correlativo proforma"
+										<input required type="number" id="correlativo_proformaSucursal" ng-model="sucursal.correlativo_proforma" placeholder="Correlativo proforma"
 										 class="form-control" />
 									</div>
 								</div>
@@ -588,7 +588,7 @@
 								<label class="col-sm-3 control-label no-padding-right" for="nombre">Nombre Sucursal</label>
 
 								<div class="col-sm-9">
-									<input disabled required type="text" id="nombre" ng-model="sucursal.nombre" placeholder="Nombre" class="col-xs-10 col-sm-5" />
+									<input disabled required type="text" id="nombreSucursalDisabled" ng-model="sucursal.nombre" placeholder="Nombre" class="col-xs-10 col-sm-5" />
 								</div>
 							</div>
 						</div>
@@ -598,7 +598,7 @@
 								<label class="col-sm-3 control-label no-padding-right" for="numero">Número Sucursal</label>
 
 								<div class="col-sm-9">
-									<input disabled required type="text" id="numero" ng-model="sucursal.numero" placeholder="Numero" class="form-control" />
+									<input disabled required type="text" id="numeroSucursalDisabled" ng-model="sucursal.numero" placeholder="Numero" class="form-control" />
 								</div>
 							</div>
 						</div>
@@ -610,7 +610,7 @@
 								<label class="col-sm-3 control-label no-padding-right" for="sucursaldireccion">Dirección</label>
 
 								<div class="col-sm-9">
-									<input disabled required type="text" id="sucursaldireccion" ng-model="sucursal.direccion" placeholder="dirección"
+									<input disabled required type="text" id="sucursaldireccionSucursalDisabled" ng-model="sucursal.direccion" placeholder="dirección"
 									 class="form-control" />
 								</div>
 							</div>
@@ -620,7 +620,7 @@
 								<label class="col-sm-3 control-label no-padding-right" for="sucursaltelefono1">Teléfono 1</label>
 
 								<div class="col-sm-9">
-									<input disabled type="text" id="sucursaltelefono1" ng-model="sucursal.telefono1" placeholder="telefono 1"
+									<input disabled type="text" id="sucursaltelefono1SucursalDisabled" ng-model="sucursal.telefono1" placeholder="telefono 1"
 									 class="form-control" />
 								</div>
 							</div>
@@ -633,7 +633,7 @@
 								<label class="col-sm-3 control-label no-padding-right" for="sucursaltelefono2">Teléfono 2</label>
 
 								<div class="col-sm-9">
-									<input disabled type="text" id="sucursaltelefono2" ng-model="sucursal.telefono2" placeholder="telefono 2"
+									<input disabled type="text" id="sucursaltelefono2SucursalDisabled" ng-model="sucursal.telefono2" placeholder="telefono 2"
 									 class="form-control" />
 								</div>
 							</div>
@@ -643,7 +643,7 @@
 								<label class="col-sm-3 control-label no-padding-right" for="sucursaltelefono3">Teléfono 3</label>
 
 								<div class="col-sm-9">
-									<input disabled type="text" id="sucursaltelefono3" ng-model="sucursal.telefono3" placeholder="telefono 3"
+									<input disabled type="text" id="sucursaltelefono3SucursalDisabled" ng-model="sucursal.telefono3" placeholder="telefono 3"
 									 class="form-control" />
 								</div>
 							</div>
@@ -679,7 +679,7 @@
 								<label class="col-sm-6 control-label no-padding-right" for="nota_venta_correlativo">Número Correlativo Venta</label>
 
 								<div class="col-sm-6">
-									<input disabled required type="number" id="nota_venta_correlativo" ng-model="sucursal.nota_venta_correlativo"
+									<input disabled required type="number" id="nota_venta_correlativoSucursalDisabled" ng-model="sucursal.nota_venta_correlativo"
 									 placeholder="Correlativo nota de venta" class="form-control" />
 								</div>
 							</div>
@@ -690,7 +690,7 @@
 									Traspaso</label>
 
 								<div class="col-sm-6">
-									<input disabled required type="number" id="nota_traspaso_correlativo" ng-model="sucursal.nota_traspaso_correlativo"
+									<input disabled required type="number" id="nota_traspaso_correlativoSucursalDisabled" ng-model="sucursal.nota_traspaso_correlativo"
 									 placeholder="Correlativo nota de traspaso" class="form-control" />
 								</div>
 							</div>
@@ -700,7 +700,7 @@
 								<label class="col-sm-6 control-label no-padding-right" for="nota_baja_correlativo">Número Correlativo Baja</label>
 
 								<div class="col-sm-6">
-									<input disabled required type="number" id="nota_baja_correlativo" ng-model="sucursal.nota_baja_correlativo"
+									<input disabled required type="number" id="nota_baja_correlativoSucursalDisabled" ng-model="sucursal.nota_baja_correlativo"
 									 placeholder="Correlativo nota de baja" class="form-control" />
 								</div>
 							</div>
@@ -711,7 +711,7 @@
 									cotizacion</label>
 
 								<div class="col-sm-6">
-									<input disabled required type="number" id="cotizacion_correlativo" ng-model="sucursal.cotizacion_correlativo"
+									<input disabled required type="number" id="cotizacion_correlativoSucursalDisabled" ng-model="sucursal.cotizacion_correlativo"
 									 placeholder="Correlativo cotizacion" class="form-control" />
 								</div>
 							</div>
@@ -817,7 +817,7 @@
 							<label class="col-sm-6 control-label no-padding-right" for="nota_venta_correlativo">Número Correlativo Venta</label>
 
 							<div class="col-sm-6">
-								<input required type="number" id="nota_venta_correlativo" ng-model="sucursal.nota_venta_correlativo"
+								<input required type="number" id="nota_venta_correlativoCorrelativosSucursal" ng-model="sucursal.nota_venta_correlativo"
 								 placeholder="Correlativo nota de venta" class="form-control" />
 							</div>
 						</div>
@@ -828,7 +828,7 @@
 								Traspaso</label>
 
 							<div class="col-sm-6">
-								<input required type="number" id="nota_traspaso_correlativo" ng-model="sucursal.nota_traspaso_correlativo"
+								<input required type="number" id="nota_traspaso_correlativoCorrelativosSucursal" ng-model="sucursal.nota_traspaso_correlativo"
 								 placeholder="Correlativo nota de traspaso" class="form-control" />
 							</div>
 						</div>
@@ -839,7 +839,7 @@
 
 							<div class="col-sm-6">
 
-								<input required type="number" id="nota_baja_correlativo" ng-model="sucursal.nota_baja_correlativo" placeholder="Correlativo nota de baja"
+								<input required type="number" id="nota_baja_correlativoCorrelativosSucursal" ng-model="sucursal.nota_baja_correlativo" placeholder="Correlativo nota de baja"
 								 class="form-control" />
 							</div>
 						</div>
@@ -861,7 +861,7 @@
 								Cotizacion</label>
 
 							<div class="col-sm-6">
-								<input required type="number" id="cotizacion_correlativo" ng-model="sucursal.cotizacion_correlativo"
+								<input required type="number" id="cotizacion_correlativoCorrelativosSucursal" ng-model="sucursal.cotizacion_correlativo"
 								 placeholder="Correlativo cotizacion" class="form-control" />
 							</div>
 						</div>
@@ -872,7 +872,7 @@
 								PreFactura</label>
 
 							<div class="col-sm-6">
-								<input required type="number" id="pre_factura_correlativo" ng-model="sucursal.pre_factura_correlativo"
+								<input required type="number" id="pre_factura_correlativoCorrelativosSucursal" ng-model="sucursal.pre_factura_correlativo"
 								 placeholder="Correlativo pre factura" class="form-control" />
 							</div>
 						</div>
@@ -882,7 +882,7 @@
 							<label class="col-sm-6 control-label no-padding-right" for="pre_factura_correlativo">Número Correlativo Despacho</label>
 
 							<div class="col-sm-6">
-								<input required type="number" id="despacho_correlativo" ng-model="sucursal.despacho_correlativo" placeholder="Correlativo despacho"
+								<input required type="number" id="despacho_correlativoCorrelativosSucursal" ng-model="sucursal.despacho_correlativo" placeholder="Correlativo despacho"
 								 class="form-control" />
 							</div>
 						</div>
@@ -893,8 +893,8 @@
 								Recibo</label>
 
 							<div class="col-sm-6">
-								<input required type="number" id="despacho_correlativo" ng-model="sucursal.despacho_recivo_correlativo"
-								 placeholder="Correlativo resivo despacho" class="form-control" />
+								<input required type="number" id="despacho_correlativoRecibo" ng-model="sucursal.despacho_recivo_correlativo"
+								 placeholder="Correlativo recibo despacho" class="form-control" />
 							</div>
 						</div>
 					</div>
@@ -904,7 +904,7 @@
 								Trabajo</label>
 
 							<div class="col-sm-6">
-								<input required type="number" id="despacho_correlativo" ng-model="sucursal.ropa_trabajo_correlativo"
+								<input required type="number" id="ropa_correlativo" ng-model="sucursal.ropa_trabajo_correlativo"
 								 placeholder="Correlativo ropa trabajo" class="form-control" />
 							</div>
 						</div>
@@ -1028,7 +1028,7 @@
 							<label class="col-sm-6 control-label no-padding-right" for="correlativo_proforma">Número Correlativo Proforma</label>
 
 							<div class="col-sm-6">
-								<input required type="number" id="correlativo_proforma" ng-model="sucursal.correlativo_proforma" placeholder="Correlativo proforma"
+								<input required type="number" id="correlativo_proformaCorrelativosSucursal" ng-model="sucursal.correlativo_proforma" placeholder="Correlativo proforma"
 								 class="form-control" />
 							</div>
 						</div>

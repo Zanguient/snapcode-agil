@@ -181,7 +181,12 @@
       if (!this.stopped) {
         element || (element = this.element);
         element = element.parentNode || element;
-        _ref = element.getElementsByClassName(this.config.boxClass);
+        if(element.hasOwnProperty('getElementsByClassName')){
+          _ref = element.getElementsByClassName(this.config.boxClass);
+        }else{
+          _ref = []
+        }
+        
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           box = _ref[_i];

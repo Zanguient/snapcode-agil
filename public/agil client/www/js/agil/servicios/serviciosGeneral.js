@@ -127,6 +127,28 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	.factory('ObtenerImagen', ['$q',function ($q) {
+		var res = function (img) {
+			var delay = $q.defer();
+			convertUrlToBase64Image(img, function (imagenEmpresa) {
+				if (imagenEmpresa.length > 0 && imagenEmpresa !== "error") {
+					delay.resolve(imagenEmpresa)
+				} else {
+					convertUrlToBase64Image("img/agilsoftware.png", function (imagenEmpresa) {
+						if (imagenEmpresa.length > 0 && imagenEmpresa !== "error") {
+							delay.resolve(imagenEmpresa)
+							return imagenEmpresa;
+						} else {
+							// $scope.mostrarMensaje('ERROR no se encuentra la imagen.')
+							delay.reject('No se encuentra la imagen.')
+						}
+					})
+				}
+			})
+			return delay.promise;
+		};
+		return res;
+	}])
 	//factory para nuevos comprobantes
 	.factory('NuevoComprobante', ["blockUI", "AsignarComprobanteFavorito", "LibroMayorCuenta", "ComprobanteRevisarPaginador", "NuevoComprobanteContabilidad", "ListaCuentasComprobanteContabilidad", "ActualizarComprobanteContabilidad", "ImprimirComprobante", "DatosComprobante",
 		function (blockUI, AsignarComprobanteFavorito, LibroMayorCuenta, ComprobanteRevisarPaginador, NuevoComprobanteContabilidad, ListaCuentasComprobanteContabilidad, ActualizarComprobanteContabilidad, ImprimirComprobante, DatosComprobante) {

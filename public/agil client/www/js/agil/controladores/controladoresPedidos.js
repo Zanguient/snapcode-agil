@@ -6,9 +6,10 @@ angular.module('agil.controladores')
 		ProductosPaginador, ListaProductosProveedores, ActualizarProductosProveedor, ListaSubGruposProductoEmpresa, ProductosPaginadorSubgrupos, ProductosPaginadorAsignados) {
 
 		$scope.usuarioSesion = JSON.parse($localStorage.usuario);
-		convertUrlToBase64Image($scope.usuarioSesion.empresa.imagen, function (imagenEmpresa) {
-			$scope.usuarioSesion.empresa.imagen = imagenEmpresa;
-		});
+		// var pormimg = ObtenerImagen($scope.usuarioSesion.empresa.imagen)
+			// 	pormimg.then(function (img) {
+			// 		$scope.usuarioSesion.empresa.imagen = img
+			// 	})
 
 		$scope.idDialogNuevoPedido = "modal-nuevo-pedido";
 		// $scope.idDialogListadoPedido = "modal-listado-nuevo-pedido"

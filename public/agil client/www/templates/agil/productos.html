@@ -6,7 +6,7 @@
 			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
 			Nuevo
 		</button>
-		<div class="fileUpload btn btn-primary btn-success">
+		<!-- <div class="fileUpload btn btn-primary btn-success">
 			<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar Productos</span>
 			<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelProductos" />&nbsp&nbsp
 		</div>
@@ -20,7 +20,7 @@
 		</a>
 		<a href="/recursos/EJEMPLO-DATOS-FORMULACION-PRODUCTO.xlsx" class="btn btn-primary btn-danger">
 			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
-			Ejemplo Importacion Formulacion </a>
+			Ejemplo Importacion Formulacion </a> -->
 		<button type="button" class="btn btn-yellow" ng-click="descargarCatalogo()">Descargar catálogo productos</button>
 		<button type="button" class="btn btn-yellow" ng-click="abrirModalReporteProductosKardex()">Reporte Productos Kardex</button>
 		<div class="clearfix">
@@ -35,21 +35,89 @@
 				</a> -->
 				<div class="col-sm-10" ng-include src="'/templates/gral/fields-viewer.html'"></div>
 			</div>
+			<!-- boton importar -->
+			<div class="pos-rel pull-right">
+				<a data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" id="zoomBtn">
+					<i class="ace-icon fa fa-wrench  bigger-110 icon-only "></i>
+				</a>
+				<ul class="dropdown-menu-right dropdown-navbar navbar-orange dropdown-menu dropdown-caret dropdown-close importar-text">
+					<li class="dropdown-header header-importar">
+						<i class="ace-icon fa fa-wrench white"></i>
+						Importaciones
+					</li>
+					<li class="dropdown-content">
+						<ul class="dropdown-menu dropdown-navbar navbar-pink">
+							<li>
+								<div class="clearfix">
+									<span class="pull-left" style="color:rgb(85, 128, 163) !important">
+										Productos
+									</span>
+
+									<a href="/recursos/EJEMPLO-DATOS-PRODUCTOS.xlsx" class="boton-importar pull-right">
+										<i class="fa  fa-cloud-download green bigger-125"></i>
+									</a>
+
+									<div class="fileUpload boton-importar pull-right">
+										<span class="fileUpload-button ace-icon fa fa-cloud-upload blue bigger-125"></span>
+										<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelProductos" />
+									</div>
+								</div>
+							</li>
+							<li>
+								<div class="clearfix">
+									<span class="pull-left" style="color:rgb(85, 128, 163) !important">
+										Formulacion productos
+									</span>
+									<a href="/recursos/EJEMPLO-DATOS-FORMULACION-PRODUCTO.xlsx"  class="boton-importar pull-right">
+										<i class="fa  fa-cloud-download green bigger-125"></i>
+									</a>
+									<div class="fileUpload boton-importar pull-right">
+										<span class="fileUpload-button ace-icon fa fa-cloud-upload blue bigger-125"></span>
+										<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelFormulacionProductos" />
+									</div>
+								</div>
+							</li>
+							<li>
+								<div class="clearfix">
+									<span class="pull-left" style="color:rgb(85, 128, 163) !important">
+										Precios Productos
+									</span>
+									<a href="/recursos/EJEMPLO-DATOS-PRECIOS-PRODUCTOS.xlsx" class="boton-importar pull-right">
+										<i class="fa  fa-cloud-download green bigger-125"></i>
+									</a>
+									<div class="fileUpload boton-importar pull-right">
+										<span class="fileUpload-button ace-icon fa fa-cloud-upload blue bigger-125"></span>
+										<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelProductosPrecio" />
+									</div>
+								</div>
+							</li>							
+						</ul>
+					</li>
+					<li class="dropdown-footer"></li>
+				</ul>
+			</div>
 		</div>
 
-		<span>Grupos: &nbsp;</span>
-		<select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)" required id="selectGruposProductos"
-		 name="selectGruposProductos" ng-model="grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
-		 data-placeholder="Click para escoger">
-			<option value="" selected>Todos</option>
-		</select>
+		
 		<!-- div.table-responsive -->
 
 		<!-- div.dataTables_borderWrap -->
 		<div>
 			<div id="tabla-productos_wrapper" class="dataTables_wrapper form-inline no-footer">
-				<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
+				<div class="row">
+					
+					<div class="row col-md-9" ng-include src="'/templates/gral/paginator-header-1.html'">
+					</div>
+					<div class="col-md-3">
+							<span>Grupos: &nbsp;</span>
+							<select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)" required id="selectGruposProductos"
+							 name="selectGruposProductos" ng-model="grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
+							 data-placeholder="Click para escoger">
+								<option value="" selected>Todos</option>
+							</select>
+					</div>
 				</div>
+				
 				<div style="overflow-x:auto;">
 					<table id="tabla-productos" class="table table-striped table-bordered table-hover table-responsive">
 						<thead>
@@ -149,7 +217,7 @@
 									{{producto.nombre}}
 								</td>
 								<td ng-if="fieldViewer.getConfiguration().imagen.show">
-									<img src="{{producto.imagen}}" width="50">
+									<img ng-src="{{producto.imagen}}" width="50">
 								</td>
 								<td ng-if="fieldViewer.getConfiguration().unidad_medida.show">{{producto.unidad_medida}}</td>
 								<td ng-if="fieldViewer.getConfiguration().precio_unitario.show">{{producto.precio_unitario | number:2}}</td>
@@ -426,7 +494,7 @@
 						<div class="row form-group">
 							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Imagen</label>
 							<div class="col-xs-12 col-xs-12 col-sm-9">
-								<img ng-if="producto.id" src="{{producto.imagen}}" width="100">
+								<img ng-if="producto.id" ng-src="{{producto.imagen}}" width="100">
 								<input type="file" id="imagen-producto" onchange="uploadImage(this,'imagen-producto-oculto')" />
 								<input id="imagen-producto-oculto" ng-model="producto.imagen" name="imagen" type="hidden" ng-update-hidden>
 							</div>
@@ -479,7 +547,7 @@
 							<label class="col-sm-3 control-label no-padding-right" for="caresp1">Carac. Esp. 1</label>
 
 							<div class="col-sm-9">
-								<input type="text" id="caresp1" ng-model="producto.caracteristica_especial1" placeholder="Caracteristica Especial 1" class="form-control"
+								<input type="text" id="caracteristica_especial1" ng-model="producto.caracteristica_especial1" placeholder="Caracteristica Especial 1" class="form-control"
 								/>
 							</div>
 						</div>
@@ -806,7 +874,7 @@
 											<label>SUCURSAL</label>&nbsp
 										</td>
 										<td>
-											<select required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+											<select required id="sucursalKardex" name="sucursalKardex" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 											 ng-model="imp.sucursal" ng-change="obtenerAlmacenes(imp.sucursal.id)" required="">
 											</select>&nbsp
 										</td>
@@ -1005,7 +1073,7 @@
 							<label class="col-sm-3 control-label no-padding-right" for="unidad_medida">Unidad de Medida</label>
 
 							<div class="col-sm-9">
-								<input disabled required type="text" id="unidad_medida" ng-model="producto.unidad_medida" placeholder="unidad de medida"
+								<input disabled required type="text" id="unidad_medidaDisabled" ng-model="producto.unidad_medida" placeholder="unidad de medida"
 								 class="form-control" />
 							</div>
 						</div>
@@ -1024,14 +1092,14 @@
 							<label class="col-sm-3 control-label no-padding-right" for="descripcion">Descripción</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="descripcion" ng-model="producto.descripcion" placeholder="Descripción" class="form-control"
+								<input disabled type="text" id="descripcionDisabled" ng-model="producto.descripcion" placeholder="Descripción" class="form-control"
 								/>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Imagen</label>
 							<div class="col-xs-12 col-xs-12 col-sm-9">
-								<img src="{{producto.imagen}}" width="100">
+								<img ng-src="{{producto.imagen}}" width="100">
 							</div>
 						</div>
 					</div>
@@ -1041,7 +1109,7 @@
 							<label class="col-sm-3 control-label no-padding-right" for="inventario_minimo">Inventario Mínimo</label>
 
 							<div class="col-sm-9">
-								<input disabled type="number" id="inventario_minimo" ng-model="producto.inventario_minimo" placeholder="Inventario Mínimo"
+								<input disabled type="number" id="inventario_minimoDisabled" ng-model="producto.inventario_minimo" placeholder="Inventario Mínimo"
 								 class="form-control" />
 							</div>
 						</div>
@@ -1049,7 +1117,7 @@
 							<label class="col-sm-3 control-label no-padding-right" for="grupo">Grupo</label>
 
 							<div class="col-sm-9">
-								<select required disabled name="grupo_producto" id="grupo_producto" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:1} track by grupoProducto.id">
+								<select required disabled name="grupo_producto" id="grupo_productoDisabled" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:1} track by grupoProducto.id">
 								</select>
 							</div>
 						</div>
@@ -1057,7 +1125,7 @@
 							<label class="col-sm-3 control-label no-padding-right" for="subgrupo">Sub-Grupo</label>
 
 							<div class="col-sm-9">
-								<select required disabled name="subgrupo_producto" id="subgrupo_producto" ng-model="producto.subgrupo" ng-options="subgrupoProducto as subgrupoProducto.nombre for subgrupoProducto in subgruposProducto | filter:{habilitado:1} track by subgrupoProducto.id">
+								<select required disabled name="subgrupo_producto" id="subgrupo_productoDisabled" ng-model="producto.subgrupo" ng-options="subgrupoProducto as subgrupoProducto.nombre for subgrupoProducto in subgruposProducto | filter:{habilitado:1} track by subgrupoProducto.id">
 								</select>
 							</div>
 						</div>
@@ -1065,21 +1133,21 @@
 							<label class="col-sm-3 control-label no-padding-right" for="caresp1">Carac. Esp. 1</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="caresp1" ng-model="producto.caracteristica_especial1" placeholder="Caracteristica Especial 1"
+								<input disabled type="text" id="caracteristica_especial1_Disabled" ng-model="producto.caracteristica_especial1" placeholder="Caracteristica Especial 1"
 								 class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="caresp2">Carac. Esp. 2</label>
 							<div class="col-sm-9">
-								<input disabled type="text" id="caresp2" ng-model="producto.caracteristica_especial2" placeholder="Caracteristica Especial 2"
+								<input disabled type="text" id="caracteristica_especial2_Disabled" ng-model="producto.caracteristica_especial2" placeholder="Caracteristica Especial 2"
 								 class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="codfab">Codigo fabrica</label>
 							<div class="col-sm-9">
-								<input disabled type="text" id="codfab" ng-model="producto.codigo_fabrica" placeholder="Codigo fabrica" class="form-control"
+								<input disabled type="text" id="codfabDisabled" ng-model="producto.codigo_fabrica" placeholder="Codigo fabrica" class="form-control"
 								/>
 							</div>
 						</div>
@@ -1087,7 +1155,7 @@
 							<label class="col-sm-3 control-label no-padding-right" for="comision">Comisión</label>
 
 							<div class="col-sm-9">
-								<input disabled type="number" step="0.01" id="comision" ng-model="producto.comision" placeholder="Comisión" class="form-control"
+								<input disabled type="number" step="0.01" id="comisionDisabled" ng-model="producto.comision" placeholder="Comisión" class="form-control"
 								/>
 							</div>
 						</div>

@@ -517,9 +517,10 @@ angular.module('agil.controladores')
 			blockUI.stop();
 		}
 
-		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-			$scope.usuario.empresa.imagen = imagenEmpresa;
-		});
+		// var pormimg = ObtenerImagen($scope.usuarioSesion.empresa.imagen)
+			// 	pormimg.then(function (img) {
+			// 		$scope.usuario.empresa.imagen = img
+			// 	})
 
 		$scope.dibujarCabeceraImpresionCotizacionCuartoCarta = function (doc, cotizacion, pagina, totalPaginas, existenDescuentos, yCuerpo) {
 			var yCabecera = 80;
@@ -638,7 +639,10 @@ angular.module('agil.controladores')
 
 		$scope.imprimirCotizacionCuartoCarta = function (papel, cotizacion, itemsPorPagina) {
 			///impresion rollo, cuarto carta
-			var doc = new PDFDocument({ size: papel, compress: false, margin: 10 });
+			var pormimg = ObtenerImagen($scope.usuarioSesion.empresa.imagen)
+				pormimg.then(function (img) {
+					$scope.usuario.empresa.imagen = img
+					var doc = new PDFDocument({ size: papel, compress: false, margin: 10 });
 			var stream = doc.pipe(blobStream());
 			cotizacion.fecha = new Date(cotizacion.fecha);
 			cotizacion.fechaTexto = cotizacion.fecha.getDate() + "/" + (cotizacion.fecha.getMonth() + 1) + "/" + cotizacion.fecha.getFullYear();
@@ -704,6 +708,8 @@ angular.module('agil.controladores')
 				$window.open(fileURL, '_blank', 'location=no');
 			});
 			blockUI.stop();
+				})
+			
 		}
 		$scope.imprimirCotizacion = function (cotizacionId) {
 			console.log('cotizacion id')

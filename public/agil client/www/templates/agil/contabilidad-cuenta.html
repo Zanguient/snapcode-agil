@@ -57,7 +57,7 @@
 										<i class="ace-icon fa fa-print bigger-160"></i>
 										PDF
 									</button>
-									<button id="pdf" ng-disabled="!Cuentas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(Cuentas)">
+									<button id="excel" ng-disabled="!Cuentas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(Cuentas)">
 										<i class="ace-icon fa fa-print bigger-160"></i>
 										Excel
 									</button>
@@ -864,7 +864,7 @@
 
 				<div class="modal-footer">
 
-					<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+					<button type="submit" id="siguiente1" class="btn btn-success btn-sm btn-next" data-last="Finish">
 						Guardar
 						<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
 					</button>
@@ -1061,7 +1061,7 @@
 										<label class="control-label col-xs-4 no-padding-right" for="bimonetaria">¿Bimonetaria?</label>
 										<div class="col-xs-8">
 											<label>
-												<input id="bimonetariaC" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.bimonetaria"
+												<input id="bimonetariaCEdicion" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.bimonetaria"
 												 value="0" />
 												<span id=check_bimonetaria class="lbl check-descuento" class="col-xs-10 col-sm-8"></span>
 											</label>
@@ -1099,7 +1099,7 @@
 												<span id=check_cuenta-especifica class="lbl check-descuento" class="col-xs-10 col-sm-8"></span>
 											</label>
 											<label>
-												<input ng-disabled="!cuenta.especifica" id="cuenta-especifica" name="switch-field-1" class="ace ace-switch ace-switch-4"
+												<input ng-disabled="!cuenta.especifica" id="cuenta-no-especifica" name="switch-field-1" class="ace ace-switch ace-switch-4"
 												 type="checkbox" ng-model="cuenta.tipo_especifica" ng-change="optenerCfDf(cuenta.tipo_especifica,cuenta.especifica)"
 												 value="0" />
 												<span id=check_cuenta-especifica class="lbl check-cuenta-especifica" class="col-xs-10 col-sm-8"></span>
@@ -1186,7 +1186,7 @@
 
 										<div class="col-sm-8">
 											<label>
-												<input id="bimonetariaC" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.cuenta_activo"
+												<input id="cuentaActivo" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.cuenta_activo"
 												 value="0" />
 												<span id=check_bimonetaria class="lbl check-descuento" class="col-xs-10 col-sm-8"></span>
 											</label>
@@ -1257,7 +1257,7 @@
 							Anterior
 						</button>
 
-						<button type="submit" ng-disabled="data.message=='¡el codigo ya Exsiste!'" id="siguiente" class="btn btn-success btn-sm btn-next"
+						<button type="submit" ng-disabled="data.message=='¡el codigo ya Exsiste!'" id="siguienteCuenta" class="btn btn-success btn-sm btn-next"
 						 data-last="Finish">
 							Siguiente
 							<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
@@ -1359,7 +1359,7 @@
 						</table>
 
 						<div class="modal-footer wizard-actions">
-							<button type="submit" id="siguiente" class="btn btn-success btn-sm btn-next" data-last="Finish">
+							<button type="submit" id="siguienteTipoCuenta" class="btn btn-success btn-sm btn-next" data-last="Finish">
 								Guardar
 								<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
 							</button>

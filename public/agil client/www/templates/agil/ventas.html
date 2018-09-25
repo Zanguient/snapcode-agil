@@ -48,11 +48,11 @@
 										<i class="ace-icon fa fa-plus align-top bigger-125"></i>
 										Filtrar
 									</button>
-									<button id="pdf" ng-disabled="!ventas" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(ventas,fechaInicioTexto,fechaFinTexto)">
+									<button id="pdfVentasFiltro" ng-disabled="!ventas" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(ventas,fechaInicioTexto,fechaFinTexto)">
 										<i class="ace-icon fa fa-print bigger-160"></i>
 										PDF
 									</button>
-									<button id="pdf" ng-disabled="!ventas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(ventas)">
+									<button id="excelVentalFiltro" ng-disabled="!ventas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(ventas)">
 										<i class="ace-icon fa fa-print bigger-160"></i>
 										Excel
 									</button>
@@ -133,7 +133,7 @@
 
 								</td>
 								<td>
-									<select id="sucursal" name="sucursal" ng-model="filtro.sucursal" data-placeholder="Elija una sucursal">
+									<select id="sucursalFiltro" name="sucursalFiltro" ng-model="filtro.sucursal" data-placeholder="Elija una sucursal">
 										<option value="0">TODOS</option>
 										<option ng-repeat="sucursalFiltro in sucursales track by $index" value="{{sucursalFiltro.id}}">{{sucursalFiltro.nombre}}</option>
 									</select>
@@ -149,14 +149,14 @@
 											
 										</select> -->
 									<label ng-show="usuario.empresa.usar_venta_servicio">
-										<select id="transaccion" name="transaccion" ng-options="transaccion.id as transaccion.nombre for transaccion in movimientosEgreso"
+										<select id="transaccionFiltroServicio" name="transaccionFiltroServicio" ng-options="transaccion.id as transaccion.nombre for transaccion in movimientosEgreso"
 										 ng-model="filtro.transaccion">
 											<option value="">TODOS</option>
 
 										</select>
 									</label>
 									<label ng-show="!usuario.empresa.usar_venta_servicio">
-										<select id="transaccion" name="transaccion" ng-options="transaccion.id as transaccion.nombre for transaccion in movimientosEgreso|filtroMovVenta"
+										<select id="transaccionFiltro" name="transaccionFiltro" ng-options="transaccion.id as transaccion.nombre for transaccion in movimientosEgreso|filtroMovVenta"
 										 ng-model="filtro.transaccion">
 											<option value="">TODOS</option>
 
@@ -389,7 +389,7 @@
 								<tr>
 									<td ng-if="usuario.empresa.usar_venta_servicio">
 										<label>MOVIMIENTO</label>
-										<select data-validate="validate(required)" ng-disabled="venta.editable" required id="movimiento" name="movimiento" ng-model="venta.movimiento"
+										<select data-validate="validate(required)" ng-disabled="venta.editable" required id="movimientoServicio" name="movimiento" ng-model="venta.movimiento"
 										 data-placeholder="Click para escoger" ng-change="obtenerTipoEgreso(venta.movimiento)" ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso track by movimiento.id">
 											<!--<option ng-disabled="movimiento.nombre_corto==diccionario.EGRE_AJUSTE" ng-repeat="movimiento in movimientosEgreso" value="{{movimiento.id}}-{{movimiento.nombre_corto}}">{{movimiento.nombre}}</option>-->
 										</select>
@@ -405,7 +405,7 @@
 									</td>
 									<td ng-if="!usuario.empresa.usar_venta_servicio">
 										<label>MOVIMIENTO</label>
-										<select data-validate="validate(required)" ng-disabled="venta.editable" required id="movimiento" name="movimiento" ng-model="venta.movimiento"
+										<select data-validate="validate(required)" ng-disabled="venta.editable" required id="movimientoFacturacion" name="movimiento" ng-model="venta.movimiento"
 										 data-placeholder="Click para escoger" ng-change="obtenerTipoEgreso(venta.movimiento)" ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso|filtroMovVenta track by movimiento.id">
 											<!--<option ng-disabled="movimiento.nombre_corto==diccionario.EGRE_AJUSTE" ng-repeat="movimiento in movimientosEgreso" value="{{movimiento.id}}-{{movimiento.nombre_corto}}">{{movimiento.nombre}}</option>-->
 										</select>
@@ -467,7 +467,7 @@
 									<td>
 										<p>SUCURSAL</p>
 										<select ng-disabled="venta.editable" ng-disabled="venta.detallesVenta.length>0" data-validate="validate(required)" required
-										 id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+										 id="sucursalVenta" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 										 ng-model="venta.sucursal" ng-change="obtenerAlmacenesActividades(venta.sucursal.id)">
 											<option value="" disabled selected>Selec. Sucursal</option>
 										</select>
@@ -478,8 +478,8 @@
 									</td>
 									<td ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO && tipoEgreso!=diccionario.EGRE_SERVICIO">
 										<p>ALMACEN</p>
-										<select ng-disabled="venta.editable || venta.detallesVenta.length>0" data-validate="validate(required)" required id="almacen"
-										 name="almacen" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
+										<select ng-disabled="venta.editable || venta.detallesVenta.length>0" data-validate="validate(required)" required id="almacenServicio"
+										 name="almacenServicio" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
 										 data-placeholder="Click para escoger">
 											<option value="" disabled selected>Selec. Almacen</option>
 										</select>
@@ -494,7 +494,7 @@
 										<label>ACTIVIDAD</label>
 									</td>
 									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION  || tipoEgreso==diccionario.EGRE_SERVICIO">
-										<select style="width:150px;" ng-disabled="venta.editable" data-validate="validate(required)" required id="actividad" name="actividad"
+										<select style="width:150px;" ng-disabled="venta.editable" data-validate="validate(required)" required id="actividad-venta" name="actividad"
 										 ng-model="venta.actividad" ng-options="actividad as actividad.nombre for actividad in actividades track by actividad.id"
 										 data-placeholder="Click para escoger">
 											<option value="" disabled selected>Selec. Actividad</option>
@@ -542,7 +542,7 @@
 									</td>
 									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA ||tipoEgreso==diccionario.EGRE_SERVICIO">
 										<p>TIPO DE PAGO</p>
-										<select data-validate="validate(required)" required id="pago" name="pago" ng-model="venta.tipoPago" data-placeholder="Elija un tipo de pago"
+										<select data-validate="validate(required)" required id="tipo-pago-venta" name="pago" ng-model="venta.tipoPago" data-placeholder="Elija un tipo de pago"
 										 ng-change="cambiarTipoPago(venta)" ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id">
 										</select>
 										<span class="red">(*)</span>
@@ -764,7 +764,7 @@
 												</a>
 												<script type="text/ng-template"id="preciosTemplate.html">                                           
 														<div  class="form-group">                                              
-														  <p ng-repeat="precio in detalleVenta.producto.tiposPrecio"><b>{{precio.tipoPrecio.nombre}}: {{precio.precio_unitario}}</p>
+														  <p ng-repeat="precio in detalleVenta.producto.tiposPrecio|filter:{eliminado:false}"><b>{{precio.tipoPrecio.nombre}}:{{precio.precio_unitario}}</b> </p>
 														</div>                                           
 													</script>
 											</div>
@@ -1962,7 +1962,7 @@
 										</div>
 										<div class="col-xs-2">
 											<label>SUCURSAL</label>
-											<select data-validate="validate(required)" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+											<select data-validate="validate(required)" required id="sucursalVentaPanel" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 											 ng-model="venta.sucursal" ng-change="obtenerAlmacenesActividades(venta.sucursal.id)">
 											</select>
 										</div>
@@ -2231,7 +2231,7 @@
 											<div class="swiper-container">
 												<div class="swiper-wrapper">
 													<div ng-click="agregarDetalleVentaPanel(producto)" class="btn btn-success swiper-slide productos-button" ng-repeat="producto in productosProcesados | orderRankin | orderBy: '-rankin'">
-														<img src="{{producto.imagen}}" width="100%" style="height: 98px;max-height:98px">
+														<img ng-src="{{producto.imagen}}" width="100%" style="height: 98px;max-height:98px">
 
 
 														<label class="panel-cantidad">{{producto.inventario_disponible}}</label>
@@ -2699,11 +2699,11 @@
 				 class="ace ace-switch ace-switch-4">
 				<span class="lbl check-detalle"></span>
 			</label>
-			<button id="pdf" class="btn btn-app btn-danger btn-xs" ng-click="generarPdfVentasMensuales()">
+			<button id="pdfVentasMensuales" class="btn btn-app btn-danger btn-xs" ng-click="generarPdfVentasMensuales()">
 				<i class="ace-icon fa fa-print bigger-160"></i>
 				PDF
 			</button>
-			<button id="pdf" class="btn btn-app btn-success btn-xs" ng-click="generarExcelVentasMensuales()">
+			<button id="excelVentasMensuales" class="btn btn-app btn-success btn-xs" ng-click="generarExcelVentasMensuales()">
 				<i class="ace-icon fa fa-print bigger-160"></i>
 				Excel
 			</button>
@@ -2982,11 +2982,11 @@
 				 class="ace ace-switch ace-switch-4">
 				<span class="lbl check-detalle"></span>
 			</label>
-			<button id="pdf" class="btn btn-app btn-danger btn-xs" ng-click="generarPdfVentasMensuales()">
+			<button id="pdfLstado" class="btn btn-app btn-danger btn-xs" ng-click="generarPdfVentasMensuales()">
 				<i class="ace-icon fa fa-print bigger-160"></i>
 				PDF
 			</button>
-			<button id="pdf" class="btn btn-app btn-success btn-xs" ng-click="generarExcelVentasMensuales()">
+			<button id="excelLstado" class="btn btn-app btn-success btn-xs" ng-click="generarExcelVentasMensuales()">
 				<i class="ace-icon fa fa-print bigger-160"></i>
 				Excel
 			</button>

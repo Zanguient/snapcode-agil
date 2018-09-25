@@ -61,7 +61,7 @@
                                             <i class="ace-icon fa fa-calendar bigger-125"></i>
                                                 Agenda OT.
                                         </button>
-                                            <button class="btn btn-purple btn-md" id="id-btn-calendar"  data-toggle="modal" data-target="#dialog-buscar-maquinaria">
+                                            <button class="btn btn-purple btn-md" id="id-btn-buscar-maquinaria"  data-toggle="modal" data-target="#dialog-buscar-maquinaria">
                                             <i class="icono-ficha_medica icono-font bigger-125"></i>
                                                 Vehiculo/Maquinaria
                                         </button>
@@ -92,7 +92,7 @@
                                 <tr>
                                     <td class="no-border-right text-right">FILTRO</td>
                                     <td>
-                                        <select id="sucursal" name="sucursal" data-placeholder="Elija una sucursal" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                        <select id="sucursal-filtro-mantenimiento" name="sucursal" data-placeholder="Elija una sucursal" class="ng-pristine ng-untouched ng-valid ng-empty">
                                             Filtro
                                             <option ></option>
                                             <option value="0">Vehiculo</option>
@@ -103,7 +103,7 @@
                                         <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty">
                                     </td>
                                     <td>
-                                        <select id="pago" name="pago" data-placeholder="Elija un tipo de pago" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                        <select id="pago-filtro-mantenimiento" name="pago" data-placeholder="Elija un tipo de pago" class="ng-pristine ng-untouched ng-valid ng-empty">
                                             <option value="? undefined:undefined ?"></option>
                                             <option value="0">TODOS</option>
                                             <option  value="17" class="ng-binding ng-scope">CONTADO</option>
@@ -146,7 +146,7 @@
                                         <input type="text" ng-model="filtro.razon_social" class="ng-pristine ng-untouched ng-valid ng-empty">
                                     </td>
                                     <td>
-                                        <select id="" name="" data-placeholder="Tipo de mantenimiento" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                        <select id="razon_social-filtro-mantenimiento" name="" data-placeholder="Tipo de mantenimiento" class="ng-pristine ng-untouched ng-valid ng-empty">
                                             Filtro
                                             <option ></option>
                                             <option value="0">Preventivo</option>
@@ -175,7 +175,7 @@
                             <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle button-columna" aria-expanded="false">
                                 <i class="glyphicon  glyphicon-list-alt"></i>
                             </a>
-                            <ul id="campos-detalle-venta" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret lista-columna">
+                            <ul id="campos-tabla-mantenimientos" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret lista-columna">
                                 <li>
                                     <label>
                                         <input class="ace ace-switch ace-switch-4  toggle-vis" type="checkbox"  data-column="1">
@@ -539,7 +539,7 @@
                                 <div class="form-group">
                                     <label for="" class="col-sm-5 control-label text-primary">Nro. de placa/Nro. de serie</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" id="">
+                                        <input type="text" class="form-control" id="numero-placa-maquinaria-mantenimientos">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -622,7 +622,7 @@
                                             <div class="col-sm-6 form-group">
                                                 <label for="form-field-select-2">Sistema principal</label>
 
-                                                <select class="form-control select-sistema" id="form-field-select-2" multiple="multiple">
+                                                <select class="form-control select-sistema" id="selector-sistema-maquinaria-mantenimiento" multiple="multiple">
                                                     <option>Motor</option>
                                                         <option>Tren Propulsor</option>
                                                         <option>Rines, llantas y frenos</option>
@@ -655,7 +655,7 @@
                                             </div>
                                             <div class="col-lg-3">
                                                 <label class="text-uppercase text-primary">Tiempo estimado</label>
-                                                <input type="text" id=""  class="form-control timepicker1" />
+                                                <input type="text" id="tiempo-estimado-maquinaria-mantenimiento"  class="form-control timepicker1" />
                                             </div>
                                         </div>
                                         <div class="row">
@@ -944,37 +944,37 @@
                                 <div class="form-group">
                                     <label for="" class="col-sm-5 control-label text-primary">NIT</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" id="">
+                                        <input type="text" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="" class="col-sm-5 control-label text-primary">Razon Social</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" id="">
+                                        <input type="text" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="" class="col-sm-5 control-label text-primary">N° Factura</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" id="">
+                                        <input type="text" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="" class="col-sm-5 control-label text-primary">N° Autorización</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" id="">
+                                        <input type="text" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="" class="col-sm-5 control-label text-primary">Monto</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" id="">
+                                        <input type="text" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="" class="col-sm-5 control-label text-primary">Código de Control</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" id="">
+                                        <input type="text" class="form-control">
                                     </div>
                                 </div>
                             </form>
@@ -1038,7 +1038,7 @@
                                                     <tr>
                                                         <td>
                                                             <input   type="text"  placeholder="Ingrese el nombre del producto..." >
-                                                            <button  id="mostrar_inv" type="button" class="btn btn-info btn-sm">
+                                                            <button  id="mostrar_inv-maquinaria-mantenimiento" type="button" class="btn btn-info btn-sm">
                                                                 <i class="ace-icon fa fa-search-plus bigger-110"></i>
                                                             </button>
                                                         </td>

@@ -168,7 +168,7 @@ angular.module('agil.controladores')
         }
         $scope.$on('$routeChangeStart', function (next, current) {
             $scope.eliminarPopup($scope.ModalVendedorMapa);
-            scope.eliminarPopup($scope.ModalFiltroMapa);
+            $scope.eliminarPopup($scope.ModalFiltroMapa);
             
         });
 

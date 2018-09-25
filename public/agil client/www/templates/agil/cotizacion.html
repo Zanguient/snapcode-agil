@@ -110,7 +110,7 @@
 									<input type="text" ng-model="filtro.busqueda">
 								</td> -->
 								<td>
-									<select id="sucursal" name="sucursal" ng-model="filtro.sucursal" data-placeholder="Elija una sucursal">
+									<select id="sucursal-filtro-cotizacion" name="sucursal" ng-model="filtro.sucursal" data-placeholder="Elija una sucursal">
 										<option value="0" selected>TODOS</option>
 										<option ng-repeat="sucursalFiltro in sucursales track by $index" value="{{sucursalFiltro.id}}">{{sucursalFiltro.nombre}}</option>
 									</select>
@@ -269,7 +269,7 @@
 									<td>
 										<label>SUCURSAL</label>
 
-										<select required id="sucursal" ng-keypress="interceptarTecla($event,'fechaSM',true)" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+										<select required id="sucursal-cotizacion" ng-keypress="interceptarTecla($event,'fechaSM',true)" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 								 ng-model="cotizacion.sucursal"  ng-change="obtenerAlmacenes(cotizacion.sucursal)"></select>
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.sucursal.$dirty && formularioVenta.sucursal.$invalid">
@@ -301,7 +301,7 @@
 									</td>
 									<td>
 										<label>PLAZO COTIZACION</label>
-										<input type="text" id="nombre" required ng-model="cotizacion.plazo" placeholder="15 Dias">
+										<input type="text" id="plazo-cotizacion" required ng-model="cotizacion.plazo" placeholder="15 Dias">
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
 											Dato requerido.
@@ -331,7 +331,7 @@
 									<td colspan="2">
 										<label>NOTA</label>
 
-										<textarea required ng-model="cotizacion.nota" placeholder="Los precios incluyen impuestos de ley" class="form-control limited ng-pristine ng-untouched ng-valid ng-empty ng-valid-maxlength" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
+										<textarea required ng-model="cotizacion.nota" placeholder="Los precios incluyen impuestos de ley" class="form-control limited ng-pristine ng-untouched ng-valid ng-empty ng-valid-maxlength" id="nota-al-pie" maxlength="100" style=" height: 35px;"></textarea>
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
 											Dato requerido.
@@ -341,7 +341,7 @@
 								<tr>
 									<td colspan="2">
 										<label>OBSERVACIÓN</label>
-										<textarea ng-model="cotizacion.descripcion" class="form-control limited ng-pristine ng-untouched ng-valid ng-empty ng-valid-maxlength" id="form-field-9" maxlength="100" style=" height: 35px;"></textarea>
+										<textarea ng-model="cotizacion.descripcion" class="form-control limited ng-pristine ng-untouched ng-valid ng-empty ng-valid-maxlength" id="observacion" maxlength="100" style=" height: 35px;"></textarea>
 									</td>
 								</tr>
 							</table>

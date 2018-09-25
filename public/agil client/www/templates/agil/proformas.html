@@ -139,7 +139,7 @@
                                     </select>
                                 </div>
                                 <div ng-if="filtro.actividadEconomica.id ===undefined">
-                                    <select id="filtroServicio" ng-model="filtro.servicio">
+                                    <select id="filtroActividad" ng-model="filtro.servicio">
                                         <option disabled selected value="">Seleccione una actividad</option>
                                     </select>
                                 </div>
@@ -151,7 +151,7 @@
                                 <input ng-model="filtro.usuario" type="text">&nbsp
                             </td>
                             <td>
-                                <select id="filtroServicio" ng-model="filtro.proformaFacturadas" ng-change="" ng-options="opcion as opcion.nombre for opcion in [{id: 1, nombre: 'Facturados'}, {id: 2, nombre: 'Pendientes'}] track by opcion.id">
+                                <select id="filtroFacturas" ng-model="filtro.proformaFacturadas" ng-change="" ng-options="opcion as opcion.nombre for opcion in [{id: 1, nombre: 'Facturados'}, {id: 2, nombre: 'Pendientes'}] track by opcion.id">
                                     <option value="" selected>TODOS</option>
                                 </select>
 
@@ -683,13 +683,13 @@
                                             <div class="container-fluid">
                                                 <label>SUCURSAL</label>
                                                 <div ng-if="(!verificarBloqueoServicios())">
-                                                    <select class="form-control" data-validate="validate(required)" required id="sucursal" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                                    <select class="form-control" data-validate="validate(required)" required id="sucursalProforma" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
                                                     ng-disabled="(proforma.ver !== undefined || $scope.verificarDetallesProformas())" ng-model="proforma.sucursal" ng-change="obtenerActividadesSucursal(proforma.sucursal.id)">
                                                         <option value="" disabled selected>Selec. Sucursal</option>
                                                     </select>
                                                 </div>
                                                 <div ng-if="(verificarBloqueoServicios())">
-                                                    <select class="form-control" data-validate="validate(required)" required id="sucursalProformaDisabled" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                                    <select class="form-control" data-validate="validate(required)" required id="sucursalProformaDisabled" name="sucursalDisabled" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
                                                         ng-model="proforma.sucursal" disabled>
                                                         <option value="" disabled selected>Selec. Sucursal</option>
                                                     </select>

@@ -106,7 +106,7 @@
 							<td>{{usuario.persona.apellido_paterno}}</td>
 							<td>{{usuario.persona.apellido_materno}}</td>
 							<td>
-								<img src="{{usuario.persona.imagen}}" width="50">
+								<img ng-src="{{usuario.persona.imagen ? usuario.persona.imagen : 'img/icon.png'}}" width="50">
 							</td>
 							<td>{{usuario.nombre_usuario}}</td>
 							<td>{{usuario.rolesUsuario[0].rol.nombre}}</td>
@@ -350,7 +350,7 @@
 								<div class="row">
 									<label class="control-label col-xs-12 col-sm-3 no-padding-right">Foto</label>
 									<div class="col-xs-12 col-xs-12 col-sm-9">
-										<img ng-if="usuario.id" src="{{usuario.persona.imagen}}" width="100">
+										<img ng-if="usuario.id" ng-src="{{usuario.persona.imagen?usuario.persona.imagen:'img/icon.png'}}" width="100">
 										<input type="file" id="imagen-persona" onchange="uploadImage(this,'imagen-persona-oculto')" />
 										<input id="imagen-persona-oculto" ng-model="usuario.persona.imagen" name="imagen" type="hidden" ng-update-hidden>
 									</div>
@@ -669,7 +669,7 @@
 							<div class="row">
 								<label class="control-label col-xs-12 col-sm-3 no-padding-right">Foto</label>
 								<div class="col-xs-12 col-xs-12 col-sm-9">
-									<img src="{{usuario.persona.imagen}}" width="100">
+									<img ng-src="{{usuario.persona.imagen?usuario.persona.imagen:'img/icon.png'}}" width="100">
 								</div>
 							</div>
 						</div>

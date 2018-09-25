@@ -1,9 +1,9 @@
 angular.module('agil.controladores')
 
-    .controller('controladorComensalesEmpresa',['$scope', '$timeout', '$localStorage', '$filter', '$location', 'blockUI', 'Clientes', 'ClientesNit', 'GuardarAlias', 'ObtenerAlias', 'GuardarGerencias',
+    .controller('controladorComensalesEmpresa',['ObtenerImagen', '$scope', '$timeout', '$localStorage', '$filter', '$location', 'blockUI', 'Clientes', 'ClientesNit', 'GuardarAlias', 'ObtenerAlias', 'GuardarGerencias',
         'ObtenerGerencias', 'GuardarComensales', 'ObtenerComensales', 'GuardarComidas', 'ObtenerComidas', 'GuardarPrecioComidas', 'ObtenerPrecioComidas', 'GuardarHistorialExcel', 'GuardarComensalesExcel',
         'ObtenerHistorial', 'GuardarEmpresasExcel', 'GuardarGerenciasExcel', 'GuardarComidasExcel', 'GuardarPreciosExcel', 'Paginator', 'BusquedaComensales', 'ObtenerReporteComedor', 'ObtenerCambioMoneda',
-        'ObtenerReporteEmpresa', 'ObtenerReporteComensal', 'ObtenerAlertasMarcacion', 'EditarAlertasMarcacion', 'ObtenerHistorialDocumentos', 'ObtenerDocumento', function ($scope, $timeout, $localStorage, $filter, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias,
+        'ObtenerReporteEmpresa', 'ObtenerReporteComensal', 'ObtenerAlertasMarcacion', 'EditarAlertasMarcacion', 'ObtenerHistorialDocumentos', 'ObtenerDocumento', function (ObtenerImagen, $scope, $timeout, $localStorage, $filter, $location, blockUI, Clientes, ClientesNit, GuardarAlias, ObtenerAlias, GuardarGerencias,
         ObtenerGerencias, GuardarComensales, ObtenerComensales, GuardarComidas, ObtenerComidas, GuardarPrecioComidas, ObtenerPrecioComidas, GuardarHistorialExcel, GuardarComensalesExcel,
         ObtenerHistorial, GuardarEmpresasExcel, GuardarGerenciasExcel, GuardarComidasExcel, GuardarPreciosExcel, Paginator, BusquedaComensales, ObtenerReporteComedor, ObtenerCambioMoneda,
         ObtenerReporteEmpresa, ObtenerReporteComensal, ObtenerAlertasMarcacion, EditarAlertasMarcacion, ObtenerHistorialDocumentos, ObtenerDocumento) {
@@ -19,7 +19,17 @@ angular.module('agil.controladores')
         $scope.dialogAlertasMarcaciones = 'dialog-alerta-marcaciones'
         $scope.dialogHistorialDocumentos = 'dialog-historial-documentos'
         // var redirectProformas;
+
         $scope.imagenEmpresa;
+        var imgDelay = ObtenerImagen($scope.usuario.empresa.imagen);
+        imgDelay.then(function (img) {
+            $scope.imagenEmpresa = img
+        }).catch(function (err) {
+            var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+            $scope.mostrarMensaje(msg)
+            blockUI.stop()
+        })
+        
         $scope.$on('$viewContentLoaded', function () {
             // if (redirectProformas) {
             //     $timeout(function () {
@@ -49,20 +59,20 @@ angular.module('agil.controladores')
             // }
         });
 
-        convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-            if (imagenEmpresa.length > 0 && imagenEmpresa !== "error") {
-                $scope.imagenEmpresa = imagenEmpresa;
-            } else {
-                convertUrlToBase64Image("img/agilsoftware.png", function (imagenEmpresa) {
-                    if (imagenEmpresa.length > 0 && imagenEmpresa !== "error") {
-                        $scope.mostrarMensaje('No se encuentra la imagen de la empresa.')
-                        $scope.imagenEmpresa = imagenEmpresa;
-                    } else {
-                        $scope.mostrarMensaje('No se encuentra imagenen de la empresa.')
-                    }
-                })
-            }
-        })
+        // convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+        //     if (imagenEmpresa.length > 0 && imagenEmpresa !== "error") {
+        //         $scope.imagenEmpresa = imagenEmpresa;
+        //     } else {
+        //         convertUrlToBase64Image("img/agilsoftware.png", function (imagenEmpresa) {
+        //             if (imagenEmpresa.length > 0 && imagenEmpresa !== "error") {
+        //                 $scope.mostrarMensaje('No se encuentra la imagen de la empresa.')
+        //                 $scope.imagenEmpresa = imagenEmpresa;
+        //             } else {
+        //                 $scope.mostrarMensaje('No se encuentra imagenen de la empresa.')
+        //             }
+        //         })
+        //     }
+        // })
 
         $scope.inicio = function () {
             // blockUI.start()

@@ -101,31 +101,31 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
         .post(/*ensureAuthorized,*/function (req, res) {
             var condicionCuenta = {}, condicionComprobante = {};
             condicionCuenta.id_empresa = parseInt(req.params.id_empresa);
-            /* if (req.params.id_tipo != 0) {   
+            /* if (req.params.id_tipo != 0) {
                 condicionCuenta.id_tipo_cuenta = parseInt(req.params.id_tipo);
             } */
             if (req.params.periodo == 'GESTIÓN') {
                 var diaInicio = req.body.fechasImpresion.inicio.split("/")[0]
                 var diafin = req.body.fechasImpresion.fin.split("/")[0]
-                var mesinico = parseInt(req.body.fechasImpresion.inicio.split("/")[1]) - 1
-                var mesfin = parseInt(req.body.fechasImpresion.fin.split("/")[1]) - 1
-                if (mesinico == 0) {
-                    var inicio = new Date(req.params.gestion, mesinico, diaInicio)
-                    var fin = new Date(req.params.gestion, mesfin, diafin)
+                var mesinico = parseInt(req.body.fechasImpresion.inicio.split("/")[1])
+                var mesfin = parseInt(req.body.fechasImpresion.fin.split("/")[1])
+                if (mesinico == 1) {
+                    var inicio = req.params.gestion + "-" + mesinico + "-" + diaInicio + " 00:00:00"
+                    var fin = req.params.gestion + "-" + mesfin + "-" + diafin + " 00:00:00"
                 } else {
                     var anio = parseInt(req.params.gestion) + 1
-                    var inicio = new Date(req.params.gestion, mesinico, diaInicio)
-                    var fin = new Date(anio, mesfin, diafin)
+                    var inicio = req.params.gestion + "-" + mesinico + "-" + diaInicio + '00:00:00'
+                    var fin = anio + "-" + mesfin + "-" + diafin + '23:59:00'
                 }
 
-                inicio.setHours(0, 0, 0, 0, 0);
-                fin.setHours(23, 59, 59, 0, 0);
+                /*   inicio.setHours(0, 0, 0, 0, 0);
+                  fin.setHours(23, 59, 59, 0, 0); */
                 var condicionComprobante = { eliminado: false }
             } else if (req.params.periodo == 'MES') {
                 var inicio = new Date(req.params.gestion, req.params.mes, 1)
                 var fin = new Date(req.params.gestion, parseInt(req.params.mes) + 1, 0)
-                inicio.setHours(0, 0, 0, 0, 0);
-                fin.setHours(23, 59, 59, 0, 0);
+                inicio = req.params.gestion + "-" + inicio.getMonth() + "-" + fin.getDate() + " 00:00:00"
+                fin = req.params.gestion + "-" + fin.getMonth() + "-" + fin.getDate() + " 00:00:00"
                 var condicionComprobante = { eliminado: false }
 
             } else if (req.params.periodo == 'FECHAS') {
@@ -134,35 +134,60 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                 inicio.setHours(0, 0, 0, 0, 0);
                 fin.setHours(23, 59, 59, 0, 0);
                 var condicionComprobante = { eliminado: false }
-
             }
             condicionCuenta.eliminado = false
-            //condicionCuenta.cuenta_activo = true
-            condicionCuenta.estado_resultado = true
+            condicionCuenta.cuenta_activo = true
             var condicionClasificacion = {}
             var condicionTipo = {}
             var datosCuenta = {
-                where: condicionCuenta,
-                include: [
-                    {
-                        model: ClasificacionCuenta, as: "clasificacion",
-                        include: [{ model: Clase, as: 'tipoClasificacion', where: condicionClasificacion }, { model: Clase, as: 'saldo' }, { model: Clase, as: 'movimiento' }]
-                    },
-                    {
-                        model: Clase, as: 'tipoCuenta', where: condicionTipo
-                    },
-                    {
-                        model: Clase, as: 'claseCalculo'
-                    },
-                    {
-                        model: Clase, as: 'tipoAuxiliar'
-                    }
+                attributes: ['id', 'nombre', 'codigo'],
+
+                include: [{
+                    model: ContabilidadCuenta, as: 'hijos', attributes: ['id', 'nombre', 'codigo'], include: [{
+                        model: ContabilidadCuenta, as: 'hijos', attributes: ['id', 'nombre', 'codigo'], include: [{
+                            model: ContabilidadCuenta, attributes: ['id', 'nombre', 'codigo', 'saldo'], as: 'hijos', where: condicionCuenta, include: [{
+                                model: AsientoContabilidad, as: 'cuenta', attributes: ['id'],
+                                include: [{ model: ComprobanteContabilidad, as: 'comprobante', attributes: ['id'], where: condicionComprobante }]
+                            }]
+                        }]
+                    }]
+                },
+                {
+                    model: ClasificacionCuenta, as: "clasificacion", attributes: ['id'], include: [{ model: Clase, as: 'tipoClasificacion', attributes: ['id'], where: condicionClasificacion }],
+
+                },
+                {
+                    model: Clase, as: 'tipoCuenta', attributes: ['id'], where: condicionTipo
+                },
 
                 ],
 
             }
 
+            var grupo = {}
+            var subgrupo = {}
+            var apropiacion = {}
+            var genericas = {}
             if (req.params.periodo != 'COMPARATIVO') {
+                Tipo.find({
+                    where: {
+                        nombre_corto: 'TCC',
+                        id_empresa: condicionCuenta.id_empresa
+                    },
+                    include: [{ model: Clase, as: 'clases' }]
+                }).then(function (tipo) {
+                    grupo = tipo.clases.find(function (clase) {
+                        return clase.nombre_corto == 1;
+                    })
+                    subgrupo = tipo.clases.find(function (clase) {
+                        return clase.nombre_corto == 2;
+                    })
+                    genericas = tipo.clases.find(function (clase) {
+                        return clase.nombre_corto == 3;
+                    })
+                    apropiacion = tipo.clases.find(function (clase) {
+                        return clase.nombre_corto == 4;
+                    })
                 MonedaTipoCambio.find({
                     where: {
                         fecha: {
@@ -171,15 +196,15 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                     }
                 }).then(function (MonedaCambio) {
                     condicionComprobante.fecha = { $between: [inicio, fin] }
-                    condicionTipo.nombre_corto = "2"
+                    condicionTipo.id = subgrupo.id
                     ContabilidadCuenta.findAll(
                         datosCuenta
                     ).then(function (cuentasVenta) {
                         if (cuentasVenta.length > 0) {
                             cuentasVenta.forEach(function (cuenta, index, array) {
-                                delete condicionTipo.nombre_corto;
+                                delete condicionTipo.id;
                                 delete condicionComprobante.fecha;
-                                /* condicionTipo.nombre_corto = "3" */
+                                //condicionTipo.id = genericas.id
                                 condicionCuenta.estado_resultado = false
                                 condicionCuenta.codigo = { $like: cuenta.codigo + "%" }
                                 ContabilidadCuenta.findAll(
@@ -187,294 +212,52 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                                 ).then(function (cuentasCostoVenta) {
                                     cuenta.dataValues.cuentasEstadoResultado = cuentasCostoVenta
                                     if (index === (array.length - 1)) {
-                                        delete condicionCuenta.codigo;
-                                        condicionClasificacion.nombre_corto = "7"
+                                        condicionTipo.id = grupo.id
+                                        condicionComprobante.fecha = { $between: [inicio, fin] }
+                                        condicionCuenta.cuenta_activo = false
+                                        condicionClasificacion.nombre_corto = { $in: ["5"] }
                                         ContabilidadCuenta.findAll(
                                             datosCuenta
-                                        ).then(function (cuentasGrupoIngresoEgreso) {
-                                            condicionTipo.nombre_corto = "2"
+                                        ).then(function (cuentasGrupoGasto) {
+                                            condicionClasificacion.nombre_corto = { $in: ["7"] }
                                             ContabilidadCuenta.findAll(
                                                 datosCuenta
-                                            ).then(function (cuentasSubGrupoIngresoEgreso) {
-                                                condicionTipo.nombre_corto = "3"
-                                                ContabilidadCuenta.findAll(
-                                                    datosCuenta
-                                                ).then(function (cuentasGenericasIngresoEgreso) {
-                                                    condicionTipo.nombre_corto = "4"
-                                                    condicionComprobante.fecha = { $between: [inicio, fin] }
-                                                    ContabilidadCuenta.findAll(
-                                                        datosCuenta
-                                                    ).then(function (cuentasApropiacionIngresoEgreso) {
-                                                        delete condicionComprobante.fecha
-                                                        //condicionCuenta.cuenta_activo = false
-                                                        condicionTipo.nombre_corto = "1"
-                                                        condicionClasificacion.nombre_corto = "5"
-                                                        ContabilidadCuenta.findAll(
-                                                            datosCuenta
-                                                        ).then(function (cuentasGrupo) {
-                                                            condicionTipo.nombre_corto = "2"
-                                                            ContabilidadCuenta.findAll(
-                                                                datosCuenta
-                                                            ).then(function (cuentasSubGrupo) {
-                                                                condicionTipo.nombre_corto = "3"
-                                                                ContabilidadCuenta.findAll(
-                                                                    datosCuenta
-                                                                ).then(function (cuentasGenericas) {
-                                                                    condicionTipo.nombre_corto = "4"
-                                                                    condicionComprobante.fecha = { $between: [inicio, fin] }
-                                                                    ContabilidadCuenta.findAll(
-                                                                        datosCuenta
-                                                                    ).then(function (cuentasApropiacion) {
+                                            ).then(function (cuentasGrupoIngresoEgreso) {
 
-                                                                        delete condicionComprobante.fecha
-                                                                        res.json({
-                                                                            cuentasGrupo: cuentasGrupo, cuentasSubGrupo: cuentasSubGrupo, cuentasGenericas: cuentasGenericas, cuentasApropiacion: cuentasApropiacion,
-                                                                            cuentasSubGrupoEstadoResultado: cuentasVenta, cuentasGrupoIngresoEgreso: cuentasGrupoIngresoEgreso, cuentasSubGrupoIngresoEgreso: cuentasSubGrupoIngresoEgreso, cuentasGenericasIngresoEgreso: cuentasGenericasIngresoEgreso, cuentasApropiacionIngresoEgreso: cuentasApropiacionIngresoEgreso
-                                                                            , monedaCambio: MonedaCambio
-                                                                        })
-                                                                    })
-                                                                })
-                                                            })
-                                                        })
-                                                    })
-                                                });
+                                                res.json({cuentasActivos: cuentasGrupoGasto, cuentasPasivosPatrimonios: cuentasGrupoIngresoEgreso,cuentasSubGrupoEstadoResultado: cuentasVenta
+                                                    , monedaCambio: MonedaCambio
+                                                })
                                             })
                                         })
-
+                                        
                                     }
                                 })
                             })
                         } else {
-                            delete condicionTipo.nombre_corto;
-                            condicionCuenta.estado_resultado = false
-                            condicionClasificacion.nombre = "EGRESO"
+                            
+                            condicionTipo.id = grupo.id
+                            condicionComprobante.fecha = { $between: [inicio, fin] }
+                            condicionCuenta.cuenta_activo = false
+                            condicionClasificacion.nombre_corto = { $in: ["5"] }
                             ContabilidadCuenta.findAll(
                                 datosCuenta
-                            ).then(function (cuentasGrupoFijo) {
-                                condicionTipo.nombre_corto = "2"
+                            ).then(function (cuentasGrupoGasto) {
+                                condicionClasificacion.nombre_corto = { $in: ["7"] }
                                 ContabilidadCuenta.findAll(
                                     datosCuenta
-                                ).then(function (cuentasSubGrupoFijo) {
-                                    condicionTipo.nombre_corto = "3"
-                                    ContabilidadCuenta.findAll(
-                                        datosCuenta
-                                    ).then(function (cuentasGenericasFijo) {
-                                        condicionTipo.nombre_corto = "4"
-                                        condicionComprobante.fecha = { $between: [inicio, fin] }
-                                        ContabilidadCuenta.findAll(
-                                            datosCuenta
-                                        ).then(function (cuentasApropiacionFijo) {
-                                            delete condicionComprobante.fecha
-                                            condicionCuenta.cuenta_activo = false
-                                            condicionTipo.nombre_corto = "1"
-                                            ContabilidadCuenta.findAll(
-                                                datosCuenta
-                                            ).then(function (cuentasGrupo) {
-                                                condicionTipo.nombre_corto = "2"
-                                                ContabilidadCuenta.findAll(
-                                                    datosCuenta
-                                                ).then(function (cuentasSubGrupo) {
-                                                    condicionTipo.nombre_corto = "3"
-                                                    ContabilidadCuenta.findAll(
-                                                        datosCuenta
-                                                    ).then(function (cuentasGenericas) {
-                                                        condicionTipo.nombre_corto = "4"
-                                                        condicionComprobante.fecha = { $between: [inicio, fin] }
-                                                        ContabilidadCuenta.findAll(
-                                                            datosCuenta
-                                                        ).then(function (cuentasApropiacion) {
-                                                            delete condicionComprobante.fecha
-                                                            res.json({
-                                                                cuentasGrupo: cuentasGrupo, cuentasSubGrupo: cuentasSubGrupo, cuentasGenericas: cuentasGenericas, cuentasApropiacion: cuentasApropiacion,
-                                                                cuentasSubGrupoEstadoResultado: cuentasVenta, cuentasGrupoFijo: cuentasGrupoFijo, cuentasSubGrupoFijo: cuentasSubGrupoFijo, cuentasGenericasFijo: cuentasGenericasFijo, cuentasApropiacionFijo: cuentasApropiacionFijo
-                                                                , monedaCambio: MonedaCambio
-                                                            })
-                                                        })
-                                                    })
-                                                })
-                                            })
-                                        })
-                                    });
+                                ).then(function (cuentasGrupoIngresoEgreso) {
+                                    res.json({cuentasActivos: cuentasGrupoGasto, cuentasPasivosPatrimonios: cuentasGrupoIngresoEgreso,cuentasSubGrupoEstadoResultado: cuentasVenta
+                                        , monedaCambio: MonedaCambio
+                                    })
                                 })
                             })
-
 
                         }
                     })
 
-                    /* ContabilidadCuenta.findAll(
-                        datosCuenta
-                    ).then(function (cuentasGrupoFijo) {
-                        condicionTipo.nombre_corto = "2"
-                        ContabilidadCuenta.findAll(
-                            datosCuenta
-                        ).then(function (cuentasSubGrupoFijo) {
-                            condicionTipo.nombre_corto = "3"
-                            ContabilidadCuenta.findAll(
-                                datosCuenta
-                            ).then(function (cuentasGenericasFijo) {
-                                condicionTipo.nombre_corto = "4"
-                                ContabilidadCuenta.findAll(
-                                    datosCuenta
-                                ).then(function (cuentasApropiacionFijo) {
-                                    condicionCuenta.cuenta_activo = false
-                                    condicionTipo.nombre_corto = "1"
-                                    ContabilidadCuenta.findAll(
-                                        datosCuenta
-                                    ).then(function (cuentasGrupo) {
-                                        condicionTipo.nombre_corto = "2"
-                                        ContabilidadCuenta.findAll(
-                                            datosCuenta
-                                        ).then(function (cuentasSubGrupo) {
-                                            condicionTipo.nombre_corto = "3"
-                                            ContabilidadCuenta.findAll(
-                                                datosCuenta
-                                            ).then(function (cuentasGenericas) {
-                                                condicionTipo.nombre_corto = "4"
-                                                ContabilidadCuenta.findAll(
-                                                    datosCuenta
-                                                ).then(function (cuentasApropiacion) {
-                                                    res.json({
-                                                        cuentasGrupo: cuentasGrupo, cuentasSubGrupo: cuentasSubGrupo, cuentasGenericas: cuentasGenericas, cuentasApropiacion: cuentasApropiacion,
-                                                        cuentasGrupoFijo: cuentasGrupoFijo, cuentasSubGrupoFijo: cuentasSubGrupoFijo, cuentasGenericasFijo: cuentasGenericasFijo, cuentasApropiacionFijo: cuentasApropiacionFijo
-                                                        , monedaCambio: MonedaCambio
-                                                    })
-                                                })
-                                            })
-                                        })
-                                    })
-                                })
-                            });
-                        })
-                    }) */
                 });
+            });
             } else {
-                var diaInicio = req.body.fechasImpresion.inicio.split("/")[0]
-                var diafin = req.body.fechasImpresion.fin.split("/")[0]
-                var mesinico = parseInt(req.body.fechasImpresion.inicio.split("/")[1]) - 1
-                var mesfin = parseInt(req.body.fechasImpresion.fin.split("/")[1]) - 1
-                if (mesinico == 0) {
-                    var inicio = new Date(req.params.gestion, mesinico, diaInicio)
-                    var fin = new Date(req.params.gestion, mesfin, diafin)
-                } else {
-                    var anio = parseInt(req.params.gestion) + 1
-                    var inicio = new Date(req.params.gestion, mesinico, diaInicio)
-                    var fin = new Date(anio, mesfin, diafin)
-                }
-
-                condicionCuenta.cuenta_activo = true
-                /* var inicio = new Date(req.params.gestion, 0, 1)
-                var fin = new Date(req.params.gestion, 12, 0) */
-                inicio.setHours(0, 0, 0, 0, 0);
-                fin.setHours(23, 59, 59, 0, 0);
-                MonedaTipoCambio.find({
-                    where: {
-                        fecha: {
-                            $between: [inicio, fin]
-                        }
-                    }
-                }).then(function (MonedaCambio) {
-                    condicionTipo.nombre_corto = "1"
-                    ContabilidadCuenta.findAll(
-                        datosCuenta
-                    ).then(function (cuentasGrupoFijo) {
-                        condicionTipo.nombre_corto = "2"
-                        ContabilidadCuenta.findAll(
-                            datosCuenta
-                        ).then(function (cuentasSubGrupoFijo) {
-                            condicionTipo.nombre_corto = "3"
-                            ContabilidadCuenta.findAll(
-                                datosCuenta
-                            ).then(function (cuentasGenericasFijo) {
-                                condicionTipo.nombre_corto = "4"
-                                ContabilidadCuenta.findAll(
-                                    datosCuenta
-                                ).then(function (cuentasApropiacionFijo) {
-                                    condicionCuenta.cuenta_activo = false
-                                    condicionTipo.nombre_corto = "1"
-                                    ContabilidadCuenta.findAll(
-                                        datosCuenta
-                                    ).then(function (cuentasGrupo) {
-                                        condicionTipo.nombre_corto = "2"
-                                        ContabilidadCuenta.findAll(
-                                            datosCuenta
-                                        ).then(function (cuentasSubGrupo) {
-                                            condicionTipo.nombre_corto = "3"
-                                            ContabilidadCuenta.findAll(
-                                                datosCuenta
-                                            ).then(function (cuentasGenericas) {
-                                                condicionTipo.nombre_corto = "4"
-                                                ContabilidadCuenta.findAll(
-                                                    datosCuenta
-                                                ).then(function (cuentasApropiacion) {
-                                                    condicionCuenta.cuenta_activo = true
-                                                    var inicio = new Date(req.params.gestion_fin, mesinico, diaInicio)
-                                                    var fin = new Date(req.params.gestion_fin, mesfin, diafin)
-                                                    inicio.setHours(0, 0, 0, 0, 0);
-                                                    fin.setHours(23, 59, 59, 0, 0);
-                                                    condicionComprobante.fecha = { $between: [inicio, fin] }
-                                                    condicionTipo.nombre_corto = "1"
-                                                    ContabilidadCuenta.findAll(
-                                                        datosCuenta
-                                                    ).then(function (cuentasGrupoFijoDos) {
-                                                        condicionTipo.nombre_corto = "2"
-                                                        ContabilidadCuenta.findAll(
-                                                            datosCuenta
-                                                        ).then(function (cuentasSubGrupoFijoDos) {
-                                                            condicionTipo.nombre_corto = "3"
-                                                            ContabilidadCuenta.findAll(
-                                                                datosCuenta
-                                                            ).then(function (cuentasGenericasFijoDos) {
-                                                                condicionTipo.nombre_corto = "4"
-                                                                ContabilidadCuenta.findAll(
-                                                                    datosCuenta
-                                                                ).then(function (cuentasApropiacionFijoDos) {
-                                                                    condicionCuenta.cuenta_activo = false
-                                                                    condicionTipo.nombre_corto = "1"
-                                                                    ContabilidadCuenta.findAll(
-                                                                        datosCuenta
-                                                                    ).then(function (cuentasGrupoDos) {
-                                                                        condicionTipo.nombre_corto = "2"
-                                                                        ContabilidadCuenta.findAll(
-                                                                            datosCuenta
-                                                                        ).then(function (cuentasSubGrupoDos) {
-                                                                            condicionTipo.nombre_corto = "3"
-                                                                            ContabilidadCuenta.findAll(
-                                                                                datosCuenta
-                                                                            ).then(function (cuentasGenericasDos) {
-                                                                                condicionTipo.nombre_corto = "4"
-                                                                                ContabilidadCuenta.findAll(
-                                                                                    datosCuenta
-                                                                                ).then(function (cuentasApropiacionDos) {
-                                                                                    res.json({
-                                                                                        primero: {
-                                                                                            cuentasGrupo: cuentasGrupo, cuentasSubGrupo: cuentasSubGrupo, cuentasGenericas: cuentasGenericas, cuentasApropiacion: cuentasApropiacion,
-                                                                                            cuentasGrupoFijo: cuentasGrupoFijo, cuentasSubGrupoFijo: cuentasSubGrupoFijo, cuentasGenericasFijo: cuentasGenericasFijo, cuentasApropiacionFijo: cuentasApropiacionFijo
-
-                                                                                        }, monedaCambio: MonedaCambio,
-                                                                                        segundo: {
-                                                                                            cuentasGrupo: cuentasGrupoDos, cuentasSubGrupo: cuentasSubGrupoDos, cuentasGenericas: cuentasGenericasDos, cuentasApropiacion: cuentasApropiacionDos,
-                                                                                            cuentasGrupoFijo: cuentasGrupoFijoDos, cuentasSubGrupoFijo: cuentasSubGrupoFijoDos, cuentasGenericasFijo: cuentasGenericasFijoDos, cuentasApropiacionFijo: cuentasApropiacionFijoDos
-
-                                                                                        }
-                                                                                    })
-                                                                                })
-                                                                            })
-                                                                        })
-                                                                    })
-                                                                })
-                                                            })
-                                                        })
-                                                    })
-                                                })
-                                            })
-                                        })
-                                    })
-                                })
-                            })
-                        })
-                    })
-                })
             }
         })
 
@@ -496,7 +279,7 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                 } else {
                     var anio = parseInt(req.params.gestion) + 1
                     var inicio = req.params.gestion + "-" + mesinico + "-" + diaInicio + '00:00:00'
-                    var fin =anio + "-" + mesfin + "-" + diafin +  '23:59:00' 
+                    var fin = anio + "-" + mesfin + "-" + diafin + '23:59:00'
                 }
 
                 /*   inicio.setHours(0, 0, 0, 0, 0);
@@ -505,8 +288,8 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
             } else if (req.params.periodo == 'MES') {
                 var inicio = new Date(req.params.gestion, req.params.mes, 1)
                 var fin = new Date(req.params.gestion, parseInt(req.params.mes) + 1, 0)
-                 inicio = req.params.gestion + "-" + inicio.getMonth() + "-" + fin.getDate() + " 00:00:00"
-                 fin = req.params.gestion + "-" + fin.getMonth() + "-" + fin.getDate() + " 00:00:00"
+                inicio = req.params.gestion + "-" + inicio.getMonth() + "-" + fin.getDate() + " 00:00:00"
+                fin = req.params.gestion + "-" + fin.getMonth() + "-" + fin.getDate() + " 00:00:00"
                 var condicionComprobante = { eliminado: false }
 
             } else if (req.params.periodo == 'FECHAS') {
@@ -518,19 +301,27 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
             }
             condicionCuenta.eliminado = false
             condicionCuenta.cuenta_activo = true
+            var condicionClasificacion = {}
             var condicionTipo = {}
             var datosCuenta = {
-                where: condicionCuenta,
+                attributes: ['id', 'nombre', 'codigo'],
+
                 include: [{
-                    model: AsientoContabilidad, as: 'cuenta',
-                    include: [{ model: ComprobanteContabilidad, as: 'comprobante' }]
+                    model: ContabilidadCuenta, as: 'hijos', attributes: ['id', 'nombre', 'codigo'], include: [{
+                        model: ContabilidadCuenta, as: 'hijos', attributes: ['id', 'nombre', 'codigo'], include: [{
+                            model: ContabilidadCuenta, attributes: ['id', 'nombre', 'codigo', 'saldo'], as: 'hijos', where: condicionCuenta, include: [{
+                                model: AsientoContabilidad, as: 'cuenta', attributes: ['id'],
+                                include: [{ model: ComprobanteContabilidad, as: 'comprobante', attributes: ['id'], where: condicionComprobante }]
+                            }]
+                        }]
+                    }]
                 },
                 {
-                    model: ClasificacionCuenta, as: "clasificacion", include: [{ model: Clase, as: 'tipoClasificacion' }],
+                    model: ClasificacionCuenta, as: "clasificacion", attributes: ['id'], include: [{ model: Clase, as: 'tipoClasificacion', attributes: ['id'], where: condicionClasificacion }],
 
                 },
                 {
-                    model: Clase, as: 'tipoCuenta', where: condicionTipo
+                    model: Clase, as: 'tipoCuenta', attributes: ['id'], where: condicionTipo
                 },
 
                 ],
@@ -569,55 +360,32 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                         }
                     }).then(function (MonedaCambio) {
                         condicionTipo.id = grupo.id
+                        condicionComprobante.fecha = { $between: [inicio, fin] }
                         condicionCuenta.cuenta_activo = false
+                        condicionClasificacion.nombre_corto = { $in: ["1"] }
                         ContabilidadCuenta.findAll(
                             datosCuenta
-                        ).then(function (cuentasGrupoFijo) {
+                        ).then(function (cuentasGrupo) {
                             condicionCuenta.cuenta_activo = true
-                            delete condicionTipo.nombre_corto
-                            condicionTipo.id = subgrupo.id
-                            sequelize.query("call balanceGeneralEEFF(" + condicionCuenta.id_empresa + "," + condicionCuenta.cuenta_activo + "," + condicionTipo.id + ")", { type: sequelize.QueryTypes.SELECT }
-                            ).then(function (cuentasSubGrupoFijo) {
-                                condicionTipo.id = genericas.id
-                                sequelize.query("call balanceGeneralEEFF(" + condicionCuenta.id_empresa + "," + condicionCuenta.cuenta_activo + "," + condicionTipo.id + ")", { type: sequelize.QueryTypes.SELECT }
-                                ).then(function (cuentasGenericasFijo) {
-                                    condicionTipo.id = apropiacion.id
-                                    condicionComprobante.fecha = { $between: [inicio, fin] }
-                                    sequelize.query("call balanceGeneralEEFFCuentasFijas(" + condicionCuenta.id_empresa + "," + condicionCuenta.cuenta_activo + "," + condicionTipo.id + ",'" + inicio.toString() + "','" + fin.toString() + "')", { type: sequelize.QueryTypes.SELECT }
-                                    ).then(function (cuentasApropiacionFijo) {
-                                        delete condicionTipo.nombre_corto
-                                        delete condicionComprobante.fecha
-                                        condicionCuenta.cuenta_activo = false
-                                        condicionTipo.id = grupo.id
-                                        sequelize.query("call balanceGeneralEEFF(" + condicionCuenta.id_empresa + "," + condicionCuenta.cuenta_activo + "," + condicionTipo.id + ")", { type: sequelize.QueryTypes.SELECT }
-                                        ).then(function (cuentasGrupo) {
-                                            condicionTipo.id = subgrupo.id
-                                            sequelize.query("call balanceGeneralEEFF(" + condicionCuenta.id_empresa + "," + condicionCuenta.cuenta_activo + "," + condicionTipo.id + ")", { type: sequelize.QueryTypes.SELECT }
-                                            ).then(function (cuentasSubGrupo) {
-                                                condicionTipo.id = genericas.id
-                                                sequelize.query("call balanceGeneralEEFF(" + condicionCuenta.id_empresa + "," + condicionCuenta.cuenta_activo + "," + condicionTipo.id + ")", { type: sequelize.QueryTypes.SELECT }
-                                                ).then(function (cuentasGenericas) {
-                                                    condicionComprobante.fecha = { $between: [inicio, fin] }
-                                                    condicionTipo.id = apropiacion.id
-                                                    sequelize.query("call balanceGeneralEEFFCuentasFijas(" + condicionCuenta.id_empresa + "," + condicionCuenta.cuenta_activo + "," + condicionTipo.id + ",'" + inicio + "','" + fin + "')", { type: sequelize.QueryTypes.SELECT }
-                                                    ).then(function (cuentasApropiacion) {
-                                                        delete condicionComprobante.fecha
-                                                        res.json({
-                                                            cuentasGrupo: cuentasGrupo[0], cuentasSubGrupo: cuentasSubGrupo[0], cuentasGenericas: cuentasGenericas[0], cuentasApropiacion: cuentasApropiacion[0],
-                                                            cuentasGrupoFijo: cuentasGrupoFijo, cuentasSubGrupoFijo: cuentasSubGrupoFijo[0], cuentasGenericasFijo: cuentasGenericasFijo[0], cuentasApropiacionFijo: cuentasApropiacionFijo[0]
-                                                            , monedaCambio: MonedaCambio
-                                                        })
-                                                    })
-                                                })
-                                            })
-                                        })
-                                    })
-                                });
+                            condicionClasificacion.nombre_corto = { $in: ["1"] }
+                            ContabilidadCuenta.findAll(
+                                datosCuenta
+                            ).then(function (cuentasGrupoFijo) {
+                                condicionCuenta.cuenta_activo = false
+                                condicionClasificacion.nombre_corto = { $in: ["2", "3"] }
+                                ContabilidadCuenta.findAll(
+                                    datosCuenta
+                                ).then(function (cuentasPasivoPatrimonio) {
+                                    res.json({ cuentasFijos: cuentasGrupoFijo, cuentasActivos: cuentasGrupo, cuentasPasivosPatrimonios: cuentasPasivoPatrimonio })
+
+                                })
+
                             })
+
                         })
                     });
                 })
-            } else {
+            } else {//falta modificar
                 var diaInicio = req.body.fechasImpresion.inicio.split("/")[0]
                 var diafin = req.body.fechasImpresion.fin.split("/")[0]
                 var mesinico = parseInt(req.body.fechasImpresion.inicio.split("/")[1]) - 1

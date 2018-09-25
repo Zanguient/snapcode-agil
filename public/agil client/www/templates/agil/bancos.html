@@ -233,7 +233,7 @@
 							<label class="col-sm-3 control-label no-padding-right" for="nombre">Nombre</label>
 
 							<div class="col-sm-9">
-								<input required type="text" id="nombre" ng-model="banco.nombre" placeholder="nombre" class="col-xs-10 col-sm-5" />
+								<input required type="text" id="nombreBanco" ng-model="banco.nombre" placeholder="nombre" class="col-xs-10 col-sm-5" />
 							</div>
 						</div>
 
@@ -241,7 +241,7 @@
 							<label class="col-sm-3 control-label no-padding-right" for="numero">Número</label>
 
 							<div class="col-sm-9">
-								<input required type="text" id="numero" ng-model="banco.numero" placeholder="numero" class="form-control" />
+								<input required type="text" id="numeroCta" ng-model="banco.numero" placeholder="numero" class="form-control" />
 							</div>
 						</div>
 					</div>
@@ -250,7 +250,7 @@
 							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo de Cuenta</label>
 
 							<div class="col-xs-12 col-sm-9">
-								<select required id="tipoCuenta" name="tipoCuenta" ng-model="banco.tipoCuenta" ng-options="tipoCuenta as tipoCuenta.nombre for tipoCuenta in tiposCuenta track by tipoCuenta.id"  data-placeholder="Click para escoger"></select>
+								<select required id="tipoCuentaCta" name="tipoCuenta" ng-model="banco.tipoCuenta" ng-options="tipoCuenta as tipoCuenta.nombre for tipoCuenta in tiposCuenta track by tipoCuenta.id"  data-placeholder="Click para escoger"></select>
 							</div>
 						</div>
 						
@@ -258,7 +258,7 @@
 							<label class="control-label col-xs-12 col-sm-3 no-padding-right">Tipo de Moneda</label>
 
 							<div class="col-xs-12 col-sm-9">
-								<select required id="tipoMoneda" name="tipoMoneda" ng-model="banco.tipoMoneda" ng-options="tipoMoneda as tipoMoneda.nombre for tipoMoneda in tiposMoneda track by tipoMoneda.id"  data-placeholder="Click para escoger"></select>
+								<select required id="tipoMonedaCta" name="tipoMoneda" ng-model="banco.tipoMoneda" ng-options="tipoMoneda as tipoMoneda.nombre for tipoMoneda in tiposMoneda track by tipoMoneda.id"  data-placeholder="Click para escoger"></select>
 							</div>
 						</div>
 						

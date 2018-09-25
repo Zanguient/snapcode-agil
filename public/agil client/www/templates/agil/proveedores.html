@@ -248,7 +248,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="codigo">Código</label>
 
 									<div class="col-sm-9">
-										<input required type="text" id="codigo" ng-model="proveedor.codigo" placeholder="Código" class="form-control" />
+										<input required type="text" id="codigoProveedor" ng-model="proveedor.codigo" placeholder="Código" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -257,7 +257,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="razon_social">Razón Social</label>
 
 									<div class="col-sm-9">
-										<input required type="text" id="razon_social" ng-model="proveedor.razon_social" placeholder="Razón Social" class="form-control"
+										<input required type="text" id="razon_socialProveedor" ng-model="proveedor.razon_social" placeholder="Razón Social" class="form-control"
 										/>
 									</div>
 								</div>
@@ -267,7 +267,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="nit">NIT</label>
 
 									<div class="col-sm-9">
-										<input required type="number" id="nit" ng-model="proveedor.nit" placeholder="nit" class="form-control" />
+										<input required type="number" id="nitProveedor" ng-model="proveedor.nit" placeholder="nit" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -279,7 +279,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="direccion">Dirección</label>
 
 									<div class="col-sm-9">
-										<input required type="text" id="direccion" ng-model="proveedor.direccion" placeholder="dirección" class="form-control" />
+										<input required type="text" id="direccionProveedor" ng-model="proveedor.direccion" placeholder="dirección" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -288,7 +288,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="telefono1">Teléfono 1</label>
 
 									<div class="col-sm-9">
-										<input type="text" id="telefono1" ng-model="proveedor.telefono1" placeholder="telefono 1" class="form-control" />
+										<input type="text" id="telefono1Proveedor" ng-model="proveedor.telefono1" placeholder="telefono 1" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -297,7 +297,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="telefono2">Teléfono 2</label>
 
 									<div class="col-sm-9">
-										<input type="text" id="telefono2" ng-model="proveedor.telefono2" placeholder="telefono 2" class="form-control" />
+										<input type="text" id="telefono2Proveedor" ng-model="proveedor.telefono2" placeholder="telefono 2" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -306,7 +306,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="telefono3">email</label>
 
 									<div class="col-sm-9">
-										<input type="text" id="telefono3" ng-model="proveedor.telefono3" placeholder="email" class="form-control" />
+										<input type="text" id="telefono3Proveedor" ng-model="proveedor.telefono3" placeholder="email" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -318,7 +318,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="contacto">Contacto</label>
 
 									<div class="col-sm-9">
-										<input type="text" id="contacto" ng-model="proveedor.contacto" placeholder="contacto" class="form-control" />
+										<input type="text" id="contactoProveedorDisabled" ng-model="proveedor.contacto" placeholder="contacto" class="form-control" />
 									</div>
 								</div>
 
@@ -327,7 +327,7 @@
 								<div class="row">
 									<label class="col-sm-3 control-label no-padding-right" for="ubicacion_geografica">Ubic. Geo.</label>
 									<div class="col-sm-9">
-										<input type="text" id="ubicacion_geografica" ng-model="proveedor.ubicacion_geografica" placeholder="ubicacion geografica"
+										<input type="text" id="ubicacion_geograficaProveedor" ng-model="proveedor.ubicacion_geografica" placeholder="ubicacion geografica"
 										 class="form-control" />
 									</div>
 								</div>
@@ -338,7 +338,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="rubro">Rubro</label>
 
 									<div class="col-sm-9">
-										<input type="text" id="rubro" ng-model="proveedor.rubro" placeholder="rubro" class="form-control" />
+										<input type="text" id="rubroProveedor" ng-model="proveedor.rubro" placeholder="rubro" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -348,7 +348,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="categoria">Categoría</label>
 
 									<div class="col-sm-9">
-										<input type="text" id="categoria" ng-model="proveedor.categoria" placeholder="categoria" class="form-control" />
+										<input type="text" id="categoriaProveedor" ng-model="proveedor.categoria" placeholder="categoria" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -357,7 +357,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="fecha1">Fecha Imp. 1</label>
 
 									<div class="col-sm-9">
-										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm" id="fecha1" ng-model="proveedor.fechatexto1"
+										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm" id="fecha1Proveedor" ng-model="proveedor.fechatexto1"
 										 placeholder="fecha 1" />
 									</div>
 								</div>
@@ -367,7 +367,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="fecha2">Fecha Imp. 2</label>
 
 									<div class="col-sm-9">
-										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm" id="fecha2" ng-model="proveedor.fechatexto2"
+										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm" id="fecha2Proveedor" ng-model="proveedor.fechatexto2"
 										 placeholder="fecha 2" />
 									</div>
 								</div>
@@ -377,7 +377,7 @@
 									<label class="col-sm-3 control-label no-padding-right" for="texto1">Texto 1</label>
 
 									<div class="col-sm-9">
-										<input type="text" id="texto1" ng-model="proveedor.texto1" placeholder="texto 1" class="form-control" />
+										<input type="text" id="texto1Proveedor" ng-model="proveedor.texto1" placeholder="texto 1" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -385,7 +385,7 @@
 								<div class="row">
 									<label class="col-sm-3 control-label no-padding-right" for="texto2">Texto 2</label>
 									<div class="col-sm-9">
-										<input type="text" id="texto2" ng-model="proveedor.texto2" placeholder="texto 2" class="form-control" />
+										<input type="text" id="texto2Proveedor" ng-model="proveedor.texto2" placeholder="texto 2" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -506,21 +506,21 @@
 							<label class="col-sm-3 control-label no-padding-right" for="codigo">Código</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="codigo" ng-model="proveedor.codigo" class="form-control"  />
+								<input disabled type="text" id="codigoProveedorDisabled" ng-model="proveedor.codigo" class="form-control"  />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="razon_social">Razón Social</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="razon_social" ng-model="proveedor.razon_social" class="form-control"  />
+								<input disabled type="text" id="razon_socialProveedorDisabled" ng-model="proveedor.razon_social" class="form-control"  />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="nit">NIT</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="nit" ng-model="proveedor.nit" class="form-control" />
+								<input disabled type="text" id="nitProveedorDisabled" ng-model="proveedor.nit" class="form-control" />
 							</div>
 						</div>
 
@@ -530,28 +530,28 @@
 							<label class="col-sm-3 control-label no-padding-right" for="direccion">Dirección</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="direccion" ng-model="proveedor.direccion" class="form-control" />
+								<input disabled type="text" id="direccionProveedorDisabled" ng-model="proveedor.direccion" class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="telefono1">Teléfono 1</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="telefono1" ng-model="proveedor.telefono1" class="form-control" />
+								<input disabled type="text" id="telefono1ProveedorDisabled" ng-model="proveedor.telefono1" class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="telefono2">Teléfono 2</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="telefono2" ng-model="proveedor.telefono2" class="form-control" />
+								<input disabled type="text" id="telefono2ProveedorDisabled" ng-model="proveedor.telefono2" class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="telefono3">email</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="telefono3" ng-model="proveedor.telefono3" class="form-control" />
+								<input disabled type="text" id="telefono3ProveedorDisabled" ng-model="proveedor.telefono3" class="form-control" />
 							</div>
 						</div>
 					</div>
@@ -561,34 +561,34 @@
 							<label class="col-sm-3 control-label no-padding-right" for="contacto">Contacto</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="contacto" ng-model="proveedor.contacto" class="form-control" />
+								<input disabled type="text" id="contactoProveedor" ng-model="proveedor.contacto" class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="ubicacion_geografica">Ubic. Geo.</label>
 							<div class="col-sm-9">
-								<input disabled type="text" id="ubicacion_geografica" ng-model="proveedor.ubicacion_geografica" class="form-control" />
+								<input disabled type="text" id="ubicacion_geograficaProveedorDisabled" ng-model="proveedor.ubicacion_geografica" class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="rubro">Rubro</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="rubro" ng-model="proveedor.rubro" class="form-control" />
+								<input disabled type="text" id="rubroProveedorDisabled" ng-model="proveedor.rubro" class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="categoria">Categoría</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="categoria" ng-model="proveedor.categoria" class="form-control" />
+								<input disabled type="text" id="categoriaProveedorDisabled" ng-model="proveedor.categoria" class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="fecha1">Fecha Imp. 1</label>
 
 							<div class="col-sm-9">
-								<input disabled class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha1" ng-model="proveedor.fechatexto1"
+								<input disabled class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha1ProveedorDisabled" ng-model="proveedor.fechatexto1"
 								/>
 							</div>
 						</div>
@@ -596,7 +596,7 @@
 							<label class="col-sm-3 control-label no-padding-right" for="fecha2">Fecha Imp. 2</label>
 
 							<div class="col-sm-9">
-								<input disabled class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha2" ng-model="proveedor.fechatexto2"
+								<input disabled class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha2ProveedorDisabled" ng-model="proveedor.fechatexto2"
 								/>
 							</div>
 						</div>
@@ -604,13 +604,13 @@
 							<label class="col-sm-3 control-label no-padding-right" for="texto1">Texto 1</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="texto1" ng-model="proveedor.texto1" class="form-control" />
+								<input disabled type="text" id="texto1ProveedorDisabled" ng-model="proveedor.texto1" class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="texto2">Texto 2</label>
 							<div class="col-sm-9">
-								<input disabled type="text" id="texto2" ng-model="proveedor.texto2" class="form-control" />
+								<input disabled type="text" id="texto2ProveedorDisabled" ng-model="proveedor.texto2" class="form-control" />
 							</div>
 						</div>
 					</div>

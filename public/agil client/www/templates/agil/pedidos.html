@@ -111,7 +111,7 @@
 
                             </td>
                             <td>
-                                <select required id="sucursal" name="sucursal" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                <select required id="sucursal-filtro-pedidos" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
                                     ng-model="filtro.sucursal" ng-change="obtenerAlmacenes(filtro.sucursal.id)">
                                     <option value="" selected>TODOS</option>
                                 </select>
@@ -305,7 +305,7 @@
                                         <b>Sucursal</b>
                                     </div>
                                     <div class="col-md-6">
-                                        <select required id="sucursal" name="sucursal" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+                                        <select required id="sucursal-pedido" name="sucursal" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
                                             ng-model="pedido.sucursal" ng-change="obtenerAlmacenes(pedido.sucursal)">
                                             <option value="" selected disabled>Seleccione una sucursal</option>
                                         </select>
@@ -377,7 +377,7 @@
                                         <b>Grupo producto</b>
                                     </div>
                                     <div class="col-md-6">
-                                        <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductos" name="selectGruposProductos"
+                                        <select class="form-control" style="width:150px;" ng-change="filtrarProductosSeleccionadosPorGrupo()" id="selectGruposProductosPedidoProveedor"
                                             ng-model="pedido.grupo" ng-options="grupo.id as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                                             data-placeholder="Click para escoger">
                                             <option value="" selected>Todos</option>
@@ -577,7 +577,7 @@
                     </div>
                     <div class="col-md-6">
                         <label>Grupos</label>
-                        <select class="form-control" style="width:150px;" ng-change="buscarProductos(1)" id="selectGruposProductos" name="selectGruposProductos"
+                        <select class="form-control" style="width:150px;" ng-change="buscarProductos(1)" id="selectGruposProductosProveedor"
                             ng-model="configuracionPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                             data-placeholder="Click para escoger">
                             <option value="" selected>Todos</option>
@@ -683,7 +683,7 @@
                                     {{producto.nombre}}
                                 </td>
                                 <td>
-                                    <img src="{{producto.imagen}}" width="50">
+                                    <img ng-src="{{producto.imagen}}" width="50">
                                 </td>
                                 <td>{{producto.unidad_medida}}</td>
                                 <td>{{producto.precio_unitario | number:2}}</td>
@@ -857,7 +857,7 @@
                     </div>
                     <div class="col-md-6">
                         <label>Grupos</label>
-                        <select class="form-control" style="width:150px;" ng-change="buscarProductosAsignados(1)" id="selectGruposProductos" name="selectGruposProductos"
+                        <select class="form-control" style="width:150px;" ng-change="buscarProductosAsignados(1)" id="selectGruposProductosAsignados"
                             ng-model="productosAsignadosPorveedor.grupo" ng-options="grupo as grupo.nombre for grupo in subGruposProducto track by grupo.id"
                             data-placeholder="Click para escoger">
                             <option value="" selected>Todos</option>
@@ -962,7 +962,7 @@
                                     {{producto.nombre}}
                                 </td>
                                 <td>
-                                    <img src="{{producto.imagen}}" width="50">
+                                    <img ng-src="{{producto.imagen}}" width="50">
                                 </td>
                                 <td>{{producto.unidad_medida}}</td>
                                 <td>{{producto.precio_unitario | number:2}}</td>

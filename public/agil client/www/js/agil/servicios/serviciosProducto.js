@@ -301,6 +301,24 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	.factory('GuardarPreciosProductosEmpresa',  ['$resource',function ($resource) {
+		return $resource(restServer + "importar-precios-productos/:id_empresa");
+	}])
+
+	.factory('PreciosProductosEmpresa', ['GuardarPreciosProductosEmpresa', '$q', function (GuardarPreciosProductosEmpresa, $q) {
+		var res = function (productos,idEmpresa) {
+			var delay = $q.defer();
+			GuardarPreciosProductosEmpresa.save({
+				id_empresa: idEmpresa				
+			},productos, function (entidades) {
+					delay.resolve(entidades);
+				}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
 
 	// .factory('ProductosAsignadosPaginadorProveedor',  ['$resource',function ($resource) {
 	// 	return $resource(restServer + "productos/asignados/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/subgrupo/:id_subgrupo/user/:id_usuario");

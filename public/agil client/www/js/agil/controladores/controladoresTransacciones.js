@@ -121,7 +121,7 @@ angular.module('agil.controladores')
             var prom = SaldoCuenta($scope.usuario.id_empresa, $scope.cuentaSeleccionada.id, $scope.filtro.desde, $scope.filtro.hasta)
             prom.then(function (res) {
                 if (res.cuenta !== undefined) {
-                    $scope.saldoInicial = res.cuenta[0].saldo
+                    $scope.saldoInicial = res.cuenta.length ? res.cuenta[0].saldo : 0
                 } else {
                     $scope.mostrarMensaje('La cuenta Nro. ' + $scope.cuentaSeleccionada.numero + ' de ' + $scope.cuentaSeleccionada.nombre + ' no cuenta con un ingreso de apertura')
                 }
@@ -224,7 +224,7 @@ angular.module('agil.controladores')
                 $scope.calcularSaldoFinal()
                 var prom = SaldoCuenta($scope.usuario.id_empresa, $scope.cuentaSeleccionada.id, $scope.filtro.desde, $scope.filtro.hasta)
                 prom.then(function (res) {
-                    $scope.saldoInicial = res.cuenta[0].saldo
+                    $scope.saldoInicial = res.cuenta.length ? res.cuenta[0].saldo : 0
                 })
             }).catch(function (err) {
                 var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : (err.data !== null && err.data !== undefined) ? err.data : 'Se perdió la conexión.'
