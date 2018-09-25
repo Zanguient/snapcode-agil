@@ -1,4 +1,4 @@
-var mainUrl="http://127.0.0.1:8083/";
+var mainUrl="http://agilsof.net/";
 var restServer=mainUrl+"agil/";
 angular.module('agil.servicios', ['ngResource'])
 
