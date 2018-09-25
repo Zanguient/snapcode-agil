@@ -1796,7 +1796,7 @@
 		</div>
 		<p>
 			<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Ingrese el monto a pagar?</p>
-		<input required ng-model="pagoCreditosCompra" min="1" max="compra.saldo" type="number" step="0.001">
+		<input required ng-model="pago" min="1" max="compra.saldo" type="number" step="0.001">
 		<button type="submit" class="btn btn-success" ng-disabled="formularioPago.$invalid">Pagar</button>
 		<button type="button" class="btn btn-danger" ng-click="cerrarPopupPago()">Cancelar</button>
 	</form>
