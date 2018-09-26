@@ -19,7 +19,17 @@ angular.module('agil.controladores')
 			$scope.obtenerInventarios();
 			$scope.compraIngresosPorInventario();
 			$scope.obtenerGruposProductosEmpresaUsuario()
+			$scope.obtenerFormatoFactura()
 			//$scope.aplicarTabla('tabla-inventarios',4);
+		}
+
+		$scope.obtenerFormatoFactura = function () {
+			blockUI.start();
+			var promesa = ClasesTipo("FORM_IMP_FAC");
+			promesa.then(function (entidad) {
+				$scope.formatosFactura = entidad.clases;
+				blockUI.stop();
+			});
 		}
 		$scope.establecerCantidad = function (model) {
 			$scope.cantidadInventario = model

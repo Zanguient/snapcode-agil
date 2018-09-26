@@ -1,0 +1,1 @@
+alter table agil_comensales_precio_comidas_cliente_empresa add constraint codigo_comida_cliente unique (codigo, comida, cliente);

@@ -1,6 +1,6 @@
 angular.module('agil.controladores')
 
-.controller('ControladorPlanillaSueldos', ['$scope','$localStorage','$location','$templateCache','$route,blockUI', 'Parametro', 'Parametros', 'RecursosHumanosEmpleados', 'ClasesTipo',
+.controller('ControladorPlanillaSueldos', ['$scope','$localStorage','$location','$templateCache','$route','blockUI', 'Parametro', 'Parametros', 'RecursosHumanosEmpleados', 'ClasesTipo',
     'RecursosHumanosEmpleadosHorasExtras', 'RecursosHumanosPlanillaSueldos', 'RRHHlistaPlanillaSueldos', function($scope,$localStorage,$location,$templateCache,$route,blockUI, Parametro, Parametros, RecursosHumanosEmpleados, ClasesTipo,
     RecursosHumanosEmpleadosHorasExtras, RecursosHumanosPlanillaSueldos, RRHHlistaPlanillaSueldos){
     $scope.$on('$viewContentLoaded', function () {

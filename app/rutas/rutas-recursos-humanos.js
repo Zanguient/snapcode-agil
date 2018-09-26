@@ -2095,7 +2095,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     where: { nombre_corto: 'RRHH_ASLP', id_empresa: req.params.id_empresa }
                 }).then(function (tipoEncontrado) {
                     Clase.findOrCreate({
-                        where: {habilitado:true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
                         defaults: {
                             nombre: dato,
                             id_tipo: tipoEncontrado.dataValues.id,
@@ -2108,7 +2108,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                     where: { nombre_corto: 'RRHH_LSS', id_empresa: req.params.id_empresa }
                                 }).then(function (tipoEncontrado) {
                                     Clase.findOrCreate({
-                                        where: { habilitado:true,nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
                                         defaults: {
                                             nombre: dato,
                                             id_tipo: tipoEncontrado.dataValues.id,
@@ -2121,7 +2121,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                     where: { nombre_corto: 'RRHH_LSS', id_empresa: req.params.id_empresa }
                                                 }).then(function (tipoEncontrado) {
                                                     Clase.findOrCreate({
-                                                        where: {habilitado:true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
                                                         defaults: {
                                                             nombre: dato,
                                                             id_tipo: tipoEncontrado.dataValues.id,
@@ -2134,7 +2134,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                     where: { nombre_corto: 'RRHH_TP', id_empresa: req.params.id_empresa }
                                                                 }).then(function (tipoEncontrado) {
                                                                     Clase.findOrCreate({
-                                                                        where: {habilitado:true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
                                                                         defaults: {
                                                                             nombre: dato,
                                                                             id_tipo: tipoEncontrado.dataValues.id,
@@ -2147,7 +2147,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                     where: { nombre_corto: 'RRHH_CH', id_empresa: req.params.id_empresa }
                                                                                 }).then(function (tipoEncontrado) {
                                                                                     Clase.findOrCreate({
-                                                                                        where: { habilitado:true,nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
                                                                                         defaults: {
                                                                                             nombre: dato,
                                                                                             id_tipo: tipoEncontrado.dataValues.id,
@@ -2160,7 +2160,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                     where: { nombre_corto: 'RRHH_AREA', id_empresa: req.params.id_empresa }
                                                                                                 }).then(function (tipoEncontrado) {
                                                                                                     Clase.findOrCreate({
-                                                                                                        where: {habilitado:true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
                                                                                                         defaults: {
                                                                                                             nombre: dato,
                                                                                                             id_tipo: tipoEncontrado.dataValues.id,
@@ -2173,7 +2173,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                     where: { nombre_corto: 'RRHH_UBI', id_empresa: req.params.id_empresa }
                                                                                                                 }).then(function (tipoEncontrado) {
                                                                                                                     Clase.findOrCreate({
-                                                                                                                        where: {habilitado:true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
                                                                                                                         defaults: {
                                                                                                                             nombre: dato,
                                                                                                                             id_tipo: tipoEncontrado.dataValues.id,
@@ -2186,7 +2186,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                                     where: { nombre_corto: 'RRHH_EC', id_empresa: req.params.id_empresa }
                                                                                                                                 }).then(function (tipoEncontrado) {
                                                                                                                                     Clase.findOrCreate({
-                                                                                                                                        where: { habilitado:true,nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
                                                                                                                                         defaults: {
                                                                                                                                             nombre: dato,
                                                                                                                                             id_tipo: tipoEncontrado.dataValues.id,
@@ -2199,7 +2199,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                                                     where: { nombre_corto: 'RRHH_OST', id_empresa: req.params.id_empresa }
                                                                                                                                                 }).then(function (tipoEncontrado) {
                                                                                                                                                     Clase.findOrCreate({
-                                                                                                                                                        where: {habilitado:true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                                                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
                                                                                                                                                         defaults: {
                                                                                                                                                             nombre: dato,
                                                                                                                                                             id_tipo: tipoEncontrado.dataValues.id,
@@ -2214,7 +2214,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                                                                     }).then(function (tipoEncontrado) {
                                                                                                                                                                         Clase.findOrCreate({
                                                                                                                                                                             where: { nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
-                                                                                                                                                                            defaults: {habilitado:true,
+                                                                                                                                                                            defaults: {
+                                                                                                                                                                                habilitado: true,
                                                                                                                                                                                 nombre: dato,
                                                                                                                                                                                 id_tipo: tipoEncontrado.dataValues.id,
                                                                                                                                                                                 habilitado: true
@@ -2281,37 +2282,37 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                         where: { nombre_corto: 'NAC' }
                     }).then(function (tipoEncontrado) {
                         Clase.find({
-                            where: {habilitado:true, nombre: empleado.nacionalidad, id_tipo: tipoEncontrado.dataValues.id }
+                            where: { habilitado: true, nombre: empleado.nacionalidad, id_tipo: tipoEncontrado.dataValues.id }
                         }).then(function (claseNacEncontrada) {
                             Tipo.find({
                                 where: { nombre_corto: 'DEP' }
                             }).then(function (tipoEncontrado) {
                                 Clase.find({
-                                    where: { habilitado:true,nombre: empleado.departamento, id_tipo: tipoEncontrado.dataValues.id }
+                                    where: { habilitado: true, nombre: empleado.departamento, id_tipo: tipoEncontrado.dataValues.id }
                                 }).then(function (claseDepEncontrada) {
                                     Tipo.find({
                                         where: { nombre_corto: 'MUN' }
                                     }).then(function (tipoEncontrado) {
                                         Clase.find({
-                                            where: { habilitado:true,nombre: empleado.provincia, id_tipo: tipoEncontrado.dataValues.id }
+                                            where: { habilitado: true, nombre: empleado.provincia, id_tipo: tipoEncontrado.dataValues.id }
                                         }).then(function (claseMunEncontrada) {
                                             Tipo.find({
                                                 where: { nombre_corto: 'LOC' }
                                             }).then(function (tipoEncontrado) {
                                                 Clase.find({
-                                                    where: { habilitado:true,nombre: empleado.provincia, id_tipo: tipoEncontrado.dataValues.id }
+                                                    where: { habilitado: true, nombre: empleado.provincia, id_tipo: tipoEncontrado.dataValues.id }
                                                 }).then(function (claseLocEncontrada) {
                                                     Tipo.find({
                                                         where: { nombre_corto: 'RRHH_EC', id_empresa: req.params.id_empresa }
                                                     }).then(function (tipoEncontrado) {
                                                         Clase.find({
-                                                            where: {habilitado:true, nombre: empleado.estado_civil, id_tipo: tipoEncontrado.dataValues.id }
+                                                            where: { habilitado: true, nombre: empleado.estado_civil, id_tipo: tipoEncontrado.dataValues.id }
                                                         }).then(function (claseEncontrada) {
-                                                            var idNac=(claseNacEncontrada)?claseNacEncontrada.id:null
-                                                            var idDep=(claseDepEncontrada)?claseDepEncontrada.id:null
-                                                            var idProv=(claseMunEncontrada)?claseMunEncontrada.id:null
-                                                            var idLoc=(claseLocEncontrada)?claseLocEncontrada.id:null
-                                                            if(!pacienteFound.persona){
+                                                            var idNac = (claseNacEncontrada) ? claseNacEncontrada.id : null
+                                                            var idDep = (claseDepEncontrada) ? claseDepEncontrada.id : null
+                                                            var idProv = (claseMunEncontrada) ? claseMunEncontrada.id : null
+                                                            var idLoc = (claseLocEncontrada) ? claseLocEncontrada.id : null
+                                                            if (!pacienteFound.persona) {
                                                                 console.log(pacienteFound)
                                                                 console.log("pacienteFound")
                                                             }
@@ -2328,50 +2329,50 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                         where: { nombre_corto: 'RRHH_TP', id_empresa: req.params.id_empresa }
                                                                     }).then(function (tipoEncontrado) {
                                                                         Clase.find({
-                                                                            where: {habilitado:true, nombre: empleado.tipo_personal, id_tipo: tipoEncontrado.dataValues.id }
+                                                                            where: { habilitado: true, nombre: empleado.tipo_personal, id_tipo: tipoEncontrado.dataValues.id }
                                                                         }).then(function (clasePersonaEncontrada) {
                                                                             Tipo.find({
                                                                                 where: { nombre_corto: 'RRHH_CH', id_empresa: req.params.id_empresa }
                                                                             }).then(function (tipoEncontrado) {
                                                                                 Clase.find({
-                                                                                    where: {habilitado:true, nombre: empleado.carga_horario, id_tipo: tipoEncontrado.dataValues.id }
+                                                                                    where: { habilitado: true, nombre: empleado.carga_horario, id_tipo: tipoEncontrado.dataValues.id }
                                                                                 }).then(function (claseCargaEncontrada) {
                                                                                     Tipo.find({
                                                                                         where: { nombre_corto: 'RRHH_AREA', id_empresa: req.params.id_empresa }
                                                                                     }).then(function (tipoEncontrado) {
                                                                                         Clase.find({
-                                                                                            where: {habilitado:true, nombre: empleado.area, id_tipo: tipoEncontrado.dataValues.id }
+                                                                                            where: { habilitado: true, nombre: empleado.area, id_tipo: tipoEncontrado.dataValues.id }
                                                                                         }).then(function (claseAreaEncontrada) {
                                                                                             Tipo.find({
                                                                                                 where: { nombre_corto: 'RRHH_UBI', id_empresa: req.params.id_empresa }
                                                                                             }).then(function (tipoEncontrado) {
                                                                                                 Clase.find({
-                                                                                                    where: {habilitado:true, nombre: empleado.ubicacion, id_tipo: tipoEncontrado.dataValues.id }
+                                                                                                    where: { habilitado: true, nombre: empleado.ubicacion, id_tipo: tipoEncontrado.dataValues.id }
                                                                                                 }).then(function (claseUbicacionEncontrada) {
                                                                                                     Tipo.find({
                                                                                                         where: { nombre_corto: 'RRHH_LSS', id_empresa: req.params.id_empresa }
                                                                                                     }).then(function (tipoEncontrado) {
                                                                                                         Clase.find({
-                                                                                                            where: {habilitado:true, nombre: empleado.lugar_afp, id_tipo: tipoEncontrado.dataValues.id }
+                                                                                                            where: { habilitado: true, nombre: empleado.lugar_afp, id_tipo: tipoEncontrado.dataValues.id }
                                                                                                         }).then(function (claseLugarSeguroAfpEncontrada) {
                                                                                                             Clase.find({
-                                                                                                                where: { habilitado:true,nombre: empleado.lugar_seguro, id_tipo: tipoEncontrado.dataValues.id }
+                                                                                                                where: { habilitado: true, nombre: empleado.lugar_seguro, id_tipo: tipoEncontrado.dataValues.id }
                                                                                                             }).then(function (claseLugarSeguroEncontrada) {
                                                                                                                 Tipo.find({
                                                                                                                     where: { nombre_corto: 'RRHH_ASLP', id_empresa: req.params.id_empresa }
                                                                                                                 }).then(function (tipoEncontrado) {
                                                                                                                     Clase.find({
-                                                                                                                        where: {habilitado:true, nombre: empleado.afp_aporte, id_tipo: tipoEncontrado.dataValues.id }
+                                                                                                                        where: { habilitado: true, nombre: empleado.afp_aporte, id_tipo: tipoEncontrado.dataValues.id }
                                                                                                                     }).then(function (claseAfpEncontrada) {
 
-                                                                                                                        var id_tipo_personal= (clasePersonaEncontrada)?clasePersonaEncontrada.id:null,
-                                                                                                                            id_carga_horarios= (clasePersonaEncontrada)?claseCargaEncontrada.id:null,
-                                                                                                                            id_area= (clasePersonaEncontrada)?claseAreaEncontrada.id:null,
-                                                                                                                            id_ubicacion= (clasePersonaEncontrada)?claseUbicacionEncontrada.id:null,
-                                                                                                                            nua_seguro_largo_plazo= (clasePersonaEncontrada)?empleado.nua_cua:null,
-                                                                                                                            id_aporte_seguro_largo_plazo= (clasePersonaEncontrada)?claseAfpEncontrada.id:null,
-                                                                                                                            id_lugar_seguro_largo_plazo= (clasePersonaEncontrada)?claseLugarSeguroAfpEncontrada.id:null,
-                                                                                                                            id_lugar_seguro_salud= (clasePersonaEncontrada)?claseLugarSeguroEncontrada.id:null;
+                                                                                                                        var id_tipo_personal = (clasePersonaEncontrada) ? clasePersonaEncontrada.id : null,
+                                                                                                                            id_carga_horarios = (clasePersonaEncontrada) ? claseCargaEncontrada.id : null,
+                                                                                                                            id_area = (clasePersonaEncontrada) ? claseAreaEncontrada.id : null,
+                                                                                                                            id_ubicacion = (clasePersonaEncontrada) ? claseUbicacionEncontrada.id : null,
+                                                                                                                            nua_seguro_largo_plazo = (clasePersonaEncontrada) ? empleado.nua_cua : null,
+                                                                                                                            id_aporte_seguro_largo_plazo = (clasePersonaEncontrada) ? claseAfpEncontrada.id : null,
+                                                                                                                            id_lugar_seguro_largo_plazo = (clasePersonaEncontrada) ? claseLugarSeguroAfpEncontrada.id : null,
+                                                                                                                            id_lugar_seguro_salud = (clasePersonaEncontrada) ? claseLugarSeguroEncontrada.id : null;
                                                                                                                         RrhhEmpleadoFicha.update({
                                                                                                                             id_tipo_personal: id_tipo_personal,
                                                                                                                             id_carga_horarios: id_carga_horarios,
@@ -2393,7 +2394,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                                         where: { nombre_corto: 'RRHH_OST', id_empresa: req.params.id_empresa }
                                                                                                                                     }).then(function (tipoEncontrado) {
                                                                                                                                         Clase.find({
-                                                                                                                                            where: {habilitado:true, nombre: empleado.seguro1, id_tipo: tipoEncontrado.dataValues.id }
+                                                                                                                                            where: { habilitado: true, nombre: empleado.seguro1, id_tipo: tipoEncontrado.dataValues.id }
                                                                                                                                         }).then(function (claseOtroSeguroEncontrada) {
                                                                                                                                             RrhhEmpleadoFichaOtrosSeguros.create({
                                                                                                                                                 id_ficha: pacienteFound.empleadosFichas[0].id,
@@ -2406,7 +2407,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                                                         where: { nombre_corto: 'RRHH_OST', id_empresa: req.params.id_empresa }
                                                                                                                                                     }).then(function (tipoEncontrado) {
                                                                                                                                                         Clase.find({
-                                                                                                                                                            where: {habilitado:true, nombre: empleado.seguro2, id_tipo: tipoEncontrado.dataValues.id }
+                                                                                                                                                            where: { habilitado: true, nombre: empleado.seguro2, id_tipo: tipoEncontrado.dataValues.id }
                                                                                                                                                         }).then(function (claseOtroSeguroEncontrada) {
                                                                                                                                                             RrhhEmpleadoFichaOtrosSeguros.create({
                                                                                                                                                                 id_ficha: pacienteFound.empleadosFichas[0].id,
@@ -2446,7 +2447,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                                         where: { nombre_corto: 'RRHH_OST', id_empresa: req.params.id_empresa }
                                                                                                                                     }).then(function (tipoEncontrado) {
                                                                                                                                         Clase.find({
-                                                                                                                                            where: {habilitado:true, nombre: empleado.seguro2, id_tipo: tipoEncontrado.dataValues.id }
+                                                                                                                                            where: { habilitado: true, nombre: empleado.seguro2, id_tipo: tipoEncontrado.dataValues.id }
                                                                                                                                         }).then(function (claseOtroSeguroEncontrada) {
                                                                                                                                             RrhhEmpleadoFichaOtrosSeguros.create({
                                                                                                                                                 id_ficha: pacienteFound.empleadosFichas[0].id,
@@ -2910,13 +2911,26 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                             nombre_corto: sucursal,
                                             id_tipo: tipo.dataValues.id
                                         },
+                                        lock: t.LOCK.UPDATE,
                                         transaction: t,
                                         defaults: {
                                             nombre: sucursal,
                                             id_tipo: tipo.dataValues.id,
                                             habilitado: true
                                         }
+                                    }).spread(function (sucursalC, created) {
+                                        return new Promise(function (fulfill, reject) {
+                                            fulfill()
+                                        });
+                                    }).catch(function (err) {
+                                        return new Promise(function (fulfill, reject) {
+                                            reject((err.stack !== undefined) ? err.stack : err);
+                                        });
                                     })
+                                }).catch(function (err) {
+                                    return new Promise(function (fulfill, reject) {
+                                        reject((err.stack !== undefined) ? err.stack : err);
+                                    });
                                 }))
                                 promises.push(Sucursal.findOrCreate({
                                     where: {
@@ -2924,10 +2938,19 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                         id_empresa: req.body.id_empresa
                                     },
                                     transaction: t,
+                                    lock: t.LOCK.UPDATE,
                                     defaults: {
                                         nombre: sucursal,
                                         id_empresa: req.body.id_empresa
                                     }
+                                }).spread(function (sucursalC, created) {
+                                    return new Promise(function (fulfill, reject) {
+                                        fulfill()
+                                    });
+                                }).catch(function (err) {
+                                    return new Promise(function (fulfill, reject) {
+                                        reject((err.stack !== undefined) ? err.stack : err);
+                                    });
                                 }))
                                 if (index2 === (array2.length - 1)) {
                                     guardarDatosCargo(res, req, promises, arregloCargo, arregloContrato, arregloExpedido, arregloSegurosSalud, t)
@@ -2947,7 +2970,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }).then(function (result) {
                 res.json({ mensaje: "¡Datos de empleados actualizados satisfactoriamente!" });
             }).catch(function (err) {
-                res.json({ hasError: true, message: err.stack });
+                res.json({ hasError: true, mensaje: err.stack?err.stack:err });
             });
         })
     function guardarDatosCargo(res, req, promises, arregloCargo, arregloContrato, arregloExpedido, arregloSegurosSalud, t) {
@@ -2968,13 +2991,26 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_tipo: tipoCargo.dataValues.id,
                         },
                         transaction: t,
+                        lock: t.LOCK.UPDATE,
                         defaults: {
                             id_tipo: tipoCargo.dataValues.id,
                             nombre: cargo,
                             nombre_corto: nombre_corto,
                             habilitado: true
                         }
+                    }).spread(function (cargoC, created) {
+                        return new Promise(function (fulfill, reject) {
+                            fulfill()
+                        });
+                    }).catch(function (err) {
+                        return new Promise(function (fulfill, reject) {
+                            reject((err.stack !== undefined) ? err.stack : err);
+                        });
                     })
+                }).catch(function (err) {
+                    return new Promise(function (fulfill, reject) {
+                        reject((err.stack !== undefined) ? err.stack : err);
+                    });
                 }))
 
                 if (index4 === (array4.length - 1)) {
@@ -3003,6 +3039,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             id_tipo: tipoContrato.dataValues.id,
                         },
                         transaction: t,
+                        lock: t.LOCK.UPDATE,
                         defaults: {
                             id_tipo: tipoContrato.dataValues.id,
                             nombre: contrato,
@@ -3010,7 +3047,19 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             habilitado: true
 
                         }
+                    }).spread(function (contratoC, created) {
+                        return new Promise(function (fulfill, reject) {
+                            fulfill()
+                        });
+                    }).catch(function (err) {
+                        return new Promise(function (fulfill, reject) {
+                            reject((err.stack !== undefined) ? err.stack : err);
+                        });
                     })
+                }).catch(function (err) {
+                    return new Promise(function (fulfill, reject) {
+                        reject((err.stack !== undefined) ? err.stack : err);
+                    });
                 }))
 
                 if (index5 === (array5.length - 1)) {
@@ -3036,6 +3085,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             nombre: expedido,
                             id_tipo: tipoExp.dataValues.id,
                         },
+                        lock: t.LOCK.UPDATE,
                         transaction: t,
                         defaults: {
                             id_tipo: tipoExp.dataValues.id,
@@ -3043,9 +3093,20 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             nombre_corto: nombre_corto3,
                             habilitado: true
                         }
+                    }).spread(function (expeditoC, created) {
+                        return new Promise(function (fulfill, reject) {
+                            fulfill()
+                        });
+                    }).catch(function (err) {
+                        return new Promise(function (fulfill, reject) {
+                            reject((err.stack !== undefined) ? err.stack : err);
+                        });
                     })
+                }).catch(function (err) {
+                    return new Promise(function (fulfill, reject) {
+                        reject((err.stack !== undefined) ? err.stack : err);
+                    });
                 }))
-
                 if (index6 === (array6.length - 1)) {
                     guardarDatosSeguro(res, req, promises, arregloSegurosSalud, t)
 
@@ -3078,7 +3139,19 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                             nombre_corto: nombre_corto3,
                             habilitado: true
                         }
+                    }).spread(function (seguroSaludC, created) {
+                        return new Promise(function (fulfill, reject) {
+                            fulfill()
+                        });
+                    }).catch(function (err) {
+                        return new Promise(function (fulfill, reject) {
+                            reject((err.stack !== undefined) ? err.stack : err);
+                        });
                     })
+                }).catch(function (err) {
+                    return new Promise(function (fulfill, reject) {
+                        reject((err.stack !== undefined) ? err.stack : err);
+                    });
                 }))
 
                 if (index7 === (array7.length - 1)) {
@@ -3363,39 +3436,67 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                                             },
                                                                                                                                                 { transaction: t }).then(function (historialCreado) {
 
-                                                                                                                                                    if (contador == (pacienteActual.historialVacacion.length - 1)) {
-
-                                                                                                                                                        if (index === (array.length - 1)) {
-
-                                                                                                                                                            res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
-                                                                                                                                                        }
-
-                                                                                                                                                    }
-                                                                                                                                                    contador++
+                                                                                                                                                    promises.push(new Promise(function (fulfill, reject) {
+                                                                                                                                                        fulfill({});
+                                                                                                                                                    }));
+                                                                                                                                                }).catch(function (err) {
+                                                                                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                                    });
                                                                                                                                                 }))
                                                                                                                                         }
 
 
                                                                                                                                     } else {
-                                                                                                                                        if (index === (array.length - 1)) {
-
-                                                                                                                                            res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
-                                                                                                                                        }
-
+                                                                                                                                        promises.push(new Promise(function (fulfill, reject) {
+                                                                                                                                            fulfill({});
+                                                                                                                                        }));
                                                                                                                                     }
+                                                                                                                                }).catch(function (err) {
+                                                                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                    });
                                                                                                                                 })
 
 
 
 
 
+                                                                                                                            }).catch(function (err) {
+                                                                                                                                return new Promise(function (fulfill, reject) {
+                                                                                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                });
                                                                                                                             })
+                                                                                                                    }).catch(function (err) {
+                                                                                                                        return new Promise(function (fulfill, reject) {
+                                                                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                        });
                                                                                                                     })
 
+                                                                                                                }).catch(function (err) {
+                                                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                    });
                                                                                                                 })
+                                                                                                            }).catch(function (err) {
+                                                                                                                return new Promise(function (fulfill, reject) {
+                                                                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                });
                                                                                                             })
+                                                                                                        }).catch(function (err) {
+                                                                                                            return new Promise(function (fulfill, reject) {
+                                                                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                            });
                                                                                                         })
+                                                                                                }).catch(function (err) {
+                                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                    });
                                                                                                 })
+                                                                                        }).catch(function (err) {
+                                                                                            return new Promise(function (fulfill, reject) {
+                                                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                                                            });
                                                                                         })
                                                                                         /*  } else  {
                                                                                               var fechaNueva = new Date()
@@ -3480,11 +3581,31 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                       })
                                                                                                   })
                                                                                           } */
+                                                                                    }).catch(function (err) {
+                                                                                        return new Promise(function (fulfill, reject) {
+                                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                                        });
                                                                                     })
+                                                                                }).catch(function (err) {
+                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                    });
                                                                                 })
+                                                                            }).catch(function (err) {
+                                                                                return new Promise(function (fulfill, reject) {
+                                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                                });
                                                                             })
 
+                                                                        }).catch(function (err) {
+                                                                            return new Promise(function (fulfill, reject) {
+                                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                                            });
                                                                         })
+                                                                    }).catch(function (err) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                        });
                                                                     })
 
                                                                     /*  return RrhhEmpleadoFicha.findAll({
@@ -3531,14 +3652,50 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         
                                                                         })
                                                                     }) ;*/
+                                                                }).catch(function (err) {
+                                                                    return new Promise(function (fulfill, reject) {
+                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                    });
                                                                 })
+                                                        }).catch(function (err) {
+                                                            return new Promise(function (fulfill, reject) {
+                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                            });
                                                         })
+                                                    }).catch(function (err) {
+                                                        return new Promise(function (fulfill, reject) {
+                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                        });
                                                     })
+                                                }).catch(function (err) {
+                                                    return new Promise(function (fulfill, reject) {
+                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                    });
                                                 })
+                                            }).catch(function (err) {
+                                                return new Promise(function (fulfill, reject) {
+                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                });
                                             })
+                                        }).catch(function (err) {
+                                            return new Promise(function (fulfill, reject) {
+                                                reject((err.stack !== undefined) ? err.stack : err);
+                                            });
                                         })
+                                    }).catch(function (err) {
+                                        return new Promise(function (fulfill, reject) {
+                                            reject((err.stack !== undefined) ? err.stack : err);
+                                        });
                                     })
+                                }).catch(function (err) {
+                                    return new Promise(function (fulfill, reject) {
+                                        reject((err.stack !== undefined) ? err.stack : err);
+                                    });
                                 })
+                            }).catch(function (err) {
+                                return new Promise(function (fulfill, reject) {
+                                    reject((err.stack !== undefined) ? err.stack : err);
+                                });
                             })
                     } else {
                         console.log('paciente nuevo')
@@ -3651,8 +3808,6 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                     transaction: t,
 
                                                                 }).then(function (TexpClase) {
-
-
                                                                     return MedicoPaciente.create({
                                                                         id_persona: personaCreada.id,
                                                                         id_empresa: req.body.id_empresa,
@@ -3778,52 +3933,132 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                                                         id_ficha: Creado.id
                                                                                                                                     },
                                                                                                                                         { transaction: t }).then(function (historialCreado) {
-
-                                                                                                                                            if (contador == (pacienteActual.historialVacacion.length - 1)) {
-
-                                                                                                                                                if (index === (array.length - 1)) {
-
-                                                                                                                                                    res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
-                                                                                                                                                }
-
-                                                                                                                                            }
-                                                                                                                                            contador++
+                                                                                                                                            return new Promise(function (fullfill, reject) {
+                                                                                                                                                fullfill()
+                                                                                                                                            })
+                                                                                                                                        }).catch(function (err) {
+                                                                                                                                            return new Promise(function (fulfill, reject) {
+                                                                                                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                            });
                                                                                                                                         }))
                                                                                                                                 }
 
                                                                                                                                 /* }) */
                                                                                                                                 /*  }); */
                                                                                                                             } else {
-                                                                                                                                if (index === (array.length - 1)) {
-
-                                                                                                                                    res.json({ mensaje: "¡Datos de empleado actualizados satisfactoriamente!" });
-                                                                                                                                }
+                                                                                                                                return new Promise(function (fullfill, reject) {
+                                                                                                                                    fullfill()
+                                                                                                                                })
 
                                                                                                                             }
 
 
+                                                                                                                        }).catch(function (err) {
+                                                                                                                            return new Promise(function (fulfill, reject) {
+                                                                                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                            });
                                                                                                                         })
+                                                                                                                }).catch(function (err) {
+                                                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                    });
                                                                                                                 })
+                                                                                                            }).catch(function (err) {
+                                                                                                                return new Promise(function (fulfill, reject) {
+                                                                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                });
                                                                                                             })
+                                                                                                        }).catch(function (err) {
+                                                                                                            return new Promise(function (fulfill, reject) {
+                                                                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                            });
                                                                                                         })
+                                                                                                }).catch(function (err) {
+                                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                    });
                                                                                                 })
+                                                                                        }).catch(function (err) {
+                                                                                            return new Promise(function (fulfill, reject) {
+                                                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                                                            });
                                                                                         })
+                                                                                    }).catch(function (err) {
+                                                                                        return new Promise(function (fulfill, reject) {
+                                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                                        });
                                                                                     })
 
+                                                                                }).catch(function (err) {
+                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                    });
                                                                                 })
+                                                                            }).catch(function (err) {
+                                                                                return new Promise(function (fulfill, reject) {
+                                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                                });
                                                                             })
+                                                                        }).catch(function (err) {
+                                                                            return new Promise(function (fulfill, reject) {
+                                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                                            });
                                                                         })
+                                                                }).catch(function (err) {
+                                                                    return new Promise(function (fulfill, reject) {
+                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                    });
                                                                 })
+                                                            }).catch(function (err) {
+                                                                return new Promise(function (fulfill, reject) {
+                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                });
                                                             })
+                                                        }).catch(function (err) {
+                                                            return new Promise(function (fulfill, reject) {
+                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                            });
                                                         })
+                                                    }).catch(function (err) {
+                                                        return new Promise(function (fulfill, reject) {
+                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                        });
                                                     })
+                                                }).catch(function (err) {
+                                                    return new Promise(function (fulfill, reject) {
+                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                    });
                                                 })
+                                            }).catch(function (err) {
+                                                return new Promise(function (fulfill, reject) {
+                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                });
                                             })
+                                        }).catch(function (err) {
+                                            return new Promise(function (fulfill, reject) {
+                                                reject((err.stack !== undefined) ? err.stack : err);
+                                            });
                                         })
+                                    }).catch(function (err) {
+                                        return new Promise(function (fulfill, reject) {
+                                            reject((err.stack !== undefined) ? err.stack : err);
+                                        });
                                     })
+                            }).catch(function (err) {
+                                return new Promise(function (fulfill, reject) {
+                                    reject((err.stack !== undefined) ? err.stack : err);
+                                });
                             })
                     }
+                }).catch(function (err) {
+                    return new Promise(function (fulfill, reject) {
+                        reject((err.stack !== undefined) ? err.stack : err);
+                    });
                 })
+            }).catch(function (err) {
+                return new Promise(function (fulfill, reject) {
+                    reject((err.stack !== undefined) ? err.stack : err);
+                });
             }));
 
         })
@@ -4263,14 +4498,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
     router.route('/recursos-humanos/vacacion/empresa/:id_empresa/inicio/:inicio/fin/:fin/estado/:estado')
         .get(function (req, res) {
             var condicionEmpleado = { id_empresa: req.params.id_empresa }
-            var  condicionFicha= {}
+            var condicionFicha = {}
             if (req.params.estado != 2) {
                 if (req.params.estado == 0) {
                     condicionEmpleado = { eliminado: true, id_empresa: req.params.id_empresa }
-                    condicionFicha= { fecha_expiracion:{$ne:null} }
+                    condicionFicha = { fecha_expiracion: { $ne: null } }
                 } else {
                     condicionEmpleado = { eliminado: false, id_empresa: req.params.id_empresa }
-                    condicionFicha= { fecha_expiracion:{$eq:null} }
+                    condicionFicha = { fecha_expiracion: { $eq: null } }
                 }
 
             }
@@ -4283,7 +4518,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             RrhhEmpleadoVacaciones.findAll({
                 where: condicionVacaciones,
                 include: [{ model: RrhhEmpleadoDescuentoVacacionHistorial, as: 'detalleDescuentosVacacionHistorial', include: [{ model: RrhhEmpleadoHistorialVacacion, as: 'historialVacacion' }] }, {
-                    model: RrhhEmpleadoFicha, as: 'ficha',where:condicionFicha, include: [{
+                    model: RrhhEmpleadoFicha, as: 'ficha', where: condicionFicha, include: [{
                         model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo' }]
                     }, { model: RrhhEmpleadoHistorialVacacion, as: 'historialVacaciones' }, { model: MedicoPaciente, as: 'empleado', where: condicionEmpleado, include: [{ model: Persona, as: 'persona' }, { model: Clase, as: 'campo' }] }]
                 }]

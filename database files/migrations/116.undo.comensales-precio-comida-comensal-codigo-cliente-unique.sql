@@ -1,0 +1,1 @@
+alter table agil_comensales_precio_comidas_cliente_empresa drop index codigo_comida_cliente;
