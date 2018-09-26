@@ -1304,12 +1304,25 @@ angular.module('agil.controladores')
 				blockUI.start();
 				if (compra.id) {
 					compra.esModificacion = true;
-					Compra.update({ id: compra.id }, compra, function (res) {
+					var detallesInvalidos = [];
+					for (var index = 0; index < compra.detallesCompra.length; index++) {
+						if (compra.detallesCompra[index].cantidad == undefined || compra.detallesCompra[index].costo_unitario == undefined) {
+							detallesInvalidos.push(compra.detallesCompra[index].producto.nombre+" no tiene cantidad o precio");
+						}
+					}
+					if (detallesInvalidos.length > 0) {
+						//alert(detallesInvalidos);
+						$scope.mostrarMensaje(detallesInvalidos);
+						$scope.abrirPopup($scope.idModalAlerta);
 						blockUI.stop();
-						$scope.cerrarPopPupEdicion();
-						$scope.mostrarMensaje(res.mensaje);
-						$scope.recargarItemsTabla();
-					});
+					}else{
+						Compra.update({ id: compra.id }, compra, function (res) {
+							blockUI.stop();
+							$scope.cerrarPopPupEdicion();
+							$scope.mostrarMensaje(res.mensaje);
+							$scope.recargarItemsTabla();
+						});
+					}
 				} else {
 					var promesa = SaveCompra(compra)
 					promesa.then(function (dato) {
