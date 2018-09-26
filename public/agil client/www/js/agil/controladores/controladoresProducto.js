@@ -4,11 +4,11 @@ angular.module('agil.controladores')
 		'$route', 'blockUI', 'Producto', 'Productos', 'ProductosPaginador', 'ProductosEmpresa',
 		'ClasesTipo', 'Clases', 'ProductoKardex', 'ProductosEmpresaCreacion', 'DatoCodigoSiguienteProductoEmpresa', 'ListaProductosEmpresa',
 		'Paginator', 'ListaCuentasComprobanteContabilidad', 'DatosProducto', 'CatalogoProductos',
-		'ListaGruposProductoEmpresa', 'Tipos', 'ClasesTipoEmpresa', 'FieldViewer', 'ListaSubGruposProductoEmpresa', 'ListaGruposProductoUsuario', 'ReporteProductosKardex', 'GuardarProductosFormulacion','PreciosProductosEmpresa', function ($scope, $timeout, $filter, $window, $localStorage, $location, $templateCache,
+		'ListaGruposProductoEmpresa', 'Tipos', 'ClasesTipoEmpresa', 'FieldViewer', 'ListaSubGruposProductoEmpresa', 'ListaGruposProductoUsuario', 'ReporteProductosKardex', 'GuardarProductosFormulacion', 'PreciosProductosEmpresa', function ($scope, $timeout, $filter, $window, $localStorage, $location, $templateCache,
 			$route, blockUI, Producto, Productos, ProductosPaginador, ProductosEmpresa,
 			ClasesTipo, Clases, ProductoKardex, ProductosEmpresaCreacion, DatoCodigoSiguienteProductoEmpresa, ListaProductosEmpresa,
 			Paginator, ListaCuentasComprobanteContabilidad, DatosProducto, CatalogoProductos,
-			ListaGruposProductoEmpresa, Tipos, ClasesTipoEmpresa, FieldViewer, ListaSubGruposProductoEmpresa, ListaGruposProductoUsuario, ReporteProductosKardex, GuardarProductosFormulacion,PreciosProductosEmpresa) {
+			ListaGruposProductoEmpresa, Tipos, ClasesTipoEmpresa, FieldViewer, ListaSubGruposProductoEmpresa, ListaGruposProductoUsuario, ReporteProductosKardex, GuardarProductosFormulacion, PreciosProductosEmpresa) {
 			blockUI.start();
 			$scope.idModalWizardProductoKardex = 'modal-wizard-producto-kardex';
 			$scope.idModalWizardProductoEdicion = 'modal-wizard-producto-edicion';
@@ -357,7 +357,9 @@ angular.module('agil.controladores')
 				$scope.Math = Math;
 				for (var i = 0; i < dato.detallesMovimiento.length; i++) {
 					if (dato.detallesMovimiento[i].movimiento) {
-						dato.detallesMovimiento[i].costo_unitario = Math.round((dato.detallesMovimiento[i].costo_unitario * 0.87) * 100) / 100;
+						if (dato.detalleMovimiento[i].clase.nombre_corto != "III") {
+							dato.detallesMovimiento[i].costo_unitario = Math.round((dato.detallesMovimiento[i].costo_unitario * 0.87) * 100) / 100;
+						}
 						if (i == 0 && dato.detallesMovimiento[i].tipo == "SALDO ANTERIOR") {
 							dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].saldoFisico;
 							dato.detallesMovimiento[i].saldoValuado = dato.detallesMovimiento[i].saldoValuado;
@@ -1225,8 +1227,8 @@ angular.module('agil.controladores')
 							var producto = {};
 							producto.codigo = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
 							producto.tipoPrecio = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
-							producto.tipoPrecio = $scope.tiposPrecios.clases.find(function(dato){
-								return producto.tipoPrecio.toUpperCase()==dato.nombre.toUpperCase()
+							producto.tipoPrecio = $scope.tiposPrecios.clases.find(function (dato) {
+								return producto.tipoPrecio.toUpperCase() == dato.nombre.toUpperCase()
 							})
 							producto.precio_unitario = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? parseFloat(worksheet['C' + row].v.toString()) : null;
 							producto.rango_positivo = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? parseFloat(worksheet['D' + row].v.toString()) : null;
@@ -1244,11 +1246,11 @@ angular.module('agil.controladores')
 			}
 
 			$scope.guardarPreciosProductos = function (productos) {
-				var promesa = new PreciosProductosEmpresa(productos,$scope.usuario.id_empresa);
+				var promesa = new PreciosProductosEmpresa(productos, $scope.usuario.id_empresa);
 				promesa.then(function (producto) {
 					blockUI.stop();
 					$scope.mostrarMensaje('Guardado Exitosamente!');
-					$scope.recargarItemsTabla();				
+					$scope.recargarItemsTabla();
 				});
 			}
 			$scope.subirExcelFormulacionProductos = function (event) {
