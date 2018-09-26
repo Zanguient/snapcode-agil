@@ -18,7 +18,6 @@ angular.module('agil.controladores')
         $scope.busquedaComensalesEmpresa = 'dialog-comensales-empresa'
         $scope.dialogAlertasMarcaciones = 'dialog-alerta-marcaciones'
         $scope.dialogHistorialDocumentos = 'dialog-historial-documentos'
-        // var redirectProformas;
 
         $scope.imagenEmpresa;
         var imgDelay = ObtenerImagen($scope.usuario.empresa.imagen);
@@ -94,6 +93,9 @@ angular.module('agil.controladores')
                 $scope.obtenerGerencias()
                 $scope.obtenerHistoriales()
                 $scope.obtenerComensales()
+                setTimeout(function () {
+                    aplicarDatePickers();
+                }, 200);
             }
             blockUI.stop()
         }
@@ -1458,11 +1460,11 @@ angular.module('agil.controladores')
                             if (excel) {
                                 for (var _index = 0; _index < reportesGerencias.length; _index++) {
                                     var repo = reportesGerencias[_index]
-                                    $scope.imprimirReporteComedorExcel(repo, repo[0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
+                                    $scope.imprimirReporteComedorExcel(repo, repo[0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar, res.periodo)
                                 }
                             } else {
                                 for (var _index = 0; _index < reportesGerencias.length; _index++) {
-                                    $scope.imprimirReporteComedor(reportesGerencias[_index], reportesGerencias[_index][0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar)
+                                    $scope.imprimirReporteComedor(reportesGerencias[_index], reportesGerencias[_index][0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar, res.periodo)
                                 }
                             }
                             blockUI.stop();
@@ -1528,9 +1530,9 @@ angular.module('agil.controladores')
 
                             })
                             if (excel) {
-                                $scope.imprimirReporteEmpresaEXCEL(res.reporte, null, cabecera, comidasEmpresa, tipoCambioDollar)
+                                $scope.imprimirReporteEmpresaEXCEL(res.reporte, res.gerencia, cabecera, comidasEmpresa, tipoCambioDollar, res.periodo)
                             } else {
-                                $scope.imprimirReporteEmpresa(res.reporte, null, cabecera, comidasEmpresa, tipoCambioDollar)
+                                $scope.imprimirReporteEmpresa(res.reporte, res.gerencia, cabecera, comidasEmpresa, tipoCambioDollar, res.periodo)
                             }
                             blockUI.stop();
                         })
@@ -1676,9 +1678,9 @@ angular.module('agil.controladores')
                             }
                             for (var _index = 0; _index < res.reporte.length; _index++) {
                                 if (excel) {
-                                    $scope.imprimirReporteComensalEXCEL(res.reporte[_index], null, cabecera, comidasEmpresa, tipoCambioDollar)
+                                    $scope.imprimirReporteComensalEXCEL(res.reporte[_index], null, cabecera, comidasEmpresa, tipoCambioDollar, res.periodo)
                                 } else {
-                                    $scope.imprimirReporteComensal(res.reporte[_index], null, cabecera, comidasEmpresa, tipoCambioDollar)
+                                    $scope.imprimirReporteComensal(res.reporte[_index], null, cabecera, comidasEmpresa, tipoCambioDollar, res.periodo)
                                 }
 
                             }
@@ -1827,7 +1829,7 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.imprimirReporteComedorExcel = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
+        $scope.imprimirReporteComedorExcel = function (reporte, gerencia, cabecera, comidasEmpresa, dollar, periodo) {
             var reporte = reporte
             var gerencia = gerencia
             var cabecera = cabecera
@@ -1956,7 +1958,7 @@ angular.module('agil.controladores')
             blockUI.stop();
         }
 
-        $scope.imprimirReporteComensalEXCEL = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
+        $scope.imprimirReporteComensalEXCEL = function (reporte, gerencia, cabecera, comidasEmpresa, dollar, periodo) {
             var reporte = reporte
             var gerencia = gerencia
             var cabecera = cabecera
@@ -2118,17 +2120,26 @@ angular.module('agil.controladores')
             // });
         }
 
-        $scope.imprimirReporteComedor = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
+        $scope.imprimirReporteComedor = function (reporte, gerencia, cabecera, comidasEmpresa, dollar, periodo) {
             var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
             var stream = doc.pipe(blobStream());
             var y = 170
-            var itemsPorPagina = 10
+            var itemsPorPagina = 20
+            var inicio_periodo;
+            var final_periodo;
+            if (periodo[0]) {
+                inicio_periodo = periodo[0].split('T')[0]
+            }
+            if (periodo[1]) {
+                final_periodo = periodo[1].split('T')[0]
+            }
+            // var periodo_ = 
             var items = 0
             var xSeparacion = 0
             var pagina = 1
             var cubeX = 100
             var totalPaginas = Math.ceil(1 / itemsPorPagina);
-            $scope.cabeceraReporteComedor(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+            $scope.cabeceraReporteComedor(reporte, doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase(), inicio_periodo, final_periodo);
             var total_desayunos = 0
             var total_almuerzos = 0
             var total_cenas = 0
@@ -2162,10 +2173,10 @@ angular.module('agil.controladores')
                 items++;
                 if (items > itemsPorPagina || (y > 700)) {
                     doc.addPage({ size: [612, 792], margin: 10 });
-                    y = 115 + 80;
+                    y = 170;
                     items = 0;
                     pagina = pagina + 1;
-                    $scope.cabeceraReporteComedor(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, reporte[i].gerencia ? reporte[i].gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+                    $scope.cabeceraReporteComedor(reporte, doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, reporte[i].gerencia ? reporte[i].gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase(), inicio_periodo, final_periodo);
                 }
             }
             doc.rect(cubeX, y, 80, 20).stroke()
@@ -2190,10 +2201,10 @@ angular.module('agil.controladores')
             doc.rect(cubeX + 160, y + 20, 80, 20).stroke()
             doc.rect(cubeX + 240, y + 20, 80, 20).stroke()
             doc.rect(cubeX + 160, y + 40, 80, 20).stroke()
-            doc.text(precio_total_desayunos, cubeX + 95 + 9, y + 7 + 20)
-            doc.text(precio_total_almuerzos, cubeX + 175 + 9, y + 7 + 20)
-            doc.text(precio_total_cenas, cubeX + 255 + 9, y + 7 + 20)
-            doc.text((precio_total_desayunos + precio_total_almuerzos + precio_total_cenas), cubeX + 175 + 9, y + 7 + 40)
+            doc.text($scope.number_format(precio_total_desayunos, 2), cubeX + 95 + 9, y + 7 + 20)
+            doc.text($scope.number_format(precio_total_almuerzos, 2), cubeX + 175 + 9, y + 7 + 20)
+            doc.text($scope.number_format(precio_total_cenas, 2), cubeX + 255 + 9, y + 7 + 20)
+            doc.text($scope.number_format((precio_total_desayunos + precio_total_almuerzos + precio_total_cenas), 2), cubeX + 175 + 9, y + 7 + 40)
             doc.rect(cubeX, y + 70, 80, 20).fill("yellow")
             doc.rect(cubeX, y + 90, 80, 20).fill("yellow")
             doc.rect(cubeX, y + 110, 80, 20).fill("yellow")
@@ -2212,10 +2223,10 @@ angular.module('agil.controladores')
             doc.text('almuerzo.-', cubeX + 15 + 9, y + 7 + 90)
             doc.text('Cena.-', cubeX + 15 + 9, y + 7 + 110)
             doc.rect(cubeX + 240, y + 90, 160, 20).stroke()
-            doc.text(('T.C. ' + dollar + '       Bs ' + ((precio_total_desayunos + precio_total_almuerzos + precio_total_cenas) * dollar).toFixed(2)), cubeX + 15 + 9 + 240, y + 7 + 90)
-            doc.text((comidasEmpresa[0].nombre.toLowerCase() === 'desayuno' ? comidasEmpresa[0].precio[0].precio : comidasEmpresa[1].nombre.toLowerCase() === 'desayuno' ? comidasEmpresa[1].precio[0].precio : comidasEmpresa[2].nombre.toLowerCase() === 'desayuno' ? comidasEmpresa[2].precio[0].precio : 'ERROR'), cubeX + 15 + 9 + 80, y + 7 + 70)
-            doc.text((comidasEmpresa[0].nombre.toLowerCase() === 'almuerzo' ? comidasEmpresa[0].precio[0].precio : comidasEmpresa[1].nombre.toLowerCase() === 'almuerzo' ? comidasEmpresa[1].precio[0].precio : comidasEmpresa[2].nombre.toLowerCase() === 'almuerzo' ? comidasEmpresa[2].precio[0].precio : 'ERROR'), cubeX + 15 + 9 + 80, y + 7 + 90)
-            doc.text((comidasEmpresa[0].nombre.toLowerCase() === 'cena' ? comidasEmpresa[0].precio[0].precio : comidasEmpresa[1].nombre.toLowerCase() === 'cena' ? comidasEmpresa[1].precio[0].precio : comidasEmpresa[2].nombre.toLowerCase() === 'cena' ? comidasEmpresa[2].precio[0].precio : 'ERROR'), cubeX + 15 + 9 + 80, y + 7 + 110)
+            doc.text(('T.C. ' + dollar + '       Bs ' + ($scope.number_format(((precio_total_desayunos + precio_total_almuerzos + precio_total_cenas) * dollar), 2))), cubeX + 15 + 9 + 240, y + 7 + 90)
+            doc.text((comidasEmpresa[0].nombre.toLowerCase() === 'desayuno' ? $scope.number_format(comidasEmpresa[0].precio[0].precio, 2) : comidasEmpresa[1].nombre.toLowerCase() === 'desayuno' ? $scope.number_format(comidasEmpresa[1].precio[0].precio, 2) : comidasEmpresa[2].nombre.toLowerCase() === 'desayuno' ? $scope.number_format(comidasEmpresa[2].precio[0].precio, 2) : 'ERROR'), cubeX + 15 + 9 + 80, y + 7 + 70)
+            doc.text((comidasEmpresa[0].nombre.toLowerCase() === 'almuerzo' ? $scope.number_format(comidasEmpresa[0].precio[0].precio, 2) : comidasEmpresa[1].nombre.toLowerCase() === 'almuerzo' ? $scope.number_format(comidasEmpresa[1].precio[0].precio, 2) : comidasEmpresa[2].nombre.toLowerCase() === 'almuerzo' ? $scope.number_format(comidasEmpresa[2].precio[0].precio, 2) : 'ERROR'), cubeX + 15 + 9 + 80, y + 7 + 90)
+            doc.text((comidasEmpresa[0].nombre.toLowerCase() === 'cena' ? $scope.number_format(comidasEmpresa[0].precio[0].precio, 2) : comidasEmpresa[1].nombre.toLowerCase() === 'cena' ? $scope.number_format(comidasEmpresa[1].precio[0].precio, 2) : comidasEmpresa[2].nombre.toLowerCase() === 'cena' ? $scope.number_format(comidasEmpresa[2].precio[0].precio, 2) : 'ERROR'), cubeX + 15 + 9 + 80, y + 7 + 110)
             var literal = ConvertirALiteral((precio_total_desayunos + precio_total_almuerzos + precio_total_cenas).toFixed(2))
             literal = literal.split('BOLIVIANOS')[0]
             doc.text('Son: ' + literal + ' Dólares Americanos', cubeX + 15 + 9, y + 7 + 130)
@@ -2229,17 +2240,25 @@ angular.module('agil.controladores')
             });
         }
 
-        $scope.imprimirReporteEmpresa = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
+        $scope.imprimirReporteEmpresa = function (reporte, gerencia, cabecera, comidasEmpresa, dollar, periodo) {
             var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
             var stream = doc.pipe(blobStream());
-            var y = 150
-            var itemsPorPagina = 10
+            var y = 190
+            var itemsPorPagina = 20
             var items = 0
             var xSeparacion = 0
+            var inicio_periodo;
+            var final_periodo;
+            if (periodo[0]) {
+                inicio_periodo = periodo[0].split('T')[0]
+            }
+            if (periodo[1]) {
+                final_periodo = periodo[1].split('T')[0]
+            }
             var pagina = 1
             var cubeX = 70
             var totalPaginas = Math.ceil(1 / itemsPorPagina);
-            $scope.cabeceraReporteEmpresa(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+            $scope.cabeceraReporteEmpresa(reporte, doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase(),inicio_periodo,final_periodo);
             var total_general_desayuno = 0
             var total_general_almuerzo = 0
             var total_general_cena = 0
@@ -2274,10 +2293,10 @@ angular.module('agil.controladores')
                 items++;
                 if (items > itemsPorPagina || (y > 700)) {
                     doc.addPage({ size: [612, 792], margin: 10 });
-                    y = 115 + 80;
+                    y = 190;
                     items = 0;
                     pagina = pagina + 1;
-                    $scope.cabeceraReporteEmpresa(doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+                    $scope.cabeceraReporteEmpresa(reporte, doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase(), inicio_periodo, final_periodo);
                 }
             }
             doc.text("Total general", cubeX + 6, y + 7);
@@ -2310,17 +2329,25 @@ angular.module('agil.controladores')
             return MyDateString
         }
 
-        $scope.imprimirReporteComensal = function (reporte, gerencia, cabecera, comidasEmpresa, dollar) {
+        $scope.imprimirReporteComensal = function (reporte, gerencia, cabecera, comidasEmpresa, dollar, periodo) {
             var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
             var stream = doc.pipe(blobStream());
-            var y = 150
+            var y = 190
             var itemsPorPagina = 10
             var items = 0
             var xSeparacion = 0
             var pagina = 1
             var cubeX = 70
+            var inicio_periodo;
+            var final_periodo;
+            if (periodo[0]) {
+                inicio_periodo = periodo[0].split('T')[0]
+            }
+            if (periodo[1]) {
+                final_periodo = periodo[1].split('T')[0]
+            }
             var totalPaginas = Math.ceil(1 / itemsPorPagina);
-            $scope.cabeceraReporteComensal(doc, pagina, totalPaginas, reporte, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+            $scope.cabeceraReporteComensal(reporte.reporte, doc, pagina, totalPaginas, reporte, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase(), inicio_periodo, final_periodo);
             var total_general_desayuno = 0
             var total_general_almuerzo = 0
             var total_general_cena = 0
@@ -2378,10 +2405,10 @@ angular.module('agil.controladores')
                 items++;
                 if (items > itemsPorPagina || (y > 700)) {
                     doc.addPage({ size: [612, 792], margin: 10 });
-                    y = 115 + 80;
+                    y = 190;
                     items = 0;
                     pagina = pagina + 1;
-                    $scope.cabeceraReporteComensal(doc, pagina, totalPaginas, reporte, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase());
+                    $scope.cabeceraReporteComensal(reporte.reporte, doc, pagina, totalPaginas, reporte, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase(), inicio_periodo, final_periodo);
                 }
             }
             doc.font('Helvetica', 8).fill('black');
@@ -2403,23 +2430,38 @@ angular.module('agil.controladores')
             });
         }
 
-        $scope.cabeceraReporteComedor = function (doc, pagina, totalPaginas, cabecera, empresa, comedor) {
+        $scope.cabeceraReporteComedor = function (reporte, doc, pagina, totalPaginas, cabecera, empresa, comedor, inicio_periodo, final_periodo) {
             var y = 150;
             var xSeparacion = 0
             var cubeX = 100
             var fecha_impresion = new Date().getDate() + '/' + (new Date().getMonth() + 1) + '/' + new Date().getFullYear()
+            
+            var inicial = new Date(inicio_periodo)
+            var finalo = new Date(final_periodo)
+            var dif = Math.floor(Math.abs(finalo - inicial) / 36e5);//(((finalo.getTime() - inicial.getTime()) / 1000) /60) /60
+            var hoy = new Date()
+            var fecha_inicial_reporte = new Date(reporte[0].fecha)
+            var fecha_final_reporte = new Date(reporte[reporte.length-1].fecha)
             // doc.rect(40, 40, 40, 40).fillAndStroke("silver", "#000");
             doc.font('Helvetica-Bold', 12)
                 .fill('black')
             doc.text("REPORTES DE COMEDOR " + comedor.toUpperCase() + ' ' + empresa.toUpperCase(), 150, 80, { width: 300, align: "center" });
+            if (inicio_periodo && final_periodo) {
+                doc.text("PERIODO " + (dif < 745 ? $scope.meses[inicial.getMonth()+1].nombre.toUpperCase() + '/' + inicial.getFullYear() : $scope.meses[inicial.getMonth()+1].nombre.toUpperCase() + '/' + inicial.getFullYear() + ' A ' + $scope.meses[finalo.getMonth()].nombre.toUpperCase() + '/' + finalo.getFullYear() ) , 150, 120, { width: 300, align: "center" });
+            }else if(!inicio_periodo && final_periodo){
+                doc.text("PERIODO " + $scope.meses[fecha_inicial_reporte.getMonth()].nombre.toUpperCase() + '/' + finalo.getFullYear() , 150, 120, { width: 300, align: "center" });
+            }else{
+                doc.text("PERIODO " + $scope.meses[fecha_inicial_reporte.getMonth()].nombre.toUpperCase() + '/' + fecha_inicial_reporte.getFullYear() + ' A ' + $scope.meses[fecha_final_reporte.getMonth()].nombre.toUpperCase() + '/' + fecha_final_reporte.getFullYear() , 150, 120, { width: 300, align: "center" });
+            }
+            
             doc.font('Helvetica-Bold', 8);
             cabecera.forEach(function (dato) {
                 doc.rect(cubeX + xSeparacion, y, 80, 20).stroke()
                 doc.text(dato, cubeX + xSeparacion + 9, y + 7);
                 xSeparacion += 80
             })
-            doc.rect(cubeX + 130, y + 460, 130, 0).stroke()
-            doc.text('Encargado', cubeX + 146 + 26, y + 490)
+            doc.rect(cubeX + 130, y + 500, 130, 0).stroke()
+            doc.text('Encargado', cubeX + 146 + 26, y + 510)
             doc.font('Helvetica', 8);
             if ($scope.imagenEmpresa) {
                 doc.image($scope.imagenEmpresa, 40, 30, { fit: [100, 100] });
@@ -2510,69 +2552,104 @@ angular.module('agil.controladores')
             }
         }
 
-        $scope.cabeceraReporteEmpresa = function (doc, pagina, totalPaginas, cabecera, empresa, comedor) {
-            var y = 150;
+        $scope.cabeceraReporteEmpresa = function (reporte, doc, pagina, totalPaginas, cabecera, empresa, comedor, inicio_periodo, final_periodo) {
+            var y = 40;
             var x = 100
             var xSeparacion = 0
             var cubeX = 70
             doc.font('Helvetica-Bold', 12)
                 .fill('black')
             doc.font('Helvetica-Bold', 8);
-            doc.text("Empresa", 124, 80);
-            doc.text(empresa, 300, 80);
-            doc.text("Gerencia", 124, 100);
-            doc.text("Periodo", 124, 120);
-            doc.text("Empleado", 124, 140);
-            doc.text("DESAYUNO", 270 - 30, 140);
-            doc.text("ALMUERZO", 350 - 30, 140);
-            doc.text("CENA", 430 - 30, 140);
-            doc.text("TOTAL GENERAL", 510 - 30, 140);
-            doc.rect(cubeX, 73, 150, 20).stroke()
-            doc.rect(cubeX, 93, 150, 20).stroke()
-            doc.rect(cubeX, 113, 150, 20).stroke()
-            doc.rect(cubeX, 133, 150, 20).stroke()
-            doc.rect(cubeX + 150, 73, 350, 20).stroke()
-            doc.rect(cubeX + 150, 93, 350, 20).stroke()
-            doc.rect(cubeX + 150, 113, 350, 20).stroke()
-            doc.rect(cubeX + 150, 133, 80, 20).stroke()
-            doc.rect(cubeX + 230, 133, 80, 20).stroke()
-            doc.rect(cubeX + 310, 133, 80, 20).stroke()
-            doc.rect(cubeX + 390, 133, 110, 20).stroke()
+            doc.text("Empresa", 124, 80 +y);
+            doc.text(empresa, 300, 80+y);
+            doc.text("Gerencia", 124, 100+y);
+            var fecha_impresion = new Date().getDate() + '/' + (new Date().getMonth() + 1) + '/' + new Date().getFullYear()
+            
+            var inicial = new Date(inicio_periodo)
+            var finalo = new Date(final_periodo)
+            var dif = Math.floor(Math.abs(finalo - inicial) / 36e5);//(((finalo.getTime() - inicial.getTime()) / 1000) /60) /60
+            var hoy = new Date()
+            var fecha_inicial_reporte = new Date(reporte[0].historial[0].fecha)
+            var fecha_final_reporte = new Date(reporte[0].historial[reporte[0].historial.length-1].fecha)
+            if (comedor) {
+                doc.text(comedor.toUpperCase()  === 'SIN ASIGNACIÓN.' ? 'TODAS' : comedor.toUpperCase(), 300, 100+y);                
+            }else{
+                doc.text("TODAS", 300, 80+y);
+            }
+            if (inicio_periodo && final_periodo) {
+                doc.text((dif < 745 ? $scope.meses[inicial.getMonth()+1].nombre.toUpperCase() + '/' + inicial.getFullYear() : $scope.meses[inicial.getMonth()+1].nombre.toUpperCase() + '/' + inicial.getFullYear() + ' A ' + $scope.meses[finalo.getMonth()].nombre.toUpperCase() + '/' + finalo.getFullYear() ) , 200, 120+y, { width: 300, align: "center" });
+            }else if(!inicio_periodo && final_periodo){
+                doc.text($scope.meses[fecha_inicial_reporte.getMonth()].nombre.toUpperCase() + '/' + finalo.getFullYear() , 200, 120+y, { width: 300, align: "center" });
+            }else{
+                doc.text($scope.meses[fecha_inicial_reporte.getMonth()].nombre.toUpperCase() + '/' + fecha_inicial_reporte.getFullYear() + ' A ' + $scope.meses[fecha_final_reporte.getMonth()].nombre.toUpperCase() + '/' + fecha_final_reporte.getFullYear() , 200, 120+y, { width: 300, align: "center" });
+            }
+            // doc.text("Periodo ", 300, 100+y);
+            doc.text("Periodo", 124, 120+y);
+            doc.text("Empleado", 124, 140+y);
+            doc.text("DESAYUNO", 270 - 30, 140+y);
+            doc.text("ALMUERZO", 350 - 30, 140+y);
+            doc.text("CENA", 430 - 30, 140+y);
+            doc.text("TOTAL GENERAL", 510 - 30, 140+y);
+            doc.rect(cubeX, 73+y, 150, 20).stroke()
+            doc.rect(cubeX, 93+y, 150, 20).stroke()
+            doc.rect(cubeX, 113+y, 150, 20).stroke()
+            doc.rect(cubeX, 133+y, 150, 20).stroke()
+            doc.rect(cubeX + 150, 73+y, 350, 20).stroke()
+            doc.rect(cubeX + 150, 93+y, 350, 20).stroke()
+            doc.rect(cubeX + 150, 113+y, 350, 20).stroke()
+            doc.rect(cubeX + 150, 133+y, 80, 20).stroke()
+            doc.rect(cubeX + 230, 133+y, 80, 20).stroke()
+            doc.rect(cubeX + 310, 133+y, 80, 20).stroke()
+            doc.rect(cubeX + 390, 133+y, 110, 20).stroke()
             doc.font('Helvetica', 8);
             if ($scope.imagenEmpresa) {
                 doc.image($scope.imagenEmpresa, 40, 30, { fit: [100, 100] });
             }
         }
 
-        $scope.cabeceraReporteComensal = function (doc, pagina, totalPaginas, reporte, empresa, comedor) {
-            var y = 150;
+        $scope.cabeceraReporteComensal = function (reporte, doc, pagina, totalPaginas, reporte, empresa, comedor, inicio_periodo, final_periodo) {
+            var y = 40;
             var x = 100
             var xSeparacion = 0
             var cubeX = 70
-            doc.font('Helvetica-Bold', 12)
+            var fecha_impresion = new Date().getDate() + '/' + (new Date().getMonth() + 1) + '/' + new Date().getFullYear()
+            var inicial = new Date(inicio_periodo)
+            var finalo = new Date(final_periodo)
+            var dif = Math.floor(Math.abs(finalo - inicial) / 36e5);//(((finalo.getTime() - inicial.getTime()) / 1000) /60) /60
+            var hoy = new Date()
+            doc.font('Helvetica-Bold', 8)
                 .fill('black')
+            var fecha_inicial_reporte = new Date(reporte.reporte[0].fecha)
+            var fecha_final_reporte = new Date(reporte.reporte[reporte.reporte.length-1].fecha)
+            if (inicio_periodo && final_periodo) {
+                doc.text((dif < 745 ? $scope.meses[inicial.getMonth()+1].nombre.toUpperCase() + '/' + inicial.getFullYear() : $scope.meses[inicial.getMonth()+1].nombre.toUpperCase() + '/' + inicial.getFullYear() + ' A ' + $scope.meses[finalo.getMonth()].nombre.toUpperCase() + '/' + finalo.getFullYear() ) , 200, 120+y, { width: 300, align: "center" });
+            }else if(!inicio_periodo && final_periodo){
+                doc.text($scope.meses[fecha_inicial_reporte.getMonth()].nombre.toUpperCase() + '/' + finalo.getFullYear() , 200, 120+y, { width: 300, align: "center" });
+            }else{
+                doc.text($scope.meses[fecha_inicial_reporte.getMonth()].nombre.toUpperCase() + '/' + fecha_inicial_reporte.getFullYear() + ' A ' + $scope.meses[fecha_final_reporte.getMonth()].nombre.toUpperCase() + '/' + fecha_final_reporte.getFullYear() , 200, 120+y, { width: 300, align: "center" });
+            }
             doc.font('Helvetica-Bold', 8);
-            doc.text("Empleado", 124, 80);
-            doc.text(reporte.nombre, 300, 80);
-            doc.text(empresa, 300, 100);
-            doc.text("Empresa", 124, 100);
-            doc.text("Periodo", 124, 120);
-            doc.text("Empleado", 124, 140);
-            doc.text("DESAYUNO", 240, 140);
-            doc.text("ALMUERZO", 320, 140);
-            doc.text("CENA", 410, 140);
-            doc.text("TOTAL GENERAL", 490, 140);
-            doc.rect(cubeX, 73, 150, 20).stroke()
-            doc.rect(cubeX, 93, 150, 20).stroke()
-            doc.rect(cubeX, 113, 150, 20).stroke()
-            doc.rect(cubeX, 133, 150, 20).stroke()
-            doc.rect(cubeX + 150, 73, 350, 20).stroke()
-            doc.rect(cubeX + 150, 93, 350, 20).stroke()
-            doc.rect(cubeX + 150, 113, 350, 20).stroke()
-            doc.rect(cubeX + 150, 133, 80, 20).stroke()
-            doc.rect(cubeX + 230, 133, 80, 20).stroke()
-            doc.rect(cubeX + 310, 133, 80, 20).stroke()
-            doc.rect(cubeX + 390, 133, 110, 20).stroke()
+            doc.text("Empleado", 124, 80+y);
+            doc.text(reporte.nombre.toUpperCase(), 300, 80+y);
+            doc.text(empresa, 300, 100+y);
+            doc.text("Empresa", 124, 100+y);
+            doc.text("Periodo", 124, 120+y);
+            doc.text("Empleado", 124, 140+y);
+            doc.text("DESAYUNO", 240, 140+y);
+            doc.text("ALMUERZO", 320, 140+y);
+            doc.text("CENA", 410, 140+y);
+            doc.text("TOTAL GENERAL", 490, 140+y);
+            doc.rect(cubeX, 73+y, 150, 20).stroke()
+            doc.rect(cubeX, 93+y, 150, 20).stroke()
+            doc.rect(cubeX, 113+y, 150, 20).stroke()
+            doc.rect(cubeX, 133+y, 150, 20).stroke()
+            doc.rect(cubeX + 150, 73+y, 350, 20).stroke()
+            doc.rect(cubeX + 150, 93+y, 350, 20).stroke()
+            doc.rect(cubeX + 150, 113+y, 350, 20).stroke()
+            doc.rect(cubeX + 150, 133+y, 80, 20).stroke()
+            doc.rect(cubeX + 230, 133+y, 80, 20).stroke()
+            doc.rect(cubeX + 310, 133+y, 80, 20).stroke()
+            doc.rect(cubeX + 390, 133+y, 110, 20).stroke()
             doc.font('Helvetica', 8);
             if ($scope.imagenEmpresa) {
                 doc.image($scope.imagenEmpresa, 40, 30, { fit: [100, 100] });

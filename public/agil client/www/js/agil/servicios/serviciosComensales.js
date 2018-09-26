@@ -76,7 +76,7 @@ angular.module('agil.servicios')
         return $resource(restServer + "cliente/documentos/historial/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado/:pagina/:items_pagina");
     }])
     .factory('Documentos',  ['$resource',function ($resource) {
-        return $resource(restServer + "obtener/documentos/historial/:id_empresa/:id_usuario/:id_cliente/:documento");
+        return $resource(restServer + "obtener/documentos/historial/:id_empresa/:id_usuario/:id_cliente/:documento/:fecha");
     }])
 
     .factory('GuardarAlias', ['Alias', '$q', function (Alias, $q) {
@@ -493,7 +493,8 @@ angular.module('agil.servicios')
                 id_empresa: idEmpresa,
                 id_usuario: usuario,
                 id_cliente: cliente,
-                documento: documento
+                documento: documento.documento,
+                fecha: documento.fecha
             }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {

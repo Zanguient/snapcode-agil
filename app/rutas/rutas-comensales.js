@@ -106,7 +106,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             }, { transaction: t })
         }
     }
-    function crearPrecioComida(precioComida, empresa, t) {
+    function crearPrecioComida(precioComida, empresa, t, i) {
         if (precioComida.id) {
             if (precioComida.eliminado) {
                 return PrecioComidasClienteEmpresa.destroy({
@@ -128,7 +128,18 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 id_comida: precioComida.comida.id,
                 id_empresa: empresa,
                 precio: parseFloat(precioComida.precio)
-            }, { transaction: t })
+            }, { transaction: t }).catch(function (err) {
+                if (err.name === "SequelizeUniqueConstraintError") {
+                    return new Promise(function (fullfil, reject) {
+                        fullfil({ hasErr: true, mensaje: 'Registro ya existente: Comida: '+ precioComida.comida.nombre + ' Codigo:' + precioComida.codigo +' Cliente: ' + precioComida.empresaCliente.razon_social, index: i + 2, tipo: 'Error' })
+                    })
+                }else{
+                    return new Promise(function (fullfil, reject) {
+                        fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+                    })
+                }
+                
+            })
         }
     }
     function crearHistorial(historial, empresa, t, i) {
@@ -486,12 +497,12 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             if (aliasEncontrado) {
                 precio.empresaCliente = aliasEncontrado.dataValues
                 return horarioComidasClienteEmpresa.find({
-                    where: { nombre: { $like: precio.nombre + '%' }, id_empresa: empresa },
+                    where: { nombre: { $like: precio.nombre + '%' }, id_empresa: empresa, id_cliente: precio.empresaCliente.id },
                     transaction: t
                 }).then(function (comidaEncontrada) {
                     if (comidaEncontrada) {
                         precio.comida = comidaEncontrada.dataValues
-                        return crearPrecioComida(precio, empresa, t)
+                        return crearPrecioComida(precio, empresa, t, i)
                     } else {
                         return new Promise(function (fullfil, reject) {
                             fullfil({ hasErr: true, mensaje: 'No se encuentra la información del comida/empresa: ' + precio.nombre, index: i + 2, tipo: 'Error' })
@@ -938,41 +949,47 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             condicionHistorial.id_cliente = req.params.id_cliente
             var desde = false
             var hasta = false
+            var fecha_desde;
+            var fecha_hasta;
             if (req.params.mes != "0" && req.params.anio != "0") {
-                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0)
-                var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes) + 1, 0, 23, 59, 0)
+                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes)-1, 1, 0, 0, 0)
+                var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), -1, 0, 0, 0)
+                fecha_hasta.setHours(23)
+                fecha_hasta.setMinutes(59)
+                fecha_hasta.setSeconds(59)
                 condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
             } else {
                 if (req.params.desde != "0") {
-                    var inicio = new Date(req.params.desde.split('/').reverse()); inicio.setHours(0, 0, 0, 0, 0);
+                    fecha_desde = new Date(req.params.desde.split('/').reverse()); fecha_desde.setHours(0, 0, 0, 0, 0);
                     desde = true
                 }
                 if (req.params.hasta != "0") {
-                    var fin = new Date(req.params.hasta.split('/').reverse()); fin.setHours(23, 59, 0, 0, 0);
+                    fecha_hasta = new Date(req.params.hasta.split('/').reverse());
+                    fecha_hasta.setHours(23)
+                    fecha_hasta.setMinutes(59)
+                    fecha_hasta.setSeconds(59)
                     hasta = true
                 }
             }
             if (desde && hasta) {
-                condicionHistorial.fecha = { $between: [inicio, fin] }
+                condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
             } else if (desde && !hasta) {
                 condicionHistorial.fecha = {
-                    $gte: [inicio]
+                    $gte: [fecha_desde]
                 }
             } else if (!desde && hasta) {
                 condicionHistorial.fecha = {
-                    $lte: [fin]
+                    $lte: [fecha_hasta]
                 }
             } else if (!desde && !hasta && (req.params.anio != "0")) {
-                var inicio;
-                var fin;
                 if (req.params.mes != "0") {
-                    inicio = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0, 0)
-                    fin = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0, 0)
+                    fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0, 0)
+                    fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0, 0)
                 } else {
-                    inicio = new Date(parseInt(req.params.anio), 0, 1, 0, 0, 0, 0)
-                    fin = new Date(parseInt(req.params.anio), 11, 31, 23, 59, 59, 0)
+                    fecha_desde = new Date(parseInt(req.params.anio), 0, 1, 0, 0, 0, 0)
+                    fecha_hasta = new Date(parseInt(req.params.anio), 11, 31, 23, 59, 59, 0)
                 }
-                condicionHistorial.fecha = { $between: [inicio, fin] }
+                condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
             }
             if (req.params.empresaCliente != "0") {
                 condicionHistorial.id_cliente = req.params.empresaCliente
@@ -1122,13 +1139,20 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
         .put(function (req, res) {
             res.json({ mensaje: 'sin funcionalidad' })
         })
-    router.route('/obtener/documentos/historial/:id_empresa/:id_usuario/:id_cliente/:documento')
+    router.route('/obtener/documentos/historial/:id_empresa/:id_usuario/:id_cliente/:documento/:fecha')
         .post(function (req, res) {
             res.json({ mensaje: 'sin funcionalidad' })
         })
         .get(function (req, res) {
             var condicionHistorial = { documento: req.params.documento }
             condicionHistorial.id_empresa = req.params.id_empresa
+            var inicio = new Date(req.params.fecha.split('-'))
+            inicio.setHours(0);
+            inicio.setMinutes(0);
+            var fin = new Date(req.params.fecha.split('-'))
+            fin.setHours(23);
+            fin.setMinutes(59);
+            condicionHistorial.fecha = {$between:[inicio,fin]}
             HistorialComidaClienteEmpresa.findAll({
                 where: condicionHistorial,
                 include: [
@@ -1165,48 +1189,63 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             var condicionHistorial = { id: { $not: null } }
             var desde = false
             var hasta = false
+            var fecha_desde;
+            var fecha_hasta;
             if (req.params.mes != "0" && req.params.anio != "0") {
-                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0)
-                var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes) + 1, 0, 23, 59, 0)
+                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes)-1, 1, 0, 0, 0)
+                var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), -1, 0, 0, 0)
+                fecha_hasta.setHours(23)
+                fecha_hasta.setMinutes(59)
+                fecha_hasta.setSeconds(59)
                 condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
             } else {
                 if (req.params.desde != "0") {
-                    var inicio = new Date(req.params.desde.split('/').reverse()); inicio.setHours(0, 0, 0, 0, 0);
+                    fecha_desde = new Date(req.params.desde.split('/').reverse()); fecha_desde.setHours(0, 0, 0, 0, 0);
                     desde = true
                 }
                 if (req.params.hasta != "0") {
-                    var fin = new Date(req.params.hasta.split('/').reverse()); fin.setHours(23, 59, 0, 0, 0);
+                    fecha_hasta = new Date(req.params.hasta.split('/').reverse());
+                    fecha_hasta.setHours(23)
+                    fecha_hasta.setMinutes(59)
+                    fecha_hasta.setSeconds(59)
                     hasta = true
                 }
             }
             if (desde && hasta) {
-                condicionHistorial.fecha = { $between: [inicio, fin] }
+                condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
             } else if (desde && !hasta) {
                 condicionHistorial.fecha = {
-                    $gte: [inicio]
+                    $gte: [fecha_desde]
                 }
             } else if (!desde && hasta) {
                 condicionHistorial.fecha = {
-                    $lte: [fin]
+                    $lte: [fecha_hasta]
                 }
             } else if (!desde && !hasta && (req.params.anio != "0")) {
-                var inicio;
-                var fin;
                 if (req.params.mes != "0") {
-                    inicio = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0, 0)
-                    fin = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0, 0)
+                    fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0, 0)
+                    fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0, 0)
                 } else {
-                    inicio = new Date(parseInt(req.params.anio), 0, 1, 0, 0, 0, 0)
-                    fin = new Date(parseInt(req.params.anio), 11, 31, 23, 59, 59, 0)
+                    fecha_desde = new Date(parseInt(req.params.anio), 0, 1, 0, 0, 0, 0)
+                    fecha_hasta = new Date(parseInt(req.params.anio), 11, 31, 23, 59, 59, 0)
                 }
-                condicionHistorial.fecha = { $between: [inicio, fin] }
+                condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
             }
-            if (req.params.gerencia !== "0") {
-                condicion.id = req.params.gerencia
+            if (req.params.empresaCliente != "0") {
+                condicionHistorial.id_cliente = req.params.empresaCliente
+            }
+            if (req.params.gerencia != "0") {
+                condicionHistorial.id_gerencia = req.params.gerencia
+            }
+            if (req.params.comensal != "0") {
+                condicionHistorial.id_comensal = req.params.comensal
+            }
+            if (req.params.comida != "0") {
+                condicionHistorial.id_comida = req.params.comida
             }
             GerenciasClienteEmpresa.findAll({
                 where: condicion,
-                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', require: false, include: [{ model: horarioComidasClienteEmpresa, as: 'comida', required: false, include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'], attributes: ['id', 'razon_social'] }] }],///include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'] }], where: condicionHistorial }],
+                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', where: condicionHistorial, require: false, include: [{ model: horarioComidasClienteEmpresa, as: 'comida', required: false, include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'], attributes: ['id', 'razon_social'] }] }],///include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'] }], where: condicionHistorial }],
                 order: [[{ model: HistorialComidaClienteEmpresa, as: 'historial' }, 'fecha', 'asc']]
             }).then(function (result) {
                 if (result.length > 0) {
@@ -1217,7 +1256,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                         }
                         return false
                     })) {
-                        res.json({ reporte: result })
+                        res.json({ reporte: result, periodo: [fecha_desde,fecha_hasta] })
                         return
                     }
                 }/// else {
@@ -1228,7 +1267,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 }).then(function (resuldato) {
                     if (resuldato) {
                         var sinAsignacion = { id: null, nombre: 'Sin asignación', id_cliente: req.params.id_cliente, id_empresa: req.params.id_empresa, historial: resuldato }
-                        res.json({ reporte: [sinAsignacion] })
+                        res.json({ reporte: [sinAsignacion], periodo: [fecha_desde, fecha_hasta] })
                     } else {
                         res.json({ mensaje: 'No se puede generar el reporte, la consulta no arrojó ningún resultado.', hasErr: true })
                     }
@@ -1247,54 +1286,73 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
     router.route('/reporte/empresa/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado')
         .get(function (req, res) {
             var condicion = { id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente }
-            var condicionHistorial = {}
+            var condicionHistorial = { id: { $not: null } }
             var desde = false
             var hasta = false
+            var fecha_desde;
+            var fecha_hasta;
             if (req.params.mes != "0" && req.params.anio != "0") {
-                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0)
-                var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes) + 1, 0, 23, 59, 0)
+                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes)-1, 1, 0, 0, 0)
+                var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), -1, 0, 0, 0)
+                fecha_hasta.setHours(23)
+                fecha_hasta.setMinutes(59)
+                fecha_hasta.setSeconds(59)
                 condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
             } else {
                 if (req.params.desde != "0") {
-                    var inicio = new Date(req.params.desde.split('/').reverse()); inicio.setHours(0, 0, 0, 0, 0);
+                    fecha_desde = new Date(req.params.desde.split('/').reverse()); fecha_desde.setHours(0, 0, 0, 0, 0);
                     desde = true
                 }
                 if (req.params.hasta != "0") {
-                    var fin = new Date(req.params.hasta.split('/').reverse()); fin.setHours(23, 59, 0, 0, 0);
+                    fecha_hasta = new Date(req.params.hasta.split('/').reverse());
+                    fecha_hasta.setHours(23)
+                    fecha_hasta.setMinutes(59)
+                    fecha_hasta.setSeconds(59)
                     hasta = true
                 }
             }
             if (desde && hasta) {
-                condicionHistorial.fecha = { $between: [inicio, fin] }
+                condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
             } else if (desde && !hasta) {
                 condicionHistorial.fecha = {
-                    $gte: [inicio]
+                    $gte: [fecha_desde]
                 }
             } else if (!desde && hasta) {
                 condicionHistorial.fecha = {
-                    $lte: [fin]
+                    $lte: [fecha_hasta]
                 }
             } else if (!desde && !hasta && (req.params.anio != "0")) {
-                var inicio;
-                var fin;
                 if (req.params.mes != "0") {
-                    inicio = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0, 0)
-                    fin = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0, 0)
+                    fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0, 0)
+                    fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0, 0)
                 } else {
-                    inicio = new Date(parseInt(req.params.anio), 0, 1, 0, 0, 0, 0)
-                    fin = new Date(parseInt(req.params.anio), 11, 31, 23, 59, 59, 0)
+                    fecha_desde = new Date(parseInt(req.params.anio), 0, 1, 0, 0, 0, 0)
+                    fecha_hasta = new Date(parseInt(req.params.anio), 11, 31, 23, 59, 59, 0)
                 }
-                condicionHistorial.fecha = { $between: [inicio, fin] }
+                condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
             }
-            if (req.params.gerencia !== "0") {
-                condicion.id = req.params.gerencia
+            if (req.params.empresaCliente != "0") {
+                condicionHistorial.id_cliente = req.params.empresaCliente
+            }
+            if (req.params.gerencia != "0") {
+                condicionHistorial.id_gerencia = req.params.gerencia
+            }
+            if (req.params.comensal != "0") {
+                condicionHistorial.id_comensal = req.params.comensal
+            }
+            if (req.params.comida != "0") {
+                condicionHistorial.id_comida = req.params.comida
             }
             ComensalesClienteEmpresa.findAll({
                 where: condicion,
-                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', required: true, include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: GerenciasClienteEmpresa, as: 'gerencia' }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'] }] }],
+                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', where: condicionHistorial, required: true, include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: GerenciasClienteEmpresa, as: 'gerencia' }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'] }] }],
                 order: [[{ model: HistorialComidaClienteEmpresa, as: 'historial' }, 'fecha', 'asc']]
             }).then(function (result) {
-                res.json({ reporte: result })
+                GerenciasClienteEmpresa.find({
+                    where: {id: req.params.gerencia}
+                }).then(function (geren) {
+                    res.json({ reporte: result, periodo: [fecha_desde, fecha_hasta], gerencia: geren })
+                })
             }).catch(function (err) {
                 res.json({ mensaje: err.stack, hasErr: true })
             })
@@ -1306,54 +1364,69 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
     router.route('/reporte/comensal/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:mes/:anio/:empresaCliente/:gerencia/:comensal/:comida/:estado')
         .get(function (req, res) {
             var condicion = { id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente }
-            var condicionHistorial = {}
+            var condicionHistorial = { id: { $not: null } }
             var desde = false
             var hasta = false
+            var fecha_desde;
+            var fecha_hasta;
             if (req.params.mes != "0" && req.params.anio != "0") {
-                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0)
-                var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes) + 1, 0, 23, 59, 0)
+                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes)-1, 1, 0, 0, 0)
+                var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), -1, 0, 0, 0)
+                fecha_hasta.setHours(23)
+                fecha_hasta.setMinutes(59)
+                fecha_hasta.setSeconds(59)
                 condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
             } else {
                 if (req.params.desde != "0") {
-                    var inicio = new Date(req.params.desde.split('/').reverse()); inicio.setHours(0, 0, 0, 0, 0);
+                    fecha_desde = new Date(req.params.desde.split('/').reverse()); fecha_desde.setHours(0, 0, 0, 0, 0);
                     desde = true
                 }
                 if (req.params.hasta != "0") {
-                    var fin = new Date(req.params.hasta.split('/').reverse()); fin.setHours(23, 59, 0, 0, 0);
+                    fecha_hasta = new Date(req.params.hasta.split('/').reverse());
+                    fecha_hasta.setHours(23)
+                    fecha_hasta.setMinutes(59)
+                    fecha_hasta.setSeconds(59)
                     hasta = true
                 }
             }
             if (desde && hasta) {
-                condicionHistorial.fecha = { $between: [inicio, fin] }
+                condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
             } else if (desde && !hasta) {
                 condicionHistorial.fecha = {
-                    $gte: [inicio]
+                    $gte: [fecha_desde]
                 }
             } else if (!desde && hasta) {
                 condicionHistorial.fecha = {
-                    $lte: [fin]
+                    $lte: [fecha_hasta]
                 }
             } else if (!desde && !hasta && (req.params.anio != "0")) {
-                var inicio;
-                var fin;
                 if (req.params.mes != "0") {
-                    inicio = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0, 0)
-                    fin = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0, 0)
+                    fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0, 0)
+                    fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0, 0)
                 } else {
-                    inicio = new Date(parseInt(req.params.anio), 0, 1, 0, 0, 0, 0)
-                    fin = new Date(parseInt(req.params.anio), 11, 31, 23, 59, 59, 0)
+                    fecha_desde = new Date(parseInt(req.params.anio), 0, 1, 0, 0, 0, 0)
+                    fecha_hasta = new Date(parseInt(req.params.anio), 11, 31, 23, 59, 59, 0)
                 }
-                condicionHistorial.fecha = { $between: [inicio, fin] }
+                condicionHistorial.fecha = { $between: [fecha_desde, fecha_hasta] }
             }
-            if (req.params.gerencia !== "0") {
-                condicion.id = req.params.gerencia
+            if (req.params.empresaCliente != "0") {
+                condicionHistorial.id_cliente = req.params.empresaCliente
+            }
+            if (req.params.gerencia != "0") {
+                condicionHistorial.id_gerencia = req.params.gerencia
+            }
+            if (req.params.comensal != "0") {
+                condicionHistorial.id_comensal = req.params.comensal
+            }
+            if (req.params.comida != "0") {
+                condicionHistorial.id_comida = req.params.comida
             }
             ComensalesClienteEmpresa.findAll({
                 where: condicion,
-                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', required: true, include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: GerenciasClienteEmpresa, as: 'gerencia' }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'] }] }],
+                include: [{ model: HistorialComidaClienteEmpresa, as: 'historial', where: condicionHistorial, required: true, include: [{ model: horarioComidasClienteEmpresa, as: 'comida', include: [{ model: PrecioComidasClienteEmpresa, as: 'precio' }] }, { model: GerenciasClienteEmpresa, as: 'gerencia' }, { model: Cliente, as: 'empresaCliente', attributes: ['id', 'razon_social'] }] }],
                 order: [[{ model: HistorialComidaClienteEmpresa, as: 'historial' }, 'fecha', 'asc']]
             }).then(function (result) {
-                res.json({ reporte: result })
+                res.json({ reporte: result, periodo: [fecha_desde, fecha_hasta] })
             }).catch(function (err) {
                 res.json({ mensaje: err.stack, hasErr: true })
             })
