@@ -1,6 +1,6 @@
 module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto,
 	Usuario, DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, ProductoBase, sequelize,
-	ContabilidadCuenta, UsuarioGrupos, ActivosFijos, ActivosFijosValores, ProductoTipoPrecio) {
+	ContabilidadCuenta, UsuarioGrupos, ActivosFijos, ActivosFijosValores, ProductoTipoPrecio,Diccionario) {
 
 	router.route('/productos')
 		.post(function (req, res) {
@@ -169,7 +169,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				})
 				Producto.findAll({
 					where: { id_empresa: req.params.id_empresa, codigo: { $not: null }, id_grupo: { $in: gruposUser } },
-					include: [{ model: Empresa, as: 'empresa' }],
+					include: [{ model: Empresa, as: 'empresa' },{ model: Clase, as: 'tipoProducto',where:{nombre_corto:Diccionario.TIPO_PRODUCTO_BASE} }],
 					order: [['codigo', 'ASC']]
 				}).then(function (resp) {
 					res.json(resp);
@@ -379,12 +379,15 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 								var tipo_producto;
 								if (producto.tipo_producto === 'base') {
 									tipo_producto = producto_base.id
+									producto.activar_inventario=true
 								}
 								if (producto.tipo_producto === 'intermedio') {
 									tipo_producto = producto_intermedio.id
+									producto.activar_inventario=false
 								}
 								if (producto.tipo_producto === 'final') {
 									tipo_producto = producto_final.id
+									producto.activar_inventario=false
 								}
 								return Producto.find({
 									where: {
@@ -438,7 +441,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													descuento_fijo: producto.descuento_fijo,
 													marca: producto.marca,
 													id_tipo_producto: tipo_producto ? tipo_producto : producto_base,
-													activo_fijo: req.body.activo_fijo
+													activo_fijo: req.body.activo_fijo,
+													activar_inventario:producto.activar_inventario
 												}, {
 														where: {
 															id: productoEncontrado.id
@@ -475,7 +479,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													descuento_fijo: producto.descuento_fijo,
 													id_tipo_producto: tipo_producto ? tipo_producto : producto_base,
 													marca: producto.marca,
-													activo_fijo: producto.activo_fijo
+													activo_fijo: producto.activo_fijo,
+													activar_inventario:producto.activar_inventario
 												}, { transaction: t }).then(function (creado) {
 													return new Promise(function (fulfill, reject) {
 														fulfill(creado)
