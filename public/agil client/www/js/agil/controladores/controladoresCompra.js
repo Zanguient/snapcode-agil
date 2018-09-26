@@ -997,6 +997,9 @@ angular.module('agil.controladores')
 				detallesCompra: [], descuento_general: false, tipo_descuento: false, codigo_control: 0, autorizacion: 0,
 				tipo_recargo: false, descuento: 0, recargo: 0, ice: 0, excento: 0
 			});
+
+			$scope.cambiarTipoPago($scope.tiposPago[0]);
+
 			if ($scope.usuario.empresa.usar_funciones_erp) {
 				$scope.compra.movimiento.clase = $scope.movimientosIngreso[0]
 			}
