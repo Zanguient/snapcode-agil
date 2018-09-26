@@ -20,16 +20,16 @@ angular.module('agil.controladores')
 			// 		$scope.usuario.empresa.imagen = img
 			// 	})
 			
-		// convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-		// 	$scope.usuario.empresa.imagen = imagenEmpresa;
-		// });
-		// // para sacar la altura de la imagen
-		// var img = new Image();
-		// img.onload = function () {
-		// 	// en pulgadas
-		// 	$scope.usuario.altura_imagen = this.height / 96;
-		// }
-		// img.src = $scope.usuario.empresa.imagen;
+		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+			$scope.usuario.empresa.imagen = imagenEmpresa;
+		});
+		// para sacar la altura de la imagen
+		var img = new Image();
+		img.onload = function () {
+			// en pulgadas
+			$scope.usuario.altura_imagen = this.height / 96;
+		}
+		img.src = $scope.usuario.empresa.imagen;
 
 		$scope.idModalPago = 'dialog-pago';
 		$scope.idModalCierre = 'dialog-cierre-caja';
