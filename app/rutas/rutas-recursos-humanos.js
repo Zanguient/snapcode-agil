@@ -3347,12 +3347,11 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                         include: [{ model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: 'cargo', include: [{ model: Tipo, as: 'tipo' }] }] }],
                                                                                         limit: 1,
                                                                                         order: [['id', 'desc']]
-                                                                                    }).then(function (fichaEncontrada) {
-                                                                                        return Persona.Destroy({
-                                                                                            where: { id: fichaEncontrada.id_persona_referencia },
+                                                                                    }).then(function (fichaEncontrada) {                                            
+                                                                                        return Persona.destroy({
+                                                                                            where: { id: fichaEncontrada[0].id_persona_referencia },
                                                                                             transaction: t,
                                                                                         }).then(function (personaReferenciaEliminada) {
-
                                                                                             /* if (fecha1 == fecha2) { */
                                                                                             return Persona.create({
                                                                                                 nombres: pacienteActual.personaReferencia.nombre_referencia,
@@ -3498,6 +3497,8 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                 reject((err.stack !== undefined) ? err.stack : err);
                                                                                             });
                                                                                         })
+                                                                                    
+                                                                                    
                                                                                         /*  } else  {
                                                                                               var fechaNueva = new Date()
         
