@@ -357,7 +357,7 @@ angular.module('agil.controladores')
 				$scope.Math = Math;
 				for (var i = 0; i < dato.detallesMovimiento.length; i++) {
 					if (dato.detallesMovimiento[i].movimiento) {
-						if (dato.detalleMovimiento[i].clase.nombre_corto != "III") {
+						if(dato.detallesMovimiento[i].movimiento.clase.nombre_corto!="III"){
 							dato.detallesMovimiento[i].costo_unitario = Math.round((dato.detallesMovimiento[i].costo_unitario * 0.87) * 100) / 100;
 						}
 						if (i == 0 && dato.detallesMovimiento[i].tipo == "SALDO ANTERIOR") {
