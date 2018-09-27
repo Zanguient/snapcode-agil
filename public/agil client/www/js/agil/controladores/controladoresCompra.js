@@ -2,9 +2,11 @@ angular.module('agil.controladores')
 
 	.controller('ControladorCompras',['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'DatosCompra', '$timeout',
 		'Compra', 'Compras', 'Proveedores', 'ProveedoresNit', 'ListaProductosEmpresaUsuario', 'ClasesTipo', 'CompraDatos',
-		'ConfiguracionCompraVistaDatos', 'ConfiguracionCompraVista', 'ConfiguracionesCuentasEmpresa', 'ClasesTipoEmpresa', 'Tipos', 'SaveCompra', 'ListaCompraPedidosEmpresa', 'EliminarPedidoEmpresa', 'EliminarDetallePedidoEmpresa', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, DatosCompra, $timeout,
+		'ConfiguracionCompraVistaDatos', 'ConfiguracionCompraVista', 'ConfiguracionesCuentasEmpresa', 'ClasesTipoEmpresa', 'Tipos', 'SaveCompra', 'ListaCompraPedidosEmpresa', 'EliminarPedidoEmpresa', 'EliminarDetallePedidoEmpresa',
+		'CompraDatosCredito', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, DatosCompra, $timeout,
 		Compra, Compras, Proveedores, ProveedoresNit, ListaProductosEmpresaUsuario, ClasesTipo, CompraDatos,
-		ConfiguracionCompraVistaDatos, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ClasesTipoEmpresa, Tipos, SaveCompra, ListaCompraPedidosEmpresa, EliminarPedidoEmpresa, EliminarDetallePedidoEmpresa) {
+		ConfiguracionCompraVistaDatos, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ClasesTipoEmpresa, Tipos, SaveCompra, ListaCompraPedidosEmpresa, EliminarPedidoEmpresa,
+		EliminarDetallePedidoEmpresa,CompraDatosCredito) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -881,14 +883,23 @@ angular.module('agil.controladores')
 		$scope.realizarPago = function(idCompra,pago,idUsuario){
 			var restante = 0;
 			var saldo = $scope.compra.saldo;
-			restante = saldo - pago;
+			restante = saldo - $scope.pago;
 			if (restante < 0) {
-				retante = restante;
+				restante = restante;
 			}else if (restante >= 0) {
-				retante = 0;
+				restante = 0;
 			}
 			blockUI.start();
-			Compra.update({ id: idCompra }, { pago: pago, id_usuario_cajero: idUsuario,saldoRestante:restante }, function (data) {			
+			var promesa = CompraDatosCredito(idCompra , { pago: pago, id_usuario_cajero: idUsuario, saldoRestante:restante });
+			promesa.then(function(data){
+				$scope.mostrarMensaje(data.mensaje);
+				$scepe.cerrarPopup($scope.ModalMensajePago);
+				$scope.cerrarPopup($scope.idModalPago);
+				$scope.obtenerCompras();
+				$scope.imprimirRecibo(data, data.compra, pago);
+				blockUI.stop();
+			})
+			/*Compra.update({ id: idCompra }, { pago: pago, id_usuario_cajero: idUsuario,saldoRestante:restante }, function (data) {			
 			//Compra.update({ id: $scope.compra.id }, { pago: pago, id_usuario_cajero: $scope.usuario.id }, function (data) {
 				$scope.mostrarMensaje(data.mensaje);
 				$scope.cerrarPopup($scope.idModalPago);
@@ -900,13 +911,13 @@ angular.module('agil.controladores')
 				$scope.cerrarPopup($scope.idModalPago);
 				$scope.obtenerCompras();
 				blockUI.stop();
-			});
+			});*/
 		}
 
 		$scope.mensaje = function(value){
 			$scope.accion = value;
 			if($scope.accion == true){
-				$scope.realizarPago($scope.compra.id,pago,$scope.usuario.id);
+				$scope.realizarPago($scope.compra.id,$scope.pago,$scope.usuario.id);
 			}else{
 				$scope.cerrarPopup($scope.ModalMensajePago);
 			}

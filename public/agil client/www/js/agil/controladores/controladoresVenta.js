@@ -6,13 +6,13 @@ angular.module('agil.controladores')
 		'socket', 'ConfiguracionVentaVistaDatos', 'ConfiguracionVentaVista', 'ListaGruposProductoEmpresa', 'ReporteVentasMensualesDatos',
 		'ConfiguracionImpresionEmpresaDato', 'VerificarUsuarioEmpresa', 'GuardarVentasImportados', 'ImprimirSalida', 'ModificarVenta', 'ListaVendedorVenta', 'VendedorVenta', 'VendedorVentaActualizacion',
 		'GuardarUsuarLectorDeBarra', 'VerificarLimiteCredito', 'ListaSucursalesUsuario', 'ListaGruposProductoUsuario', 'ListaServiciosVentas', 'GuardarListaServiciosVentas',
-		'EliminarVentaServicio', 'ventasDetalleEmpresa', 'EliminarDetalleVentaEdicion', 'filtroCotizacionesPendientes', 'CotizacionRechazo', 'ListaInventariosProductoVentaEdicion',function ($scope, $filter, $localStorage, $location, $templateCache, $route, blockUI, $timeout, $window, InventarioPaginador,
+		'EliminarVentaServicio', 'ventasDetalleEmpresa', 'EliminarDetalleVentaEdicion', 'filtroCotizacionesPendientes', 'CotizacionRechazo', 'ListaInventariosProductoVentaEdicion','PagosVentaCreditos',function ($scope, $filter, $localStorage, $location, $templateCache, $route, blockUI, $timeout, $window, InventarioPaginador,
 		Venta, Ventas, VentasProductos, detalle, detalleEmpresa, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
 		PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto, Paginator,
 		socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa, ReporteVentasMensualesDatos,
 		ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, GuardarVentasImportados, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion,
 		GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario, ListaServiciosVentas, GuardarListaServiciosVentas,
-		EliminarVentaServicio, ventasDetalleEmpresa, EliminarDetalleVentaEdicion, filtroCotizacionesPendientes, CotizacionRechazo, ListaInventariosProductoVentaEdicion) {
+		EliminarVentaServicio, ventasDetalleEmpresa, EliminarDetalleVentaEdicion, filtroCotizacionesPendientes, CotizacionRechazo, ListaInventariosProductoVentaEdicion,PagosVentaCreditos) {
 		blockUI.start();
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		// var pormimg = ObtenerImagen($scope.usuarioSesion.empresa.imagen)
@@ -1007,24 +1007,38 @@ angular.module('agil.controladores')
 			var saldo = $scope.venta.saldo;
 			restante = saldo - pago;
 			if (restante < 0) {
-				retante = restante;
+				restante = restante;
 			}else if (restante >= 0) {
-				retante = 0;
+				restante = 0;
 			}
 			blockUI.start();
-			VentaEmpresaDatos.update({ id: idVenta, id_empresa: idEmpresa }, { pago: pago, id_usuario_cajero: idUsuario,saldoRestante: restante }, function (data) {
+			var promesa = PagosVentaCreditos(idVenta, idEmpresa , { pago: pago, id_usuario_cajero: idUsuario, saldoRestante: restante })
+			promesa.then(function(data){
 				$scope.mostrarMensaje(data.mensaje);
+				$scope.cerrarPopup($scope.ModalMensajePago);
+				$scope.cerrarPopup($scope.idModalPago);
+				$scope.obtenerVentas();
+				$scope.imprimirRecibo(data, data.venta, pago);
+				blockUI.stop();
+			})
+			
+			
+			/*VentaEmpresaDatos.update({ id: idVenta, id_empresa: idEmpresa }, { pago: pago, id_usuario_cajero: idUsuario, saldoRestante: restante }, function (data) {
+				$scope.mostrarMensaje(data.mensaje);
+				$scope.cerrarPopup($scope.ModalMensajePago);
 				$scope.cerrarPopup($scope.idModalPago);
 				$scope.obtenerVentas();
 				$scope.imprimirRecibo(data, data.venta, pago);
 				blockUI.stop();
 			}, function (error) {
 				$scope.mostrarMensaje(error);
+				$scope.cerrarPopup($scope.ModalMensajePago);
 				$scope.cerrarPopup($scope.idModalPago);
 				$scope.obtenerVentas();
 				blockUI.stop();
-			});
+			});*/
 		}
+
 		$scope.mensaje = function(value){
 			$scope.accion = value;
 			if($scope.accion == true){
@@ -1052,6 +1066,19 @@ angular.module('agil.controladores')
 					$scope.mostrarMensaje("El cobro excede el monto a cobrar");
 				}
 			}
+			/*blockUI.start();
+			VentaEmpresaDatos.update({ id: $scope.venta.id, id_empresa: $scope.usuario.id_empresa }, { pago: pago, id_usuario_cajero: $scope.usuario.id }, function (data) {
+				$scope.mostrarMensaje(data.mensaje);
+				$scope.cerrarPopup($scope.idModalPago);
+				$scope.obtenerVentas();
+				$scope.imprimirRecibo(data, data.venta, pago);
+				blockUI.stop();
+			}, function (error) {
+				$scope.mostrarMensaje(error);
+				$scope.cerrarPopup($scope.idModalPago);
+				$scope.obtenerVentas();
+				blockUI.stop();
+			});*/
 		}
 
 		$scope.imprimirRecibo = function (data, venta, pago) {
