@@ -2,9 +2,9 @@ angular.module('agil.controladores')
 
 	.controller('ControladorInventarios', ['$scope', '$timeout', '$filter', '$window', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'ListaInventariosProducto',
 		'Inventario', 'InventarioPaginador', 'Productos', 'ActualizacionInventario', 'ListaProductosEmpresa', 'IngresosPorInventario', 'ActualizarDetalleMovimiento', 'ListaGruposProductoUsuario',
-		'ProductosUsuario','IngPorInventario', 'InventarioInicial',function ($scope, $timeout, $filter, $window, $localStorage, $location, $templateCache, $route, blockUI, ListaInventariosProducto,
+		'ProductosUsuario','IngPorInventario', 'InventarioInicial', 'ClasesTipo' ,function ($scope, $timeout, $filter, $window, $localStorage, $location, $templateCache, $route, blockUI, ListaInventariosProducto,
 		Inventario, InventarioPaginador, Productos, ActualizacionInventario, ListaProductosEmpresa, IngresosPorInventario, ActualizarDetalleMovimiento, ListaGruposProductoUsuario,
-		ProductosUsuario,IngPorInventario, InventarioInicial) {
+		ProductosUsuario,IngPorInventario, InventarioInicial, ClasesTipo) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
