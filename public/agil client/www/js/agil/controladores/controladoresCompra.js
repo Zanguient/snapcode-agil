@@ -19,8 +19,24 @@ angular.module('agil.controladores')
 		$scope.idModalPedidos = 'dialog-pedidos'
 		$scope.idModalDetallePedidos = 'dialog-detalle-pedidos'
 		$scope.idModalEliminarPedido = 'dialog-eliminar-pedido'
-		$scope.idModalEliminarProductoPedido ='dialog-eliminar-producto-pedido'
+		$scope.idModalEliminarProductoPedido ='dialog-eliminar-producto-pedido',
+		$scope.ModalMensajePago = 'Modal-Mensaje-Pago';
+
 		$scope.url = restServer + '/proveedores/empresa/' + $scope.usuario.id_empresa + '/texto/';
+
+		$scope.$on('$viewContentLoaded', function () {
+			resaltarPestaña($location.path().substring(1));
+			ejecutarScriptsCompra($scope.idModalWizardCompraEdicion, $scope.idModalWizardCompraVista,
+				$scope.idModalEliminarCompra, $scope.idModalContenedorCompraEdicion,
+				$scope.idModalContenedorCompraVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago, $scope.idModalServicios, $scope.idModalPedidos, $scope.idModalDetallePedidos, 
+				$scope.idModalEliminarPedido,$scope.idModalEliminarProductoPedido,$scope.ModalMensajePago);
+			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
+			$('#formularioCompra').ketchup({
+				validateEvents: 'blur focus keyup change submit'
+			});
+			blockUI.stop();
+		});
+
 
 		$scope.inicio = function () {
 
@@ -682,18 +698,6 @@ angular.module('agil.controladores')
 			}
 		}
 
-		$scope.$on('$viewContentLoaded', function () {
-			resaltarPestaña($location.path().substring(1));
-			ejecutarScriptsCompra($scope.idModalWizardCompraEdicion, $scope.idModalWizardCompraVista,
-				$scope.idModalEliminarCompra, $scope.idModalContenedorCompraEdicion,
-				$scope.idModalContenedorCompraVista, $scope.idInputCompletar, $scope.url, $scope.idModalPago, $scope.idModalServicios, $scope.idModalPedidos, $scope.idModalDetallePedidos, $scope.idModalEliminarPedido,$scope.idModalEliminarProductoPedido);
-			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
-			$('#formularioCompra').ketchup({
-				validateEvents: 'blur focus keyup change submit'
-			});
-			blockUI.stop();
-		});
-
 		$scope.formatearCodigoControl = function (codigo) {
 			var codigoFormateado = "";
 			for (var i = 0; i < codigo.length; i++) {
@@ -873,9 +877,19 @@ angular.module('agil.controladores')
 				});
 			});
 		}
-		$scope.efectuarPago = function (pago) {
+
+		$scope.realizarPago = function(idCompra,pago,idUsuario){
+			var restante = 0;
+			var saldo = $scope.compra.saldo;
+			restante = saldo - pago;
+			if (restante < 0) {
+				retante = restante;
+			}else if (restante >= 0) {
+				retante = 0;
+			}
 			blockUI.start();
-			Compra.update({ id: $scope.compra.id }, { pago: pago, id_usuario_cajero: $scope.usuario.id }, function (data) {
+			Compra.update({ id: idCompra }, { pago: pago, id_usuario_cajero: idUsuario,saldoRestante:restante }, function (data) {			
+			//Compra.update({ id: $scope.compra.id }, { pago: pago, id_usuario_cajero: $scope.usuario.id }, function (data) {
 				$scope.mostrarMensaje(data.mensaje);
 				$scope.cerrarPopup($scope.idModalPago);
 				$scope.obtenerCompras();
@@ -887,6 +901,35 @@ angular.module('agil.controladores')
 				$scope.obtenerCompras();
 				blockUI.stop();
 			});
+		}
+
+		$scope.mensaje = function(value){
+			$scope.accion = value;
+			if($scope.accion == true){
+				$scope.realizarPago($scope.compra.id,pago,$scope.usuario.id);
+			}else{
+				$scope.cerrarPopup($scope.ModalMensajePago);
+			}
+		}
+
+		$scope.efectuarPago = function (pago) {
+			var tipoPago = $scope.usuario.empresa.usar_pago_anticipado;
+			$scope.pago = pago;
+			if (tipoPago == true) {
+				//usar pagos anticipados
+				if(pago <= $scope.compra.saldo){
+					$scope.realizarPago($scope.compra.id,pago,$scope.usuario.id);
+				}else{
+					$scope.abrirPopup($scope.ModalMensajePago);		
+				}
+			}else{
+				//no usar pagos anticipados
+				if(pago <= $scope.venta.saldo){
+					$scope.realizarPago($scope.compra.id,pago,$scope.usuario.id);
+				}else{
+					$scope.mostrarMensaje("El cobro excede el monto a cobrar");
+				}
+			}
 		}
 
 		$scope.imprimirRecibo = function (data, compra, pago) {

@@ -152,7 +152,11 @@ module.exports = function (sequelize, Sequelize) {
 		usar_tipo_precio:{
 			type: Sequelize.BOOLEAN,
 			field: 'usar_tipo_precio'
-		}
+		},
+		usar_pago_anticipado:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_pago_anticipado'
+		},
 	}, {
 			freezeTableName: true
 		});

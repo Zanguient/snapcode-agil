@@ -123,8 +123,7 @@ module.exports = function (sequelize, Sequelize) {
 		color_cabecera_factura_servicio: {
 			type: Sequelize.STRING,
 			field: 'color_cabecera_factura_servicio'
-		},
-		color_detalle_factura_servicio: {
+		},color_detalle_factura_servicio: {
 			type: Sequelize.STRING,
 			field: 'color_detalle_factura_servicio'
 		},id_tipo_configuracion: {

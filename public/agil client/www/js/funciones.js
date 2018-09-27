@@ -600,7 +600,8 @@ function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	idContenedorEdicion, idContenedorVista, idInput, url,
 	idPopupPago, idPopupCierre, idPopupPanel, idPopupEliminacion, idModalInventario, idModalPanelCobro,
 	idModalVendedor, idModalImpresionVencimiento,IdModalVerificarCuenta,modalReportesProductos,modalServicioVenta,
-	modelGraficaProductos,modalReportesEmpresas,modelGraficaEmpresas,modelImportacionVentaServicio, idModalCotizaciones, idModalDetalleCotizaciones, idModalDetalleCotizacionEditar) {
+	modelGraficaProductos,modalReportesEmpresas,modelGraficaEmpresas,modelImportacionVentaServicio, idModalCotizaciones, idModalDetalleCotizaciones, idModalDetalleCotizacionEditar,
+	ModalMensajePago) {
 	crearPopup(idPopupEdicion, "100%",  screen.height);
 	crearPopup(idPopupVista, "100%", 600);
 	crearPopup(idModalInventario, "85%", 550);
@@ -626,13 +627,16 @@ function ejecutarScriptsVenta(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	crearPopup(idModalCotizaciones, "85%", 550);
 	crearPopup(idModalDetalleCotizaciones, "79%", 480);
 	crearPopup(idModalDetalleCotizacionEditar, "30%", 270);
+	crearPopup(ModalMensajePago, "40%", 230);
+
 	$(document).on('click', '#campos-detalle-venta', function (e) {
 		e.stopPropagation();
 	});
 }
 
 function ejecutarScriptsCompra(idPopupEdicion, idPopupVista, idPopupEliminacion,
-	idContenedorEdicion, idContenedorVista, idInput, url, idPopupPago,idModalServicios,idModalPedidos,idModalDetallePedidos,idModalEliminarPedido,idModalEliminarProductoPedido) {
+	idContenedorEdicion, idContenedorVista, idInput, url, idPopupPago,idModalServicios,idModalPedidos,idModalDetallePedidos,idModalEliminarPedido,
+	idModalEliminarProductoPedido,ModalMensajePago) {
 	crearPopup(idPopupEdicion, "100%", 600);
 	crearPopup(idPopupVista, "100%", 600);
 	crearPopup(idPopupPago, "30%", 200);
@@ -641,6 +645,8 @@ function ejecutarScriptsCompra(idPopupEdicion, idPopupVista, idPopupEliminacion,
 	crearPopup(idModalDetallePedidos, "100%", 600);
 	crearPopup(idModalEliminarPedido, "30%", 200);
 	crearPopup(idModalEliminarProductoPedido, "30%", 200);
+	crearPopup(ModalMensajePago,"40%",230);
+
 	setTimeout(function () {
 		aplicarDatePickers();
 	}, 200);

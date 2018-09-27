@@ -2118,7 +2118,7 @@ angular.module('agil.controladores')
                         paciente.matricula_seguro = worksheet['AC' + row] != undefined && worksheet['AC' + row] != "" ? worksheet['AC' + row].v.toString() : null;
                         paciente.seguro_salud = worksheet['AD' + row] != undefined && worksheet['AD' + row] != "" ? worksheet['AD' + row].v.toString() : null;
                         paciente.estadoTexto = worksheet['AE' + row] != undefined && worksheet['AE' + row] != "" ? worksheet['AE' + row].v.toString() : null;
-                        paciente.estado = (paciente.estadoTexto === "Activo") ? false : true;
+                        paciente.estado = (paciente.estadoTexto.toUpperCase() === "Activo") ? false : true;
                         paciente.fecha_expiracion = worksheet['AF' + row] != undefined && worksheet['AF' + row] != "" ? $scope.fecha_excel_angular(worksheet['AF' + row].v.toString()) : null;
                         paciente.imagen = "img/icon-user-default.png"
                         paciente.es_empleado = true

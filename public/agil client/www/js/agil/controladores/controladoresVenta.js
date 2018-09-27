@@ -56,6 +56,8 @@ angular.module('agil.controladores')
 		$scope.idModalCotizaciones = 'dialog-cotizaciones-venta';
 		$scope.idModalDetalleCotizaciones = 'dialog-detalle-cotizaciones';
 		$scope.idModalDetalleCotizacionEditar = 'dialog-cotizacione-editar';
+		$scope.ModalMensajePago = 'Modal-Mensaje-Pago';
+
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
 			ejecutarScriptsVenta($scope.idModalWizardCompraEdicion, $scope.idModalWizardVentaVista,
@@ -64,7 +66,8 @@ angular.module('agil.controladores')
 				$scope.idModalCierre,
 				$scope.idModalPanelVentas, $scope.idModalConfirmacionEliminacionVenta, $scope.idModalInventario, $scope.idModalPanelVentasCobro,
 				$scope.idModalEdicionVendedor, $scope.idModalImpresionVencimiento, $scope.IdModalVerificarCuenta, $scope.modalReportesProductos, $scope.modalServicioVenta,
-				$scope.modelGraficaProductos, $scope.modalReportesEmpresas, $scope.modelGraficaEmpresas, $scope.modelImportacionVentaServicio, $scope.idModalCotizaciones, $scope.idModalDetalleCotizaciones, $scope.idModalDetalleCotizacionEditar);
+				$scope.modelGraficaProductos, $scope.modalReportesEmpresas, $scope.modelGraficaEmpresas, $scope.modelImportacionVentaServicio, $scope.idModalCotizaciones, $scope.idModalDetalleCotizaciones, $scope.idModalDetalleCotizacionEditar,
+				$scope.ModalMensajePago);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
@@ -999,9 +1002,17 @@ angular.module('agil.controladores')
 			$scope.cerrarPopup($scope.idModalPago);
 		}
 
-		$scope.efectuarPago = function (pago) {
+		$scope.realizarPago = function(idVenta,idEmpresa,pago,idUsuario){
+			var restante = 0;
+			var saldo = $scope.venta.saldo;
+			restante = saldo - pago;
+			if (restante < 0) {
+				retante = restante;
+			}else if (restante >= 0) {
+				retante = 0;
+			}
 			blockUI.start();
-			VentaEmpresaDatos.update({ id: $scope.venta.id, id_empresa: $scope.usuario.id_empresa }, { pago: pago, id_usuario_cajero: $scope.usuario.id }, function (data) {
+			VentaEmpresaDatos.update({ id: idVenta, id_empresa: idEmpresa }, { pago: pago, id_usuario_cajero: idUsuario,saldoRestante: restante }, function (data) {
 				$scope.mostrarMensaje(data.mensaje);
 				$scope.cerrarPopup($scope.idModalPago);
 				$scope.obtenerVentas();
@@ -1013,6 +1024,34 @@ angular.module('agil.controladores')
 				$scope.obtenerVentas();
 				blockUI.stop();
 			});
+		}
+		$scope.mensaje = function(value){
+			$scope.accion = value;
+			if($scope.accion == true){
+				$scope.realizarPago($scope.venta.id,$scope.usuario.id_empresa,$scope.pago,$scope.usuario.id);
+			}else{
+				$scope.cerrarPopup($scope.ModalMensajePago);
+			}
+		}
+
+		$scope.efectuarPago = function (pago) {
+			var tipoPago = $scope.usuario.empresa.usar_pago_anticipado;
+			$scope.pago = pago;
+			if (tipoPago == true) {
+				//usar pagos anticipados
+				if(pago <= $scope.venta.saldo){
+					$scope.realizarPago($scope.venta.id,$scope.usuario.id_empresa,pago,$scope.usuario.id);
+				}else{
+					$scope.abrirPopup($scope.ModalMensajePago);		
+				}
+			}else{
+				//no usar pagos anticipados
+				if(pago <= $scope.venta.saldo){
+					$scope.realizarPago($scope.venta.id,$scope.usuario.id_empresa,pago,$scope.usuario.id);
+				}else{
+					$scope.mostrarMensaje("El cobro excede el monto a cobrar");
+				}
+			}
 		}
 
 		$scope.imprimirRecibo = function (data, venta, pago) {

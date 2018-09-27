@@ -407,7 +407,7 @@ angular.module('agil.controladores')
                 prom.then(function (res) {
                     $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true, true)
                     if (res.hasErr) {
-                        res.mostrarMensaje(res.mensaje)
+                        $scope.mostrarMensaje(res.mensaje)
                     } else {
                         $scope.historialesComedor = res.historial.map(function (hist) {
                             hist.fecha_texto = hist.fecha.split('T')[0].split('-').reverse().join('/') + ' ' + hist.fecha.split('T')[1].split('.')[0]

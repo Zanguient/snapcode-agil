@@ -1,0 +1,1 @@
+ALTER TABLE agil_empresa add usar_pago_anticipado tinyint default 0;

@@ -1801,6 +1801,7 @@
 		<button type="button" class="btn btn-danger" ng-click="cerrarPopupPago()">Cancelar</button>
 	</form>
 </div>
+
 <!-- === modal SERVICIOS"==== -->
 <div id="dialog-servicios" class="modal" t item-width="500">
 	<div class="modal-header bg-primary">
@@ -2125,3 +2126,23 @@
 
 </div>
 <!-- ========= fin detalle pedidos ========= -->
+
+<!--==========Mensaje de pago de compra =========== -->
+<div id="Modal-Mensaje-Pago" class="modal wizard-posicion">
+		<div class="modal-header bg-primary">
+			<h4 class='smaller text-white text-uppercase'>			
+				<center>Mensaje</center>
+			</h4>
+		</div>
+		<div class="modal-body">
+			<div class="modal-content">
+				<h5><center>El pago excede el monto de la deuda, desea continuar 
+					(se registrará como pago anticipado)</center></h5>
+			</div>		
+		</div>
+		<div class="modal-footer wizard-actions">
+			<button class="btn btn-success btn-sm" ng-click="mensaje(true)">Continuar</button>
+			<button class="btn btn-danger btn-sm pull-left" ng-click="mensaje(false)">Cancelar</button>
+		</div>
+	</div>
+	<!-- ==============Fin mensaje=============-->
