@@ -3594,7 +3594,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		})
 
 		.put(function (req, res) {
-			var saldoRestante = res.params.saldoRestante;
+			//var saldoRestante = res.params.saldoRestante;
 			Venta.find({
 				where: { id: req.params.id },
 				include: [{
