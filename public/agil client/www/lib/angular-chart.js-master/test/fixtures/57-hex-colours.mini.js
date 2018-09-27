@@ -1,0 +1,1 @@
+!function(){"use strict";var e=angular.module("pie",["chart.js"]);Chart.defaults.global.legend={display:!1},e.controller("PieCtrl",["$scope",function(e){e.labels=["Series A","Series B"],e.colors=["#9AFEFF","#D1D0CE"],e.data=[49,65]}])}();

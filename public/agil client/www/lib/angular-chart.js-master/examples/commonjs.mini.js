@@ -1,0 +1,1 @@
+!function(){"use strict";require("angular").module("app",[require("angular-chart")]).controller("CommonJSCtrl",["$scope",function(e){e.labels=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],e.series=["Series A","Series B"],e.data=[[65,59,80,81,56,55,40],[28,48,40,19,86,27,90]]}])}();

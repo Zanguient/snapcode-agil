@@ -1,0 +1,1 @@
+myApp.run(function(n){n.removeHost=function(n){if(n){return"[...]/"+n.match(/[^/\\]+(?:jpg|gif|png)/gi)[0]+"..."}}});

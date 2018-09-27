@@ -1,0 +1,1 @@
+!function(){"use strict";var n=angular.module("line",["chart.js"]);n.config(function(n){n.setOptions({chartColors:["#FF5252","#FF8A80"]}),n.setOptions("line",{showLines:!1})}),n.controller("LineCtrl",["$scope","$timeout",function(n,t){n.labels=["Series A","Series B"],n.data=[[15,23],[59,80]],n.options={legend:{display:!1}},t(function(){n.data=[[15,23],[59,80]]},0)}])}();

@@ -73,6 +73,16 @@ angular.module('agil.controladores')
             //     }
             // })
 
+            $scope.odenarColumnasComensales = function (columna) {
+                $scope.paginator.direccion = $scope.paginator.direccion == 'asc' ? 'desc' : 'asc'
+                $scope.paginator.sortColumn(columna)
+            }
+            $scope.ordenarColumnasMarcaciones = function (columna) {
+                $scope.filtroMarcaciones.direccion = $scope.paginator.direccion == 'asc' ? 'desc' : 'asc'
+                $scope.filtroMarcaciones.columna = columna
+                $scope.obtenerAlertas()
+            }
+
             $scope.inicio = function () {
                 // blockUI.start()
                 $scope.activeModal = 0
@@ -93,6 +103,7 @@ angular.module('agil.controladores')
                     $scope.obtenerGerencias()
                     $scope.obtenerHistoriales()
                     $scope.obtenerComensales()
+                    $scope.filtroMarcaciones = {desde: "", hasta: "", columna:'fecha', direccion:'asc'}
                     setTimeout(function () {
                         aplicarDatePickers();
                     }, 200);
@@ -426,7 +437,8 @@ angular.module('agil.controladores')
 
             $scope.obtenerAlertas = function (filtrar) {
                 blockUI.start()
-                var prom = ObtenerAlertasMarcacion($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
+                $scope.filtroMarcaciones = $scope.filtrarHistorial($scope.filtroMarcaciones, true)
+                var prom = ObtenerAlertasMarcacion($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id, $scope.filtroMarcaciones)
                 prom.then(function (res) {
                     if (res.hasErr) {
                         res.mostrarMensaje(res.mensaje)

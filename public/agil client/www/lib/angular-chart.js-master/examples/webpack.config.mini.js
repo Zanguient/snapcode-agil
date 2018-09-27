@@ -1,0 +1,1 @@
+module.exports={entry:"./amd.js",output:{filename:"./bundle.js"},resolve:{alias:{"angular-chart":"../angular-chart.js"}}};

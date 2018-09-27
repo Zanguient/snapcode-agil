@@ -3,7 +3,7 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
     'blockUI', 'ngStorage', 'ui.bootstrap', 'ngCordova', 'uiGmapgoogle-maps', 'isteven-multi-select',
     'chart.js', 'btford.socket-io','ngMessages','colorpicker'])
 
-    .config(function ($routeProvider, uiGmapGoogleMapApiProvider, $httpProvider, ChartJsProvider) {
+    .config(['$routeProvider', 'uiGmapGoogleMapApiProvider', '$httpProvider', 'ChartJsProvider',function ($routeProvider, uiGmapGoogleMapApiProvider, $httpProvider, ChartJsProvider) {
 
         uiGmapGoogleMapApiProvider.configure({
             libraries: 'geometry,visualization'
@@ -311,4 +311,4 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
         }]);
 
 
-    });
+    }]);

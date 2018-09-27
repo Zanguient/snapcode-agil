@@ -1,0 +1,1 @@
+!function(){"use strict";var l=require("chai");global.chai=l,global.should=l.should(),global.expect=l.expect,global.assert=l.assert}();

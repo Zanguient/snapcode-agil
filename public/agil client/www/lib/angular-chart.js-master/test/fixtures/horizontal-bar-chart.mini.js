@@ -1,0 +1,1 @@
+!function(){"use strict";var a=angular.module("horizontal",["chart.js"]);Chart.defaults.global.legend={display:!1},a.controller("HorizontalBarCtrl",function(a){a.labels=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],a.active=!0,a.data=[[65,59,90,81,56,55,40],[28,48,40,19,96,27,100]]})}();

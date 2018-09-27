@@ -212,14 +212,32 @@
                 <table id="tabla-ventas" class="table table-striped table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th>Tarjeta</th>
-                            <th>Empleado</th>
-                            <th>Empresa</th>
-                            <th>Gerencia</th>
-                            <th>Comida</th>
-                            <th>Fecha/Hora</th>
-                            <th>Usuario</th>
-                            <th>Estado</th>
+                            <th>
+                                <a href="javascript:void(0)" ng-click="odenarColumnasComensales('tarjeta')">Tarjeta
+                                    <span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
+                                </a>
+                            </th>
+                            <th><a href="javascript:void(0)" ng-click="odenarColumnasComensales('nombre')">Empleado
+                                <span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
+                            </a></th>
+                            <th><a href="javascript:void(0)" ng-click="odenarColumnasComensales('empresa')">Empresa
+                                <span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
+                            </a></th>
+                            <th><a href="javascript:void(0)" ng-click="odenarColumnasComensales('gerencia')">Gerencia
+                                <span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
+                            </a></th>
+                            <th><a href="javascript:void(0)" ng-click="odenarColumnasComensales('comida')">Comida
+                                <span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
+                            </a></th>
+                            <th><a href="javascript:void(0)" ng-click="odenarColumnasComensales('fecha')">Fecha/Hora
+                                <span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
+                            </a></th>
+                            <th><a href="javascript:void(0)" ng-click="odenarColumnasComensales('usuario')">Usuario
+                                <span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
+                            </a></th>
+                            <th><a href="javascript:void(0)" ng-click="odenarColumnasComensales('estado')">Estado
+                                <span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
+                            </a></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1185,10 +1203,10 @@
                     <tr>
                         <td>PERIODO</td>
                         <td>
-                            <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroMarcaciones.desde">
+                            <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroMarcaciones.desde" value="{{filtroMarcaciones.desde | date: 'dd/mm/yyyy'}}">
                         </td>
                         <td>
-                            <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroMarcaciones.hasta">
+                            <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroMarcaciones.hasta" value="{{filtroMarcaciones.hasta | date: 'dd/mm/yyyy'}}">
                         </td>
                         <td>
                             <button class="btn btn-primary" type="submit">Filtrar
@@ -1201,7 +1219,7 @@
             <div class="table-header">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h4 class="widget-title">Lista de Tipo de Cambio</h4>
+                        <h4 class="widget-title">Alertas</h4>
                     </div>
                 </div>
             </div>
@@ -1210,9 +1228,15 @@
                     <thead fix-head class="table-head-color">
                         <tr>
                             <th>N°</th>
-                            <th>Comensal</th>
-                            <th>Fecha</th>
-                            <th>Comida</th>
+                            <th><a href="javascript:void(0)" ng-click="ordenarColumnasMarcaciones('comensal')">Comensal
+                                <span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
+                            </a></th>
+                            <th><a href="javascript:void(0)" ng-click="ordenarColumnasMarcaciones('fecha')">Fecha
+                                <span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
+                            </a></th>
+                            <th><a href="javascript:void(0)" ng-click="ordenarColumnasMarcaciones('comida')">Comida
+                                <span id="publicar_panel" class="sort fa fa-sort icon-only"></span>
+                            </a></th>
                             <th style="width:5px">Acciones</th>
                         </tr>
                     </thead>

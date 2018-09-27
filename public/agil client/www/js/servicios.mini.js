@@ -1,0 +1,1 @@
+var mainUrl="http://127.0.0.1:8083/",restServer=mainUrl+"agil/";angular.module("agil.servicios",["ngResource"]).factory("socket",function(r){return r()});

@@ -1,0 +1,1 @@
+!function(){"use strict";module.exports={entry:"./examples/commonjs.js",output:{filename:"./examples/commonjs.bundle.js"},resolve:{alias:{"angular-chart":"../angular-chart.js"}}}}();

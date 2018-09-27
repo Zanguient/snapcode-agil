@@ -1,0 +1,1 @@
+module.exports=function(e){e.set({basePath:"",files:["mock/socket-io.js","node_modules/angular/angular.js","node_modules/angular-mocks/angular-mocks.js","socket.js","*.spec.js"],reporters:["progress"],port:9876,colors:!0,logLevel:e.LOG_INFO,browsers:["Chrome"],frameworks:["jasmine"],captureTimeout:6e4,autoWatch:!0,singleRun:!1})};

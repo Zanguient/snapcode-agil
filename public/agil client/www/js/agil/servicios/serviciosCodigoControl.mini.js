@@ -1,0 +1,1 @@
+angular.module("agil.servicios").factory("CodigoControl",["$resource",function(o){return o(restServer+"pruebas-codigo-control")}]);
