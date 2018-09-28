@@ -301,6 +301,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					unidad_medida LIKE '%"+ req.params.texto_busqueda + "%' or \
 					descripcion LIKE '%"+ req.params.texto_busqueda + "%' or \
 					grupo.nombre LIKE '%"+ req.params.texto_busqueda + "%' or \
+					tipoProducto.nombre LIKE '"+ req.params.texto_busqueda + "' or \
 					producto.caracteristica_especial1 LIKE '%"+ req.params.texto_busqueda + "%' or \
 					producto.caracteristica_especial2 LIKE '%"+ req.params.texto_busqueda + "%' or \
 					subgrupo.nombre LIKE '%"+ req.params.texto_busqueda + "%')";
@@ -310,6 +311,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					}
 					sequelize.query("select count(producto.id) as cantidad_productos \
 								from agil_producto as producto \
+								LEFT OUTER JOIN gl_clase AS tipoProducto ON (producto.tipo_producto = tipoProducto.id)\
 								LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id) \
 								LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id) \
 								WHERE "+ condicionProducto + " and producto.grupo in (" + gruposProductos + ")", { type: sequelize.QueryTypes.SELECT })
@@ -407,7 +409,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 										},
 										transaction: t,
 										lock: t.LOCK.UPDATE
-									}).then(function (claseGrupoEncontrado) {
+									}).spread(function(claseGrupoEncontrado, created){
 										return Clase.findOrCreate({
 											where: {
 												nombre: producto.subgrupo,
@@ -419,7 +421,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 											},
 											transaction: t,
 											lock: t.LOCK.UPDATE
-										}).then(function (claseSubGrupoEncontrado) {
+										}).spread(function(claseSubGrupoEncontrado, created){
 											if (productoEncontrado) {
 												return Producto.update({
 													nombre: producto.nombre,

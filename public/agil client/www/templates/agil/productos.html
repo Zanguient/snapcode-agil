@@ -106,22 +106,21 @@
 			<div id="tabla-productos_wrapper" class="dataTables_wrapper form-inline no-footer">
 				<div class="row">
 					
-					<div class="row col-md-6" ng-include src="'/templates/gral/paginator-header-1.html'">
+					<div class="col-md-6" ng-include src="'/templates/gral/paginator-header-1.html'">
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-6">
 							<span>Grupos: &nbsp;</span>
 							<select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)" required id="selectGruposProductos"
 							 name="selectGruposProductos" ng-model="grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
 							 data-placeholder="Click para escoger">
 								<option value="" selected>Todos</option>
 							</select>
-					</div>
-					<!-- <div class="row col-md-3">
+					
 						<span>Tipo de Producto: &nbsp;</span>
 						<select class="form-control" ng-change="paginator.getSearch(tipoProducto.nombre,paginator.filter,$event)"   name="tipo_producto" id="tipo_producto" ng-model="tipoProducto"  ng-options="tipoProducto as tipoProducto.nombre for tipoProducto in tipoProductos track by tipoProducto.id" >
 								<option value="" selected>Todos</option>
 						</select>
-					</div> -->
+					</div>
 				</div>
 				
 				<div style="overflow-x:auto;">

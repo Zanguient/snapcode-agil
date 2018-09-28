@@ -971,6 +971,7 @@ angular.module('agil.controladores')
 				var promesa = ClasesTipo("TPS");
 				promesa.then(function (entidad) {
 					$scope.tipoProductos = entidad.clases;
+					$scope.tipoProducto = $.grep($scope.tipoProductos, function (e) { return e.nombre_corto == $scope.diccionario.TIPO_PRODUCTO_BASE; })[0];
 					blockUI.stop();
 				});
 			}
@@ -1010,6 +1011,7 @@ angular.module('agil.controladores')
 				$scope.paginator.filter = $scope.grupo
 				$scope.paginator.callBack = $scope.buscarProductos;
 				$scope.paginator.getSearch("", null, null);
+
 			}
 
 			$scope.buscarProducto = function (query) {
