@@ -24,6 +24,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var UsuarioSucursal = require('../modelos/AGIL/usuario-sucursal')(sequelize, Sequelize);
 	var Cliente = require('../modelos/AGIL/cliente')(sequelize, Sequelize);
 	var Proveedor = require('../modelos/AGIL/proveedor')(sequelize, Sequelize);
+	var ProveedorAnticipo = require('../modelos/AGIL/proveedor-anticipo')(sequelize, Sequelize);
 	var Producto = require('../modelos/AGIL/producto')(sequelize, Sequelize);
 	var ProductoTipoPrecio = require('../modelos/AGIL/producto-tipo-precio')(sequelize, Sequelize);
 	var ProductoBase = require('../modelos/AGIL/producto-base')(sequelize, Sequelize);
@@ -213,7 +214,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
 		RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
 		EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica, CierreCajaChica,
-		AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal,ProductoTipoPrecio);
+		AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal,ProductoTipoPrecio,ProveedorAnticipo);
 	require('../sockets/pantallas.js')(io, socket);
 	//*****ROUTES*****
 	//SYS

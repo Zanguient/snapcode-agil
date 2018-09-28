@@ -435,13 +435,14 @@ angular.module('agil.controladores')
                 })
             }
 
-            $scope.obtenerAlertas = function (filtrar) {
+            $scope.obtenerAlertas = function () {
                 blockUI.start()
                 $scope.filtroMarcaciones = $scope.filtrarHistorial($scope.filtroMarcaciones, true)
                 var prom = ObtenerAlertasMarcacion($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id, $scope.filtroMarcaciones)
                 prom.then(function (res) {
+                    $scope.filtroMarcaciones = $scope.filtrarHistorial($scope.filtroMarcaciones, true, true)
                     if (res.hasErr) {
-                        res.mostrarMensaje(res.mensaje)
+                        $scope.mostrarMensaje(res.mensaje)
                     } else {
                         $scope.alertaMarcaciones = res.alertas
                         $scope.Marcaciones = res.alertas
@@ -2879,6 +2880,7 @@ angular.module('agil.controladores')
 
             $scope.cerrardialogAlertaMarcaciones = function () {
                 $scope.activeModal = 0
+                $scope.filtroMarcaciones = {desde: '', hasta:'', columna:'fecha', direccion: 'asc'}
                 $scope.alertaMarcaciones = []
                 $scope.cerrarPopup($scope.dialogAlertasMarcaciones);
             }

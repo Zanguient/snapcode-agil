@@ -1,0 +1,26 @@
+----------------------------------------------------------------
+Thu Sep 13 15:26:58 BOT 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-0165-d466-99d8-000009c34c68 
+on database directory C:\Users\AGIL\Documents\Agil\custom modules\dbVentas with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
+Loaded from file:/C:/Users/AGIL/Documents/Librerias/Librerias%20Proyecto/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_151-b12
+user.dir=C:\Users\AGIL\Documents\Agil\custom modules\Ventas
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Thu Sep 13 15:27:22 BOT 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance 6074401f-0165-d466-99d8-000009c34c68 
+on database directory C:\Users\AGIL\Documents\Agil\custom modules\dbVentasExportar with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
+Loaded from file:/C:/Users/AGIL/Documents/Librerias/Librerias%20Proyecto/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_151-b12
+user.dir=C:\Users\AGIL\Documents\Agil\custom modules\Ventas
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

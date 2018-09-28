@@ -432,7 +432,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		})
 
 		.put(function (req, res) {
-			var saldoRestante = req.params.saldoRestante;
+			var anticipo = req.body.saldoRestante;
 			if (req.body.esModificacion) {
 				var compra = req.body;
 				if (req.body.usar_producto) {
@@ -3593,8 +3593,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			});
 		})
 
-		.put(function (req, res) {
-			//var saldoRestante = res.params.saldoRestante;
+		.put(function (req, res) {		
+			var anticipo = req.body.saldoRestante;			
 			Venta.find({
 				where: { id: req.params.id },
 				include: [{

@@ -579,7 +579,7 @@ angular.module('agil.controladores')
 			var codigo = CodigoCuenta;
 			if (codigo != '') {
 				$timeout(function () {
-					$scope.validar = new ValidarCodigoCuenta();
+					$scope.validar = new ValidarCodigoCuenta({id_empresa: $scope.usuario.id_empresa});
 
 					$scope.validar.codigo = CodigoCuenta;
 

@@ -15,10 +15,11 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 
 		})
 
-	router.route('/validar-codigo')
+	router.route('/validar-codigo/empresa/:id_empresa')
 		.post(function (req, res) {
 			ContabilidadCuenta.find({
 				where: {
+					id_empresa:req.params.id_empresa,
 					codigo: req.body.codigo,
 					eliminado: false
 				}

@@ -1209,7 +1209,7 @@
                             <input class="date-picker" type="text" ng-update-hidden data-date-format="dd/mm/yyyy" ng-model="filtroMarcaciones.hasta" value="{{filtroMarcaciones.hasta | date: 'dd/mm/yyyy'}}">
                         </td>
                         <td>
-                            <button class="btn btn-primary" type="submit">Filtrar
+                            <button class="btn btn-primary" type="button", ng-click="obtenerAlertas()">Filtrar
                                 <i class="ace-icon fa fa-search align-top bigger-125"></i>
                             </button>
                         </td>

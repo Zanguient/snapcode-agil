@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Tue Jun 12 16:50:09 BOT 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-0163-f5c3-54fb-00000893f358 
+on database directory C:\Users\AGIL\Documents\Agil\custom modules\agil with class loader sun.misc.Launcher$AppClassLoader@4b1210ee 
+Loaded from file:/C:/Users/AGIL/Documents/Agil/custom%20modules/Agil-Panel/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_151-b12
+user.dir=C:\Users\AGIL\Documents\Agil\custom modules\Agil-Panel
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

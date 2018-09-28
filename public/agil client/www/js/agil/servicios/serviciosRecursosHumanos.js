@@ -1,6 +1,6 @@
 angular.module('agil.servicios')
 
-    .factory('UsuarioRhOtroSeguro',  ['$resource',function ($resource) {
+    .factory('UsuarioRhOtroSeguro', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos-seguro/:id_seguro", { id_seguro: '@id_seguro' },
             {
                 'update': { method: 'PUT' }
@@ -21,7 +21,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('UsuarioRhfamiliar',  ['$resource',function ($resource) {
+    .factory('UsuarioRhfamiliar', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos-familiar/:id_persona/familiar-relacion/:id_familiar", { id_persona: '@id_persona', id_familiar: "@id_familiar" },
             {
                 'update': { method: 'PUT' }
@@ -42,7 +42,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('RecursosHumanosEmpresaPaginador',  ['$resource',function ($resource) {
+    .factory('RecursosHumanosEmpresaPaginador', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/codigo/:codigo/nombres/:nombres/ci/:ci/campo/:campo/cargo/:cargo/busquedaEmpresa/:busquedaEmpresa/grupo/:grupo_sanguineo/estado/:estado/apellido/:apellido");
     }])
 
@@ -82,13 +82,13 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('NuevoRecursoHumano',  ['$resource',function ($resource) {
+    .factory('NuevoRecursoHumano', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/:id_usuario", { id_usuario: '@id_usuario' },
             {
                 'update': { method: 'PUT' }
             });
     }])
-    .factory('UsuarioRhActivo',  ['$resource',function ($resource) {
+    .factory('UsuarioRhActivo', ['$resource', function ($resource) {
         return $resource(restServer + "usuario-recurso-humano/:id_empleado", null,
             {
                 'update': { method: 'PUT' }
@@ -122,7 +122,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('UsuarioRhFicha',  ['$resource',function ($resource) {
+    .factory('UsuarioRhFicha', ['$resource', function ($resource) {
         return $resource(restServer + "usuario-recurso-humano-ficha/empleado/:id_empleado", null,
             {
                 'update': { method: 'PUT' }
@@ -144,7 +144,7 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('bitacoraFicha',  ['$resource',function ($resource) {
+    .factory('bitacoraFicha', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/bitacora-ficha/usuario/:id", null,
             {
                 'update': { method: 'PUT' }
@@ -192,7 +192,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('HistorialFicha',  ['$resource',function ($resource) {
+    .factory('HistorialFicha', ['$resource', function ($resource) {
         return $resource(restServer + "usuario-ficha/:id_empleado", { id_empleado: '@id_empleado' },
             {
                 'update': { method: 'PUT' }
@@ -213,7 +213,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('UsuarioHojaVida',  ['$resource',function ($resource) {
+    .factory('UsuarioHojaVida', ['$resource', function ($resource) {
         return $resource(restServer + "usuario-hoja-vida/:id_empleado", { id_empleado: '@id_empleado' },
             {
                 'update': { method: 'PUT' }
@@ -243,7 +243,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('Prestamo',  ['$resource',function ($resource) {
+    .factory('Prestamo', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/prestamo/empleado/:id_empleado", { id_empleado: '@id_empleado' },
             {
                 'update': { method: 'PUT' }
@@ -262,7 +262,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('HistorialPrestamos',  ['$resource',function ($resource) {
+    .factory('HistorialPrestamos', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/prestamos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/plazo/:plazo/inicio/:inicio/fin/:fin/nombre/:nombre/cuenta-liquida/:cuentas_liquidas",
             {
                 'update': { method: 'PUT' }
@@ -280,7 +280,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('RolTurno',  ['$resource',function ($resource) {
+    .factory('RolTurno', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/rolTurno/empleado/:id_empleado", { id_empleado: '@id_empleado' },
             {
                 'update': { method: 'PUT' }
@@ -299,7 +299,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('PagoPrestamo',  ['$resource',function ($resource) {
+    .factory('PagoPrestamo', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/pago-prestamo/:id_prestamo/usuario/:id_usuario", { id_prestamo: '@id_prestamo', id_usuario: '@id_usuario' },
             {
                 'update': { method: 'PUT' }
@@ -317,7 +317,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('EditPrestamo',  ['$resource',function ($resource) {
+    .factory('EditPrestamo', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/prestamo/:id_prestamo", { id_prestamo: '@id_prestamo' },
             {
                 'update': { method: 'PUT' }
@@ -335,7 +335,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ListEmpleados',  ['$resource',function ($resource) {
+    .factory('ListEmpleados', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/empleados/:id_empresa", { id_empresa: '@id_empresa' },
             {
                 'update': { method: 'PUT' }
@@ -353,16 +353,41 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('EmpleadoEmpresa',  ['$resource',function ($resource) {
+    .factory('EmpleadoEmpresa', ['$resource', function ($resource) {
         return $resource(restServer + "empleados/empresa/excel/upload")
     }])
-    .factory('FichasEmpleadoEmpresa',  ['$resource',function ($resource) {
+    .factory('GuardarEmpleadoEmpresaI', ['EmpleadoEmpresa', '$q', function (EmpleadoEmpresa, $q) {
+        var res = function (pacientes,
+            id_empresa,
+            arregloSucursales,
+            arregloCargo,
+            arregloContrato,
+            arregloExpedido,
+            arregloSegurosSalud, ) {
+            var delay = $q.defer();
+            EmpleadoEmpresa.save(null, {id_empresa: id_empresa,
+                pacientes: pacientes,
+                arregloSucursales: arregloSucursales,
+                arregloCargo: arregloCargo,
+                arregloContrato: arregloContrato,
+                arregloExpedido: arregloExpedido,
+                arregloSegurosSalud: arregloSegurosSalud
+            }, function (entidad) {
+                delay.resolve(entidad);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
+    .factory('FichasEmpleadoEmpresa', ['$resource', function ($resource) {
         return $resource(restServer + "fichas/empleados/empresa/excel/upload")
     }])
-    .factory('FamiliaresEmpleadoEmpresa',  ['$resource',function ($resource) {
+    .factory('FamiliaresEmpleadoEmpresa', ['$resource', function ($resource) {
         return $resource(restServer + "familiares/empleados/empresa/excel/upload")
     }])
-    .factory('HorasExtra',  ['$resource',function ($resource) {
+    .factory('HorasExtra', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/horas-extra/empleado/:id_empleado", { id_empleado: '@id_empleado' },
             {
                 'update': { method: 'PUT' }
@@ -380,7 +405,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('EmpleadoHorasExtra',  ['$resource',function ($resource) {
+    .factory('EmpleadoHorasExtra', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/horas-extra/empleado/:id_empleado/inicio/:inicio/fin/:fin", null,
             {
                 'update': { method: 'PUT' }
@@ -398,7 +423,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ListRolTurnoEmpleados',  ['$resource',function ($resource) {
+    .factory('ListRolTurnoEmpleados', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/empresa/:id_empresa/rolTurno/empleado/:id_empleado", null,
             {
                 'update': { method: 'PUT' }
@@ -416,7 +441,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ListRolTurnoEmpleadosCalendario',  ['$resource',function ($resource) {
+    .factory('ListRolTurnoEmpleadosCalendario', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/empresa/:id_empresa/rolTurnoCalendario/inicio/:inicio/fin/:fin/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:grupo/nombre/:nombre/campo/:campo", null,
             {
                 'update': { method: 'PUT' }
@@ -446,13 +471,13 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ValidarCodigoCuentaEmpleado',  ['$resource',function ($resource) {
+    .factory('ValidarCodigoCuentaEmpleado', ['$resource', function ($resource) {
         return $resource(restServer + "validar-codigo-empleado/empresa/:id_empresa",
             {
                 'update': { method: 'PUT' }
             });
     }])
-    .factory('CapacidadesEmpleado',  ['$resource',function ($resource) {
+    .factory('CapacidadesEmpleado', ['$resource', function ($resource) {
         return $resource(restServer + "recurso-humanos/capacidades/hoja-vida/:id_hoja_vida/inicio/:inicio/fin/:fin/tipo/:tipo", null,
             {
                 'update': { method: 'PUT' }
@@ -470,7 +495,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ConfiguracionVacaciones',  ['$resource',function ($resource) {
+    .factory('ConfiguracionVacaciones', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/configuracion/vacacion", null,
             {
                 'update': { method: 'PUT' }
@@ -487,7 +512,7 @@ angular.module('agil.servicios')
             return delay.promise;
         };
         return res;
-    }]).factory('HistorialGestionVacacion',  ['$resource',function ($resource) {
+    }]).factory('HistorialGestionVacacion', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/historial/gestion/vacacion/empleado/:id", null,
             {
                 'update': { method: 'PUT' }
@@ -518,7 +543,7 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('EmpleadoAnticipo',  ['$resource',function ($resource) {
+    .factory('EmpleadoAnticipo', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/anticipos/empleado/:id_empleado", null,
             {
                 'update': { method: 'PUT' }
@@ -548,7 +573,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('CrearEmpleadosAnticipos',  ['$resource',function ($resource) {
+    .factory('CrearEmpleadosAnticipos', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanoss/anticipos/empleados", null,
             {
                 'update': { method: 'PUT' }
@@ -566,7 +591,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('EmpleadosAnticipos',  ['$resource',function ($resource) {
+    .factory('EmpleadosAnticipos', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/anticipos/empleado/:id_empleado/inicio/:inicio/fin/:fin/empresa/:id_empresa", null,
             {
                 'update': { method: 'PUT' }
@@ -584,7 +609,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('EmpleadoAusencia',  ['$resource',function ($resource) {
+    .factory('EmpleadoAusencia', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/ausencia/empleado/:id_empleado", null,
             {
                 'update': { method: 'PUT' }
@@ -603,7 +628,7 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('EmpleadoListaAusencias',  ['$resource',function ($resource) {
+    .factory('EmpleadoListaAusencias', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/ausencias/empleado/:id_empleado/inicio/:inicio/fin/:fin/tipo-ausencia/:tipo_ausencia/tipo/:tipo", null,
             {
                 'update': { method: 'PUT' }
@@ -621,7 +646,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('EmpresaListaAusencias',  ['$resource',function ($resource) {
+    .factory('EmpresaListaAusencias', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/ausencias/empresa/:id_empresa/inicio/:inicio/fin/:fin/tipo-ausencia/:tipo_ausencia/tipo/:tipo", null,
             {
                 'update': { method: 'PUT' }
@@ -641,7 +666,7 @@ angular.module('agil.servicios')
     }])
     //vacaciones
 
-    .factory('EmpleadoVacacion',  ['$resource',function ($resource) {
+    .factory('EmpleadoVacacion', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/vacacion/empleado/:id_empleado", null,
             {
                 'update': { method: 'PUT' }
@@ -659,7 +684,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('EmpleadoListaVacaciones',  ['$resource',function ($resource) {
+    .factory('EmpleadoListaVacaciones', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/vacacion/empleado/:id_empleado/inicio/:inicio/fin/:fin", null,
             {
                 'update': { method: 'PUT' }
@@ -677,7 +702,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('EmpresaListaVacaciones',  ['$resource',function ($resource) {
+    .factory('EmpresaListaVacaciones', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/vacacion/empresa/:id_empresa/inicio/:inicio/fin/:fin/estado/:estado", null,
             {
                 'update': { method: 'PUT' }
@@ -696,7 +721,7 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('EmpresaFeriados',  ['$resource',function ($resource) {
+    .factory('EmpresaFeriados', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/vacacion/feriados/empresa/:id_empresa", null,
             {
                 'update': { method: 'PUT' }
@@ -727,7 +752,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ClasesAusencias',  ['$resource',function ($resource) {
+    .factory('ClasesAusencias', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/ausencia/clases/tipo/:tipo", null,
             {
                 'update': { method: 'PUT' }
@@ -745,7 +770,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('Tr3',  ['$resource',function ($resource) {
+    .factory('Tr3', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/tr3/empresa/:id_empresa", null,
             {
                 'update': { method: 'PUT' }
@@ -763,7 +788,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ListaTr3',  ['$resource',function ($resource) {
+    .factory('ListaTr3', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/tr3/empresa/:id_empresa/banco/:nombre", null,
             {
                 'update': { method: 'PUT' }
@@ -781,13 +806,13 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('NuevoBeneficioSocial',  ['$resource',function ($resource) {
+    .factory('NuevoBeneficioSocial', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/beneficios/ficha/:id", null,
             {
                 'update': { method: 'PUT' }
             });
     }])
-    .factory('FiniquitoEmpleado',  ['$resource',function ($resource) {
+    .factory('FiniquitoEmpleado', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/beneficio/ficha/:id", null,
             {
                 'update': { method: 'PUT' }
@@ -830,7 +855,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ConfiguracionRopa',  ['$resource',function ($resource) {
+    .factory('ConfiguracionRopa', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/configuracion-ropa-trabajo/cargo/:id_cargo", null,
             {
                 'update': { method: 'PUT' }
@@ -860,7 +885,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ReporteConfiguracionRopa',  ['$resource',function ($resource) {
+    .factory('ReporteConfiguracionRopa', ['$resource', function ($resource) {
         return $resource(restServer + "reporte/configuracion/ropa-trabajo/empresa/:id_empresa", null,
             {
                 'update': { method: 'PUT' }
@@ -878,7 +903,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('CargosEmpleado',  ['$resource',function ($resource) {
+    .factory('CargosEmpleado', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/cargos/empleado/:id_ficha", null,
             {
                 'update': { method: 'PUT' }
@@ -897,7 +922,7 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('RopaTrabajoProductos',  ['$resource',function ($resource) {
+    .factory('RopaTrabajoProductos', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/ropa-trabajo/productos/subgrupos/:subgrupos", null,
             {
                 'update': { method: 'PUT' }
@@ -915,7 +940,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('CrearDotacionRopa',  ['$resource',function ($resource) {
+    .factory('CrearDotacionRopa', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/ropa-trabajo/empleado/:id_empleado", null,
             {
                 'update': { method: 'PUT' }
@@ -933,7 +958,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('DotacionRopaActualizar',  ['$resource',function ($resource) {
+    .factory('DotacionRopaActualizar', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/ropa-trabajo/actualizar/empleado/:id_empleado", null,
             {
                 'update': { method: 'PUT' }
@@ -951,7 +976,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('BuscarRopasTrabajoEmpleado',  ['$resource',function ($resource) {
+    .factory('BuscarRopasTrabajoEmpleado', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/ropa-trabajo/empleado/:id_empleado/inicio/:inicio/fin/:fin", null,
             {
                 'update': { method: 'PUT' }
@@ -981,7 +1006,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('BuscarRopasTrabajoEmpresa',  ['$resource',function ($resource) {
+    .factory('BuscarRopasTrabajoEmpresa', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/ropa-trabajo/empresa/:id_empresa/inicio/:inicio/fin/:fin/campamento/:campamento", null,
             {
                 'update': { method: 'PUT' }
@@ -999,7 +1024,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('FiltroRolTurno',  ['$resource',function ($resource) {
+    .factory('FiltroRolTurno', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/empresa/:id_empresa/rolTurno/inicio/:inicio/fin/:fin/grupo/:grupo/pagina/:pagina/items/:items_pagina/campo/:campo/texto_busqueda/:texto_busqueda/direccion/:direccion/columna/:columna", { id_empleado: '@id_empleado' },
             {
                 'update': { method: 'PUT' }
@@ -1028,7 +1053,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ChoferesViaje',  ['$resource',function ($resource) {
+    .factory('ChoferesViaje', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/choferes/empresa/:id_empresa", null,
             {
                 'update': { method: 'PUT' }
@@ -1047,7 +1072,7 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('ViajeRrhh',  ['$resource',function ($resource) {
+    .factory('ViajeRrhh', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/viaje/empresa/:id_empresa", null,
             {
                 'update': { method: 'PUT' }
@@ -1065,7 +1090,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ViajesRrhh',  ['$resource',function ($resource) {
+    .factory('ViajesRrhh', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/viaje/empresa/:id_empresa/inicio/:inicio/fin/:fin/tipoPasajero/:tipoPasajero/destino/:destino/vehiculo/:vehiculo/conductor/:conductor/tipoViaje/:tipoViaje/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion", null,
             {
                 'update': { method: 'PUT' }
@@ -1097,7 +1122,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ListaViajesRrhh',  ['$resource',function ($resource) {
+    .factory('ListaViajesRrhh', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/viaje/empresa/:id_empresa/inicio/:inicio/fin/:fin/destino/:destino/vehiculo/:vehiculo/conductor/:conductor/relevo/:relevo/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion", null,
             {
                 'update': { method: 'PUT' }
@@ -1128,7 +1153,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ListaBeneficioEmpresa',  ['$resource',function ($resource) {
+    .factory('ListaBeneficioEmpresa', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/beneficio/empresa/:id_empresa/tipo/:tipo/inicio/:inicio/fin/:fin/motivo/:motivo/pagina/:pagina/items_pagina/:items_pagina/texto_busqueda/:texto_busqueda/columna/:columna/direccion/:direccion", null,
             {
                 'update': { method: 'PUT' }
@@ -1157,7 +1182,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('SaveConductoresEmpresa',  ['$resource',function ($resource) {
+    .factory('SaveConductoresEmpresa', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos/conductor/empresa/:id_empresa", null,
             {
                 'update': { method: 'PUT' }
@@ -1177,7 +1202,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ListaHijosEmpresa',  ['$resource',function ($resource) {
+    .factory('ListaHijosEmpresa', ['$resource', function ($resource) {
         return $resource(restServer + "recursos-humanos-familiar/empresa/:id_empresa", null,
             {
                 'update': { method: 'PUT' }
@@ -1197,7 +1222,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ImportacionFichaEmpleados',  ['$resource',function ($resource) {
+    .factory('ImportacionFichaEmpleados', ['$resource', function ($resource) {
         return $resource(restServer + "empleados/empresa/:id_empresa/fichas/excel/upload", null,
             {
                 'update': { method: 'PUT' }
@@ -1226,8 +1251,8 @@ angular.module('agil.servicios')
                     arregloArega: arregloArega,
                     arregloUbicacion: arregloUbicacion,
                     arregloEstadoCivil: arregloEstadoCivil,
-                    arregloOtrosSeguros1:arregloOtrosSeguros1,
-                    arregloOtrosSeguros2:arregloOtrosSeguros2
+                    arregloOtrosSeguros1: arregloOtrosSeguros1,
+                    arregloOtrosSeguros2: arregloOtrosSeguros2
                 }, function (entidad) {
                     delay.resolve(entidad);
                 }, function (error) {
@@ -1237,7 +1262,7 @@ angular.module('agil.servicios')
         };
         return res;
     }])
-    .factory('ImportacionRolTurnoEmpleados',  ['$resource',function ($resource) {
+    .factory('ImportacionRolTurnoEmpleados', ['$resource', function ($resource) {
         return $resource(restServer + "empleados/empresa/:id_empresa/rolTurnos/tipo/:tipo/excel/upload", null,
             {
                 'update': { method: 'PUT' }

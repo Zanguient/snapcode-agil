@@ -1451,6 +1451,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
     router.route('/alertas/marcaciones/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:columna/:direccion')
         .get(function (req, res) {
             var condicion = { id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente }
+            var condicionMarcacion = {id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente}
             var desde = false
             var hasta = false
             var fecha_desde;
@@ -1458,8 +1459,8 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             if (req.params.desde != "0") {
                 fecha_desde = new Date(req.params.desde.split('/').reverse());
                 fecha_desde.setHours(0);
-                fecha_hasta.setMinutes(0);
-                fecha_hasta.setSeconds(0);
+                fecha_desde.setMinutes(0);
+                fecha_desde.setSeconds(0);
                 desde = true
             }
             if (req.params.hasta != "0") {
@@ -1470,28 +1471,28 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 hasta = true
             }
             if (desde && hasta) {
-                condicion.fecha = { $between: [fecha_desde, fecha_hasta] }
+                condicionMarcacion.fecha = { $between: [fecha_desde, fecha_hasta] }
             } else if (desde && !hasta) {
-                condicion.fecha = {
+                condicionMarcacion.fecha = {
                     $gte: [fecha_desde]
                 }
             } else if (!desde && hasta) {
-                condicion.fecha = {
+                condicionMarcacion.fecha = {
                     $lte: [fecha_hasta]
                 }
-            } else if (!desde && !hasta && (req.params.anio != "0")) {
-                if (req.params.mes != "0") {
-                    fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0, 0)
-                    fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0, 0)
-                } else {
-                    fecha_desde = new Date(parseInt(req.params.anio), 0, 1, 0, 0, 0, 0)
-                    fecha_hasta = new Date(parseInt(req.params.anio), 11, 31, 23, 59, 59, 0)
-                }
-                condicion.fecha = { $between: [fecha_desde, fecha_hasta] }
+            }
+            var ordenamiento = []
+            if(req.params.columna === "fecha"){
+                ordenamiento.push([{ model: ComensalesMarcacionesClienteEmpresa, as: 'marcaciones' }, 'fecha', req.params.direccion])
+            }else if(req.params.columna === "comida"){
+                ordenamiento.push([{ model: horarioComidasClienteEmpresa, as: 'comida' }, 'nombre', req.params.direccion])
+            }else{
+                ordenamiento.push([req.params.columna, req.params.direccion])
             }
             ComensalesClienteEmpresa.findAll({
                 where: condicion,
-                include: [{ model: ComensalesMarcacionesClienteEmpresa, as: 'marcaciones' }]
+                include: [{ model: ComensalesMarcacionesClienteEmpresa, as: 'marcaciones', where: condicionMarcacion }],
+                order: [ordenamiento]
             }).then(function (alertas) {
                 res.json({ alertas: alertas })
             }).catch(function (err) {

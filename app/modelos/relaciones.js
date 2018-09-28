@@ -17,7 +17,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
 	RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
 	EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica, CierreCajaChica,
-	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal,ProductoTipoPrecio) {
+	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal,ProductoTipoPrecio,ProveedorAnticipo) {
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lenguaje', as: 'lenguaje' });
@@ -1208,5 +1208,14 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	Empresa.hasMany(ServicioVenta, { foreignKey: 'id_empresa', as: 'serviciosVenta' })
 	ServicioVenta.hasMany(DetalleVenta, { foreignKey: 'id_servicio', as: 'detallesVenta' })
 	DetalleVenta.belongsTo(ServicioVenta, { foreignKey: 'id_servicio', as: 'servicio' })
+
+	ProveedorAnticipo.belongsTo(PagoCompra, { foreignKey: 'id_pago_compra', as: 'pagoCompra' })
+	ProveedorAnticipo.belongsTo(Proveedor, { foreignKey: 'id_proveedor', as: 'proveedor' })
+	ProveedorAnticipo.belongsTo(ProveedorAnticipo, { foreignKey: 'id_padre', as: 'pradre' })
+	ProveedorAnticipo.hasMany(ProveedorAnticipo, { foreignKey: 'id_padre', as: 'detallesAnticipo' })
+
+	PagoCompra.hasMany(ProveedorAnticipo, { foreignKey: 'id_pago_compra', as: 'anticipo' })
+	Proveedor.hasMany(ProveedorAnticipo, { foreignKey: 'id_proveedor', as: 'proveedorAnticipos' })
+
 }
 

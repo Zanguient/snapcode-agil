@@ -1,6 +1,6 @@
 angular.module('agil.servicios')
 .factory('ValidarCodigoCuenta', ['$resource',function ($resource) {
-	return $resource(restServer+"/validar-codigo",
+	return $resource(restServer+"validar-codigo/empresa/:id_empresa", { id_empresa: '@id_empresa' },
 	{
 		'update': { method:'PUT' }
 	});
