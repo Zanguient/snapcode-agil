@@ -135,6 +135,8 @@
 
 		<!-- div.dataTables_borderWrap -->
 		<div style="overflow-x:auto;">
+			<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
+			</div>
 			<table id="tabla-compras" class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
@@ -145,12 +147,31 @@
 							</label>
 						</th>
 						<th>Nº</th>
-						<th>Sucursal</th>
-						<th>Razón Social Proveedor</th>
-						<th>Nit Proveedor</th>
-						<th>Factura</th>
-						<th>Fecha Fact.</th>
-						<th>Hora - Fecha</th>
+						<th>
+							Sucursal
+							
+						</th>
+						<th>
+							Razón Social Proveedor
+						</th>
+						<th>
+							Nit Proveedor
+						</th>
+						<th>
+							<a href="javascript:void(0)" ng-click="paginator.sortColumn('factura',obtenerLista)">Factura
+								<span id="factura" class="sort fa fa-sort icon-only"></span>
+							</a>
+						</th>
+						<th>
+							<a href="javascript:void(0)" ng-click="paginator.sortColumn('fecha',obtenerLista)">Fecha Fact.
+								<span id="fecha" class="sort fa fa-sort icon-only"></span>
+							</a>
+						</th>
+						<th>
+							<a href="javascript:void(0)" ng-click="paginator.sortColumn('createdAt',obtenerLista)">Hora - Fecha
+								<span id="createdAt" class="sort fa fa-sort icon-only"></span>
+							</a>
+						</th>
 						<th>Monto</th>
 						<th>Tipo de Pago</th>
 						<th>Pago</th>
@@ -264,6 +285,8 @@
 					</tr>
 				</tbody>
 			</table>
+			<div class="row" ng-include src="'/templates/GRAL/paginator.html'">
+			</div>
 		</div>
 	</div>
 </div>

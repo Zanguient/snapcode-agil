@@ -3,10 +3,10 @@ angular.module('agil.controladores')
 	.controller('ControladorCompras',['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'DatosCompra', '$timeout',
 		'Compra', 'Compras', 'Proveedores', 'ProveedoresNit', 'ListaProductosEmpresaUsuario', 'ClasesTipo', 'CompraDatos',
 		'ConfiguracionCompraVistaDatos', 'ConfiguracionCompraVista', 'ConfiguracionesCuentasEmpresa', 'ClasesTipoEmpresa', 'Tipos', 'SaveCompra', 'ListaCompraPedidosEmpresa', 'EliminarPedidoEmpresa', 'EliminarDetallePedidoEmpresa',
-		'CompraDatosCredito', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, DatosCompra, $timeout,
+		'CompraDatosCredito','Paginator', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, DatosCompra, $timeout,
 		Compra, Compras, Proveedores, ProveedoresNit, ListaProductosEmpresaUsuario, ClasesTipo, CompraDatos,
 		ConfiguracionCompraVistaDatos, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ClasesTipoEmpresa, Tipos, SaveCompra, ListaCompraPedidosEmpresa, EliminarPedidoEmpresa,
-		EliminarDetallePedidoEmpresa,CompraDatosCredito) {
+		EliminarDetallePedidoEmpresa,CompraDatosCredito,Paginator) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -735,12 +735,39 @@ angular.module('agil.controladores')
 			sucursal = (sucursal == null || sucursal == undefined) ? 0 : sucursal;
 			var roles = $.grep($scope.usuario.rolesUsuario, function (e) { return e.rol.nombre == $scope.diccionario.ROL_ADMINISTRADOR; });
 			usuario = roles.length > 0 ? ((usuario == "" || usuario == undefined) ? 0 : usuario) : $scope.usuario.nombre_usuario;
-			blockUI.start();
 			inicio = new Date($scope.convertirFecha(inicio));
 			fin = new Date($scope.convertirFecha(fin));
-			var promesa = Compras(sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, usuario, $scope.usuario.id, tipo);
+			
+			$scope.paginator = Paginator();
+			$scope.paginator.column = "fecha";
+			$scope.paginator.direccion = "asc";
+			$scope.filtroDetallesProducto = {
+				idsSucursales: sucursalesUsuario,
+				inicio: inicio,
+				fin: fin,
+				razon_social: razon_social,
+				nit: nit,
+				monto: monto,
+				tipo_compra:tipo_pago,
+				sucursal: sucursal, 
+				usuario: usuario, 
+				id_usuario: $scope.usuario.id, 
+				tipo: tipo 
+
+			}
+			$scope.paginator.callBack = $scope.paginadorCompras;
+			$scope.paginator.getSearch("", $scope.filtroDetallesProducto, null);
+		}
+
+		$scope.paginadorCompras = function(){
+			blockUI.start();
+			
+			var promesa = Compras($scope.paginator);
 			promesa.then(function (compras) {
-				$scope.compras = compras;
+				//$scope.compras = compras;
+				$scope.compras = compras.detalle;
+				$scope.paginator.setPages(compras.paginas);
+
 				blockUI.stop();
 			});
 		}
@@ -893,10 +920,13 @@ angular.module('agil.controladores')
 			var promesa = CompraDatosCredito(idCompra , { pago: pago, id_usuario_cajero: idUsuario, saldoRestante:restante });
 			promesa.then(function(data){
 				$scope.mostrarMensaje(data.mensaje);
-				$scepe.cerrarPopup($scope.ModalMensajePago);
+				$scope.cerrarPopup($scope.ModalMensajePago);
 				$scope.cerrarPopup($scope.idModalPago);
 				$scope.obtenerCompras();
-				$scope.imprimirRecibo(data, data.compra, pago);
+				$scope.imprimirRecibo(data, data.compra, pago, restante);
+				if (restante < 0) {
+					$scope.imprimirReciboAnticipo(data, data.compra, pago,restante);
+				}
 				blockUI.stop();
 			})
 			/*Compra.update({ id: idCompra }, { pago: pago, id_usuario_cajero: idUsuario,saldoRestante:restante }, function (data) {			
@@ -943,7 +973,7 @@ angular.module('agil.controladores')
 			}
 		}
 
-		$scope.imprimirRecibo = function (data, compra, pago) {
+		$scope.imprimirRecibo = function (data, compra, pago,anticipo) {
 			blockUI.start();
 			var doc = new PDFDocument({ size: [227, 353], margin: 10 });
 			var stream = doc.pipe(blobStream());
@@ -994,7 +1024,11 @@ angular.module('agil.controladores')
 			doc.text("Fecha: " + compra.fecha.getDate() + "/" + (compra.fecha.getMonth() + 1) + "/" + compra.fecha.getFullYear(), 15, 210);
 			var textoFact = $scope.compra.factura;
 			doc.text(textoFact, 105, 210, { width: 100 });
+
 			doc.text("Bs " + pago + ".-", 170, 210, { width: 100 });
+			
+			
+			//doc.text("Saldo " + (compra.saldo-pago) + ".-", 170, 220, { width: 100 });
 
 			doc.text("--------------", 10, 230, { align: 'right' });
 			//oc.text("--------------------",{align:'right'});
@@ -1003,6 +1037,93 @@ angular.module('agil.controladores')
 			doc.moveDown(0.4);
 			doc.moveDown(0.4);
 			doc.text("SON: " + data.pago, { align: 'left' });
+			doc.moveDown(0.6);
+
+			doc.moveDown(0.4);
+
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+
+			doc.text("-------------------------                       -------------------------", { align: 'center' });
+			doc.text("ENTREGUE CONFORME            RECIBI CONFORME", { align: 'center' });
+			doc.end();
+			stream.on('finish', function () {
+				var fileURL = stream.toBlobURL('application/pdf');
+				window.open(fileURL, '_blank', 'location=no');
+			});
+			blockUI.stop();
+		}
+
+		$scope.imprimirReciboAnticipo = function (data, compra, pago,anticipio) {
+			blockUI.start();
+			var doc = new PDFDocument({ size: [227, 353], margin: 10 });
+			var stream = doc.pipe(blobStream());
+			doc.moveDown(2);
+			doc.font('Helvetica-Bold', 8);
+			doc.text($scope.usuario.empresa.razon_social.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			doc.font('Helvetica', 7);
+			doc.text(compra.almacen.sucursal.nombre.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text(compra.almacen.sucursal.direccion.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			var telefono = (compra.almacen.sucursal.telefono1 != null ? compra.almacen.sucursal.telefono1 : "") +
+				(compra.almacen.sucursal.telefono2 != null ? "-" + compra.almacen.sucursal.telefono2 : "") +
+				(compra.almacen.sucursal.telefono3 != null ? "-" + compra.almacen.sucursal.telefono3 : "");
+			doc.text("TELF.: " + telefono, { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text("COCHABAMBA - BOLIVIA", { align: 'center' });
+			doc.moveDown(0.5);
+			doc.font('Helvetica-Bold', 8);
+			doc.text("PAGO ANTICIPADO", { align: 'center' });
+			doc.font('Helvetica', 7);
+			doc.moveDown(0.4);
+			doc.text("------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			//doc.text("NIT: "+$scope.usuario.empresa.nit,{align:'center'});
+			doc.moveDown(0.4);
+			doc.text(compra.almacen.sucursal.nota_recibo_correlativo, { align: 'center' });
+			doc.moveDown(0.4);
+			//doc.text("AUTORIZACIÓN No: "+venta.autorizacion,{align:'center'});
+			doc.moveDown(0.4);
+			doc.text("------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			//doc.text(venta.actividad.nombre,{align:'center'});
+			doc.moveDown(0.6);
+			var date = new Date();
+			doc.text("FECHA : " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(), { align: 'left' });
+			doc.moveDown(0.4);
+			doc.text("Pagado a : " + $scope.compra.proveedor.razon_social, { align: 'left' });
+			doc.moveDown(0.4);
+			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+			doc.moveDown(0.2);
+			doc.text("       CONCEPTO                                   ", { align: 'left' });
+			doc.moveDown(0.2);
+			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			compra.fecha = new Date(compra.fecha);
+			doc.text("Fecha: " + compra.fecha.getDate() + "/" + (compra.fecha.getMonth() + 1) + "/" + compra.fecha.getFullYear(), 15, 210);
+			var textoFact = $scope.compra.factura;
+			doc.text(textoFact, 105, 210, { width: 100 });
+			doc.text("Bs " + anticipio.toFixed(2) + ".-", 170, 210, { width: 100 });
+
+			doc.text("--------------", 10, 230, { align: 'right' });
+			//oc.text("--------------------",{align:'right'});
+			doc.moveDown(0.3);
+			doc.text("TOTAL Bs.              " + anticipio.toFixed(2), { align: 'right' });
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			//doc.text("SON: " + data.pago, { align: 'left' });
 			doc.moveDown(0.6);
 
 			doc.moveDown(0.4);
