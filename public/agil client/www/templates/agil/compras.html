@@ -134,9 +134,9 @@
 		<!-- div.table-responsive -->
 
 		<!-- div.dataTables_borderWrap -->
+		<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
+		</div>
 		<div style="overflow-x:auto;">
-			<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
-			</div>
 			<table id="tabla-compras" class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
@@ -158,19 +158,13 @@
 							Nit Proveedor
 						</th>
 						<th>
-							<a href="javascript:void(0)" ng-click="paginator.sortColumn('factura',obtenerLista)">Factura
-								<span id="factura" class="sort fa fa-sort icon-only"></span>
-							</a>
+							Factura
 						</th>
 						<th>
-							<a href="javascript:void(0)" ng-click="paginator.sortColumn('fecha',obtenerLista)">Fecha Fact.
-								<span id="fecha" class="sort fa fa-sort icon-only"></span>
-							</a>
+							Fecha Fact.
 						</th>
 						<th>
-							<a href="javascript:void(0)" ng-click="paginator.sortColumn('createdAt',obtenerLista)">Hora - Fecha
-								<span id="createdAt" class="sort fa fa-sort icon-only"></span>
-							</a>
+							Hora - Fecha
 						</th>
 						<th>Monto</th>
 						<th>Tipo de Pago</th>
@@ -284,9 +278,9 @@
 
 					</tr>
 				</tbody>
-			</table>
-			<div class="row" ng-include src="'/templates/GRAL/paginator.html'">
-			</div>
+			</table>	
+		</div>
+		<div class="row" ng-include src="'/templates/gral/paginator.html'">
 		</div>
 	</div>
 </div>
