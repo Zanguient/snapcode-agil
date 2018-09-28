@@ -1018,7 +1018,10 @@ angular.module('agil.controladores')
 				$scope.cerrarPopup($scope.ModalMensajePago);
 				$scope.cerrarPopup($scope.idModalPago);
 				$scope.obtenerVentas();
-				$scope.imprimirRecibo(data, data.venta, pago);
+				$scope.imprimirRecibo(data, data.venta, pago,restante);
+				if(restante < 0){
+					$scope.imprimirReciboAnticipo(data, data.venta,pago);
+				}	
 				blockUI.stop();
 			})
 			
@@ -1081,7 +1084,7 @@ angular.module('agil.controladores')
 			});*/
 		}
 
-		$scope.imprimirRecibo = function (data, venta, pago) {
+		$scope.imprimirRecibo = function (data, venta, pago,anticipo) {
 			blockUI.start();
 			var doc = new PDFDocument({ compress: false, size: [227, 353], margin: 10 });
 			var stream = doc.pipe(blobStream());
@@ -1140,6 +1143,100 @@ angular.module('agil.controladores')
 			//oc.text("--------------------",{align:'right'});
 			doc.moveDown(0.3);
 			doc.text("TOTAL Bs.              " + pago.toFixed(2), { align: 'right' });
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.text("SON: " + data.pago, { align: 'left' });
+			doc.moveDown(0.6);
+
+			doc.moveDown(0.4);
+
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+
+			doc.text("-------------------------                       -------------------------", { align: 'center' });
+			doc.text("ENTREGUE CONFORME            RECIBI CONFORME", { align: 'center' });
+			doc.end();
+			stream.on('finish', function () {
+				var fileURL = stream.toBlobURL('application/pdf');
+				window.open(fileURL, '_blank', 'location=no');
+			});
+			blockUI.stop();
+		}
+
+		$scope.imprimirReciboAnticipo = function (data, venta, pago) {
+			blockUI.start();
+			var doc = new PDFDocument({ compress: false, size: [227, 353], margin: 10 });
+			var stream = doc.pipe(blobStream());
+			doc.moveDown(2);
+			doc.font('Helvetica-Bold', 8);
+			doc.text($scope.usuario.empresa.razon_social.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			doc.font('Helvetica', 7);
+			doc.text(venta.almacen.sucursal.nombre.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text(venta.almacen.sucursal.direccion.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			var telefono = (venta.almacen.sucursal.telefono1 != null ? venta.almacen.sucursal.telefono1 : "") +
+				(venta.almacen.sucursal.telefono2 != null ? "-" + venta.almacen.sucursal.telefono2 : "") +
+				(venta.almacen.sucursal.telefono3 != null ? "-" + venta.almacen.sucursal.telefono3 : "");
+			doc.text("TELF.: " + telefono, { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text("COCHABAMBA - BOLIVIA", { align: 'center' });
+			doc.moveDown(0.5);
+			doc.font('Helvetica-Bold', 8);
+			doc.text("ANTICIPO", { align: 'center' });
+			doc.font('Helvetica', 7);
+			doc.moveDown(0.4);
+			doc.text("------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text(venta.almacen.sucursal.nota_recibo_correlativo, { align: 'center' });
+			//doc.text("NIT: "+$scope.usuario.empresa.nit,{align:'center'});
+
+			//doc.text("FACTURA No: "+venta.factura,{align:'center'});
+			doc.moveDown(0.4);
+			//doc.text("AUTORIZACIÓN No: "+venta.autorizacion,{align:'center'});
+			doc.moveDown(0.4);
+			doc.text("------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			//doc.text(venta.actividad.nombre,{align:'center'});
+			doc.moveDown(0.6);
+			var date = new Date();
+			doc.text("FECHA : " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(), { align: 'left' });
+			doc.moveDown(0.4);
+			doc.text("He recibido de : " + $scope.venta.cliente.razon_social, { align: 'left' });
+			doc.moveDown(0.4);
+			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+			doc.moveDown(0.2);
+			doc.text("       CONCEPTO                                   ", { align: 'left' });
+			doc.moveDown(0.2);
+			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			venta.fecha = new Date(venta.fecha);
+			doc.text("Fecha: " + venta.fecha.getDate() + "/" + (venta.fecha.getMonth() + 1) + "/" + venta.fecha.getFullYear(), 15, 210);
+			var textoFact = $scope.venta.movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ? "Factura nro. " + $scope.venta.factura : "Proforma nro. " + $scope.venta.factura;
+			doc.text(textoFact, 105, 210, { width: 100 });
+			if (anticipo >= 0) {
+				doc.text("Saldo Bs " + ((venta.saldo - pago)*-1) + ".-", 105, 220, { width: 100 });
+			}else{
+				doc.text("Saldo Bs " +"0" + ".-", 105, 220, { width: 100 });
+			}
+			
+			doc.text("Bs " + ((venta.saldo - pago)*-1) + ".-", 170, 210, { width: 100 });
+
+			doc.text("--------------", 10, 230, { align: 'right' });
+			//oc.text("--------------------",{align:'right'});
+			doc.moveDown(0.3);
+			doc.text("TOTAL Bs.              " + ((venta.saldo - pago)*-1).toFixed(2), { align: 'right' });
 			doc.moveDown(0.4);
 			doc.moveDown(0.4);
 			doc.text("SON: " + data.pago, { align: 'left' });

@@ -1,0 +1,1 @@
+alter table agil_comensales_cliente_empresa add constraint codigo_cliente_tipo unique (cliente, codigo, tipo);

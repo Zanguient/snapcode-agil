@@ -1,0 +1,1 @@
+alter table agil_comensales_cliente_empresa drop index codigo_cliente_tipo;

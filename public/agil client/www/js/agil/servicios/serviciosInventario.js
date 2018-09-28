@@ -106,16 +106,31 @@ angular.module('agil.servicios')
 	}])
 
 	.factory('CompraFiltro',  ['$resource',function ($resource) {
-		return $resource(restServer + "compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario/tipo/:tipo", null,
-			{
-				'update': { method: 'PUT' }
-			});
+		return $resource(restServer + "compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo_compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario/tipo/:tipo/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion");
 	}])
 
 	.factory('Compras', ['CompraFiltro', '$q', function (CompraFiltro, $q) {
-		var res = function (sucursales, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, usuario, id_usuario, tipo) {
+		var res = function (paginator) {
 			var delay = $q.defer();
-			CompraFiltro.query({ idsSucursales: sucursales, inicio: inicio, fin: fin, razon_social: razon_social, nit: nit, monto: monto, tipo_compra: tipo_pago, sucursal: sucursal, usuario: usuario, id_usuario: id_usuario, tipo: tipo }, function (entidades) {
+			CompraFiltro.get({ 
+				idsSucursales: paginator.filter.idsSucursales, 
+				inicio: paginator.filter.inicio, 
+				fin: paginator.filter.fin, 
+				razon_social: paginator.filter.razon_social, 
+				nit: paginator.filter.nit, 
+				monto: paginator.filter.monto, 
+				tipo_compra: paginator.filter.tipo_compra, 
+				sucursal: paginator.filter.sucursal, 
+				usuario: paginator.filter.usuario, 
+				id_usuario: paginator.filter.id_usuario, 
+				tipo: paginator.filter.tipo,
+
+				pagina: paginator.currentPage,
+				items_pagina: paginator.itemsPerPage,
+				texto_busqueda: paginator.search,
+				columna: paginator.column,
+				direccion: paginator.direction, 
+			}, function (entidades) {
 				delay.resolve(entidades);
 			}, function (error) {
 					delay.reject(error);

@@ -118,7 +118,7 @@
 					</div>
 					<!-- <div class="row col-md-3">
 						<span>Tipo de Producto: &nbsp;</span>
-						<select class="form-control"   name="tipo_producto" id="tipo_producto" ng-model="tipoProducto" ng-change="buscarProductos(tipoProducto)" ng-options="tipoProducto as tipoProducto.nombre for tipoProducto in tipoProductos track by tipoProducto.id" >
+						<select class="form-control" ng-change="paginator.getSearch(tipoProducto.nombre,paginator.filter,$event)"   name="tipo_producto" id="tipo_producto" ng-model="tipoProducto"  ng-options="tipoProducto as tipoProducto.nombre for tipoProducto in tipoProductos track by tipoProducto.id" >
 								<option value="" selected>Todos</option>
 						</select>
 					</div> -->

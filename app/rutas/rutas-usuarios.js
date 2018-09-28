@@ -607,7 +607,8 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 			Usuario.find({
 				where: {
 					nombre_usuario: req.body.nombre_usuario,
-					clave: md5(req.body.clave)
+					clave: md5(req.body.clave),
+					activo:true
 				},
 				include: [{ model: Persona, as: 'persona' }
 					// { model: UsuarioGrupos, as: 'grupos', include: [{ model: Clase, as: 'grupo' }] },

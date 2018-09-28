@@ -1,0 +1,2 @@
+alter table agil_comensales_alias_cliente_empresa drop alias_cliente_empresa_codigo;
+alter table agil_comensales_horario_comida_cliente_empresa drop comensales_horario_comidas;
