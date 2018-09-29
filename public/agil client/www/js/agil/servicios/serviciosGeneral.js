@@ -1104,7 +1104,7 @@ angular.module('agil.servicios')
 
 							doc.text(venta.detallesVenta[i].producto.codigo, 55, y, { width: 70 });
 							doc.text(venta.detallesVenta[i].cantidad, 135, y);
-							doc.text(venta.detallesVenta[i].producto.unidad_medida, 160, y - 3, { width: 43 });
+							doc.text(venta.detallesVenta[i].producto.unidad_medida, 160, y , { width: 43 });
 							var longitudCaracteres = venta.detallesVenta[i].producto.nombre.length;
 							var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
 							doc.text(venta.detallesVenta[i].producto.nombre, 198, yDesc, { width: 130 });
@@ -1139,9 +1139,18 @@ angular.module('agil.servicios')
 							var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
 							doc.text(venta.detallesVenta[i].servicio.nombre, 198, yDesc, { width: 130 });
 
-							if (venta.con_vencimiento) {
+							/*if (venta.con_vencimiento) {
 								doc.text(fechaVencimientoTexto, 340, y);
 								doc.text(venta.detallesVenta[i].lote, 380, y);
+							}*/
+							if (venta.con_vencimiento) {
+								if (venta.configuracion.tipoConfiguracion.nombre_corto == 'SERIE') {								
+									doc.text(venta.detallesVenta[i].lote, 380, y);
+								}else{
+									doc.text(fechaVencimientoTexto, 340, y);
+									doc.text(venta.detallesVenta[i].lote, 380, y);
+								}								
+								
 							}
 
 							// doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
@@ -1362,7 +1371,7 @@ angular.module('agil.servicios')
 		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario) {
 			if (venta.configuracion.usar_pf) {
 				if (vacia) {
-					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }
+					if (usuario.empresa.imagen.length > 100) {doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }
 					doc.font('Helvetica-Bold', 8);
 					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
 					doc.font('Helvetica', 7);
@@ -2584,7 +2593,7 @@ angular.module('agil.servicios')
 						doc.text(venta.detallesVenta[i].producto.codigo, 55, y, { width: 50 });
 						doc.text(venta.detallesVenta[i].cantidad, 105, y);
 						doc.text(venta.detallesVenta[i].producto.unidad_medida, 120, y, { width: 40 });
-						doc.text(venta.detallesVenta[i].producto.nombre, 160, y - 9, { width: 80 });
+						doc.text(venta.detallesVenta[i].producto.nombre, 160, y , { width: 80 });
 						if (usuario.empresa.usar_vencimientos) {
 							if (venta.con_vencimiento) {
 								doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 245, y);
