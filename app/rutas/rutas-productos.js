@@ -431,8 +431,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													utilidad_esperada: producto.utilidad_esperada,
 													inventario_minimo: producto.inventario_minimo,
 													descripcion: producto.descripcion,
-													id_grupo: claseGrupoEncontrado[0].id,
-													id_subgrupo: claseSubGrupoEncontrado[0].id,
+													id_grupo: claseGrupoEncontrado.id,
+													id_subgrupo: claseSubGrupoEncontrado.id,
 													caracteristica_especial1: producto.caracteristica_especial1,
 													caracteristica_especial2: producto.caracteristica_especial2,
 													imagen: './img/icon-producto-default.png',
@@ -469,8 +469,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													utilidad_esperada: producto.utilidad_esperada,
 													inventario_minimo: producto.inventario_minimo,
 													descripcion: producto.descripcion,
-													id_grupo: claseGrupoEncontrado[0].id,
-													id_subgrupo: claseSubGrupoEncontrado[0].id,
+													id_grupo: claseGrupoEncontrado.id,
+													id_subgrupo: claseSubGrupoEncontrado.id,
 													caracteristica_especial1: producto.caracteristica_especial1,
 													caracteristica_especial2: producto.caracteristica_especial2,
 													imagen: './img/icon-producto-default.png',
@@ -515,7 +515,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 									res.json({ mensaje: "¡Datos de Productos actualizados satisfactoriamente!" });
 								}
 							}).catch(function (err) {
-								res.json({ hasError: true, mensaje: err.stack });
+								res.json({ hasError: true, mensaje: err.stack?err.stack:err });
 							});
 						});
 
