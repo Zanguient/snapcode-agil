@@ -3629,11 +3629,12 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     },
                     transaction: t
                 }).then(function (personaActualizada) {
+                    var persona={id:pacienteFound.id_persona}
                     return guardarDatosEmpleadoExtension(req, pacienteActual, i, t, tipoCentro,
                         tipoCargo,
                         tipoContrato,
                         tipoExp,
-                        tipoSeguroSalud, tipoEE, tipoE, pacienteFound, pacienteFound)
+                        tipoSeguroSalud, tipoEE, tipoE, persona, pacienteFound)
                 }).catch(function (err) {
                     return new Promise(function (fulfill, reject) {
                         reject((err.stack !== undefined) ? err.stack : err);
