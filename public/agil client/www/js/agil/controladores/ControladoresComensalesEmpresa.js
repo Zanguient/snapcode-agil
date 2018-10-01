@@ -39,8 +39,8 @@ angular.module('agil.controladores')
                 // }
                 ejecutarScriptsComensales($scope.modalEdicionAlias, $scope.modalEdicionGerencias, $scope.modalEdicionComensales, $scope.modalEdicionComidas, $scope.modalEdicionPrecios,
                     $scope.dialogClienteEmpresa, $scope.busquedaComensalesEmpresa, $scope.dialogAlertasMarcaciones, $scope.dialogHistorialDocumentos);
-                // resaltarPestaña($location.path().substring(1));
-                // $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
+                resaltarPestaña($location.path().substring(1));
+                $scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
                 // $scope.obtenerColumnasAplicacion()
             });
 
@@ -2843,7 +2843,7 @@ angular.module('agil.controladores')
                 } else if (!inicio_periodo && final_periodo) {
                     doc.text($scope.meses[fecha_inicial_reporte.getMonth()].nombre.toUpperCase() + '/' + finalo.getFullYear(), 200, 120 + y, { width: 300, align: "center" });
                 } else {
-                    doc.text($scope.meses[fecha_inicial_reporte.getMonth()].nombre.toUpperCase() + '/' + fecha_inicial_reporte.getFullYear() + ' A ' + $scope.meses[fecha_final_reporte.getMonth()].nombre.toUpperCase() + '/' + fecha_final_reporte.getFullYear(), 200, 120 + y, { width: 300, align: "center" });
+                    doc.text(reporte.reporte[0].fecha.split('T')[0].split('-').reverse().join('/') + ' A ' + reporte.reporte[reporte.reporte.length - 1].fecha.split('T')[0].split('-').reverse().join('/'), 200, 120 + y, { width: 300, align: "center" });
                 }
                 doc.font('Helvetica-Bold', 8);
                 doc.text("Empleado", 124, 80 + y);
