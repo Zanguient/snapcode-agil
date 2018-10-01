@@ -698,7 +698,7 @@ function ejecutarScriptsProducto(idPopupEdicion, idPopupVista, idPopupKadex, idP
 	setTimeout(function () {
 		aplicarDatePickers();
 		crearPopup(idModalConceptoEdicion, "auto", "auto")
-	}, 200);
+	}, 2000);
 }
 
 function ejecutarScriptsProveedor(idPopupEdicion, idPopupVista, idPopupEliminacion, idContenedorEdicion, idContenedorVista) {
