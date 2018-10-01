@@ -24,10 +24,11 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.INTEGER,
       field: 'comida'
     },
-    // almuerzo: {
-    //   type: Sequelize.INTEGER,
-    //   field: 'almuerzo'
-    // },
+    verificado: {
+      type: Sequelize.BOOLEAN,
+      field: 'verificado',
+      defaultValue: false
+    },
     // cena: {
     //   type: Sequelize.INTEGER,
     //   field: 'cena'

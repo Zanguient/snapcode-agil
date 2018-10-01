@@ -98,7 +98,9 @@ angular.module('agil.controladores')
                     $scope.listaComidasclienteEmpresa = []
                     $scope.listaPrecioComidasclienteEmpresa = []
                     $scope.alertaMarcaciones = []
+                    $scope.alertaMarcacionesFiltradas = []
                     $scope.historialesDocumentos = []
+                    $scope.comensalesSeleccionadosFiltro = []
                     $scope.obtenerComidas()
                     $scope.obtenerGerencias()
                     $scope.obtenerHistoriales()
@@ -122,6 +124,18 @@ angular.module('agil.controladores')
                     var promesa = ClientesNit($scope.usuario.id_empresa, query);
                     return promesa;
                 }
+            }
+
+            $scope.filtrarAlertas = function () {
+                $scope.alertaMarcacionesFiltradas = $scope.alertaMarcaciones.filter(function (alerta) {
+                    var fecha_alerta = new Date(alerta.fecha.split('/').reverse().join('-')+'T04:00:00.000Z')
+                    var desde = new Date($scope.filtroMarcaciones.desde.split('/').reverse().join('-')+'T00:00:00.000Z') 
+                    var hasta = new Date($scope.filtroMarcaciones.hasta.split('/').reverse().join('-')+'T23:59:59.000Z')
+                    if (fecha_alerta >= desde && fecha_alerta <= hasta) {
+                        return true
+                    }
+                    return false
+                })
             }
 
             $scope.buscarComensales = function (query) {
@@ -285,6 +299,18 @@ angular.module('agil.controladores')
                 $scope.cerrardialogClientesComensales()
             }
 
+            $scope.limpiarPeriodo = function () {
+                $scope.filtroComensales.desde = null
+                $scope.filtroComensales.hasta = null
+                $scope.filtroComensales.anio = null
+                $scope.filtroComensales.mes = null
+                $scope.filtroComensales.empresaCliente = $scope.empresaExternaSeleccionada
+                $scope.filtroComensales.gerencia = null
+                $scope.filtroComensales.comensal = null
+                $scope.filtroComensales.comida = null
+                $scope.filtroComensales.estado = null
+            }
+
             $scope.obtenerAliasEmpresa = function () {
                 blockUI.start()
                 var prom = ObtenerAlias($scope.usuario.id_empresa, $scope.usuario.id)
@@ -339,12 +365,24 @@ angular.module('agil.controladores')
                         $scope.listaComensalesclienteEmpresa = res.lista
                         $scope.comensalesBusqueda = res.lista
                         $scope.comensalesProcesados = res.lista
+                        $scope.llenarComensalesMiltiselect(res.lista)
                     }
                     blockUI.stop()
                 }).catch(function (err) {
                     var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                     $scope.mostrarMensaje(msg)
                     blockUI.stop()
+                })
+            }
+            $scope.llenarComensalesMiltiselect = function (datos) {
+                $scope.comensalesMultiselect = datos.map(function (comensal) {
+                    var formato = {
+                        name: comensal.nombre,
+                        maker: "",
+                        ticked: false,
+                        id: comensal.id
+                    }
+                    return formato
                 })
             }
             $scope.verTodasLasComidas = function () {
@@ -567,6 +605,7 @@ angular.module('agil.controladores')
                             }
                         }
                         $scope.alertaMarcaciones = marcasFaltantes
+                        $scope.alertaMarcacionesFiltradas = marcasFaltantes
                         blockUI.stop()
                     }
                     blockUI.stop()
@@ -1270,12 +1309,15 @@ angular.module('agil.controladores')
                     comensal.habilitado = true
                 } else if (marca === 2) {
                     comensal.habilitado = false
+                } else if (marca === 3) {
+                    comensal.habilitado = null
                 }
                 var prom = EditarAlertasMarcacion($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, comensal)
                 prom.then(function (res) {
                     $scope.mostrarMensaje(res.mensaje)
                     if (!res.hasErr) {
                         comensal.id = res.marcacion.id
+                        comensal.habilitado = res.marcacion.habilitado
                         comensal.fecha = res.marcacion.fecha.split('T')[0].split('-').reverse().join('/')
                         // $scope.obtenerAlertas()
                     }
@@ -1674,14 +1716,14 @@ angular.module('agil.controladores')
                         cabecera.unshift('empleado'.toUpperCase())
                         cabecera.unshift('empresa'.toUpperCase())
                         cabecera.push('Total general'.toUpperCase())
-                        if ($scope.alertaMarcaciones.length > 0) {
-                            $scope.alertaMarcaciones.reverse()
+                        if ($scope.alertaMarcacionesFiltradas.length > 0) {
+                            $scope.alertaMarcacionesFiltradas.reverse()
                             var alertasVerificadas = []
                             var alertas = []
                             var index = 0
-                            while ($scope.alertaMarcaciones.length > 0) {
+                            while ($scope.alertaMarcacionesFiltradas.length > 0) {
                                 var conteoIndex = -1
-                                var alerta = $scope.alertaMarcaciones.pop()
+                                var alerta = $scope.alertaMarcacionesFiltradas.pop()
                                 if (alertas.some(function (dato) {
                                     conteoIndex += 1
                                     if (dato.fecha === alerta.fecha) {
@@ -1698,7 +1740,7 @@ angular.module('agil.controladores')
                                 }
                                 index += 1
                             }
-                            $scope.alertaMarcaciones = alertasVerificadas
+                            $scope.alertaMarcacionesFiltradas = alertasVerificadas
                             if (excel) {
                                 $scope.imprimirAlertaMarcacionesMatriz(alertas, null, cabecera, comidasEmpresa)
                             } else {
@@ -1711,11 +1753,11 @@ angular.module('agil.controladores')
                         blockUI.stop()
                     })
                 } else {
-                    if ($scope.alertaMarcaciones.length > 0) {
+                    if ($scope.alertaMarcacionesFiltradas.length > 0) {
                         if (excel) {
-                            $scope.imprimirAlertaMarcacionesMatriz($scope.alertaMarcaciones)
+                            $scope.imprimirAlertaMarcacionesMatriz($scope.alertaMarcacionesFiltradas)
                         } else {
-                            $scope.imprimirAlertaMarcacionesLista($scope.alertaMarcaciones)
+                            $scope.imprimirAlertaMarcacionesLista($scope.alertaMarcacionesFiltradas)
                         }
                     }
                 }
@@ -1741,6 +1783,16 @@ angular.module('agil.controladores')
                             })
                             cabecera.unshift('FECHA'.toUpperCase())
                             cabecera.push('Total general'.toUpperCase())
+                            var listaComensales;
+                            if ($scope.filtroComensales.comensal.length > 0) {
+                                listaComensales = $scope.filtroComensales.comensal.map(function (comensal) {
+                                    return comensal.id
+                                })
+                            } else {
+                                listaComensales = []
+                            }
+                            
+                            $scope.filtroComensales.comensalesProcesados = listaComensales
                             var promHistorial = ObtenerReporteComensal($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, $scope.paginator)
                             promHistorial.then(function (res) {
                                 $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true, true)
@@ -1952,7 +2004,7 @@ angular.module('agil.controladores')
                 var cabecera = cabecera
                 var comidasEmpresa = comidasEmpresa
                 var dollar = dollar
-                var data = [[""], [""], [("REPORTES DE COMEDOR " + gerencia.nombre.toUpperCase() + ' ' + reporte[0].empresaCliente.razon_social.toUpperCase())], [""], cabecera]
+                var data = [[""], [""], [("REPORTE DE COMEDOR " + gerencia.nombre.toUpperCase() + ' ' + reporte[0].empresaCliente.razon_social.toUpperCase())], [""], cabecera]
                 var total_desayunos = 0;
                 var total_almuerzos = 0;
                 var total_cenas = 0;
@@ -2395,7 +2447,7 @@ angular.module('agil.controladores')
                     total_cenas += reporte[i].cena.cantidad
                     xSeparacion = 0
                     doc.font('Helvetica', 8).fill('black')
-                    doc.text(reporte[i].nombre, cubeX + 3, y + 7);
+                    doc.text(reporte[i].nombre, cubeX + 3, y + 6, {width: 147});
                     doc.text(reporte[i].desayuno.cantidad, cubeX + 80 + 95 + 9, y + 7)
                     doc.text(reporte[i].almuerzo.cantidad, cubeX + 80 + 175 + 9, y + 7)
                     doc.text(reporte[i].cena.cantidad, cubeX + 80 + 255 + 9, y + 7)
@@ -2564,11 +2616,15 @@ angular.module('agil.controladores')
                     .fill('black')
                 doc.text("REPORTES DE COMEDOR " + comedor.toUpperCase() + ' ' + empresa.toUpperCase(), 150, 80, { width: 300, align: "center" });
                 if (inicio_periodo && final_periodo) {
-                    doc.text("PERIODO " + (dif < 745 ? $scope.meses[inicial.getMonth() + 1].nombre.toUpperCase() + '/' + inicial.getFullYear() : $scope.meses[inicial.getMonth() + 1].nombre.toUpperCase() + '/' + inicial.getFullYear() + ' A ' + $scope.meses[finalo.getMonth()].nombre.toUpperCase() + '/' + finalo.getFullYear()), 150, 120, { width: 300, align: "center" });
+                    doc.text("PERIODO " + (dif < 745 ? $scope.meses[inicial.getMonth() + 1].nombre.toUpperCase() + '/' + inicial.getFullYear() : $scope.meses[inicial.getMonth() + 1].nombre.toUpperCase() + '/' + inicial.getFullYear() + ' A ' + $scope.meses[finalo.getMonth()].nombre.toUpperCase() + '/' + finalo.getFullYear()), 150, 110, { width: 300, align: "center" });
                 } else if (!inicio_periodo && final_periodo) {
-                    doc.text("PERIODO " + $scope.meses[fecha_inicial_reporte.getMonth()].nombre.toUpperCase() + '/' + finalo.getFullYear(), 150, 120, { width: 300, align: "center" });
+                    doc.text("PERIODO " + $scope.meses[fecha_inicial_reporte.getMonth()].nombre.toUpperCase() + '/' + finalo.getFullYear(), 150, 110, { width: 300, align: "center" });
                 } else {
-                    doc.text("PERIODO " + $scope.meses[fecha_inicial_reporte.getMonth()].nombre.toUpperCase() + '/' + fecha_inicial_reporte.getFullYear() + ' A ' + $scope.meses[fecha_final_reporte.getMonth()].nombre.toUpperCase() + '/' + fecha_final_reporte.getFullYear(), 150, 120, { width: 300, align: "center" });
+                    doc.text("PERIODO " + reporte[0].fecha.split('-').reverse().join('/') + ' A ' + reporte[reporte.length - 1].fecha.split('-').reverse().join('/'), 150, 110, { width: 300, align: "center" });
+                }
+
+                if ($scope.filtroComensales.comensal) {
+                    doc.text("COMENSAL " + reporte[0].fecha.split('-').reverse().join('/') + ' A ' + reporte[reporte.length - 1].fecha.split('-').reverse().join('/'), 150, 130, { width: 300, align: "center" });
                 }
 
                 doc.font('Helvetica-Bold', 8);

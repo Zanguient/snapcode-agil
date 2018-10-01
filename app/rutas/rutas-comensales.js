@@ -50,7 +50,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             }, { transaction: t })
         }
     }
-    function crearComensal(comensal, empresa, t) {
+    function crearComensal(comensal, empresa, t, i) {
         if (comensal.id) {
             if (comensal.eliminado) {
                 return ComensalesClienteEmpresa.destroy({
@@ -76,7 +76,21 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 id_empresa: empresa,
                 id_gerencia: comensal.gerencia ? comensal.gerencia.id : null,
                 tipo: comensal.tipo
-            }, { transaction: t })
+            }, { transaction: t }).then(function (comensalCreado) {
+                return new Promise(function (fullfil, reject) {
+                    fullfil(comensalCreado)
+                }).catch(function (err) {
+                    if (err.name === "SequelizeUniqueConstraintError") {
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({ hasErr: true, mensaje: 'Registro ya existente: Comensal ' + comensal.nombre + ' Codigo:' + comensal.codigo, index: i + 2, tipo: 'Error' })
+                        })
+                    } else {
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+                        })
+                    }
+                })
+            })
         }
     }
     function crearComida(comida, empresa, t) {
@@ -131,14 +145,14 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             }, { transaction: t }).catch(function (err) {
                 if (err.name === "SequelizeUniqueConstraintError") {
                     return new Promise(function (fullfil, reject) {
-                        fullfil({ hasErr: true, mensaje: 'Registro ya existente: Comida: '+ precioComida.comida.nombre + ' Codigo:' + precioComida.codigo +' Cliente: ' + precioComida.empresaCliente.razon_social, index: i + 2, tipo: 'Error' })
+                        fullfil({ hasErr: true, mensaje: 'Registro ya existente: Comida: ' + precioComida.comida.nombre + ' Codigo:' + precioComida.codigo + ' Cliente: ' + precioComida.empresaCliente.razon_social, index: i + 2, tipo: 'Error' })
                     })
-                }else{
+                } else {
                     return new Promise(function (fullfil, reject) {
                         fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
                     })
                 }
-                
+
             })
         }
     }
@@ -171,14 +185,14 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 }).catch(function (err) {
                     if (err.name === "SequelizeUniqueConstraintError") {
                         return new Promise(function (fullfil, reject) {
-                            fullfil({ hasErr: true, mensaje: 'Registro ya existente: Comensal '+ comensal.nombre + ' Fecha:' + historial.fecha, index: i + 2, tipo: 'Error' })
+                            fullfil({ hasErr: true, mensaje: 'Registro ya existente: Comensal ' + comensal.nombre + ' Fecha:' + historial.fecha, index: i + 2, tipo: 'Error' })
                         })
-                    }else{
+                    } else {
                         return new Promise(function (fullfil, reject) {
                             fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
                         })
                     }
-                    
+
                 })
             }
         } else {
@@ -202,9 +216,9 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 }).catch(function (err) {
                     if (err.name === "SequelizeUniqueConstraintError") {
                         return new Promise(function (fullfil, reject) {
-                            fullfil({ hasErr: true, mensaje: 'Registro ya existente: Comensal '+ historial.comensal.nombre + ' Fecha:' + historial.fecha, index: i + 2, tipo: 'Error' })
+                            fullfil({ hasErr: true, mensaje: 'Registro ya existente: Comensal ' + historial.comensal.nombre + ' Fecha:' + historial.fecha, index: i + 2, tipo: 'Error' })
                         })
-                    }else{
+                    } else {
                         return new Promise(function (fullfil, reject) {
                             fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
                         })
@@ -231,7 +245,8 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                     id_gerencia: historial.gerencia ? historial.gerencia.id : null,
                     id_comida: historial.comida.id,
                     observacion: historial.observacion,
-                    habilitado: historial.habilitado
+                    habilitado: historial.habilitado,
+                    verificado: historial.verificado
                     // desayuno: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "desayuno" ? 1 : 0 : 0 : 0,
                     // almuerzo: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "almuerzo" ? 1 : 0 : 0 : 0,
                     // cena: historial.comida ? historial.comida.nombre ? historial.comida.nombre.toLowerCase() === "cena" ? 1 : 0 : 0 : 0,
@@ -254,10 +269,15 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 id_gerencia: historial.gerencia ? historial.gerencia.id : null,
                 id_comida: historial.comida.id,
                 observacion: historial.observacion,
-                habilitado: historial.habilitado !== undefined ? historial.habilitado : true
+                habilitado: historial.habilitado !== undefined ? historial.habilitado : true,
+                verificado: false
             },
                 { transaction: t }
             )
+            // .then(function (marcacionCreada) {
+            //     var historial = {alias: { id_cliente: req.body.comida.empresaCliente.id }, comensal: req.body.comensal, fecha: (req.body.fecha.split('/').reverse().join('-') + 'T' + req.body.comida.inicio + '.000Z')}
+            //     return verificarMarcacionesFaltantes(historial, null, empresa)
+            // })
         }
     }
     function verificarDatosHistorialExcel(historial, empresa, t, i) {
@@ -365,7 +385,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                             transaction: t
                         }).spread(function (gerenciaEncontrada, created) {
                             comensal.gerencia = gerenciaEncontrada ? gerenciaEncontrada.dataValues : { id: null, nombre: 'Sin asignación' }
-                            return crearComensal(comensal, empresa, t)
+                            return crearComensal(comensal, empresa, t, i)
                         }).catch(function (err) {
                             if (err.name === "SequelizeUniqueConstraintError") {
                                 return GerenciasClienteEmpresa.find({
@@ -373,9 +393,9 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                                     transaction: t
                                 }).then(function (gerenciaEncontrada) {
                                     comensal.gerencia = gerenciaEncontrada ? gerenciaEncontrada.dataValues : { id: null, nombre: 'Sin asignación' }
-                                    return crearComensal(comensal, empresa, t)
+                                    return crearComensal(comensal, empresa, t, i)
                                 })
-                            }else{
+                            } else {
                                 return new Promise(function (fullfil, reject) {
                                     fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
                                 })
@@ -383,9 +403,15 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                         })
                     }
                 }).catch(function (err) {
-                    return new Promise(function (fullfil, reject) {
-                        fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
-                    })
+                    if (err.name === "SequelizeUniqueConstraintError") {
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({ hasErr: true, mensaje: 'Registro ya existente: Codigo ' + err.fields.codigo_cliente_tipo.split('-')[1] + ' Empresa:' + err.fields.codigo_cliente_tipo.split('-')[2], index: i + 2, tipo: 'Error' })
+                        })
+                    } else {
+                        return new Promise(function (fullfil, reject) {
+                            fullfil({ hasErr: true, mensaje: err.stack, index: i + 2, tipo: 'Error' })
+                        })
+                    }
                 })
             } else {
                 erro = true
@@ -612,7 +638,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             sequelize.transaction(function (t) {
                 var promises = []
                 for (let i = 0; i < req.body.length; i++) {
-                    promises.push(crearComensal(req.body[i], req.params.id_empresa, t))
+                    promises.push(crearComensal(req.body[i], req.params.id_empresa, t, i))
                 }
                 return Promise.all(promises)
             }).then(function (result) {
@@ -713,11 +739,17 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
         .post(function (req, res) {
             var Errors = []
             var promises = []
+            var fechasVerificacionMarcaciones = []
             sequelize.transaction(function (t) {
                 for (let i = 0; i < req.body.length; i++) {
                     req.body[i].id_usuario = req.params.id_usuario
                     req.body[i].id_empresa = req.params.id_empresa
                     promises.push(verificarDatosHistorialExcel(req.body[i], req.params.id_empresa, t, i))
+                    if (req.body[i].fecha) {
+                        if (fechasVerificacionMarcaciones.indexOf(req.body[i].fecha.split('T')[0]) < 0) {
+                            fechasVerificacionMarcaciones.push(req.body[i].fecha.split('T')[0])
+                        }
+                    }
                 }
                 return Promise.all(promises)
             }).then(function (result) {
@@ -734,9 +766,11 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                         mensajes.unshift('No se guardo')
                         res.json({ hasErr: true, mensaje: 'No se guardo', mensajes: mensajes })
                     } else if (mensajes.length === 0) {
+                        verificarMarcacionesFaltantes(null, fechasVerificacionMarcaciones, req.params.id_empresa)
                         res.json({ mensaje: 'Guardado correctamente.' })
                     } else {
                         mensajes.unshift('Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length)
+                        verificarMarcacionesFaltantes(null, fechasVerificacionMarcaciones, req.params.id_empresa)
                         res.json({ hasErr: true, mensaje: 'Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length, mensajes: mensajes })
                     }
                 } else {
@@ -751,7 +785,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
         .post(function (req, res) {
             var Errors = []
             var promises = []
-            sequelize.transaction({isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED},function (t) {
+            sequelize.transaction({ isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED }, function (t) {
                 for (let i = 0; i < req.body.length; i++) {
                     req.body[i].id_usuario = req.params.id_usuario
                     req.body[i].id_empresa = req.params.id_empresa
@@ -952,7 +986,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             var fecha_desde;
             var fecha_hasta;
             if (req.params.mes != "0" && req.params.anio != "0") {
-                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes)-1, 1, 0, 0, 0)
+                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0)
                 var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), -1, 0, 0, 0)
                 fecha_hasta.setHours(23)
                 fecha_hasta.setMinutes(59)
@@ -998,7 +1032,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 condicionHistorial.id_gerencia = req.params.gerencia
             }
             if (req.params.comensal != "0") {
-                condicionHistorial.id_comensal = req.params.comensal
+                condicionHistorial.id_comensal = { $in: req.params.comensal.split(',')}
             }
             if (req.params.comida != "0") {
                 condicionHistorial.id_comida = req.params.comida
@@ -1009,13 +1043,13 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             var ordenamiento = []
             if (req.params.columna === "nombre") {
                 ordenamiento.push([{ model: ComensalesClienteEmpresa, as: 'comensal' }, 'nombre', req.params.direccion])
-            }else if(req.params.columna === "gerencia"){
+            } else if (req.params.columna === "gerencia") {
                 ordenamiento.push([{ model: GerenciasClienteEmpresa, as: 'gerencia' }, 'nombre', req.params.direccion])
-            }else if(req.params.columna === "empresa"){
+            } else if (req.params.columna === "empresa") {
                 ordenamiento.push([{ model: Cliente, as: 'empresaCliente' }, 'razon_social', req.params.direccion])
-            }else if(req.params.columna === "comida"){
+            } else if (req.params.columna === "comida") {
                 ordenamiento.push([{ model: horarioComidasClienteEmpresa, as: 'comida' }, 'nombre', req.params.direccion])
-            }else{
+            } else {
                 ordenamiento.push([req.params.columna, req.params.direccion])
             }
             HistorialComidaClienteEmpresa.findAndCountAll({
@@ -1038,7 +1072,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                         { model: Usuario, as: 'usuario' },
                         { model: horarioComidasClienteEmpresa, as: 'comida' }
                     ],
-                    order:[ordenamiento]
+                    order: [ordenamiento]
                 }).then(function (historial) {
                     res.json({ historial: historial, paginas: Math.ceil(historialCount.count / req.params.items_pagina) })
                 }).catch(function (err) {
@@ -1106,7 +1140,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 condicionHistorial.id_gerencia = req.params.gerencia
             }
             if (req.params.comensal != "0") {
-                condicionHistorial.id_comensal = req.params.comensal
+                condicionHistorial.id_comensal = { $in: req.params.comensal.split(',')}
             }
             if (req.params.comida != "0") {
                 condicionHistorial.id_comida = req.params.comida
@@ -1165,7 +1199,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             var fin = new Date(req.params.fecha.split('-'))
             fin.setHours(23);
             fin.setMinutes(59);
-            condicionHistorial.fecha = {$between:[inicio,fin]}
+            condicionHistorial.fecha = { $between: [inicio, fin] }
             HistorialComidaClienteEmpresa.findAll({
                 where: condicionHistorial,
                 include: [
@@ -1205,7 +1239,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             var fecha_desde;
             var fecha_hasta;
             if (req.params.mes != "0" && req.params.anio != "0") {
-                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes)-1, 1, 0, 0, 0)
+                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0)
                 var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), -1, 0, 0, 0)
                 fecha_hasta.setHours(23)
                 fecha_hasta.setMinutes(59)
@@ -1251,7 +1285,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 condicionHistorial.id_gerencia = req.params.gerencia
             }
             if (req.params.comensal != "0") {
-                condicionHistorial.id_comensal = req.params.comensal
+                condicionHistorial.id_comensal = { $in: req.params.comensal.split(',')}
             }
             if (req.params.comida != "0") {
                 condicionHistorial.id_comida = req.params.comida
@@ -1269,7 +1303,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                         }
                         return false
                     })) {
-                        res.json({ reporte: result, periodo: [fecha_desde,fecha_hasta] })
+                        res.json({ reporte: result, periodo: [fecha_desde, fecha_hasta] })
                         return
                     }
                 }/// else {
@@ -1305,7 +1339,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             var fecha_desde;
             var fecha_hasta;
             if (req.params.mes != "0" && req.params.anio != "0") {
-                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes)-1, 1, 0, 0, 0)
+                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0)
                 var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), -1, 0, 0, 0)
                 fecha_hasta.setHours(23)
                 fecha_hasta.setMinutes(59)
@@ -1351,7 +1385,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 condicionHistorial.id_gerencia = req.params.gerencia
             }
             if (req.params.comensal != "0") {
-                condicionHistorial.id_comensal = req.params.comensal
+                condicionHistorial.id_comensal = { $in: req.params.comensal.split(',')}
             }
             if (req.params.comida != "0") {
                 condicionHistorial.id_comida = req.params.comida
@@ -1362,7 +1396,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 order: [[{ model: HistorialComidaClienteEmpresa, as: 'historial' }, 'fecha', 'asc']]
             }).then(function (result) {
                 GerenciasClienteEmpresa.find({
-                    where: {id: req.params.gerencia}
+                    where: { id: req.params.gerencia }
                 }).then(function (geren) {
                     res.json({ reporte: result, periodo: [fecha_desde, fecha_hasta], gerencia: geren })
                 })
@@ -1383,7 +1417,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             var fecha_desde;
             var fecha_hasta;
             if (req.params.mes != "0" && req.params.anio != "0") {
-                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes)-1, 1, 0, 0, 0)
+                var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0)
                 var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), -1, 0, 0, 0)
                 fecha_hasta.setHours(23)
                 fecha_hasta.setMinutes(59)
@@ -1429,7 +1463,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 condicionHistorial.id_gerencia = req.params.gerencia
             }
             if (req.params.comensal != "0") {
-                condicionHistorial.id_comensal = req.params.comensal
+                condicionHistorial.id_comensal = {$in: req.params.comensal.split(',')}
             }
             if (req.params.comida != "0") {
                 condicionHistorial.id_comida = req.params.comida
@@ -1451,7 +1485,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
     router.route('/alertas/marcaciones/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:columna/:direccion')
         .get(function (req, res) {
             var condicion = { id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente }
-            var condicionMarcacion = {id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente}
+            var condicionMarcacion = { id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente, verificado: false }
             var desde = false
             var hasta = false
             var fecha_desde;
@@ -1482,11 +1516,11 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 }
             }
             var ordenamiento = []
-            if(req.params.columna === "fecha"){
+            if (req.params.columna === "fecha") {
                 ordenamiento.push([{ model: ComensalesMarcacionesClienteEmpresa, as: 'marcaciones' }, 'fecha', req.params.direccion])
-            }else if(req.params.columna === "comida"){
+            } else if (req.params.columna === "comida") {
                 ordenamiento.push([{ model: horarioComidasClienteEmpresa, as: 'comida' }, 'nombre', req.params.direccion])
-            }else{
+            } else {
                 ordenamiento.push([req.params.columna, req.params.direccion])
             }
             ComensalesClienteEmpresa.findAll({
@@ -1507,26 +1541,20 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
         .post(function (req, res) {
             var condicion = { id_empresa: req.params.id_empresa, id_cliente: req.params.id_cliente, comensal: req.params.comensal, id: req.body.id }
             if (req.params.marcacion == "1") {
-                req.body.desayuno = 1
+                // req.body.desayuno = 1
             }
             if (req.params.marcacion == "2") {
-                req.body.almuerzo = 1
+                // req.body.almuerzo = 1
             }
             if (req.params.marcacion == "3") {
-                req.body.cena = 1
+                // req.body.cena = 1
             }
             var historial = { alias: { id_cliente: req.body.comida.empresaCliente.id }, comensal: req.body.comensal, fecha: (req.body.fecha.split('/').reverse().join('-') + 'T' + req.body.comida.inicio + '.000Z'), gerencia: req.body.gerencia, comida: req.body.comida, habilitado: req.body.habilitado }
             sequelize.transaction(function (t) {
                 return crearMarcacion(historial, req.params.id_empresa, t, 0)
-                // id_empresa: empresa,
-                // id_cliente: historial.alias.id_cliente,
-                // id_comensal: historial.comensal.id,
-                // fecha: historial.fecha,
-                // id_gerencia: historial.gerencia ? historial.gerencia.id : null,
-                // id_comida: historial.comida.id,
-                // observacion: historial.observacion
             }).then(function (marcacionActualizada) {
                 if (marcacionActualizada) {
+                    verificarMarcacionesFaltantes(historial, null, req.params.id_empresa, req.params.id_cliente)
                     res.json({ mensaje: 'Actualizado correctamente', marcacion: marcacionActualizada })
                 } else {
                     res.json({ mensaje: 'No se pudo actualizar.', hasErr: true })
@@ -1538,4 +1566,111 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
         .put(function (req, res) {
             res.json({ mensaje: 'sin funcionalidad' })
         })
+
+    function verificarMarcacionesFaltantes(historial, fechas, empresa, cliente) {
+        var condicion;
+        if (cliente) {
+            condicion = { id_empresa: empresa, id_cliente: cliente }
+        } else {
+            condicion = { id_empresa: empresa }
+        }
+        var promesas = []
+        if (historial) {
+            var fecha_inicio = historial.fecha.split('T')[0] + 'T00:00:00.000Z'
+            var fecha_final = historial.fecha.split('T')[0] + 'T23:59:59.000Z'
+            var condicionMarcacion = { id_empresa: historial.empresa, id_cliente: historial.alias.id_cliente, verificado: false, fecha: { $between: [fecha_inicio, fecha_final], id_comensal: historial.comensal.id } }
+            ComensalesClienteEmpresa.findAll({
+                where: condicion,
+                include: [{ model: ComensalesMarcacionesClienteEmpresa, as: 'marcaciones', where: condicionMarcacion }]
+                // transaction: t
+            }).then(function (marcacionesComensal) {
+                var completadosParaActualizar = []
+                if (marcacionesComensal.length > 0) {
+                    for (var i = 0; i < marcacionesComensal.length; i++) {
+                        if (marcacionesComensal[i].marcaciones.length === 3) {
+                            completadosParaActualizar.push({ id_comensal: marcacionesComensal[i].id, fecha: marcacionesComensal[i].marcaciones[0].fecha })
+                        }
+                    }
+                    if (completadosParaActualizar.length > 0) {
+                        var promesasMarcaciones = []
+                        sequelize.transaction(function (t) {
+                            for (var index = 0; index < completadosParaActualizar.length; index++) {
+                                promesasMarcaciones.push(actualizarMarcacionesCompletadas(completadosParaActualizar[i]))
+                            }
+                            return Promise.all(promesasMarcaciones)
+                        }).then(function (result) {
+                            // if (result.length > 0) {
+
+                            // } else {
+
+                            // }
+                        })
+                    }
+                }
+                // res.json({ alertas: alertas })
+            }).catch(function (err) {
+                return new Promise(function (fullfil, reject) {
+                    fullfil({mensaje: err, hasErr: true})
+                })
+            })
+        } else if (fechas) {
+            sequelize.transaction(function (t) {
+                for (var index = 0; index < fechas.length; index++) {
+                    var fecha_inicio = fechas[index] + 'T00:00:00.000Z'
+                    var fecha_final = fechas[index] + 'T23:59:59.000Z'
+                    var condicionMarcacion = { id_empresa: empresa, verificado: false, fecha: { $between: [fecha_inicio, fecha_final] } }
+                    var consulta = ComensalesClienteEmpresa.findAll({
+                        where: condicion,
+                        include: [{ model: ComensalesMarcacionesClienteEmpresa, as: 'marcaciones', where: condicionMarcacion }],
+                        transaction: t
+                    })
+                    promesas.push(consulta)
+                }
+                return Promise.all(promesas)
+            }).then(function (result) {
+                var promesasCompletados = []
+                if (result) {
+                    sequelize.transaction(function (t) {
+                        for (var index = 0; index < result.length; index++) {
+                            if (result[i].length > 0) {
+                                if (result[i][0].marcaciones.length === 3) {
+                                    var idsMarcaciones = result[i][0].marcaciones.map(function (marcacion) {
+                                        return marcacion.id
+                                    })
+
+                                    var dato = { id_comensal: result[i][0].id, id_marcaciones: idsMarcaciones }
+                                    promesasCompletados.push(actualizarMarcacionesCompletadas(dato, t))
+                                }
+                            }
+                        }
+                        return Promise.all(promesasCompletados)
+                    }).then(function (result) {
+
+                    })
+                    // verificarMarcacionesFaltantes(historial)
+                    // res.json({ mensaje: 'Actualizado correctamente', marcacion: result })
+                } else {
+                    // res.json({ mensaje: 'No se pudo actualizar.', hasErr: true })
+                }
+            }).catch(function (err) {
+                // res.json({ mensaje: err.stack, hasErr: true })
+            })
+        } else {
+            // res.json({ mensaje: 'No se pudo verificar las marcaciones.', hasErr: true })
+        }
+    }
+
+    function actualizarMarcacionesCompletadas(dato, t) {
+        return ComensalesMarcacionesClienteEmpresa.update({
+            verificado: true
+        }, { where: { id_comensal: dato.id_comensal, id: { $in: dato.id_marcaciones } }, transaction: t }).then(function (marcacionesActualizadas) {
+            return new Promise(function (fullfil, reject) {
+                fullfil({ marcacionesActualizadas })
+            })
+        }).catch(function (err) {
+            return new Promise(function (fullfil, reject) {
+                fullfil({ hasErr: true, mensaje: err.stack})
+            })
+        })
+    }
 }
