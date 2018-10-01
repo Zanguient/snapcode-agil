@@ -180,9 +180,9 @@
                                     placeholder="Ingrese el nombre" uib-typeahead="comensal as comensal.nombre for comensal in buscarComensales($viewValue)"
                                     typeahead-wait-ms="1500" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
                                     typeahead-min-length="2" typeahead-on-select="establecerComensal($item, $model, $label, $event)"> -->
-                                <button tabindex="-1" type="button" ng-click="abrirdialogBusquedaComensales()" class="btn btn-info btn-sm">
+                                <!-- <button tabindex="-1" type="button" ng-click="abrirdialogBusquedaComensales()" class="btn btn-info btn-sm">
                                     <i class="ace-icon fa fa-search-plus bigger-110"></i>
-                                </button>
+                                </button> -->
                             </td>
                             <td>&nbsp
                                 <select ng-options="comida.id as (comida.nombre) for comida in listaComidasclienteEmpresa track by comida.id" ng-model="filtroComensales.comida">

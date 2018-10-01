@@ -2206,249 +2206,253 @@ angular.module('agil.controladores')
                             i++;
 
                         } while (worksheet['A' + row] != undefined);
-                        var arregloAporteAfp = []
-                        var arregloLugarAfp = []
-                        var arregloLugarSeguroSalud = []
-                        var arregloTipoPersona = []
-                        var arregloCargaHorario = []
-                        var arregloArega = []
-                        var arregloUbicacion = []
-                        var arregloEstadoCivil = []
-                        var arregloOtrosSeguros1 = []
-                        var arregloOtrosSeguros2 = []
-                        fichas.forEach(function (ficha, index, array) {
-                            var bandera = false
-                            if (arregloAporteAfp.length > 0) {
-                                for (var i = 0; i < arregloAporteAfp.length; i++) {
-                                    var element = arregloAporteAfp[i];
-                                    if (ficha.afp_aporte != null) {
-                                        if (element == ficha.afp_aporte) {
-                                            bandera = true
-                                        }
-                                    }
-                                }
-                                if (!bandera) {
 
-                                    arregloAporteAfp.push(ficha.afp_aporte)
-
-                                }
-                            } else {
-                                arregloAporteAfp.push(ficha.afp_aporte)
-
-                            }
-                            var bandera2 = false
-                            if (arregloLugarAfp.length > 0) {
-                                for (var i = 0; i < arregloLugarAfp.length; i++) {
-                                    var element = arregloLugarAfp[i];
-                                    if (ficha.lugar_afp != null) {
-                                        if (element == ficha.lugar_afp) {
-                                            bandera2 = true
-                                        }
-                                    }
-                                }
-                                if (!bandera2) {
-
-                                    arregloLugarAfp.push(ficha.lugar_afp)
-
-                                }
-                            } else {
-                                arregloLugarAfp.push(ficha.lugar_afp)
-
-                            }
-                            var bandera3 = false
-                            if (arregloLugarSeguroSalud.length > 0) {
-                                for (var i = 0; i < arregloLugarSeguroSalud.length; i++) {
-                                    var element = arregloLugarSeguroSalud[i];
-                                    if (ficha.lugar_seguro != null) {
-                                        if (element == ficha.lugar_seguro) {
-                                            bandera3 = true
-                                        }
-                                    }
-                                }
-                                if (!bandera3) {
-
-                                    arregloLugarSeguroSalud.push(ficha.lugar_seguro)
-
-                                }
-                            } else {
-                                arregloLugarSeguroSalud.push(ficha.lugar_seguro)
-
-                            }
-                            var bandera4 = false
-                            if (arregloTipoPersona.length > 0) {
-                                for (var i = 0; i < arregloTipoPersona.length; i++) {
-                                    var element = arregloTipoPersona[i];
-                                    if (ficha.tipo_personal != null) {
-                                        if (element == ficha.tipo_personal) {
-                                            bandera4 = true
-                                        }
-                                    }
-                                }
-                                if (!bandera4) {
-
-                                    arregloTipoPersona.push(ficha.tipo_personal)
-
-                                }
-                            } else {
-                                arregloTipoPersona.push(ficha.tipo_personal)
-
-                            }
-                            var bandera5 = false
-                            if (arregloCargaHorario.length > 0) {
-                                for (var i = 0; i < arregloCargaHorario.length; i++) {
-                                    var element = arregloCargaHorario[i];
-                                    if (ficha.carga_horario != null) {
-                                        if (element == ficha.carga_horario) {
-                                            bandera5 = true
-                                        }
-                                    }
-                                }
-                                if (!bandera5) {
-
-                                    arregloCargaHorario.push(ficha.carga_horario)
-
-                                }
-                            } else {
-                                arregloCargaHorario.push(ficha.carga_horario)
-
-                            }
-                            var bandera6 = false
-                            if (arregloArega.length > 0) {
-                                for (var i = 0; i < arregloArega.length; i++) {
-                                    var element = arregloArega[i];
-                                    if (ficha.area != null) {
-                                        if (element == ficha.area) {
-                                            bandera6 = true
-                                        }
-                                    }
-                                }
-                                if (!bandera6) {
-
-                                    arregloArega.push(ficha.area)
-
-                                }
-                            } else {
-                                arregloArega.push(ficha.area)
-
-                            }
-                            var bandera7 = false
-                            if (arregloUbicacion.length > 0) {
-                                for (var i = 0; i < arregloUbicacion.length; i++) {
-                                    var element = arregloUbicacion[i];
-                                    if (ficha.ubicacion != null) {
-                                        if (element == ficha.ubicacion) {
-                                            bandera7 = true
-                                        }
-                                    }
-                                }
-                                if (!bandera7) {
-
-                                    arregloUbicacion.push(ficha.ubicacion)
-
-                                }
-                            } else {
-                                arregloUbicacion.push(ficha.ubicacion)
-
-                            }
-                            var bandera8 = false
-                            if (arregloEstadoCivil.length > 0) {
-                                for (var i = 0; i < arregloEstadoCivil.length; i++) {
-                                    var element = arregloEstadoCivil[i];
-                                    if (ficha.estado_civil != null) {
-                                        if (element == ficha.estado_civil) {
-                                            bandera8 = true
-                                        }
-                                    }
-                                }
-                                if (!bandera8) {
-
-                                    arregloEstadoCivil.push(ficha.estado_civil)
-
-                                }
-                            } else {
-                                arregloEstadoCivil.push(ficha.estado_civil)
-
-                            }
-                            var bandera9 = false
-                            if (arregloOtrosSeguros1.length > 0) {
-                                for (var i = 0; i < arregloOtrosSeguros1.length; i++) {
-                                    var element = arregloOtrosSeguros1[i];
-                                    if (ficha.seguro1 != null) {
-                                        if (element == ficha.seguro1) {
-                                            bandera9 = true
-                                        }
-                                    }
-                                }
-                                if (!bandera9) {
-
-                                    arregloOtrosSeguros1.push(ficha.seguro1)
-
-                                }
-                            } else {
-                                arregloOtrosSeguros1.push(ficha.seguro1)
-
-                            }
-                            var bandera10 = false
-                            if (arregloOtrosSeguros2.length > 0) {
-                                for (var i = 0; i < arregloOtrosSeguros2.length; i++) {
-                                    var element = arregloOtrosSeguros2[i];
-                                    if (ficha.seguro2 != null) {
-                                        if (element == ficha.seguro2) {
-                                            bandera10 = true
-                                        }
-                                    }
-                                }
-                                if (!bandera10) {
-
-                                    arregloOtrosSeguros2.push(ficha.seguro2)
-
-                                }
-                            } else {
-                                arregloOtrosSeguros2.push(ficha.seguro2)
-
-                            }
-                            if (index === (array.length - 1)) {
-                                $scope.guardarFichasEmpleados(fichas, arregloAporteAfp,
-                                    arregloLugarAfp,
-                                    arregloLugarSeguroSalud,
-                                    arregloTipoPersona,
-                                    arregloCargaHorario,
-                                    arregloArega,
-                                    arregloUbicacion,
-                                    arregloEstadoCivil,
-                                    arregloOtrosSeguros1,
-                                    arregloOtrosSeguros2);
-                            }
-                        })
-
+                        $scope.guardarFichasEmpleados(fichas)
                     };
                     reader.readAsBinaryString(f);
                     //console.log('pacientes obtenidos')
                 }
             }
-            $scope.guardarFichasEmpleados = function (fichas, arregloAporteAfp, arregloLugarAfp,
-                arregloLugarSeguroSalud,
-                arregloTipoPersona,
-                arregloCargaHorario, arregloArega,
-                arregloUbicacion,
-                arregloEstadoCivil,
-                arregloOtrosSeguros1,
-                arregloOtrosSeguros2) {
-                var promesa = GuardarImportacionFichaEmpleados(fichas, $scope.usuario.id_empresa, arregloAporteAfp,
-                    arregloLugarAfp,
-                    arregloLugarSeguroSalud,
-                    arregloTipoPersona,
-                    arregloCargaHorario,
-                    arregloArega,
-                    arregloUbicacion,
-                    arregloEstadoCivil,
-                    arregloOtrosSeguros1,
-                    arregloOtrosSeguros2)
-                promesa.then(function (dato) {
+            $scope.guardarFichasEmpleados = function (fichas) {
+                $scope.empleadosParaGuardar = fichas
+                var empleadosArray = []
+                if ($scope.empleadosParaGuardar.length > 0) {
+                    if ($scope.empleadosParaGuardar.length > 100) {
+                        empleadosArray = $scope.empleadosParaGuardar.slice(0, 100)
+                        $scope.empleadosParaGuardar = $scope.empleadosParaGuardar.slice(100, $scope.empleadosParaGuardar.length)
+                    } else {
+                        empleadosArray = $scope.empleadosParaGuardar
+                        $scope.empleadosParaGuardar = []
+                    }
+                    var arregloAporteAfp = []
+                    var arregloLugarAfp = []
+                    var arregloLugarSeguroSalud = []
+                    var arregloTipoPersona = []
+                    var arregloCargaHorario = []
+                    var arregloArega = []
+                    var arregloUbicacion = []
+                    var arregloEstadoCivil = []
+                    var arregloOtrosSeguros1 = []
+                    var arregloOtrosSeguros2 = []
+                    empleadosArray.forEach(function (ficha, index, array) {
+                        var bandera = false
+                        if (arregloAporteAfp.length > 0) {
+                            for (var i = 0; i < arregloAporteAfp.length; i++) {
+                                var element = arregloAporteAfp[i];
+                                if (ficha.afp_aporte != null) {
+                                    if (element == ficha.afp_aporte) {
+                                        bandera = true
+                                    }
+                                }
+                            }
+                            if (!bandera) {
+
+                                arregloAporteAfp.push(ficha.afp_aporte)
+
+                            }
+                        } else {
+                            arregloAporteAfp.push(ficha.afp_aporte)
+
+                        }
+                        var bandera2 = false
+                        if (arregloLugarAfp.length > 0) {
+                            for (var i = 0; i < arregloLugarAfp.length; i++) {
+                                var element = arregloLugarAfp[i];
+                                if (ficha.lugar_afp != null) {
+                                    if (element == ficha.lugar_afp) {
+                                        bandera2 = true
+                                    }
+                                }
+                            }
+                            if (!bandera2) {
+
+                                arregloLugarAfp.push(ficha.lugar_afp)
+
+                            }
+                        } else {
+                            arregloLugarAfp.push(ficha.lugar_afp)
+
+                        }
+                        var bandera3 = false
+                        if (arregloLugarSeguroSalud.length > 0) {
+                            for (var i = 0; i < arregloLugarSeguroSalud.length; i++) {
+                                var element = arregloLugarSeguroSalud[i];
+                                if (ficha.lugar_seguro != null) {
+                                    if (element == ficha.lugar_seguro) {
+                                        bandera3 = true
+                                    }
+                                }
+                            }
+                            if (!bandera3) {
+
+                                arregloLugarSeguroSalud.push(ficha.lugar_seguro)
+
+                            }
+                        } else {
+                            arregloLugarSeguroSalud.push(ficha.lugar_seguro)
+
+                        }
+                        var bandera4 = false
+                        if (arregloTipoPersona.length > 0) {
+                            for (var i = 0; i < arregloTipoPersona.length; i++) {
+                                var element = arregloTipoPersona[i];
+                                if (ficha.tipo_personal != null) {
+                                    if (element == ficha.tipo_personal) {
+                                        bandera4 = true
+                                    }
+                                }
+                            }
+                            if (!bandera4) {
+
+                                arregloTipoPersona.push(ficha.tipo_personal)
+
+                            }
+                        } else {
+                            arregloTipoPersona.push(ficha.tipo_personal)
+
+                        }
+                        var bandera5 = false
+                        if (arregloCargaHorario.length > 0) {
+                            for (var i = 0; i < arregloCargaHorario.length; i++) {
+                                var element = arregloCargaHorario[i];
+                                if (ficha.carga_horario != null) {
+                                    if (element == ficha.carga_horario) {
+                                        bandera5 = true
+                                    }
+                                }
+                            }
+                            if (!bandera5) {
+
+                                arregloCargaHorario.push(ficha.carga_horario)
+
+                            }
+                        } else {
+                            arregloCargaHorario.push(ficha.carga_horario)
+
+                        }
+                        var bandera6 = false
+                        if (arregloArega.length > 0) {
+                            for (var i = 0; i < arregloArega.length; i++) {
+                                var element = arregloArega[i];
+                                if (ficha.area != null) {
+                                    if (element == ficha.area) {
+                                        bandera6 = true
+                                    }
+                                }
+                            }
+                            if (!bandera6) {
+
+                                arregloArega.push(ficha.area)
+
+                            }
+                        } else {
+                            arregloArega.push(ficha.area)
+
+                        }
+                        var bandera7 = false
+                        if (arregloUbicacion.length > 0) {
+                            for (var i = 0; i < arregloUbicacion.length; i++) {
+                                var element = arregloUbicacion[i];
+                                if (ficha.ubicacion != null) {
+                                    if (element == ficha.ubicacion) {
+                                        bandera7 = true
+                                    }
+                                }
+                            }
+                            if (!bandera7) {
+
+                                arregloUbicacion.push(ficha.ubicacion)
+
+                            }
+                        } else {
+                            arregloUbicacion.push(ficha.ubicacion)
+
+                        }
+                        var bandera8 = false
+                        if (arregloEstadoCivil.length > 0) {
+                            for (var i = 0; i < arregloEstadoCivil.length; i++) {
+                                var element = arregloEstadoCivil[i];
+                                if (ficha.estado_civil != null) {
+                                    if (element == ficha.estado_civil) {
+                                        bandera8 = true
+                                    }
+                                }
+                            }
+                            if (!bandera8) {
+
+                                arregloEstadoCivil.push(ficha.estado_civil)
+
+                            }
+                        } else {
+                            arregloEstadoCivil.push(ficha.estado_civil)
+
+                        }
+                        var bandera9 = false
+                        if (arregloOtrosSeguros1.length > 0) {
+                            for (var i = 0; i < arregloOtrosSeguros1.length; i++) {
+                                var element = arregloOtrosSeguros1[i];
+                                if (ficha.seguro1 != null) {
+                                    if (element == ficha.seguro1) {
+                                        bandera9 = true
+                                    }
+                                }
+                            }
+                            if (!bandera9) {
+
+                                arregloOtrosSeguros1.push(ficha.seguro1)
+
+                            }
+                        } else {
+                            arregloOtrosSeguros1.push(ficha.seguro1)
+
+                        }
+                        var bandera10 = false
+                        if (arregloOtrosSeguros2.length > 0) {
+                            for (var i = 0; i < arregloOtrosSeguros2.length; i++) {
+                                var element = arregloOtrosSeguros2[i];
+                                if (ficha.seguro2 != null) {
+                                    if (element == ficha.seguro2) {
+                                        bandera10 = true
+                                    }
+                                }
+                            }
+                            if (!bandera10) {
+
+                                arregloOtrosSeguros2.push(ficha.seguro2)
+
+                            }
+                        } else {
+                            arregloOtrosSeguros2.push(ficha.seguro2)
+
+                        }
+                        if (index === (array.length - 1)) {
+                            var promesa = GuardarImportacionFichaEmpleados(empleadosArray, $scope.usuario.id_empresa, arregloAporteAfp,
+                                arregloLugarAfp,
+                                arregloLugarSeguroSalud,
+                                arregloTipoPersona,
+                                arregloCargaHorario,
+                                arregloArega,
+                                arregloUbicacion,
+                                arregloEstadoCivil,
+                                arregloOtrosSeguros1,
+                                arregloOtrosSeguros2)
+                            promesa.then(function (dato) {
+                                //$scope.recargarItemsTabla();
+                                if (res.hasError) {
+                                    $scope.mostrarMensaje(res.mensaje);
+                                    blockUI.stop();
+                                } else {
+                                    $scope.mostrarMensaje("del codigo " + empleadosArray[0].codigo + " hasta el codigo " + empleadosArray[empleadosArray.length - 1].codigo + " ingresados satisfactoriamente, faltan procesar " + $scope.empleadosParaGuardar.length + " fichas empleados")
+                                    $scope.guardarFichasEmpleados($scope.empleadosParaGuardar)
+                                }
+                            })
+                        }
+                    })
+                } else {
                     $scope.recargarItemsTabla();
-                    $scope.mostrarMensaje(dato.mensaje)
                     blockUI.stop();
-                })
+                }
+                
             }
             $scope.subirExcelRTurnoEmpleados = function (event) {
                 blockUI.start();

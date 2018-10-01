@@ -105,7 +105,7 @@ angular.module('agil.controladores')
                     $scope.obtenerGerencias()
                     $scope.obtenerHistoriales()
                     $scope.obtenerComensales()
-                    $scope.filtroMarcaciones = {desde: "", hasta: "", columna:'fecha', direccion:'asc'}
+                    $scope.filtroMarcaciones = { desde: "", hasta: "", columna: 'fecha', direccion: 'asc' }
                     setTimeout(function () {
                         aplicarDatePickers();
                     }, 200);
@@ -128,9 +128,9 @@ angular.module('agil.controladores')
 
             $scope.filtrarAlertas = function () {
                 $scope.alertaMarcacionesFiltradas = $scope.alertaMarcaciones.filter(function (alerta) {
-                    var fecha_alerta = new Date(alerta.fecha.split('/').reverse().join('-')+'T04:00:00.000Z')
-                    var desde = new Date($scope.filtroMarcaciones.desde.split('/').reverse().join('-')+'T00:00:00.000Z') 
-                    var hasta = new Date($scope.filtroMarcaciones.hasta.split('/').reverse().join('-')+'T23:59:59.000Z')
+                    var fecha_alerta = new Date(alerta.fecha.split('/').reverse().join('-') + 'T04:00:00.000Z')
+                    var desde = new Date($scope.filtroMarcaciones.desde.split('/').reverse().join('-') + 'T00:00:00.000Z')
+                    var hasta = new Date($scope.filtroMarcaciones.hasta.split('/').reverse().join('-') + 'T23:59:59.000Z')
                     if (fecha_alerta >= desde && fecha_alerta <= hasta) {
                         return true
                     }
@@ -1552,6 +1552,16 @@ angular.module('agil.controladores')
                             })
                             cabecera.unshift('fecha'.toUpperCase())
                             cabecera.push('observación'.toUpperCase())
+                            var listaComensales;
+                            if ($scope.filtroComensales.comensal.length > 0) {
+                                listaComensales = $scope.filtroComensales.comensal.map(function (comensal) {
+                                    return comensal.id
+                                })
+                            } else {
+                                listaComensales = []
+                            }
+                            $scope.filtroComensales.comensalesProcesados = listaComensales
+                            $scope.paginator.filter = $scope.filtroComensales
                             var promHistorial = ObtenerReporteComedor($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, $scope.paginator)
                             promHistorial.then(function (res) {
                                 $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true, true)
@@ -1622,6 +1632,10 @@ angular.module('agil.controladores')
                                         $scope.imprimirReporteComedorExcel(repo, repo[0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar, res.periodo)
                                     }
                                 } else {
+                                    if (reportesGerencias.length === 0) {
+                                        $scope.mostrarMensaje('No existen datos.')
+                                        return
+                                    }
                                     for (var _index = 0; _index < reportesGerencias.length; _index++) {
                                         $scope.imprimirReporteComedor(reportesGerencias[_index], reportesGerencias[_index][0].gerencia, cabecera, comidasEmpresa, tipoCambioDollar, res.periodo)
                                     }
@@ -1642,6 +1656,16 @@ angular.module('agil.controladores')
                 var tipoCambioDollar = 0
                 var promesa = ObtenerCambioMoneda(new Date())
                 promesa.then(function (res) {
+                    var listaComensales;
+                    if ($scope.filtroComensales.comensal.length > 0) {
+                        listaComensales = $scope.filtroComensales.comensal.map(function (comensal) {
+                            return comensal.id
+                        })
+                    } else {
+                        listaComensales = []
+                    }
+
+                    $scope.filtroComensales.comensalesProcesados = listaComensales
                     tipoCambioDollar = res.monedaCambio.dolar
                     $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true)
                     $scope.paginator.filter = $scope.filtroComensales
@@ -1650,6 +1674,16 @@ angular.module('agil.controladores')
                         $scope.listaGerenciasClienteEmpresa = res.lista
                         var promComidas = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id)
                         promComidas.then(function (comidas) {
+                            var listaComensales;
+                            if ($scope.filtroComensales.comensal.length > 0) {
+                                listaComensales = $scope.filtroComensales.comensal.map(function (comensal) {
+                                    return comensal.id
+                                })
+                            } else {
+                                listaComensales = []
+                            }
+
+                            $scope.filtroComensales.comensalesProcesados = listaComensales
                             var comidasEmpresa = comidas.lista
                             var cabecera = []
                             comidasEmpresa.forEach(function (comida) {
@@ -1657,6 +1691,7 @@ angular.module('agil.controladores')
                             })
                             cabecera.unshift('Empleado'.toUpperCase())
                             cabecera.push('Total general'.toUpperCase())
+
                             var promHistorial = ObtenerReporteEmpresa($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, $scope.paginator)
                             promHistorial.then(function (res) {
                                 $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true, true)
@@ -1791,7 +1826,7 @@ angular.module('agil.controladores')
                             } else {
                                 listaComensales = []
                             }
-                            
+
                             $scope.filtroComensales.comensalesProcesados = listaComensales
                             var promHistorial = ObtenerReporteComensal($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.id ? $scope.filtroComensales.empresaCliente.id : $scope.empresaExternaSeleccionada.id : $scope.empresaExternaSeleccionada.id, $scope.paginator)
                             promHistorial.then(function (res) {
@@ -2290,6 +2325,10 @@ angular.module('agil.controladores')
             }
 
             $scope.imprimirReporteComedor = function (reporte, gerencia, cabecera, comidasEmpresa, dollar, periodo) {
+                if (reporte.length === 0) {
+                    $scope.mostrarMensaje('No existen datos.')
+                    return
+                }
                 var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
                 var stream = doc.pipe(blobStream());
                 var y = 170
@@ -2308,7 +2347,7 @@ angular.module('agil.controladores')
                 var pagina = 1
                 var cubeX = 100
                 var totalPaginas = Math.ceil(1 / itemsPorPagina);
-                $scope.cabeceraReporteComedor(reporte, doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase(), inicio_periodo, final_periodo);
+                $scope.cabeceraReporteComedor(reporte, doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, gerencia ? gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase(), inicio_periodo, final_periodo, 0);
                 var total_desayunos = 0
                 var total_almuerzos = 0
                 var total_cenas = 0
@@ -2345,7 +2384,7 @@ angular.module('agil.controladores')
                         y = 170;
                         items = 0;
                         pagina = pagina + 1;
-                        $scope.cabeceraReporteComedor(reporte, doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, reporte[i].gerencia ? reporte[i].gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase(), inicio_periodo, final_periodo);
+                        $scope.cabeceraReporteComedor(reporte, doc, pagina, totalPaginas, cabecera, $scope.filtroComensales.empresaCliente ? $scope.filtroComensales.empresaCliente.razon_social ? $scope.filtroComensales.empresaCliente.razon_social : $scope.empresaExternaSeleccionada.razon_social : $scope.empresaExternaSeleccionada.razon_social, reporte[i].gerencia ? reporte[i].gerencia.nombre.toUpperCase() : 'Sin asignación.'.toUpperCase(), inicio_periodo, final_periodo, i);
                     }
                 }
                 doc.rect(cubeX, y, 80, 20).stroke()
@@ -2410,6 +2449,10 @@ angular.module('agil.controladores')
             }
 
             $scope.imprimirReporteEmpresa = function (reporte, gerencia, cabecera, comidasEmpresa, dollar, periodo) {
+                if (reporte.length === 0) {
+                    $scope.mostrarMensaje('No existen datos.')
+                    return
+                }
                 var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
                 var stream = doc.pipe(blobStream());
                 var y = 190
@@ -2447,7 +2490,7 @@ angular.module('agil.controladores')
                     total_cenas += reporte[i].cena.cantidad
                     xSeparacion = 0
                     doc.font('Helvetica', 8).fill('black')
-                    doc.text(reporte[i].nombre, cubeX + 3, y + 6, {width: 147});
+                    doc.text(reporte[i].nombre, cubeX + 3, y + 6, { width: 147 });
                     doc.text(reporte[i].desayuno.cantidad, cubeX + 80 + 95 + 9, y + 7)
                     doc.text(reporte[i].almuerzo.cantidad, cubeX + 80 + 175 + 9, y + 7)
                     doc.text(reporte[i].cena.cantidad, cubeX + 80 + 255 + 9, y + 7)
@@ -2599,7 +2642,7 @@ angular.module('agil.controladores')
                 });
             }
 
-            $scope.cabeceraReporteComedor = function (reporte, doc, pagina, totalPaginas, cabecera, empresa, comedor, inicio_periodo, final_periodo) {
+            $scope.cabeceraReporteComedor = function (reporte, doc, pagina, totalPaginas, cabecera, empresa, comedor, inicio_periodo, final_periodo, i) {
                 var y = 150;
                 var xSeparacion = 0
                 var cubeX = 100
@@ -2623,8 +2666,8 @@ angular.module('agil.controladores')
                     doc.text("PERIODO " + reporte[0].fecha.split('-').reverse().join('/') + ' A ' + reporte[reporte.length - 1].fecha.split('-').reverse().join('/'), 150, 110, { width: 300, align: "center" });
                 }
 
-                if ($scope.filtroComensales.comensal) {
-                    doc.text("COMENSAL " + reporte[0].fecha.split('-').reverse().join('/') + ' A ' + reporte[reporte.length - 1].fecha.split('-').reverse().join('/'), 150, 130, { width: 300, align: "center" });
+                if ($scope.filtroComensales.comensal.length === 1) {
+                    doc.text("COMENSAL " + $scope.filtroComensales.comensal[0].name, 150, 130, { width: 300, align: "center" });
                 }
 
                 doc.font('Helvetica-Bold', 8);
@@ -2742,6 +2785,7 @@ angular.module('agil.controladores')
                 var finalo = new Date(final_periodo)
                 var dif = Math.floor(Math.abs(finalo - inicial) / 36e5);//(((finalo.getTime() - inicial.getTime()) / 1000) /60) /60
                 var hoy = new Date()
+
                 var fecha_inicial_reporte = new Date(reporte[0].historial[0].fecha)
                 var fecha_final_reporte = new Date(reporte[0].historial[reporte[0].historial.length - 1].fecha)
                 if (comedor) {
@@ -2807,7 +2851,7 @@ angular.module('agil.controladores')
                 doc.text(empresa, 300, 100 + y);
                 doc.text("Empresa", 124, 100 + y);
                 doc.text("Periodo", 124, 120 + y);
-                doc.text("Empleado", 124, 140 + y);
+                doc.text("Fecha", 124, 140 + y);
                 doc.text("DESAYUNO", 240, 140 + y);
                 doc.text("ALMUERZO", 320, 140 + y);
                 doc.text("CENA", 410, 140 + y);
@@ -2936,7 +2980,7 @@ angular.module('agil.controladores')
 
             $scope.cerrardialogAlertaMarcaciones = function () {
                 $scope.activeModal = 0
-                $scope.filtroMarcaciones = {desde: '', hasta:'', columna:'fecha', direccion: 'asc'}
+                $scope.filtroMarcaciones = { desde: '', hasta: '', columna: 'fecha', direccion: 'asc' }
                 $scope.alertaMarcaciones = []
                 $scope.cerrarPopup($scope.dialogAlertasMarcaciones);
             }

@@ -2089,189 +2089,685 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         })
     router.route('/empleados/empresa/:id_empresa/fichas/excel/upload')
         .post(function (req, res) {
-
-            req.body.arregloAporteAfp.forEach(function (dato, index, array) {
+            Tipo.find({
+                where: { nombre_corto: 'NAC' }
+            }).then(function (tipoEncontradoNAC) {
                 Tipo.find({
-                    where: { nombre_corto: 'RRHH_ASLP', id_empresa: req.params.id_empresa }
-                }).then(function (tipoEncontrado) {
-                    Clase.findOrCreate({
-                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
-                        defaults: {
-                            nombre: dato,
-                            id_tipo: tipoEncontrado.dataValues.id,
-                            habilitado: true
-                        }
-                    }).spread(function (datos, cread) {
-                        if (index === (array.length - 1)) {
-                            req.body.arregloLugarAfp.forEach(function (dato, index, array) {
+                    where: { nombre_corto: 'DEP' }
+                }).then(function (tipoEncontradoDEP) {
+                    Tipo.find({
+                        where: { nombre_corto: 'MUN' }
+                    }).then(function (tipoEncontradoMUN) {
+                        Tipo.find({
+                            where: { nombre_corto: 'LOC' }
+                        }).then(function (tipoEncontradoLOC) {
+                            Tipo.find({
+                                where: { nombre_corto: 'RRHH_ASLP', id_empresa: req.params.id_empresa }
+                            }).then(function (tipoEncontradoRRHH_ASLP) {
                                 Tipo.find({
                                     where: { nombre_corto: 'RRHH_LSS', id_empresa: req.params.id_empresa }
-                                }).then(function (tipoEncontrado) {
-                                    Clase.findOrCreate({
-                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
-                                        defaults: {
-                                            nombre: dato,
-                                            id_tipo: tipoEncontrado.dataValues.id,
-                                            habilitado: true
-                                        }
-                                    }).spread(function (datos, cread) {
-                                        if (index === (array.length - 1)) {
-                                            req.body.arregloLugarSeguroSalud.forEach(function (dato, index, array) {
+                                }).then(function (tipoEncontradoRRHH_LSS) {
+                                    Tipo.find({
+                                        where: { nombre_corto: 'RRHH_TP', id_empresa: req.params.id_empresa }
+                                    }).then(function (tipoEncontradoRRHH_TP) {
+                                        Tipo.find({
+                                            where: { nombre_corto: 'RRHH_CH', id_empresa: req.params.id_empresa }
+                                        }).then(function (tipoEncontradoRRHH_CH) {
+                                            Tipo.find({
+                                                where: { nombre_corto: 'RRHH_AREA', id_empresa: req.params.id_empresa }
+                                            }).then(function (tipoEncontradoRRHH_AREA) {
                                                 Tipo.find({
-                                                    where: { nombre_corto: 'RRHH_LSS', id_empresa: req.params.id_empresa }
-                                                }).then(function (tipoEncontrado) {
-                                                    Clase.findOrCreate({
-                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
-                                                        defaults: {
-                                                            nombre: dato,
-                                                            id_tipo: tipoEncontrado.dataValues.id,
-                                                            habilitado: true
-                                                        }
-                                                    }).spread(function (datos, cread) {
-                                                        if (index === (array.length - 1)) {
-                                                            req.body.arregloTipoPersona.forEach(function (dato, index, array) {
-                                                                Tipo.find({
-                                                                    where: { nombre_corto: 'RRHH_TP', id_empresa: req.params.id_empresa }
-                                                                }).then(function (tipoEncontrado) {
-                                                                    Clase.findOrCreate({
-                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                    where: { nombre_corto: 'RRHH_UBI', id_empresa: req.params.id_empresa }
+                                                }).then(function (tipoEncontradoRRHH_UBI) {
+                                                    Tipo.find({
+                                                        where: { nombre_corto: 'RRHH_EC', id_empresa: req.params.id_empresa }
+                                                    }).then(function (tipoEncontradoRRHH_EC) {
+                                                        Tipo.find({
+                                                            where: { nombre_corto: 'RRHH_OST', id_empresa: req.params.id_empresa }
+                                                        }).then(function (tipoEncontradoRRHH_OST) {
+                                                            var promises = []
+                                                            sequelize.transaction(function (t) {
+                                                                req.body.arregloAporteAfp.forEach(function (dato, index, array) {
+                                                                    promises.push(Clase.findOrCreate({
+                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontradoRRHH_ASLP.dataValues.id },
                                                                         defaults: {
                                                                             nombre: dato,
-                                                                            id_tipo: tipoEncontrado.dataValues.id,
+                                                                            id_tipo: tipoEncontradoRRHH_ASLP.dataValues.id,
                                                                             habilitado: true
-                                                                        }
+                                                                        }, transaction: t,
+                                                                        lock: t.LOCK.UPDATE
                                                                     }).spread(function (datos, cread) {
-                                                                        if (index === (array.length - 1)) {
-                                                                            req.body.arregloCargaHorario.forEach(function (dato, index, array) {
-                                                                                Tipo.find({
-                                                                                    where: { nombre_corto: 'RRHH_CH', id_empresa: req.params.id_empresa }
-                                                                                }).then(function (tipoEncontrado) {
-                                                                                    Clase.findOrCreate({
-                                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
-                                                                                        defaults: {
-                                                                                            nombre: dato,
-                                                                                            id_tipo: tipoEncontrado.dataValues.id,
-                                                                                            habilitado: true
-                                                                                        }
-                                                                                    }).spread(function (datos, cread) {
-                                                                                        if (index === (array.length - 1)) {
-                                                                                            req.body.arregloArega.forEach(function (dato, index, array) {
-                                                                                                Tipo.find({
-                                                                                                    where: { nombre_corto: 'RRHH_AREA', id_empresa: req.params.id_empresa }
-                                                                                                }).then(function (tipoEncontrado) {
-                                                                                                    Clase.findOrCreate({
-                                                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
-                                                                                                        defaults: {
-                                                                                                            nombre: dato,
-                                                                                                            id_tipo: tipoEncontrado.dataValues.id,
-                                                                                                            habilitado: true
-                                                                                                        }
-                                                                                                    }).spread(function (datos, cread) {
-                                                                                                        if (index === (array.length - 1)) {
-                                                                                                            req.body.arregloUbicacion.forEach(function (dato, index, array) {
-                                                                                                                Tipo.find({
-                                                                                                                    where: { nombre_corto: 'RRHH_UBI', id_empresa: req.params.id_empresa }
-                                                                                                                }).then(function (tipoEncontrado) {
-                                                                                                                    Clase.findOrCreate({
-                                                                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
-                                                                                                                        defaults: {
-                                                                                                                            nombre: dato,
-                                                                                                                            id_tipo: tipoEncontrado.dataValues.id,
-                                                                                                                            habilitado: true
-                                                                                                                        }
-                                                                                                                    }).spread(function (datos, cread) {
-                                                                                                                        if (index === (array.length - 1)) {
-                                                                                                                            req.body.arregloEstadoCivil.forEach(function (dato, index, array) {
-                                                                                                                                Tipo.find({
-                                                                                                                                    where: { nombre_corto: 'RRHH_EC', id_empresa: req.params.id_empresa }
-                                                                                                                                }).then(function (tipoEncontrado) {
-                                                                                                                                    Clase.findOrCreate({
-                                                                                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
-                                                                                                                                        defaults: {
-                                                                                                                                            nombre: dato,
-                                                                                                                                            id_tipo: tipoEncontrado.dataValues.id,
-                                                                                                                                            habilitado: true
-                                                                                                                                        }
-                                                                                                                                    }).spread(function (datos, cread) {
-                                                                                                                                        if (index === (array.length - 1)) {
-                                                                                                                                            req.body.arregloOtrosSeguros1.forEach(function (dato, index, array) {
-                                                                                                                                                Tipo.find({
-                                                                                                                                                    where: { nombre_corto: 'RRHH_OST', id_empresa: req.params.id_empresa }
-                                                                                                                                                }).then(function (tipoEncontrado) {
-                                                                                                                                                    Clase.findOrCreate({
-                                                                                                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
-                                                                                                                                                        defaults: {
-                                                                                                                                                            nombre: dato,
-                                                                                                                                                            id_tipo: tipoEncontrado.dataValues.id,
-                                                                                                                                                            habilitado: true
-                                                                                                                                                        }
-                                                                                                                                                    }).spread(function (datos, cread) {
-                                                                                                                                                        if (index === (array.length - 1)) {
-                                                                                                                                                            if (req.body.arregloOtrosSeguros2.length > 0) {
-                                                                                                                                                                req.body.arregloOtrosSeguros2.forEach(function (dato, index, array) {
-                                                                                                                                                                    Tipo.find({
-                                                                                                                                                                        where: { nombre_corto: 'RRHH_OST', id_empresa: req.params.id_empresa }
-                                                                                                                                                                    }).then(function (tipoEncontrado) {
-                                                                                                                                                                        Clase.findOrCreate({
-                                                                                                                                                                            where: { nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
-                                                                                                                                                                            defaults: {
-                                                                                                                                                                                habilitado: true,
-                                                                                                                                                                                nombre: dato,
-                                                                                                                                                                                id_tipo: tipoEncontrado.dataValues.id,
-                                                                                                                                                                                habilitado: true
-                                                                                                                                                                            }
-                                                                                                                                                                        }).spread(function (datos, cread) {
-                                                                                                                                                                            if (index === (array.length - 1)) {
-                                                                                                                                                                                guardarFichas(req, res)
-                                                                                                                                                                            }
-                                                                                                                                                                        })
-                                                                                                                                                                    })
-                                                                                                                                                                })
-                                                                                                                                                            } else {
-                                                                                                                                                                if (index === (array.length - 1)) {
-                                                                                                                                                                    guardarFichas(req, res)
-                                                                                                                                                                }
-                                                                                                                                                            }
-                                                                                                                                                        }
-                                                                                                                                                    })
-                                                                                                                                                })
-                                                                                                                                            })
-                                                                                                                                        }
-                                                                                                                                    })
-                                                                                                                                })
-                                                                                                                            })
-                                                                                                                        }
-                                                                                                                    })
-                                                                                                                })
-                                                                                                            })
-                                                                                                        }
-                                                                                                    })
-                                                                                                })
-                                                                                            })
-                                                                                        }
-                                                                                    })
-                                                                                })
-                                                                            })
-                                                                        }
-                                                                    })
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            fulfill(datos);
+                                                                        });
+                                                                    }).catch(function (err) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                        });
+                                                                    }))
                                                                 })
-                                                            })
-                                                        }
+                                                                req.body.arregloLugarAfp.forEach(function (dato, index, array) {
+                                                                    promises.push(Clase.findOrCreate({
+                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontradoRRHH_LSS.dataValues.id },
+                                                                        defaults: {
+                                                                            nombre: dato,
+                                                                            id_tipo: tipoEncontradoRRHH_LSS.dataValues.id,
+                                                                            habilitado: true
+                                                                        }, transaction: t,
+                                                                        lock: t.LOCK.UPDATE
+                                                                    }).spread(function (datos, cread) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            fulfill(datos);
+                                                                        });
+                                                                    }).catch(function (err) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                        });
+                                                                    }))
+                                                                })
+                                                                req.body.arregloLugarSeguroSalud.forEach(function (dato, index, array) {
+                                                                    promises.push(Clase.findOrCreate({
+                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontradoRRHH_LSS.dataValues.id },
+                                                                        defaults: {
+                                                                            nombre: dato,
+                                                                            id_tipo: tipoEncontradoRRHH_LSS.dataValues.id,
+                                                                            habilitado: true
+                                                                        }, transaction: t,
+                                                                        lock: t.LOCK.UPDATE
+                                                                    }).spread(function (datos, cread) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            fulfill(datos);
+                                                                        });
+                                                                    }).catch(function (err) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                        });
+                                                                    }))
+                                                                })
+                                                                req.body.arregloTipoPersona.forEach(function (dato, index, array) {
+                                                                    promises.push(Clase.findOrCreate({
+                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontradoRRHH_TP.dataValues.id },
+                                                                        defaults: {
+                                                                            nombre: dato,
+                                                                            id_tipo: tipoEncontradoRRHH_TP.dataValues.id,
+                                                                            habilitado: true
+                                                                        }, transaction: t,
+                                                                        lock: t.LOCK.UPDATE
+                                                                    }).spread(function (datos, cread) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            fulfill(datos);
+                                                                        });
+                                                                    }).catch(function (err) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                        });
+                                                                    }))
+                                                                })
+                                                                req.body.arregloCargaHorario.forEach(function (dato, index, array) {
+                                                                    promises.push(Clase.findOrCreate({
+                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontradoRRHH_CH.dataValues.id },
+                                                                        defaults: {
+                                                                            nombre: dato,
+                                                                            id_tipo: tipoEncontradoRRHH_CH.dataValues.id,
+                                                                            habilitado: true
+                                                                        }, transaction: t,
+                                                                        lock: t.LOCK.UPDATE
+                                                                    }).spread(function (datos, cread) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            fulfill(datos);
+                                                                        });
+                                                                    }).catch(function (err) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                        });
+                                                                    }))
+                                                                })
+                                                                req.body.arregloArega.forEach(function (dato, index, array) {
+                                                                    promises.push(Clase.findOrCreate({
+                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontradoRRHH_AREA.dataValues.id },
+                                                                        defaults: {
+                                                                            nombre: dato,
+                                                                            id_tipo: tipoEncontradoRRHH_AREA.dataValues.id,
+                                                                            habilitado: true
+                                                                        }, transaction: t,
+                                                                        lock: t.LOCK.UPDATE
+                                                                    }).spread(function (datos, cread) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            fulfill(datos);
+                                                                        });
+                                                                    }).catch(function (err) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                        });
+                                                                    }))
+                                                                })
+                                                                req.body.arregloUbicacion.forEach(function (dato, index, array) {
+                                                                    promises.push(Clase.findOrCreate({
+                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontradoRRHH_UBI.dataValues.id },
+                                                                        defaults: {
+                                                                            nombre: dato,
+                                                                            id_tipo: tipoEncontradoRRHH_UBI.dataValues.id,
+                                                                            habilitado: true
+                                                                        }, transaction: t,
+                                                                        lock: t.LOCK.UPDATE
+                                                                    }).spread(function (datos, cread) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            fulfill(datos);
+                                                                        });
+                                                                    }).catch(function (err) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                        });
+                                                                    }))
+                                                                })
+                                                                req.body.arregloEstadoCivil.forEach(function (dato, index, array) {
+                                                                    promises.push(Clase.findOrCreate({
+                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontradoRRHH_EC.dataValues.id },
+                                                                        defaults: {
+                                                                            nombre: dato,
+                                                                            id_tipo: tipoEncontradoRRHH_EC.dataValues.id,
+                                                                            habilitado: true
+                                                                        }, transaction: t,
+                                                                        lock: t.LOCK.UPDATE
+                                                                    }).spread(function (datos, cread) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            fulfill(datos);
+                                                                        });
+                                                                    }).catch(function (err) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                        });
+                                                                    }))
+                                                                })
+                                                                req.body.arregloOtrosSeguros1.forEach(function (dato, index, array) {
+                                                                    promises.push(Clase.findOrCreate({
+                                                                        where: { habilitado: true, nombre: dato, id_tipo: tipoEncontradoRRHH_OST.dataValues.id },
+                                                                        defaults: {
+                                                                            nombre: dato,
+                                                                            id_tipo: tipoEncontradoRRHH_OST.dataValues.id,
+                                                                            habilitado: true
+                                                                        }, transaction: t,
+                                                                        lock: t.LOCK.UPDATE
+                                                                    }).spread(function (datos, cread) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            fulfill(datos);
+                                                                        });
+                                                                    }).catch(function (err) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                        });
+                                                                    }))
+                                                                })
+                                                                req.body.arregloOtrosSeguros2.forEach(function (dato, index, array) {
+                                                                    promises.push(Clase.findOrCreate({
+                                                                        where: { nombre: dato, id_tipo: tipoEncontradoRRHH_OST.dataValues.id },
+                                                                        defaults: {
+                                                                            habilitado: true,
+                                                                            nombre: dato,
+                                                                            id_tipo: tipoEncontradoRRHH_OST.dataValues.id,
+                                                                            habilitado: true
+                                                                        }, transaction: t,
+                                                                        lock: t.LOCK.UPDATE
+                                                                    }).spread(function (datos, cread) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            fulfill(datos);
+                                                                        });
+                                                                    }).catch(function (err) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                        });
+                                                                    }))
+                                                                })
+
+                                                                req.body.fichas.forEach(function (empleado, index, array) {
+                                                                    promises.push(MedicoPaciente.find({
+                                                                        where: { codigo: empleado.codigo, id_empresa: req.params.id_empresa }, transaction: t
+                                                                        , include: [{ model: Persona, as: 'persona' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', required: false, limit: 1, order: [["id", "desc"]] }]
+                                                                    }).then(function (pacienteFound) {
+                                                                        if (pacienteFound != null) {
+                                                                            return Clase.find({
+                                                                                where: { habilitado: true, nombre: empleado.nacionalidad, id_tipo: tipoEncontradoNAC.dataValues.id }, transaction: t
+                                                                            }).then(function (claseNacEncontrada) {
+                                                                                return Clase.find({
+                                                                                    where: { habilitado: true, nombre: empleado.departamento, id_tipo: tipoEncontradoDEP.dataValues.id }, transaction: t
+                                                                                }).then(function (claseDepEncontrada) {
+                                                                                    return Clase.find({
+                                                                                        where: { habilitado: true, nombre: empleado.provincia, id_tipo: tipoEncontradoMUN.dataValues.id }, transaction: t
+                                                                                    }).then(function (claseMunEncontrada) {
+                                                                                        return Clase.find({
+                                                                                            where: { habilitado: true, nombre: empleado.provincia, id_tipo: tipoEncontradoLOC.dataValues.id }, transaction: t
+                                                                                        }).then(function (claseLocEncontrada) {
+                                                                                            return Clase.find({
+                                                                                                where: { habilitado: true, nombre: empleado.estado_civil, id_tipo: tipoEncontradoRRHH_EC.dataValues.id }, transaction: t
+                                                                                            }).then(function (claseEncontrada) {
+                                                                                                var idEstC= (claseEncontrada) ? claseEncontrada.id : null
+                                                                                                var idNac = (claseNacEncontrada) ? claseNacEncontrada.id : null
+                                                                                                var idDep = (claseDepEncontrada) ? claseDepEncontrada.id : null
+                                                                                                var idProv = (claseMunEncontrada) ? claseMunEncontrada.id : null                                                                                               
+                                                                                                var idLoc = (claseLocEncontrada) ? claseLocEncontrada.id : null
+                                                                                                /*  if (!pacienteFound.persona) {
+                                                                                                     console.log(pacienteFound)
+                                                                                                     console.log("pacienteFound")
+                                                                                                 } */
+                                                                                                return Persona.update({
+                                                                                                    id_estado_civil:idEstC,
+                                                                                                    id_pais_nacimiento: idNac,
+                                                                                                    id_ciudad_nacimiento: idDep,
+                                                                                                    id_provincia_nacimiento: idProv,
+                                                                                                    id_localidad_nacimiento: idLoc
+                                                                                                }, {
+                                                                                                        where: { id: pacienteFound.persona.id }, transaction: t
+                                                                                                    }).then(function (PersonaActualizada) {
+                                                                                                        return Clase.find({
+                                                                                                            where: { habilitado: true, nombre: empleado.afp_aporte, id_tipo: tipoEncontradoRRHH_ASLP.dataValues.id }, transaction: t
+                                                                                                        }).then(function (claseAfpEncontrada) {
+                                                                                                            return Clase.find({
+                                                                                                                where: { habilitado: true, nombre: empleado.tipo_personal, id_tipo: tipoEncontradoRRHH_TP.dataValues.id }, transaction: t
+                                                                                                            }).then(function (clasePersonaEncontrada) {
+                                                                                                                return Clase.find({
+                                                                                                                    where: { habilitado: true, nombre: empleado.carga_horario, id_tipo: tipoEncontradoRRHH_CH.dataValues.id }, transaction: t
+                                                                                                                }).then(function (claseCargaEncontrada) {
+                                                                                                                    return Clase.find({
+                                                                                                                        where: { habilitado: true, nombre: empleado.area, id_tipo: tipoEncontradoRRHH_AREA.dataValues.id }, transaction: t
+                                                                                                                    }).then(function (claseAreaEncontrada) {
+                                                                                                                        return Clase.find({
+                                                                                                                            where: { habilitado: true, nombre: empleado.ubicacion, id_tipo: tipoEncontradoRRHH_UBI.dataValues.id }, transaction: t
+                                                                                                                        }).then(function (claseUbicacionEncontrada) {
+                                                                                                                            return Clase.find({
+                                                                                                                                where: { habilitado: true, nombre: empleado.lugar_afp, id_tipo: tipoEncontradoRRHH_LSS.dataValues.id }, transaction: t
+                                                                                                                            }).then(function (claseLugarSeguroAfpEncontrada) {
+                                                                                                                                return Clase.find({
+                                                                                                                                    where: { habilitado: true, nombre: empleado.lugar_seguro, id_tipo: tipoEncontradoRRHH_LSS.dataValues.id }, transaction: t
+                                                                                                                                }).then(function (claseLugarSeguroEncontrada) {
+                                                                                                                                    var id_tipo_personal = (clasePersonaEncontrada) ? clasePersonaEncontrada.id : null,
+                                                                                                                                        id_carga_horarios = (claseCargaEncontrada) ? claseCargaEncontrada.id : null,
+                                                                                                                                        id_area = (claseAreaEncontrada) ? claseAreaEncontrada.id : null,
+                                                                                                                                        id_ubicacion = (claseUbicacionEncontrada) ? claseUbicacionEncontrada.id : null,
+                                                                                                                                        nua_seguro_largo_plazo = (empleado.nua_cua) ? empleado.nua_cua : null,
+                                                                                                                                        id_aporte_seguro_largo_plazo = (claseAfpEncontrada) ? claseAfpEncontrada.id : null,
+                                                                                                                                        id_lugar_seguro_largo_plazo = (claseLugarSeguroAfpEncontrada) ? claseLugarSeguroAfpEncontrada.id : null,
+                                                                                                                                        id_lugar_seguro_salud = (claseLugarSeguroEncontrada) ? claseLugarSeguroEncontrada.id : null;
+                                                                                                                                    return RrhhEmpleadoFicha.update({
+                                                                                                                                        id_tipo_personal: id_tipo_personal,
+                                                                                                                                        id_carga_horarios: id_carga_horarios,
+                                                                                                                                        id_area: id_area,
+                                                                                                                                        id_ubicacion: id_ubicacion,
+                                                                                                                                        nua_seguro_largo_plazo: nua_seguro_largo_plazo,
+                                                                                                                                        id_aporte_seguro_largo_plazo: id_aporte_seguro_largo_plazo,
+                                                                                                                                        id_lugar_seguro_largo_plazo: id_lugar_seguro_largo_plazo,
+                                                                                                                                        id_lugar_seguro_salud: id_lugar_seguro_salud,
+                                                                                                                                    }, {
+
+                                                                                                                                            where: {
+                                                                                                                                                id: pacienteFound.empleadosFichas[0].id
+                                                                                                                                            }, transaction: t
+
+                                                                                                                                        }).then(function (fichaCreada) {
+                                                                                                                                            if (empleado.seguro1) {
+
+                                                                                                                                                return Clase.find({
+                                                                                                                                                    where: { habilitado: true, nombre: empleado.seguro1, id_tipo: tipoEncontradoRRHH_OST.dataValues.id }, transaction: t
+                                                                                                                                                }).then(function (claseOtroSeguroEncontrada) {
+                                                                                                                                                    return RrhhEmpleadoFichaOtrosSeguros.create({
+                                                                                                                                                        id_ficha: pacienteFound.empleadosFichas[0].id,
+                                                                                                                                                        id_tipo_seguro: claseOtroSeguroEncontrada.id,
+                                                                                                                                                        monto: empleado.monto1,
+                                                                                                                                                        observacion: empleado.observacion2
+                                                                                                                                                    }, { transaction: t }).then(function (seguroCreado) {
+                                                                                                                                                        if (empleado.seguro2) {
+
+                                                                                                                                                            return Clase.find({
+                                                                                                                                                                where: { habilitado: true, nombre: empleado.seguro2, id_tipo: tipoEncontradoRRHH_OST.dataValues.id }, transaction: t
+                                                                                                                                                            }).then(function (claseOtroSeguroEncontrada) {
+                                                                                                                                                                return RrhhEmpleadoFichaOtrosSeguros.create({
+                                                                                                                                                                    id_ficha: pacienteFound.empleadosFichas[0].id,
+                                                                                                                                                                    id_tipo_seguro: claseOtroSeguroEncontrada.id,
+                                                                                                                                                                    monto: empleado.monto2,
+                                                                                                                                                                    observacion: empleado.observacion2
+                                                                                                                                                                }, { transaction: t }).then(function (seguroCreado) {
+                                                                                                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                                                                                                        fulfill(seguroCreado);
+                                                                                                                                                                    });
+                                                                                                                                                                }).catch(function (err) {
+                                                                                                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                                                    });
+                                                                                                                                                                })
+                                                                                                                                                            }).catch(function (err) {
+                                                                                                                                                                return new Promise(function (fulfill, reject) {
+                                                                                                                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                                                });
+                                                                                                                                                            })
+
+                                                                                                                                                        } else {
+                                                                                                                                                            return new Promise(function (fulfill, reject) {
+                                                                                                                                                                fulfill();
+                                                                                                                                                            });
+                                                                                                                                                        }
+
+                                                                                                                                                    }).catch(function (err) {
+                                                                                                                                                        return new Promise(function (fulfill, reject) {
+                                                                                                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                                        });
+                                                                                                                                                    })
+                                                                                                                                                }).catch(function (err) {
+                                                                                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                                    });
+                                                                                                                                                })
+
+                                                                                                                                            } else if (empleado.seguro2) {
+
+                                                                                                                                                return Clase.find({
+                                                                                                                                                    where: { habilitado: true, nombre: empleado.seguro2, id_tipo: tipoEncontradoRRHH_OST.dataValues.id }, transaction: t
+                                                                                                                                                }).then(function (claseOtroSeguroEncontrada) {
+                                                                                                                                                    return RrhhEmpleadoFichaOtrosSeguros.create({
+                                                                                                                                                        id_ficha: pacienteFound.empleadosFichas[0].id,
+                                                                                                                                                        id_tipo_seguro: claseOtroSeguroEncontrada.id,
+                                                                                                                                                        monto: empleado.monto2,
+                                                                                                                                                        observacion: empleado.observacion2
+                                                                                                                                                    }, { transaction: t }).then(function (seguroCreado) {
+                                                                                                                                                        return new Promise(function (fulfill, reject) {
+                                                                                                                                                            fulfill(seguroCreado);
+                                                                                                                                                        });
+                                                                                                                                                    }).catch(function (err) {
+                                                                                                                                                        return new Promise(function (fulfill, reject) {
+                                                                                                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                                        });
+                                                                                                                                                    })
+                                                                                                                                                }).catch(function (err) {
+                                                                                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                                    });
+                                                                                                                                                })
+
+                                                                                                                                            } else {
+                                                                                                                                                return new Promise(function (fulfill, reject) {
+                                                                                                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                                });
+                                                                                                                                            }
+
+                                                                                                                                        }).catch(function (err) {
+                                                                                                                                            return new Promise(function (fulfill, reject) {
+                                                                                                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                            });
+                                                                                                                                        })
+                                                                                                                                }).catch(function (err) {
+                                                                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                    });
+                                                                                                                                })
+                                                                                                                            }).catch(function (err) {
+                                                                                                                                return new Promise(function (fulfill, reject) {
+                                                                                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                                });
+                                                                                                                            })
+                                                                                                                        }).catch(function (err) {
+                                                                                                                            return new Promise(function (fulfill, reject) {
+                                                                                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                            });
+                                                                                                                        })
+                                                                                                                    }).catch(function (err) {
+                                                                                                                        return new Promise(function (fulfill, reject) {
+                                                                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                        });
+                                                                                                                    })
+                                                                                                                }).catch(function (err) {
+                                                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                    });
+                                                                                                                })
+                                                                                                            }).catch(function (err) {
+                                                                                                                return new Promise(function (fulfill, reject) {
+                                                                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                                });
+                                                                                                            })
+                                                                                                        }).catch(function (err) {
+                                                                                                            return new Promise(function (fulfill, reject) {
+                                                                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                            });
+                                                                                                        })
+                                                                                                    }).catch(function (err) {
+                                                                                                        return new Promise(function (fulfill, reject) {
+                                                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                        });
+                                                                                                    })
+                                                                                            }).catch(function (err) {
+                                                                                                return new Promise(function (fulfill, reject) {
+                                                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                                                });
+                                                                                            })
+                                                                                        }).catch(function (err) {
+                                                                                            return new Promise(function (fulfill, reject) {
+                                                                                                reject((err.stack !== undefined) ? err.stack : err);
+                                                                                            });
+                                                                                        })
+                                                                                    }).catch(function (err) {
+                                                                                        return new Promise(function (fulfill, reject) {
+                                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                                        });
+                                                                                    })
+                                                                                }).catch(function (err) {
+                                                                                    return new Promise(function (fulfill, reject) {
+                                                                                        reject((err.stack !== undefined) ? err.stack : err);
+                                                                                    });
+                                                                                })
+                                                                            }).catch(function (err) {
+                                                                                return new Promise(function (fulfill, reject) {
+                                                                                    reject((err.stack !== undefined) ? err.stack : err);
+                                                                                });
+                                                                            })
+                                                                        }else{
+                                                                            return new Promise(function (fulfill, reject) {
+                                                                                fulfill();
+                                                                            });
+                                                                        }
+                                                                    }).catch(function (err) {
+                                                                        return new Promise(function (fulfill, reject) {
+                                                                            reject((err.stack !== undefined) ? err.stack : err);
+                                                                        });
+                                                                    }))
+                                                                })
+                                                                return Promise.all(promises);
+                                                            }).then(function (result) {
+                                                                res.json({ mensaje: "¡Datos de empleados actualizados satisfactoriamente!" });
+                                                            }).catch(function (err) {
+                                                                res.json({ hasError: true, mensaje: err.stack ? err.stack : err });
+                                                            });
+                                                        })
                                                     })
                                                 })
                                             })
-                                        }
+                                        })
                                     })
                                 })
                             })
-
-                        }
+                        })
                     })
                 })
             })
+            /* req.body.arregloAporteAfp.forEach(function (dato, index, array) {
+            Tipo.find({
+                where: { nombre_corto: 'RRHH_ASLP', id_empresa: req.params.id_empresa }
+            }).then(function (tipoEncontrado) {
+                Clase.findOrCreate({
+                    where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                    defaults: {
+                        nombre: dato,
+                        id_tipo: tipoEncontrado.dataValues.id,
+                        habilitado: true
+                    }
+                }).spread(function (datos, cread) {
+                    if (index === (array.length - 1)) {
+                        req.body.arregloLugarAfp.forEach(function (dato, index, array) {
+                            Tipo.find({
+                                where: { nombre_corto: 'RRHH_LSS', id_empresa: req.params.id_empresa }
+                            }).then(function (tipoEncontrado) {
+                                Clase.findOrCreate({
+                                    where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                    defaults: {
+                                        nombre: dato,
+                                        id_tipo: tipoEncontrado.dataValues.id,
+                                        habilitado: true
+                                    }
+                                }).spread(function (datos, cread) {
+                                    if (index === (array.length - 1)) {
+                                        req.body.arregloLugarSeguroSalud.forEach(function (dato, index, array) {
+                                            Tipo.find({
+                                                where: { nombre_corto: 'RRHH_LSS', id_empresa: req.params.id_empresa }
+                                            }).then(function (tipoEncontrado) {
+                                                Clase.findOrCreate({
+                                                    where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                    defaults: {
+                                                        nombre: dato,
+                                                        id_tipo: tipoEncontrado.dataValues.id,
+                                                        habilitado: true
+                                                    }
+                                                }).spread(function (datos, cread) {
+                                                    if (index === (array.length - 1)) {
+                                                        req.body.arregloTipoPersona.forEach(function (dato, index, array) {
+                                                            Tipo.find({
+                                                                where: { nombre_corto: 'RRHH_TP', id_empresa: req.params.id_empresa }
+                                                            }).then(function (tipoEncontrado) {
+                                                                Clase.findOrCreate({
+                                                                    where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                    defaults: {
+                                                                        nombre: dato,
+                                                                        id_tipo: tipoEncontrado.dataValues.id,
+                                                                        habilitado: true
+                                                                    }
+                                                                }).spread(function (datos, cread) {
+                                                                    if (index === (array.length - 1)) {
+                                                                        req.body.arregloCargaHorario.forEach(function (dato, index, array) {
+                                                                            Tipo.find({
+                                                                                where: { nombre_corto: 'RRHH_CH', id_empresa: req.params.id_empresa }
+                                                                            }).then(function (tipoEncontrado) {
+                                                                                Clase.findOrCreate({
+                                                                                    where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                                    defaults: {
+                                                                                        nombre: dato,
+                                                                                        id_tipo: tipoEncontrado.dataValues.id,
+                                                                                        habilitado: true
+                                                                                    }
+                                                                                }).spread(function (datos, cread) {
+                                                                                    if (index === (array.length - 1)) {
+                                                                                        req.body.arregloArega.forEach(function (dato, index, array) {
+                                                                                            Tipo.find({
+                                                                                                where: { nombre_corto: 'RRHH_AREA', id_empresa: req.params.id_empresa }
+                                                                                            }).then(function (tipoEncontrado) {
+                                                                                                Clase.findOrCreate({
+                                                                                                    where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                                                    defaults: {
+                                                                                                        nombre: dato,
+                                                                                                        id_tipo: tipoEncontrado.dataValues.id,
+                                                                                                        habilitado: true
+                                                                                                    }
+                                                                                                }).spread(function (datos, cread) {
+                                                                                                    if (index === (array.length - 1)) {
+                                                                                                        req.body.arregloUbicacion.forEach(function (dato, index, array) {
+                                                                                                            Tipo.find({
+                                                                                                                where: { nombre_corto: 'RRHH_UBI', id_empresa: req.params.id_empresa }
+                                                                                                            }).then(function (tipoEncontrado) {
+                                                                                                                Clase.findOrCreate({
+                                                                                                                    where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                                                                    defaults: {
+                                                                                                                        nombre: dato,
+                                                                                                                        id_tipo: tipoEncontrado.dataValues.id,
+                                                                                                                        habilitado: true
+                                                                                                                    }
+                                                                                                                }).spread(function (datos, cread) {
+                                                                                                                    if (index === (array.length - 1)) {
+                                                                                                                        req.body.arregloEstadoCivil.forEach(function (dato, index, array) {
+                                                                                                                            Tipo.find({
+                                                                                                                                where: { nombre_corto: 'RRHH_EC', id_empresa: req.params.id_empresa }
+                                                                                                                            }).then(function (tipoEncontrado) {
+                                                                                                                                Clase.findOrCreate({
+                                                                                                                                    where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                                                                                    defaults: {
+                                                                                                                                        nombre: dato,
+                                                                                                                                        id_tipo: tipoEncontrado.dataValues.id,
+                                                                                                                                        habilitado: true
+                                                                                                                                    }
+                                                                                                                                }).spread(function (datos, cread) {
+                                                                                                                                    if (index === (array.length - 1)) {
+                                                                                                                                        req.body.arregloOtrosSeguros1.forEach(function (dato, index, array) {
+                                                                                                                                            Tipo.find({
+                                                                                                                                                where: { nombre_corto: 'RRHH_OST', id_empresa: req.params.id_empresa }
+                                                                                                                                            }).then(function (tipoEncontrado) {
+                                                                                                                                                Clase.findOrCreate({
+                                                                                                                                                    where: { habilitado: true, nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                                                                                                    defaults: {
+                                                                                                                                                        nombre: dato,
+                                                                                                                                                        id_tipo: tipoEncontrado.dataValues.id,
+                                                                                                                                                        habilitado: true
+                                                                                                                                                    }
+                                                                                                                                                }).spread(function (datos, cread) {
+                                                                                                                                                    if (index === (array.length - 1)) {
+                                                                                                                                                        if (req.body.arregloOtrosSeguros2.length > 0) {
+                                                                                                                                                            req.body.arregloOtrosSeguros2.forEach(function (dato, index, array) {
+                                                                                                                                                                Tipo.find({
+                                                                                                                                                                    where: { nombre_corto: 'RRHH_OST', id_empresa: req.params.id_empresa }
+                                                                                                                                                                }).then(function (tipoEncontrado) {
+                                                                                                                                                                    Clase.findOrCreate({
+                                                                                                                                                                        where: { nombre: dato, id_tipo: tipoEncontrado.dataValues.id },
+                                                                                                                                                                        defaults: {
+                                                                                                                                                                            habilitado: true,
+                                                                                                                                                                            nombre: dato,
+                                                                                                                                                                            id_tipo: tipoEncontrado.dataValues.id,
+                                                                                                                                                                            habilitado: true
+                                                                                                                                                                        }
+                                                                                                                                                                    }).spread(function (datos, cread) {
+                                                                                                                                                                        if (index === (array.length - 1)) {
+                                                                                                                                                                            guardarFichas(req, res)
+                                                                                                                                                                        }
+                                                                                                                                                                    })
+                                                                                                                                                                })
+                                                                                                                                                            })
+                                                                                                                                                        } else {
+                                                                                                                                                            if (index === (array.length - 1)) {
+                                                                                                                                                                guardarFichas(req, res)
+                                                                                                                                                            }
+                                                                                                                                                        }
+                                                                                                                                                    }
+                                                                                                                                                })
+                                                                                                                                            })
+                                                                                                                                        })
+                                                                                                                                    }
+                                                                                                                                })
+                                                                                                                            })
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                })
+                                                                                                            })
+                                                                                                        })
+                                                                                                    }
+                                                                                                })
+                                                                                            })
+                                                                                        })
+                                                                                    }
+                                                                                })
+                                                                            })
+                                                                        })
+                                                                    }
+                                                                })
+                                                            })
+                                                        })
+                                                    }
+                                                })
+                                            })
+                                        })
+                                    }
+                                })
+                            })
+                        })
+ 
+                    }
+                })
+            })
+        }) */
 
         })
-    function guardarFichas(req, res) {
+    /* function guardarFichas(req, res) {
         req.body.fichas.forEach(function (empleado, index, array) {
             MedicoPaciente.find({
                 where: { codigo: empleado.codigo, id_empresa: req.params.id_empresa }
@@ -2563,7 +3059,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             })
 
         })
-    }
+    } */
     router.route('/empleados/empresa/:id_empresa/rolTurnos/tipo/:tipo/excel/upload')
         .post(function (req, res) {
             var arregloSucursales = []
@@ -3425,7 +3921,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                 tipoCargo,
                                 tipoContrato,
                                 tipoExp,
-                                tipoSeguroSalud, tipoEE, tipoE, pacienteFound, personaCreada, idexpClase, idcentroCosto, TexpClase, medicoPacienteActualizado, personaReferenciaCreada, idcontratoClase, idSeguroSalud,fichaEncontrada)
+                                tipoSeguroSalud, tipoEE, tipoE, pacienteFound, personaCreada, idexpClase, idcentroCosto, TexpClase, medicoPacienteActualizado, personaReferenciaCreada, idcontratoClase, idSeguroSalud, fichaEncontrada)
                         }).catch(function (err) {
                             return new Promise(function (fulfill, reject) {
                                 reject((err.stack !== undefined) ? err.stack : err);
@@ -3471,7 +3967,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         tipoCargo,
         tipoContrato,
         tipoExp,
-        tipoSeguroSalud, tipoEE, tipoE, pacienteFound, personaCreada, idexpClase, idcentroCosto, TexpClase, medicoPacienteActualizado, personaReferenciaCreada, idcontratoClase, idSeguroSalud,fichaEncontrada) {
+        tipoSeguroSalud, tipoEE, tipoE, pacienteFound, personaCreada, idexpClase, idcentroCosto, TexpClase, medicoPacienteActualizado, personaReferenciaCreada, idcontratoClase, idSeguroSalud, fichaEncontrada) {
         if (pacienteFound != null) {
             pacienteActual.fecha_inicio = new Date(pacienteActual.fecha_inicio); pacienteActual.fecha_inicio.setHours(0, 0, 0, 0, 0);
             var fechaFichaEncontrada = new Date(fichaEncontrada[0].dataValues.fecha_inicio)

@@ -248,7 +248,7 @@ angular.module('agil.servicios')
                 anio: filtro.filter.anio ? (filtro.filter.desde || filtro.filter.hasta) ? 0 : filtro.filter.anio.id : 0,
                 empresaCliente: filtro.filter.empresaCliente ? filtro.filter.empresaCliente.id ? filtro.filter.empresaCliente.id : 0 : 0,
                 gerencia: filtro.filter.gerencia ? filtro.filter.gerencia : 0,
-                comensal: filtro.filter.comensal ? filtro.filter.comensal.length > 0 ? filtro.filter.comensal.join(',') : 0 : 0,
+                comensal: filtro.filter.comensal ? filtro.filter.comensal.length > 0 ? filtro.filter.comensalesProcesados.join(',') : 0 : 0,
                 comida: filtro.filter.comida ? filtro.filter.comida: 0,
                 estado: filtro.filter.estado ? filtro.filter.estado !== "" ? filtro.filter.estado : 0 : 0,
                 pagina: filtro.currentPage,
@@ -369,7 +369,7 @@ angular.module('agil.servicios')
                 anio: filtro.filter.anio ? (filtro.filter.desde || filtro.filter.hasta) ? 0 : filtro.filter.anio.id : 0,
                 empresaCliente: filtro.filter.empresaCliente ? filtro.filter.empresaCliente.id ? filtro.filter.empresaCliente.id : 0 : 0,
                 gerencia: filtro.filter.gerencia ? filtro.filter.gerencia : 0,
-                comensal: filtro.filter.comensal ? filtro.filter.comensal.length > 0 ? filtro.filter.comensal.join(',') : 0 : 0,
+                comensal: filtro.filter.comensal ? filtro.filter.comensal.length > 0 ? filtro.filter.comensalesProcesados.join(',') : 0 : 0,
                 comida: filtro.filter.comida ? filtro.filter.comida: 0,
                 estado: filtro.filter.estado ? filtro.filter.estado !== "" ? filtro.filter.estado : 0 : 0
             }, function (entidades) {
@@ -395,7 +395,7 @@ angular.module('agil.servicios')
                 anio: filtro.filter.anio ? (filtro.filter.desde || filtro.filter.hasta) ? 0 : filtro.filter.anio.id : 0,
                 empresaCliente: filtro.filter.empresaCliente ? filtro.filter.empresaCliente.id ? filtro.filter.empresaCliente.id : 0 : 0,
                 gerencia: filtro.filter.gerencia ? filtro.filter.gerencia : 0,
-                comensal: filtro.filter.comensal ? filtro.filter.comensal.length > 0 ? filtro.filter.comensal.join(',') : 0 : 0,
+                comensal: filtro.filter.comensal ? filtro.filter.comensal.length > 0 ? filtro.filter.comensalesProcesados.join(',') : 0 : 0,
                 comida: filtro.filter.comida ? filtro.filter.comida: 0,
                 estado: filtro.filter.estado ? filtro.filter.estado !== "" ? filtro.filter.estado : 0 : 0
             }, function (entidades) {
@@ -473,7 +473,7 @@ angular.module('agil.servicios')
                 anio: filtro.filter.anio ? (filtro.filter.desde || filtro.filter.hasta) ? 0 : filtro.filter.anio.id : 0,
                 empresaCliente: filtro.filter.empresaCliente ? filtro.filter.empresaCliente.id ? filtro.filter.empresaCliente.id : 0 : 0,
                 gerencia: filtro.filter.gerencia ? filtro.filter.gerencia : 0,
-                comensal: filtro.filter.comensal ? filtro.filter.comensal.length > 0 ? filtro.filter.comensal.join(',') : 0 : 0,
+                comensal: filtro.filter.comensal ? filtro.filter.comensal.length > 0 ? filtro.filter.comensalesProcesados.join(',') : 0 : 0,
                 comida: filtro.filter.comida ? filtro.filter.comida: 0,
                 estado: filtro.filter.estado ? filtro.filter.estado !== "" ? filtro.filter.estado : 0 : 0,
                 pagina: filtro.currentPage,
