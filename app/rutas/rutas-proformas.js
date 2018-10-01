@@ -581,21 +581,34 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
             });
         })
 
-    router.route('/alertas/proformas/:id_empresa')
+    router.route('/alertas/proformas/:id_empresa/:mes/:anio/:razon_social/:proforma')
         .get(function (req, res) {
+            var condicionCliente = {id_empresa: req.params.id_empresa}
+            var condicion = {
+                id_empresa: req.params.id_empresa,
+                eliminado: false,
+                fecha_factura: null,
+                fecha_proforma_ok: { $not: null }
+            }
+            if (req.params.mes != "0") {
+                condicion.periodo_mes = parseInt(req.params.mes)
+            }
+            if (req.params.anio != "0") {
+                condicion.periodo_anio = parseInt(req.params.anio)
+            }
+            if (req.params.razon_social != "0") {
+                condicionCliente.razon_social = {$like: req.params.razon_social + ' %'}
+            }
+            if (req.params.proforma != "0") {
+                condicion.correlativo = parseInt(req.params.proforma)
+            }
             if (req.params.id_empresa) {
                 Proforma.findAll({
-                    where: {
-                        id_empresa: req.params.id_empresa,
-                        eliminado: false,
-                        fecha_factura: null,
-                        fecha_proforma_ok: { $not: null }
-                    },
+                    where: condicion,
                     include: [
                         { model: Clase, as: 'actividadEconomica' },
-                        { model: Cliente, as: 'cliente' }
+                        { model: Cliente, as: 'cliente', where: condicionCliente }
                     ]
-
                 }).then(function (proformasAlertas) {
                     res.json({ proformas: proformasAlertas })
                     // var proformasVencimiento = []

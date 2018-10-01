@@ -3140,6 +3140,50 @@
 		</div>
 		<div class="modal-body">
 			<div class="clearfix"></div>
+			<table class="table table-striped table-bordered table-hover">
+				<tr>
+					<td></td>
+					<td>Mes</td>
+					<td>Anio</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>PERIODO</td>
+					<td><select ng-options="mes.id as mes.nombre for mes in mesesFiltro track by mes.id" ng-model="filtroAlertasProformas.mes">
+						<option value="">Todos</option>
+					</select></td>
+					<td><select ng-options="anio.id as anio.nombre for anio in anios track by anio.id" ng-model="filtroAlertasProformas.anio">
+							<option value="">Todos</option>
+						</select></td>
+						<td>
+							<button class="btn btn-primary" type="button" ng-click="abrirListaVencimientoProformas(true)">
+								<i class="ace ace-icon fa fa-search"></i> Filtrar
+							</button>
+						</td>
+				</tr>
+				<tr>
+					<td>
+						
+					</td>
+					<td>
+						Razón Social
+					</td>
+					<td>
+						Proforma
+					</td>
+				</tr>
+				<tr>
+					<td>
+							FILTRO
+					</td>
+					<td>
+						<input type="text" ng-model="filtroAlertasProformas.razon_social">
+					</td>
+					<td>
+						<input type="text" ng-model="filtroAlertasProformas.proforma">
+					</td>
+				</tr>
+			</table>
 			<div class="table-fixed-header">
 				<table id="tabla-alerta-proformas" class="table table-responsive-actual table-striped table-bordered table-hover">
 					<thead fix-head class="table-head-color">

@@ -194,10 +194,10 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('alertasProformasLista', ['alertas', '$q', function (alertas, $q) {
-        var res = function (idEmpresa) {
+    .factory('alertasProformasLista', ['alertasProformas', '$q', function (alertasProformas, $q) {
+        var res = function (idEmpresa, filtro) {
             var delay = $q.defer();
-            alertas.get({ id_empresa: (idEmpresa !== null && idEmpresa !== undefined && idEmpresa !== "") ? idEmpresa : 0 }, function (entidades) {
+            alertasProformas.get({ id_empresa: idEmpresa ? idEmpresa : 0, mes: filtro.mes ? filtro.mes : 0, anio: filtro.anio ? filtro.anio : 0, razon_social: filtro.razon_social ? filtro.razon_social : 0, proforma: filtro.proforma ? filtro.proforma : 0}, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);
@@ -207,24 +207,11 @@ angular.module('agil.servicios')
         return res;
     }])
 
-    .factory('alertas',  ['$resource',function ($resource) {
-        return $resource(restServer + "alertas/proformas/:id_empresa", {},
+    .factory('alertasProformas',  ['$resource',function ($resource) {
+        return $resource(restServer + "alertas/proformas/:id_empresa/:mes/:anio/:razon_social/:proforma", {},
             {
                 'update': { method: 'PUT' }
             });
-    }])
-
-    .factory('alertasProformasLista', ['alertas', '$q', function (alertas, $q) {
-        var res = function (idEmpresa) {
-            var delay = $q.defer();
-            alertas.get({ id_empresa: (idEmpresa !== null && idEmpresa !== undefined && idEmpresa !== "") ? idEmpresa : 0 }, function (entidades) {
-                delay.resolve(entidades);
-            }, function (error) {
-                delay.reject(error);
-            });
-            return delay.promise;
-        };
-        return res;
     }])
 
     .factory('FacturarProformas',  ['$resource',function ($resource) {

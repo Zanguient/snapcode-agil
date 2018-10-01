@@ -1569,7 +1569,12 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
 
             $scope.verificarAlertasProformas = function(idEmpresa) {
                 $scope.alertasProformas = []
-                var prom = alertasProformasLista(idEmpresa)
+                if ($scope.filtroAlertasProformas === undefined) {
+                    $scope.filtroAlertasProformas = {mes:"", anio: "", razon_social: "", proforma: ""}
+                }
+                $scope.filtroAlertasProformas = $scope.filtrarFiltroProformas($scope.filtroAlertasProformas, true)
+                var prom = alertasProformasLista(idEmpresa, $scope.filtroAlertasProformas)
+                $scope.filtroAlertasProformas = $scope.filtrarFiltroProformas($scope.filtroAlertasProformas, true, true)
                 prom.then(function(proformas) {
                     if (!proformas.hasErr) {
                         $scope.alertasProformas = proformas.proformas
@@ -2209,6 +2214,58 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
                     })
                 }
             }
+            $scope.abrirListaVencimientoProformas = function(alreadyOpen) {
+                // $scope.obtenerMeses()
+                if ($scope.filtroAlertasProformas === undefined) {
+                    $scope.filtroAlertasProformas = {mes:"", anio: "", razon_social: "", proforma: ""}
+                }
+                $scope.filtroAlertasProformas = $scope.filtrarFiltroProformas($scope.filtroAlertasProformas, true)
+                var prom = alertasProformasLista($scope.usuario.empresa.id, $scope.filtroAlertasProformas)
+                prom.then(function(proformas) {
+                    $scope.filtroAlertasProformas = $scope.filtrarFiltroProformas($scope.filtroAlertasProformas, true, true)
+                    $scope.alertasProformas = proformas.proformas
+                    $scope.alertasProformas.forEach(function(_) {
+                        var dolores = 0
+                        var promesa = ObtenerCambioMoneda(_.fecha_proforma)
+                        promesa.then(function(dato) {
+                            if (dato.monedaCambio) {
+                                dolores = dato.monedaCambio.dolar;
+                            } else {
+                                $scope.mostrarMensaje('La fecha ' + _.fecha_proforma + ' no tiene datos del tipo de cambio de dolar.')
+                            }
+                            _.totalSus = _.totalImporteBs / dolores
+                            if (alreadyOpen === undefined) {
+                                $scope.abrirPopup($scope.dialogAlertasProformas)                                
+                            }
+                        })
+                    })
+                }).catch(function (err) {
+                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                    $scope.mostrarMensaje(msg)
+                    blockUI.stop()
+                })
+
+            }
+            $scope.filtrarFiltroProformas = function (filtro, _, __) {
+                if (__ !== undefined) {
+                    for (var key in filtro) {
+                        if (filtro[key] == 0) {
+                            filtro[key] = ""
+                        }
+                    }
+                } else {
+                    for (var key in filtro) {
+                        if (filtro[key] === "" || filtro[key] === null) {
+                            filtro[key] = 0
+                        }
+                    }
+                }
+                if (_ === undefined || !_) {
+                    // $scope.obtenerHistoriales(true)
+                } else {
+                    return filtro
+                }
+            }
 
             $scope.obtenerTipoEgreso = function(movimiento) {
                 var nombre_corto = movimiento.nombre_corto;
@@ -2518,34 +2575,12 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
                 });
             }
 
-            $scope.abrirListaVencimientoProformas = function() {
-                // $scope.obtenerMeses()
-                var prom = alertasProformasLista($scope.usuario.empresa.id)
-                prom.then(function(proformas) {
-                    $scope.alertasProformas = proformas.proformas
-                    $scope.alertasProformas.forEach(function(_) {
-                        var dolores = 0
-                        var promesa = ObtenerCambioMoneda(_.fecha_proforma)
-                        promesa.then(function(dato) {
-                            if (dato.monedaCambio) {
-                                dolores = dato.monedaCambio.dolar;
-                            } else {
-                                $scope.mostrarMensaje('La fecha ' + _.fecha_proforma + ' no tiene datos del tipo de cambio de dolar.')
-                            }
-                            _.totalSus = _.totalImporteBs / dolores
-                            $scope.abrirPopup($scope.dialogAlertasProformas)
-                        })
-                    })
-                }).catch(function(err) {
-                    $scope.mostrarMensaje(err.data !== undefined ? err.data : err.message)
-                })
-
-            }
+            
             $scope.abrirListaVencimientoProductos = function() {
                 $scope.abrirPopup($scope.idModalTablaVencimientoProductos);
             }
             $scope.cerrarListaVencimientoProformas = function() {
-
+                $scope.filtroAlertasProformas = {mes:"", anio: "", razon_social: "", proforma: ""}
                 $scope.cerrarPopup($scope.dialogAlertasProformas);
             }
             $scope.cerrarListaDespachos = function() {
@@ -3764,6 +3799,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
                 } else {
                     $scope.abrirPopup($scope.idModalInicioSesion);
                 }
+               
                 $scope.ocultarMenu = true;
             }
         }]);
