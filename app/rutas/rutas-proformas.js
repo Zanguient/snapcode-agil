@@ -597,7 +597,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, Cliente, Profo
                 condicion.periodo_anio = parseInt(req.params.anio)
             }
             if (req.params.razon_social != "0") {
-                condicionCliente.razon_social = {$like: req.params.razon_social + ' %'}
+                condicionCliente.razon_social = {$like: req.params.razon_social + '%'}
             }
             if (req.params.proforma != "0") {
                 condicion.correlativo = parseInt(req.params.proforma)
