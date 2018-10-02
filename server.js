@@ -24,6 +24,7 @@ var aws = require('aws-sdk');
 var io = require('socket.io')(http);
 var schedule = require('node-schedule');
 var Postgrator = require('postgrator');
+var compression = require('compression');
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -146,6 +147,8 @@ io.on('connection', function(socket){console.log("fsdfs");
 	require('./app/rutas')(router,sequelize,Sequelize,jwt,md5,forEach,ensureAuthorized,ensureAuthorizedAdministrador,PDF,fs,
             excelbuilder,decodeBase64Image,signs3,io,socket,schedule);
 });
+
+app.use(compression()); //Compress all routes
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.get('/', function(req, res) {
