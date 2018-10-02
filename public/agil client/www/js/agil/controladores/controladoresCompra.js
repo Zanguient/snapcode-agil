@@ -965,7 +965,7 @@ angular.module('agil.controladores')
 				}
 			}else{
 				//no usar pagos anticipados
-				if(pago <= $scope.venta.saldo){
+				if(pago <= $scope.compra.saldo){
 					$scope.realizarPago($scope.compra.id,pago,$scope.usuario.id);
 				}else{
 					$scope.mostrarMensaje("El cobro excede el monto a cobrar");
