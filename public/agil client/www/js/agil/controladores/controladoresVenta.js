@@ -4172,6 +4172,7 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalCotizaciones);
 			$scope.eliminarPopup($scope.idModalDetalleCotizaciones);
 			$scope.eliminarPopup($scope.idModalDetalleCotizacionEditar);
+			$scope.eliminarPopup($scope.ModalMensajePago);
 		});
 
 
