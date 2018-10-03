@@ -3476,6 +3476,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 	router.route('/ventas/:id/empresa/:id_empresa')
 		.get(function (req, res) {
+			Sucursal.findAll({
+				where:{id_empresa: req.params.id_empresa, 
+					numero: 0}
+			}).then(function(sucursalPrincipalEncontrada){
 			Venta.find({
 				where: {
 					id: req.params.id
@@ -3537,7 +3541,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								var dosificacion = sucursalActividadDosificacion.dosificacion;
 								if (configuracionGeneralFactura.usar) {
 									res.json({
-										venta: venta, configuracion: configuracionGeneralFactura, sucursal: venta.sucursal,
+										sucursalPrincipal:sucursalPrincipalEncontrada,venta: venta, configuracion: configuracionGeneralFactura, sucursal: venta.sucursal,
 										numero_literal: venta.numero_literal, pieFactura: dosificacion.pieFactura, sucursalDestino: ((venta.almacenTraspaso) ? venta.almacenTraspaso.sucursal : null)
 									});
 								} else {
@@ -3564,6 +3568,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										{ model: Clase, as: 'tipoConfiguracion'}]
 									}).then(function (configuracionFactura) {
 										res.json({
+											sucursalPrincipal:sucursalPrincipalEncontrada,
 											venta: venta,
 											configuracion: configuracionFactura,
 											sucursal: venta.sucursal,
@@ -3576,6 +3581,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						} else {
 							if (configuracionGeneralFactura.usar) {
 								res.json({
+									sucursalPrincipal:sucursalPrincipalEncontrada,
 									venta: venta, configuracion: configuracionGeneralFactura, sucursal: venta.sucursal,
 									numero_literal: venta.numero_literal, sucursalDestino: ((venta.almacenTraspaso) ? venta.almacenTraspaso.sucursal : null)
 								});
@@ -3592,6 +3598,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									{ model: Clase, as: 'tamanoPapelNotaVenta' }]
 								}).then(function (configuracionFactura) {
 									res.json({
+										sucursalPrincipal:sucursalPrincipalEncontrada,
 										venta: venta,
 										configuracion: configuracionFactura,
 										sucursal: venta.sucursal,
@@ -3612,6 +3619,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							var dosificacion = sucursalActividadDosificacion.dosificacion;
 							if (configuracionGeneralFactura.usar) {
 								res.json({
+									sucursalPrincipal:sucursalPrincipalEncontrada,
 									venta: venta, configuracion: configuracionGeneralFactura, sucursal: venta.sucursal,
 									numero_literal: venta.numero_literal, pieFactura: dosificacion.pieFactura, sucursalDestino: ((venta.almacenTraspaso) ? venta.almacenTraspaso.sucursal : null)
 								});
@@ -3639,6 +3647,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									{ model: Clase, as: 'tipoConfiguracion'}]
 								}).then(function (configuracionFactura) {
 									res.json({
+										sucursalPrincipal:sucursalPrincipalEncontrada,
 										venta: venta,
 										configuracion: configuracionFactura,
 										sucursal: venta.sucursal,
@@ -3652,6 +3661,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				});
 
 			});
+		})
 		})
 
 		.put(function (req, res) {		

@@ -1,9 +1,9 @@
-angular.module('agil', ['ngRoute', 'agil.controladores',
+angular.module('agil', ['oc.lazyLoad','ngRoute', 'agil.controladores',
     'agil.servicios', 'agil.directivas', 'agil.filtros', 'checklist-model',
     'blockUI', 'ngStorage', 'ui.bootstrap', 'ngCordova', 'uiGmapgoogle-maps', 'isteven-multi-select',
     'chart.js', 'btford.socket-io','ngMessages','colorpicker'])
 
-    .config(['$routeProvider', 'uiGmapGoogleMapApiProvider', '$httpProvider', 'ChartJsProvider',function ($routeProvider, uiGmapGoogleMapApiProvider, $httpProvider, ChartJsProvider) {
+    .config(['$routeProvider', 'uiGmapGoogleMapApiProvider', '$httpProvider', 'ChartJsProvider', '$ocLazyLoadProvider',function ($routeProvider, uiGmapGoogleMapApiProvider, $httpProvider, ChartJsProvider, $ocLazyLoadProvider) {
 
         uiGmapGoogleMapApiProvider.configure({
             libraries: 'geometry,visualization'
@@ -20,6 +20,18 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
             showLines: true
         });
 
+        //Config For ocLazyLoading
+        $ocLazyLoadProvider.config({
+            'debug': true, // For debugging 'true/false'
+            'events': true, // For Event 'true/false'
+            // 'modules': [
+            //     { // Set modules initially
+            //         name : 'usuarios', // State1 module
+            //         files: ['js/sys/controladores/controladoresUsuario.js']
+            //     }
+            // ]
+        });
+
         $routeProvider
             .when('/', {
                 controller: 'ControladorPrincipal',
@@ -32,31 +44,69 @@ angular.module('agil', ['ngRoute', 'agil.controladores',
 
             .when('/usuarios', {
                 controller: 'ControladorUsuarios',
-                templateUrl: 'templates/sys/usuarios.html'
+                templateUrl: 'templates/sys/usuarios.html',
+                resolve: {
+                    loadMyService: ['$ocLazyLoad', function($ocLazyLoad) {
+                        return $ocLazyLoad.load('js/sys/servicios/serviciosUsuario.js');
+                    }],
+                    loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                        return $ocLazyLoad.load('js/sys/controladores/controladoresUsuario.js'); 
+                    }]
+                }
             })
             .when('/clientes', {
                 controller: 'ControladorClientes',
-                templateUrl: 'templates/agil/clientes.html'
+                templateUrl: 'templates/agil/clientes.html',
+                resolve: {
+                    loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                        return $ocLazyLoad.load('js/agil/controladores/controladoresCliente.js'); 
+                    }]
+                }
             })
             .when('/proveedores', {
                 controller: 'ControladorProveedores',
-                templateUrl: 'templates/agil/proveedores.html'
+                templateUrl: 'templates/agil/proveedores.html',
+                resolve: {
+                    loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                        return $ocLazyLoad.load('js/agil/controladores/controladoresProveedor.js'); 
+                    }]
+                }
             })
             .when('/productos', {
                 controller: 'ControladorProductos',
-                templateUrl: 'templates/agil/productos.html'
+                templateUrl: 'templates/agil/productos.html',
+                resolve: {
+                    loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                        return $ocLazyLoad.load('js/agil/controladores/controladoresProducto.js'); 
+                    }]
+                }
             })
             .when('/conceptos', {
                 controller: 'ControladorConceptos',
-                templateUrl: 'templates/sys/conceptos.html'
+                templateUrl: 'templates/sys/conceptos.html',
+                resolve: {
+                    loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                        return $ocLazyLoad.load('js/sys/controladores/controladoresConcepto.js'); 
+                    }]
+                }
             })
             .when('/sucursales', {
                 controller: 'ControladorSucursales',
-                templateUrl: 'templates/agil/sucursales.html'
+                templateUrl: 'templates/agil/sucursales.html',
+                resolve: {
+                    loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                        return $ocLazyLoad.load('js/agil/controladores/controladoresSucursal.js'); 
+                    }]
+                }
             })
             .when('/dosificaciones', {
                 controller: 'ControladorDosificaciones',
-                templateUrl: 'templates/agil/dosificaciones.html'
+                templateUrl: 'templates/agil/dosificaciones.html',
+                resolve: {
+                    loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {
+                        return $ocLazyLoad.load('js/agil/controladores/controladoresDosificacion.js'); 
+                    }]
+                }
             })
             .when('/codigo-control', {
                 controller: 'ControladorCodigoControl',

@@ -1020,7 +1020,7 @@ angular.module('agil.controladores')
 				$scope.obtenerVentas();
 				$scope.imprimirRecibo(data, data.venta, pago,restante);
 				if(restante < 0){
-					$scope.imprimirReciboAnticipo(data, data.venta,pago);
+					$scope.imprimirReciboAnticipo(data, data.venta,pago,restante);
 				}	
 				blockUI.stop();
 			})
@@ -1173,7 +1173,7 @@ angular.module('agil.controladores')
 			blockUI.stop();
 		}
 
-		$scope.imprimirReciboAnticipo = function (data, venta, pago) {
+		$scope.imprimirReciboAnticipo = function (data, venta, pago,anticipo) {
 			blockUI.start();
 			var doc = new PDFDocument({ compress: false, size: [227, 353], margin: 10 });
 			var stream = doc.pipe(blobStream());
@@ -1936,13 +1936,14 @@ angular.module('agil.controladores')
 		$scope.imprimirVenta = function (venta) {
 			var promesa = DatosVenta(venta.id, $scope.usuario.id_empresa);
 			promesa.then(function (datos) {
+				
 				var ventaConsultada = datos.venta;
 				ventaConsultada.configuracion = datos.configuracion;
 				ventaConsultada.sucursal = datos.sucursal;
 				ventaConsultada.numero_literal = datos.numero_literal;
 				ventaConsultada.pieFactura = datos.pieFactura;
 				ventaConsultada.sucursalDestino = datos.sucursalDestino;
-
+				ventaConsultada.sucursalPrincipal = datos.sucursalPrincipal;
 				var fecha = new Date(ventaConsultada.fecha);
 				ventaConsultada.fechaTexto = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
 
