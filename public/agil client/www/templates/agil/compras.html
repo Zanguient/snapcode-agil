@@ -219,7 +219,7 @@
 								</div>
 							</div>
 						</td>
-						<td>{{compra.usuario.nombre_usuario}}</td>
+						<td>{{compra.usuario.nombre_usuario}}{{compra.pagosCompra.length}}</td>
 						<td>
 							<div class="hidden-sm hidden-xs action-buttons">
 								<a class="green" href="javascript:void(0)" ng-click="imprimirCompra(compra)">
@@ -228,7 +228,7 @@
 								<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCompra(compra)">
 									<i class="ace-icon fa fa-search-plus bigger-130"></i>
 								</a>
-								<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarCompra(compra)">
+								<a class="green" ng-if="compra.pagosCompra.length==0" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarCompra(compra)">
 									<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
 								</a>
 							</div>

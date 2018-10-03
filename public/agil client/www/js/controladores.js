@@ -316,7 +316,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
             }
             $scope.ConfirmarGuardarComprobante = function(form, nuevoComprobante, form2) {
                 var tamaño = nuevoComprobante.asientosContables.length - 1
-                for (let i = tamaño; i >= 0; i--) {
+                for (var i = tamaño; i >= 0; i--) {
                     var asiento = nuevoComprobante.asientosContables[i]
                     if (asiento.debe_bs == 0 && asiento.haber_bs == 0) {
                         $scope.nuevoComprobante.asientosContables.splice(i, 1)

@@ -350,7 +350,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				where: condicionCompra,
 				offset: (req.params.items_pagina * (req.params.pagina - 1)),
 				limit: req.params.items_pagina,
-				include: [/* {model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal }, */ {
+				include: [{model:PagoCompra,as:'pagosCompra'},/* {model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal }, */ {
 					model: Movimiento, as: 'movimiento',
 					include: [{ model: Clase, as: 'clase', }]
 				}, {

@@ -84,9 +84,13 @@
 	<link rel="stylesheet" href="lib/swiper/swiper.min.css">
 	<script src="lib/swiper/swiper.min.js"></script>
 
-	<script src="lib/pdfkit/pdfkit.js"></script>
+	<!-- <script src="lib/pdfkit/pdfkit.js"></script>
 	<script src="lib/pdfkit/blob-stream.js"></script>
-	<script src="lib/pdfkit/qr.js"></script>
+	<script src="lib/pdfkit/qr.js"></script> -->
+
+	<script src="lib/pdfkit/pdfkit.min.js"></script>
+	<script src="lib/pdfkit/blob-stream.min.js"></script>
+	<script src="lib/pdfkit/qr.min.js"></script>
 
 	<script src="lib/js-xlsx-master/xlsx.core.min.js"></script>
 	<script src='lib/FileSaver.js-master/FileSaver.min.js'></script>
@@ -95,17 +99,20 @@
 	<script src="lib/angular-resource.min.js"></script>
 	<script src="lib/angular-route.js"></script>
 
-	<script src="lib/angular-messages.js"></script>
+	<!-- <script src="lib/angular-messages.js"></script> -->
+	<script src="lib/angular-messages.min.js"></script>
 
 	<link href="css/circle.css" rel="stylesheet" type="text/css">
 	<link href="lib/angular-block-ui/angular-block-ui.min.css" rel="stylesheet" type="text/css">
 	<script src="lib/angular-block-ui/angular-block-ui.min.js"></script>
-	<script src="lib/ngStorage.js"></script>
+	<script src="lib/ngStorage.min.js"></script>
+	<!-- <script src="lib/ngStorage.js"></script> -->
 	<script src='https://www.google.com/recaptcha/api.js'></script>
 	<script src="lib/ui-bootstrap-tpls-1.3.3.min.js"></script>
 	<script src='assets/js/jquery.min.js'></script>
 	<script src="lib/angular-google-maps.min.js"></script>
-	<script src="lib/lodash.js"></script>
+	<!-- <script src="lib/lodash.js"></script> -->
+	<script src="lib/lodash.min.js"></script>
 	<script src="lib/angular-simple-logger.js"></script>
 	<script src='//maps.googleapis.com/maps/api/js?key=AIzaSyD92T1q0UWEY4M86vcv0LH9te3-WXe3kMY&libraries=drawing'></script>
 
@@ -115,14 +122,18 @@
 	<script src="lib/Chart.min.js"></script>
 	<script src="lib/angular-chart.js-master/dist/angular-chart.min.js"></script>
 	<script src="lib/oclazyload/dist/ocLazyLoad.min.js"></script>
-	<script src="lib/checklist-model.js"></script>
-	<script src="lib/ng-cordova.js"></script>
+	<!-- <script src="lib/checklist-model.js"></script> -->
+	<script src="lib/checklist-model.min.js"></script>
+	<!-- <script src="lib/ng-cordova.js"></script> -->
+	<script src="lib/ng-cordova.min.js"></script>
 	<!-- shortcut libreria -->
-	<script src="lib/shortcut.js"></script>
+	<!-- <script src="lib/shortcut.js"></script> -->
+	<script src="lib/shortcut.min.js"></script>
 <!-- shortcut color piker -->
 <script src="lib/color-picker.min.js"></script>
 	<!-- número literal libreria -->
-	<script src="lib/numero-literal.js"></script>
+	<!-- <script src="lib/numero-literal.js"></script> -->
+	<script src="lib/numero-literal.min.js"></script>
 
 	<script src="lib/angular-multi-select-master/isteven-multi-select.js"></script>
 	<link rel="stylesheet" href="lib/angular-multi-select-master/isteven-multi-select.css">
@@ -1995,7 +2006,7 @@
 				<div class="modal-header">
 					<div class="row">
 						<div class="col-sm-9">
-							<button ng-hide="verComprobante" tabindex="-1"  type="submit" ng-disabled="nuevoComprobante.$invalid" class="btn btn-primary">
+							<button ng-hide="verComprobante" tabindex="-1" id="guardarV" type="submit" ng-disabled="nuevoComprobante.$invalid" class="btn btn-primary">
 								<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 								GUARDAR
 							</button>
@@ -2103,7 +2114,7 @@
 						</div>
 						<div class="col-sm-2">
 							<label>SUCURSAL:</label>
-							<select enter class="form-control" ng-disabled="verComprobante" required data-validate="validate(required)" 
+							<select enter class="form-control" ng-disabled="verComprobante" required data-validate="validate(required)" id="sucursalOrigen"
 							 name="sucursalOrigen" required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 							 ng-model="nuevoComprobante.id_sucursal">
 
@@ -2444,7 +2455,7 @@
 								</td>
 								<td>
 									<input ng-disabled="disparo" ng-update-hidden class="form-control date-picker" size="10" type="text" data-date-format="dd/mm/yyyy"
-									  ng-model="datoQr.fecha" placeholder="Ingrese la fecha" ng-change="verificarFechaQr(datoQr,$index)">
+									 id="fechainicio" ng-model="datoQr.fecha" placeholder="Ingrese la fecha" ng-change="verificarFechaQr(datoQr,$index)">
 								</td>
 								<td>
 									<input class="form-control" size="4" ng-disabled="disparo" ng-model="datoQr.total">
@@ -2550,7 +2561,7 @@
 						</div>
 					</div>
 					<div class="col-sm-2">
-						<button  type="submit" class="btn btn-primary" ng-click="guardarComprasComprobante()">
+						<button id="guardarV" type="submit" class="btn btn-primary" ng-click="guardarComprasComprobante()">
 							<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 							GUARDAR
 						</button>
@@ -2580,11 +2591,11 @@
 					</div>
 					<div class="col-sm-3">
 						<input required="" size="15" ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
-						 type="text" data-date-format="dd/mm/yyyy"  ng-model="filtro.inicio" placeholder="Fecha inicial">
+						 type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="filtro.inicio" placeholder="Fecha inicial">
 					</div>
 					<div class="col-sm-3">
 						<input required="" ng-update-hidden="filtro.fin" class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
-						 type="text" data-date-format="dd/mm/yyyy"  ng-model="filtro.fin" placeholder="Fecha final" size="10">
+						 type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="filtro.fin" placeholder="Fecha final" size="10">
 					</div>
 					<div class="col-sm-3">
 						<a class="blue" ng-click="paginator.getSearch(paginator.search,filtro)">
@@ -2696,11 +2707,11 @@
 				</div>
 				<div class="col-sm-2">
 					<input required="" ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
-					 type="text" data-date-format="dd/mm/yyyy"  ng-model="fechaInicioTexto" placeholder="fecha inicial">
+					 type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="fechaInicioTexto" placeholder="fecha inicial">
 				</div>
 				<div class="col-sm-2">
 					<input required="" ng-update-hidden class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
-					 type="text" data-date-format="dd/mm/yyyy"  ng-model="fechafinTexto" placeholder="fecha final">
+					 type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="fechafinTexto" placeholder="fecha final">
 				</div>
 				<!-- <div class="col-sm-1">
 					<button type="button" class="btn btn-app btn-success btn-xs" ng-click="BuscarPorFechaLibrosMayores(DatosLibroMayor,fechaInicioTexto,fechafinTexto)">
@@ -2758,11 +2769,11 @@
 					</div>
 					<div class="col-sm-6">
 						<input required="" ng-update-hidden="" class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
-						 type="text" data-date-format="dd/mm/yyyy"  ng-model="fechaInicioTexto" placeholder="fecha inicial">
+						 type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="fechaInicioTexto" placeholder="fecha inicial">
 					</div>
 					<div class="col-sm-6">
 						<input required="" ng-update-hidden="" class="form-control date-picker ng-pristine ng-untouched ng-isolate-scope ng-empty ng-invalid ng-invalid-required"
-						 type="text" data-date-format="dd/mm/yyyy"  ng-model="fechafinTexto" placeholder="fecha final">
+						 type="text" data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="fechafinTexto" placeholder="fecha final">
 					</div>
 				</div>
 			</div>
@@ -2873,11 +2884,11 @@
 									</div>
 								</div>
 								<div class="col-sm-8" style=" margin-top: 20px;margin-left: 0px;">
-									<button  type="submit" ng-disabled="formularioVenta.$invalid || pedido.detalles_despacho.length==0" class="btn btn-primary">
+									<button id="guardarV" type="submit" ng-disabled="formularioVenta.$invalid || pedido.detalles_despacho.length==0" class="btn btn-primary">
 										<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 										GUARDAR
 									</button>
-									<button  type="button" class="btn btn-primary btn-danger" ng-click="cerrarNuevoPedido()">
+									<button id="cerrarV" type="button" class="btn btn-primary btn-danger" ng-click="cerrarNuevoPedido()">
 										<i class="ace-icon fa fa-times red2 align-top bigger-125"></i>
 										CERRAR
 								</div>
@@ -2893,7 +2904,7 @@
 									<tr>
 										<td>
 											<label>MOVIMIENTO</label>
-											<select  name="movimiento" ng-model="pedido.movimiento" disabled data-placeholder="Click para escoger">
+											<select id="movimiento" name="movimiento" ng-model="pedido.movimiento" disabled data-placeholder="Click para escoger">
 												<option value="" selected>Pedido</option>
 											</select>
 											<span class="red">(*)</span>
@@ -2918,7 +2929,7 @@
 									<tr>
 										<td>
 											<label>FACTURAR A:</label>
-											<select data-validate="validate(required)"  name="sucursalOrigen" required ng-options="razon as razon.razon_social for razon in pedido.clientes_razon track by razon.id"
+											<select data-validate="validate(required)" id="sucursalOrigen" name="sucursalOrigen" required ng-options="razon as razon.razon_social for razon in pedido.clientes_razon track by razon.id"
 											 ng-model="pedido.cliente_razon" ng-change="obtenerNit(pedido.cliente_razon)">
 												<option value="" disabled selected>Selec. CLiente</option>
 											</select>
@@ -3274,7 +3285,7 @@
 						<div class="widget-header">
 							<h4 class="widget-title">DATOS DE FACTURA</h4>
 							&nbsp;
-							<button ng-disabled="facturaProformas.ver !== undefined"  type="submit" ng-disabled="detallesFacturaProformas.length==0"
+							<button ng-disabled="facturaProformas.ver !== undefined" id="guardarV" type="submit" ng-disabled="detallesFacturaProformas.length==0"
 							 class="btn btn-primary">
 								<i class="ace-icon fa fa-floppy-o align-top bigger-125"></i>
 								GUARDAR
@@ -3352,7 +3363,7 @@
 											<input class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha_FActura_PRoforma" ng-update-hidden
 											 ng-model="facturaProformas.fecha_factura">
 											<label>Movimiento</label>
-											<select required class="form-control"  name="movimiento" ng-model="facturaProformas.movimiento" data-placeholder="Click para escoger"
+											<select required class="form-control" id="movimiento" name="movimiento" ng-model="facturaProformas.movimiento" data-placeholder="Click para escoger"
 											 ng-change="obtenerTipoEgreso(facturaProformas.movimiento)" ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso track by movimiento.id">
 											</select>
 											<label>TIPO DE PAGO</label>
