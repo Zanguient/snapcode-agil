@@ -1,5 +1,5 @@
 module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Cliente, RutaCliente, Venta,
-	VentaReprogramacionPago, sequelize, ClienteRazon, GtmClienteDestino, GtmDestino, Clase) {
+	VentaReprogramacionPago, sequelize, ClienteRazon, GtmClienteDestino, GtmDestino, Clase, ClienteAnticipo, Sucursal) {
 
 	router.route('/clientes')
 		.post(function (req, res) {
@@ -739,5 +739,48 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 				res.json(clienteCreado);
 			});
 		});
+
+	router.route('/anticipo-cliente/cliente/:id_cliente')
+		.post(function (req, res) {
+			Sucursal.find({
+				where: { id: req.body.id_sucursal }
+			}).then(function (sucursalEncontrada) {
+				ClienteAnticipo.create({
+					id_cliente: parseInt(req.params.id_cliente),
+					monto_anticipo: req.body.monto_anticipo,
+					fecha: req.body.fecha,
+					monto_salida: req.body.monto_salida,
+					saldo: req.body.saldo,
+					id_sucursal: req.body.id_sucursal,
+					numero_correlativo_anticipo: sucursalEncontrada.anticipo_cliente_correlativo,
+					eliminado: false
+				}).then(function (clienteCreado) {
+					var correlativo = sucursalEncontrada.anticipo_cliente_correlativo + 1
+					Sucursal.update({
+						anticipo_cliente_correlativo: correlativo
+					}, {
+							where: { id: req.body.id_sucursal }
+						}).then(function (Actualizado) {
+							ClienteAnticipo.find({
+								where:{id:clienteCreado.id},
+								include:[{model:Sucursal,as:'sucursal'},{model:Cliente,as:'cliente'}]
+							}).then(function(encontrado){
+								res.json({ mensaje: "anticipo guardado satisfactoriamente!",anticipo:encontrado });
+							})
+							
+						})
+
+				});
+			})
+		})
+		.get(function (req, res) {
+			ClienteAnticipo.findAll({
+				where:{id_cliente:req.params.id_cliente,padre:null}
+			}).then(function (clientesAnticipos) {
+				res.json(clientesAnticipos);
+			})
+
+		})
+		
 
 }

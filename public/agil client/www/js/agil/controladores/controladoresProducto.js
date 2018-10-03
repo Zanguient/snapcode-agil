@@ -1202,7 +1202,7 @@ angular.module('agil.controladores')
 				var productosEmpresa = new ProductosEmpresaCreacion({ productos: productos, id_empresa: $scope.usuario.id_empresa });
 				productosEmpresa.$save(function (producto) {
 					blockUI.stop();
-					$scope.mostrarMensaje('Guardado Exitosamente!');
+					$scope.mostrarMensaje(producto.mensaje);
 					$scope.recargarItemsTabla();
 				}, function (error) {
 					blockUI.stop();

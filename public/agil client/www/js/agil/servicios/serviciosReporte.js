@@ -211,4 +211,28 @@ var res = function(idEmpresa,idSucursal,idAlmacen, id_usuario)
 		return delay.promise;
 	};
     return res;
-  }]);
+	}])
+	
+	.factory('CompensacionDeuda',  ['$resource',function ($resource) {
+		return $resource(restServer+"anticipo/venta/:id_venta", null,
+		{
+			'update': { method:'PUT' }
+		});
+}])
+
+.factory('GuardarCompensacionDeuda', ['CompensacionDeuda','$q',function(CompensacionDeuda, $q) 
+  {
+	var res = function(idVenta,pago) 
+	{
+		var delay = $q.defer();
+		CompensacionDeuda.save({id_venta:idVenta},{pago:pago},function(entidades) 
+		{        
+			delay.resolve(entidades);
+		}, function(error) 
+			{
+				delay.reject(error);
+			});
+		return delay.promise;
+	};
+    return res;
+	}]);

@@ -3394,16 +3394,30 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
             }
 
             $scope.loadData = function() {
-                $http.get('recursos/data.json').success(function(data) {
-                    $scope.menu_items = data.menu_items;
-                    $scope.skin = data.skin;
-                    $scope.app_name = data.app_name;
-                    $scope.paragrahp_1 = data.paragrahp_1;
-                    $scope.paragrahp_2 = data.paragrahp_2;
-                    $scope.username_label = data.username_label;
-                    $scope.password_label = data.password_label;
-                    $scope.missing_password_label = data.missing_password_label;
-                });
+                // $http.get('recursos/data.json').success(function(data) {
+                //     $scope.menu_items = data.menu_items;
+                //     $scope.skin = data.skin;
+                //     $scope.app_name = data.app_name;
+                //     $scope.paragrahp_1 = data.paragrahp_1;
+                //     $scope.paragrahp_2 = data.paragrahp_2;
+                //     $scope.username_label = data.username_label;
+                //     $scope.password_label = data.password_label;
+                //     $scope.missing_password_label = data.missing_password_label;
+                // });
+                $scope.menu_items = [{"nombre":"Noticias Mundiales","enlace":"http://www.bbc.com/mundo"},
+                {"nombre":"Los Tiempos","enlace":"http://www.lostiempos.com/"},
+                {"nombre":"yahoo","enlace":"https://login.yahoo.com/?.src=ym&.intl=us&.lang=en-US&.done=https%3a//mail.yahoo.com"},
+                {"nombre":"google.com","enlace":"https://www.google.com/"},
+                {"nombre":"facebook.com","enlace":"https://www.facebook.com/"},
+                {"nombre":"hotmail.com","enlace":"https://login.live.com/"},
+                {"nombre":"youtube.com","enlace":"https://www.youtube.com/?hl=es&gl=ES"}];
+                $scope.skin = "no-skin";
+                $scope.app_name = "AGIL";
+                $scope.paragrahp_1 = "Somos una empresa que cuenta con un amplio portafolio de Soluciones, Especializadas porque sabemos que tu negocio tiene necesidades propias, bien sean a nivel Administrativo Comercial Industrial, Educativo y de Servicios";
+                $scope.paragrahp_2 = "Contamos con un equipo multidiciplinario comprometido a generar proyectos con resultados optimos dando siempre lo mejor de cada talento";
+                $scope.username_label = "Usuario";
+                $scope.password_label = "Contraseña";
+                $scope.missing_password_label = "¿Olvidaste tu contraseña?";
             }
 
 

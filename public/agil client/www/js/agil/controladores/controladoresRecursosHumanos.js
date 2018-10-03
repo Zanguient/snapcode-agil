@@ -2442,7 +2442,7 @@ angular.module('agil.controladores')
                                     $scope.mostrarMensaje(res.mensaje);
                                     blockUI.stop();
                                 } else {
-                                    $scope.mostrarMensaje("del codigo " + empleadosArray[0].codigo + " hasta el codigo " + empleadosArray[empleadosArray.length - 1].codigo + " ingresados satisfactoriamente, faltan procesar " + $scope.empleadosParaGuardar.length + " fichas empleados")
+                                    $scope.mostrarMensaje("del codigo " + empleadosArray[0].codigo + " hasta el codigo " + empleadosArray[empleadosArray.length - 1].codigo + " ingresados satisfactoriamente, faltan procesar " + $scope.empleadosParaGuardar.length + " fichas de empleados")
                                     $scope.guardarFichasEmpleados($scope.empleadosParaGuardar)
                                 }
                             })

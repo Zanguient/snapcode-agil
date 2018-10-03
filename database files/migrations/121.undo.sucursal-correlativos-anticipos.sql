@@ -1,0 +1,4 @@
+ALTER TABLE agil_sucursal drop anticipo_cliente_correlativo;
+ALTER TABLE agil_sucursal drop anticipo_proveedor_correlativo;
+ALTER TABLE agil_sucursal drop anticipo_compensacion_cliente_correlativo;
+ALTER TABLE agil_sucursal drop anticipo_compensacion_proveedor_correlativo;

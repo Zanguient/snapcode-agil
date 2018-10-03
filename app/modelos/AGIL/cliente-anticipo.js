@@ -1,16 +1,16 @@
 module.exports = function (sequelize, Sequelize) {
-    var ProveedorAnticipo = sequelize.define('agil_proveedor_anticipo', {
-        id_proveedor: {
+    var ClienteAnticipo = sequelize.define('agil_cliente_anticipo', {
+        id_cliente: {
             type: Sequelize.INTEGER,
-            field: 'proveedor'
+            field: 'cliente'
+        },
+        id_pago_venta: {
+            type: Sequelize.INTEGER,
+            field: 'pago_venta'
         },
         id_sucursal: {
             type: Sequelize.INTEGER,
             field: 'sucursal'
-        },
-        id_pago_compra: {
-            type: Sequelize.INTEGER,
-            field: 'pago_compra'
         },
         fecha: {
             type: Sequelize.DATE,
@@ -40,10 +40,9 @@ module.exports = function (sequelize, Sequelize) {
             type: Sequelize.BOOLEAN,
             field: 'eliminado'
         },
-        
     }, {
             freezeTableName: true
         });
-    ProveedorAnticipo.sync();
-    return ProveedorAnticipo;
+        ClienteAnticipo.sync();
+    return ClienteAnticipo;
 }

@@ -221,13 +221,6 @@ angular.module('agil.servicios')
             });
     }])
 
-    // .factory('FacturarProformas',  ['$resource',function ($resource) {
-    //     return $resource(restServer + "ventas/factura/proformas", {},
-    //         {
-    //             'update': { method: 'PUT' }
-    //         });
-    // })
-
     .factory('FacturaProforma', ['FacturarProformas', '$q', function (FacturarProformas, $q) {
         var res = function (idEmpresa, proformas) {
             var delay = $q.defer();

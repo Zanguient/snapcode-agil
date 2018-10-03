@@ -24,7 +24,8 @@
 		<div class="table-header">
 			Lista de Clientes
 			<div class="pos-rel pull-right">
-				<a href="javascript:void(0)" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.ROL_ADMINISTRADOR && usuario.empresa.usar_correlativos_clientes" ng-click="abrirModalConceptoEdicionCorrelativos()">
+				<a href="javascript:void(0)" ng-if="usuario.rolesUsuario[0].rol.nombre==diccionario.ROL_ADMINISTRADOR && usuario.empresa.usar_correlativos_clientes"
+				 ng-click="abrirModalConceptoEdicionCorrelativos()">
 					<img src="img/icono-correlativo.png" height="30" width="30" alt="">
 
 				</a>
@@ -178,7 +179,9 @@
 										<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarCliente(cliente)">
 											<i class="ace-icon fa fa-pencil bigger-130"></i>
 										</a>
-
+										<a ng-if="usuario.empresa.usar_pago_anticipado" class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="abrirModalNuevoAnticipo(cliente)">
+											<i class="ace-icon fa fa-money bigger-130"></i>
+										</a>
 										<!-- <a class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(cliente)">
 											<i class="ace-icon fa fa-trash-o bigger-130"></i>
 										</a> -->
@@ -192,8 +195,8 @@
 
 											<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
 												<li>
-													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCliente(cliente)" class="tooltip-info" data-rel="tooltip"
-													 title="View">
+													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCliente(cliente)" class="tooltip-info"
+													 data-rel="tooltip" title="View">
 														<span class="blue">
 															<i class="ace-icon fa fa-search-plus bigger-120"></i>
 														</span>
@@ -201,14 +204,21 @@
 												</li>
 
 												<li>
-													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarCliente(cliente)" class="tooltip-success"
-													 data-rel="tooltip" title="Edit">
+													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarCliente(cliente)"
+													 class="tooltip-success" data-rel="tooltip" title="Edit">
 														<span class="green">
 															<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
 														</span>
 													</a>
 												</li>
-
+												<li ng-if="usuario.empresa.usar_pago_anticipado">
+													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="abrirModalNuevoAnticipo(cliente)"
+													 class="tooltip-success" data-rel="tooltip" title="Edit">
+														<span class="green">
+															<i class="ace-icon fa  fa-money bigger-120"></i>
+														</span>
+													</a>
+												</li>
 												<!-- <li>
 													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(cliente)" class="tooltip-error"
 													 data-rel="tooltip" title="Delete">
@@ -227,7 +237,8 @@
 				</div>
 				<div class="row">
 					<div class="col-xs-6">
-						<div class="dataTables_info" id="tabla-clientes_info" role="status" aria-live="polite">Mostrando página {{paginaActual}} de {{paginas.length}}</div>
+						<div class="dataTables_info" id="tabla-clientes_info" role="status" aria-live="polite">Mostrando página
+							{{paginaActual}} de {{paginas.length}}</div>
 					</div>
 					<div class="col-xs-6">
 						<div class="dataTables_paginate paging_simple_numbers" id="tabla-clientes_paginate">
@@ -235,16 +246,15 @@
 								<li class="paginate_button previous" aria-controls="tabla-clientes" tabindex="0" id="tabla-clientes_previous">
 									<a href="javascript:void(0)" ng-click="buscarClientes(1,itemsPorPagina,textoBusqueda)">Primero</a>
 								</li>
-								<li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-clientes" tabindex="0" id="tabla-clientes_previous">
+								<li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-clientes"
+								 tabindex="0" id="tabla-clientes_previous">
 									<a href="javascript:void(0)" e-disabled="paginaActual==1" ng-click="buscarClientes(paginaActual-1,itemsPorPagina,textoBusqueda)">
-										<<</a>
+										<<</a> </li> <li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-clientes"
+										 tabindex="0" ng-repeat="pagina in paginas" ng-if="abs(paginaActual-pagina)<4">
+											<a href="javascript:void(0)" ng-click="buscarClientes(pagina,itemsPorPagina,textoBusqueda)">{{pagina}}</a>
 								</li>
-								<li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-clientes" tabindex="0" ng-repeat="pagina in paginas"
-								 ng-if="abs(paginaActual-pagina)<4">
-									<a href="javascript:void(0)" ng-click="buscarClientes(pagina,itemsPorPagina,textoBusqueda)">{{pagina}}</a>
-								</li>
-								<li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-clientes" tabindex="0"
-								 id="tabla-clientes_next">
+								<li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-clientes"
+								 tabindex="0" id="tabla-clientes_next">
 									<a href="javascript:void(0)" e-disabled="paginaActual==paginas.length" ng-click="buscarClientes(paginaActual+1,itemsPorPagina,textoBusqueda)">>></a>
 								</li>
 								<li class="paginate_button previous" aria-controls="tabla-clientes" tabindex="0" id="tabla-clientes_previous">
@@ -322,8 +332,8 @@
 									</div>
 									<div class="col-sm-5">
 										<br ng-hide="cliente.id" ng-if="usuario.empresa.usar_correlativos_clientes">
-										<input ng-disabled="usuario.empresa.usar_correlativos_clientes" required type="text" id="codigoClienteNuevo" ng-model="cliente.codigo"
-										 placeholder="Código" class="form-control" />
+										<input ng-disabled="usuario.empresa.usar_correlativos_clientes" required type="text" id="codigoClienteNuevo"
+										 ng-model="cliente.codigo" placeholder="Código" class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -332,12 +342,12 @@
 									<label class="col-sm-3 control-label no-padding-right" for="razon_social">Razón Social</label>
 
 									<div class="col-sm-4">
-										<input required type="text" id="razon_socialCliente" ng-model="cliente.razon_social" placeholder="Razón Social" class="form-control"
-										/>
+										<input required type="text" id="razon_socialCliente" ng-model="cliente.razon_social" placeholder="Razón Social"
+										 class="form-control" />
 									</div>
 									<div class="col-sm-5" ng-if="usuario.empresa.usar_tipo_precio">
-											<select name="tipoprecio" id="tipoprecio" class="form-control" ng-options="tipoPrecio as tipoPrecio.nombre for tipoPrecio in tiposPrecios.clases | filter:{habilitado:true} track by tipoPrecio.id"
-											ng-model="cliente.tipoPrecioVenta"></select>
+										<select name="tipoprecio" id="tipoprecio" class="form-control" ng-options="tipoPrecio as tipoPrecio.nombre for tipoPrecio in tiposPrecios.clases | filter:{habilitado:true} track by tipoPrecio.id"
+										 ng-model="cliente.tipoPrecioVenta"></select>
 									</div>
 								</div>
 							</div>
@@ -405,8 +415,8 @@
 								<div class="row">
 									<label class="col-sm-3 control-label no-padding-right" for="ubicacion_geografica">Ubic. Geo.</label>
 									<div class="col-sm-9">
-										<input type="text" id="ubicacion_geograficaCliente" ng-model="cliente.ubicacion_geografica" placeholder="ubicacion geografica" class="form-control"
-										/>
+										<input type="text" id="ubicacion_geograficaCliente" ng-model="cliente.ubicacion_geografica" placeholder="ubicacion geografica"
+										 class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -421,7 +431,7 @@
 							</div>
 							<div class="form-group">
 								<div class="row">
-									<label class="col-sm-3 control-label no-padding-right" >Categoria</label>
+									<label class="col-sm-3 control-label no-padding-right">Categoria</label>
 
 									<div class="col-sm-9">
 										<input type="text" id="categoriaClienteNuevo" ng-model="cliente.categoria" placeholder="categoria" class="form-control" />
@@ -433,8 +443,8 @@
 									<label class="col-sm-3 control-label no-padding-right" for="fecha1">Fecha Imp. 1</label>
 
 									<div class="col-sm-9">
-										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm" id="fecha1Cliente" ng-model="cliente.fechatexto1"
-										 placeholder="fecha 1" />
+										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm" id="fecha1Cliente"
+										 ng-model="cliente.fechatexto1" placeholder="fecha 1" />
 									</div>
 								</div>
 							</div>
@@ -443,8 +453,8 @@
 									<label class="col-sm-3 control-label no-padding-right" for="fecha2">Fecha Imp. 2</label>
 
 									<div class="col-sm-9">
-										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm" id="fecha2Cliente" ng-model="cliente.fechatexto2"
-										 placeholder="fecha 2" />
+										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm" id="fecha2Cliente"
+										 ng-model="cliente.fechatexto2" placeholder="fecha 2" />
 									</div>
 								</div>
 							</div>
@@ -472,7 +482,7 @@
 										<i class="ace-icon fa fa-map-marker"></i>
 									</button>
 								</div>
-								
+
 								<div id="map_canvas" class="mapa_cliente" ng-if="cliente && mostrarMap">
 									<ui-gmap-google-map center="map.center" zoom="map.zoom" options="options">
 										<ui-gmap-marker coords="marker.coords" options="marker.options" events="marker.events" idkey="marker.id">
@@ -495,8 +505,8 @@
 								<div class="row">
 									<label class="col-sm-3 control-label no-padding-right" for="linea_credito">Línea de crédito</label>
 									<div class="col-sm-9">
-										<input type="number" min="0" id="linea_credito" ng-model="cliente.linea_credito" placeholder="Línea de crédito" class="form-control"
-										/>
+										<input type="number" min="0" id="linea_credito" ng-model="cliente.linea_credito" placeholder="Línea de crédito"
+										 class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -504,7 +514,8 @@
 								<div class="row">
 									<label class="col-sm-3 control-label no-padding-right" for="plazo_credito">Plazo créditos</label>
 									<div class="col-sm-9">
-										<input type="number" min="0" id="plazo_creditoCliente" ng-model="cliente.plazo_credito" placeholder="Plazo" class="form-control" />
+										<input type="number" min="0" id="plazo_creditoCliente" ng-model="cliente.plazo_credito" placeholder="Plazo"
+										 class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -525,8 +536,8 @@
 									<label class="col-sm-3 control-label no-padding-right" for="razon_social">Razon social</label>
 
 									<div class="col-sm-9">
-										<input type="text" id="razon_socialClienteRazon" ng-model="cliente_razon.razon_social" placeholder="Razon social" class="form-control"
-										/>
+										<input type="text" id="razon_socialClienteRazon" ng-model="cliente_razon.razon_social" placeholder="Razon social"
+										 class="form-control" />
 									</div>
 								</div>
 							</div>
@@ -839,7 +850,8 @@
 							<div class="row">
 								<label class="col-sm-3 control-label no-padding-right" for="ubicacion_geografica">Ubic. Geo.</label>
 								<div class="col-sm-9">
-									<input disabled type="text" id="ubicacion_geograficaClienteDisabled" ng-model="cliente.ubicacion_geografica" class="form-control" />
+									<input disabled type="text" id="ubicacion_geograficaClienteDisabled" ng-model="cliente.ubicacion_geografica"
+									 class="form-control" />
 								</div>
 							</div>
 						</div>
@@ -866,8 +878,8 @@
 								<label class="col-sm-3 control-label no-padding-right" for="fecha1">Fecha Imp. 1</label>
 
 								<div class="col-sm-9">
-									<input disabled class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha1ClienteDisabled" ng-model="cliente.fechatexto1"
-									/>
+									<input disabled class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha1ClienteDisabled"
+									 ng-model="cliente.fechatexto1" />
 								</div>
 							</div>
 						</div>
@@ -876,8 +888,8 @@
 								<label class="col-sm-3 control-label no-padding-right" for="fecha2">Fecha Imp. 2</label>
 
 								<div class="col-sm-9">
-									<input disabled class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha2ClienteDisabled" ng-model="cliente.fechatexto2"
-									/>
+									<input disabled class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fecha2ClienteDisabled"
+									 ng-model="cliente.fechatexto2" />
 								</div>
 							</div>
 						</div>
@@ -969,7 +981,8 @@
 
 <div id="dialog-eliminar-cliente" title="¿Eliminación de Cliente?">
 	<p>
-		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el cliente seleccionado?
+		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el
+		cliente seleccionado?
 	</p>
 	<button type="button" class="btn btn-danger" ng-click="eliminarCliente(cliente)">Si</button>
 	<button type="button" class="btn btn-success" ng-click="cerrarConfirmacionEliminacion()">No</button>
@@ -1008,3 +1021,33 @@
 	</form>
 </div>
 <!-- fin confirmar usuario -->
+<div id="modal-anticipo-cliente" class="modal">
+
+		<div class="modal-content">
+			<div class="modal-header" align="center">
+				<h2>Nuevo Anticipo</h2>
+				<p>{{cliente.nombre}}</p>
+			</div>
+			<form id="nuevo-anticipo-cliente" ng-submit="guardarAnticipoCliente(anticipo)">
+			<div class="modal-body">
+				
+					<div class="form-group">
+						<label class="inline" >Sucursal</label>
+						<select required class="form-control" required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+						 ng-model="anticipo.sucursal">
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="inline">¿Ingresar monto a depositar?</label>
+						<input required type="number" class="form-control" ng-model="anticipo.monto" min="1" step="0.0001">
+					</div>
+				
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-danger pull-left" type="button" ng-click="cerrarModalNuevoAnticipo()"><i class="ace-icon fa fa-times"></i>Cancelar</button>
+				<button class="btn btn-success pull-right" type="submit"><i class="ace-icon fa fa-floppy-o"></i>Guardar</button>
+			</div>
+		</form>
+		</div>
+	
+</div>

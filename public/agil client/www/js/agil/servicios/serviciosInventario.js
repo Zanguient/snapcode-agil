@@ -7,6 +7,7 @@ angular.module('agil.servicios')
 				'update': { method: 'PUT' }
 			});
 	}])
+	
 	.factory('ActualizarDetalleMovimiento',  ['$resource',function ($resource) {
 		return $resource(restServer + "actualizar-movimiento-detalle/:id", null,
 			{
@@ -249,7 +250,42 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-
+	.factory('CompensacionVentaEmpresaDatos',  ['$resource',function ($resource) {
+		return $resource(restServer + "compensacion/ventas/:id/empresa/:id_empresa/cliente/:id_cliente", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	}])
+	.factory('PagosVentaCreditosAnticipo', ['CompensacionVentaEmpresaDatos', '$q', function (CompensacionVentaEmpresaDatos, $q) {
+		var res = function (id_venta, id_empresa,id_cliente,datos) {
+			var delay = $q.defer();
+			CompensacionVentaEmpresaDatos.update({ id: id_venta, id_empresa: id_empresa,id_cliente:id_cliente },datos, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
+	.factory('CompensacionCompraEmpresaDatos',  ['$resource',function ($resource) {
+		return $resource(restServer + "compensacion/compra/:id/empresa/:id_empresa/proveedor/:id_proveedor", null,
+			{
+				'update': { method: 'PUT' }
+			});
+	}])
+	.factory('PagosCompraCreditosAnticipo', ['CompensacionCompraEmpresaDatos', '$q', function (CompensacionCompraEmpresaDatos, $q) {
+		var res = function (id_venta, id_empresa,id_proveedor,datos) {
+			var delay = $q.defer();
+			CompensacionCompraEmpresaDatos.update({ id: id_venta, id_empresa: id_empresa,id_proveedor:id_proveedor },datos, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
 	.factory('VentaFiltro',  ['$resource',function ($resource) {
 		return $resource(restServer + "ventas/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-venta/:tipo_venta/sucursal/:sucursal/transaccion/:transaccion/usuario/:usuario/estado/:estado", null,
 			{

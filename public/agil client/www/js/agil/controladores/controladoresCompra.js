@@ -923,9 +923,12 @@ angular.module('agil.controladores')
 				$scope.cerrarPopup($scope.ModalMensajePago);
 				$scope.cerrarPopup($scope.idModalPago);
 				$scope.obtenerCompras();
-				$scope.imprimirRecibo(data, data.compra, pago, restante);
+				
 				if (restante < 0) {
-					$scope.imprimirReciboAnticipo(data, data.compra, pago,restante);
+					$scope.imprimirRecibo(data, data.compra, saldo, restante);
+					$scope.imprimirReciboAnticipo(data.anticipo);
+				}else{
+					$scope.imprimirRecibo(data, data.compra, pago, restante);
 				}
 				blockUI.stop();
 			})
@@ -1064,66 +1067,75 @@ angular.module('agil.controladores')
 			blockUI.stop();
 		}
 
-		$scope.imprimirReciboAnticipo = function (data, compra, pago,anticipio) {
+		$scope.imprimirReciboAnticipo = function (anticipo) {
 			blockUI.start();
-			var doc = new PDFDocument({ size: [227, 353], margin: 10 });
+			var doc = new PDFDocument({ compress: false, size: [227, 353], margin: 10 });
 			var stream = doc.pipe(blobStream());
 			doc.moveDown(2);
 			doc.font('Helvetica-Bold', 8);
 			doc.text($scope.usuario.empresa.razon_social.toUpperCase(), { align: 'center' });
 			doc.moveDown(0.4);
 			doc.font('Helvetica', 7);
-			doc.text(compra.almacen.sucursal.nombre.toUpperCase(), { align: 'center' });
+			doc.text(anticipo.sucursal.nombre.toUpperCase(), { align: 'center' });
 			doc.moveDown(0.4);
-			doc.text(compra.almacen.sucursal.direccion.toUpperCase(), { align: 'center' });
+			doc.text(anticipo.sucursal.direccion.toUpperCase(), { align: 'center' });
 			doc.moveDown(0.4);
-			var telefono = (compra.almacen.sucursal.telefono1 != null ? compra.almacen.sucursal.telefono1 : "") +
-				(compra.almacen.sucursal.telefono2 != null ? "-" + compra.almacen.sucursal.telefono2 : "") +
-				(compra.almacen.sucursal.telefono3 != null ? "-" + compra.almacen.sucursal.telefono3 : "");
+			var telefono = (anticipo.sucursal.telefono1 != null ? anticipo.sucursal.telefono1 : "") +
+				(anticipo.sucursal.telefono2 != null ? "-" + anticipo.sucursal.telefono2 : "") +
+				(anticipo.sucursal.telefono3 != null ? "-" + anticipo.sucursal.telefono3 : "");
 			doc.text("TELF.: " + telefono, { align: 'center' });
 			doc.moveDown(0.4);
 			doc.text("COCHABAMBA - BOLIVIA", { align: 'center' });
 			doc.moveDown(0.5);
 			doc.font('Helvetica-Bold', 8);
-			doc.text("PAGO ANTICIPADO", { align: 'center' });
+			doc.text("ANTICIPO", { align: 'center' });
 			doc.font('Helvetica', 7);
 			doc.moveDown(0.4);
 			doc.text("------------------------------------", { align: 'center' });
 			doc.moveDown(0.4);
+			doc.text(anticipo.numero_correlativo_anticipo, { align: 'center' });
 			//doc.text("NIT: "+$scope.usuario.empresa.nit,{align:'center'});
+
+			//doc.text("FACTURA No: "+anticipo.factura,{align:'center'});
 			doc.moveDown(0.4);
-			doc.text(compra.almacen.sucursal.nota_recibo_correlativo, { align: 'center' });
-			doc.moveDown(0.4);
-			//doc.text("AUTORIZACIÓN No: "+venta.autorizacion,{align:'center'});
+			//doc.text("AUTORIZACIÓN No: "+anticipo.autorizacion,{align:'center'});
 			doc.moveDown(0.4);
 			doc.text("------------------------------------", { align: 'center' });
 			doc.moveDown(0.4);
-			//doc.text(venta.actividad.nombre,{align:'center'});
+			//doc.text(anticipo.actividad.nombre,{align:'center'});
 			doc.moveDown(0.6);
 			var date = new Date();
 			doc.text("FECHA : " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(), { align: 'left' });
 			doc.moveDown(0.4);
-			doc.text("Pagado a : " + $scope.compra.proveedor.razon_social, { align: 'left' });
+			doc.text("He recibido de : " +anticipo.proveedor.razon_social, { align: 'left' });
 			doc.moveDown(0.4);
 			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
 			doc.moveDown(0.2);
 			doc.text("       CONCEPTO                                   ", { align: 'left' });
 			doc.moveDown(0.2);
+			
 			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
 			doc.moveDown(0.4);
-			compra.fecha = new Date(compra.fecha);
-			doc.text("Fecha: " + compra.fecha.getDate() + "/" + (compra.fecha.getMonth() + 1) + "/" + compra.fecha.getFullYear(), 15, 210);
-			var textoFact = $scope.compra.factura;
-			doc.text(textoFact, 105, 210, { width: 100 });
-			doc.text("Bs " + anticipio.toFixed(2) + ".-", 170, 210, { width: 100 });
+			anticipo.fecha = new Date(anticipo.fecha);
+			doc.text("Fecha: " + anticipo.fecha.getDate() + "/" + (anticipo.fecha.getMonth() + 1) + "/" + anticipo.fecha.getFullYear(), 15, 210);
+			//var textoFact = $scope.anticipo.movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ? "Factura nro. " + $scope.anticipo.factura : "Proforma nro. " + $scope.anticipo.factura;
+			//doc.text(textoFact, 105, 210, { width: 100 });
+			/* if (anticipo >= 0) {
+				doc.text("Saldo Bs " + ((anticipo.saldo - pago)*-1) + ".-", 105, 220, { width: 100 });
+			}else{
+				doc.text("Saldo Bs " +"0" + ".-", 105, 220, { width: 100 });
+			} */
+			doc.text("Anticipo", 105, 210, { width: 100 });
+			doc.moveDown(0.2);
+			doc.text("Bs " + anticipo.monto_anticipo.toFixed(2) + ".-", 170, 210, { width: 100 });
 
 			doc.text("--------------", 10, 230, { align: 'right' });
 			//oc.text("--------------------",{align:'right'});
 			doc.moveDown(0.3);
-			doc.text("TOTAL Bs.              " + anticipio.toFixed(2), { align: 'right' });
+			doc.text("TOTAL Bs.              " + anticipo.monto_anticipo.toFixed(2), { align: 'right' });
 			doc.moveDown(0.4);
 			doc.moveDown(0.4);
-			//doc.text("SON: " + data.pago, { align: 'left' });
+			doc.text(ConvertirALiteral(anticipo.monto_anticipo.toFixed(2)), { align: 'left' });
 			doc.moveDown(0.6);
 
 			doc.moveDown(0.4);
@@ -1143,6 +1155,13 @@ angular.module('agil.controladores')
 
 			doc.text("-------------------------                       -------------------------", { align: 'center' });
 			doc.text("ENTREGUE CONFORME            RECIBI CONFORME", { align: 'center' });
+			doc.moveDown(0.4);
+			var fechaActual = new Date();
+			var min = fechaActual.getMinutes();
+			if (min < 10) {
+				min = "0" + min;
+			}
+			doc.text("  Usuario : " + $scope.usuario.nombre_usuario + " -- Fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min + "  ", { align: 'center' });
 			doc.end();
 			stream.on('finish', function () {
 				var fileURL = stream.toBlobURL('application/pdf');

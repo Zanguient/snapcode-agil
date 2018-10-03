@@ -105,4 +105,32 @@ angular.module('agil.servicios')
 			return delay.promise;
 		};
 		return res;
+	}])
+	.factory('AnticipoProveedor', ['$resource', function ($resource) {
+		return $resource(restServer + "anticipo-proveedor/proveedor/:id_proveedor");
+	}])
+
+	.factory('ObtenerAnticiposProveedor', ['AnticipoProveedor', '$q', function (AnticipoProveedor, $q) {
+		var res = function (idProveedor) {
+			var delay = $q.defer();
+			AnticipoProveedor.query({ id_proveedor: idProveedor }, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
+	.factory('GuardarAnticipoProveedor', ['AnticipoProveedor', '$q', function (AnticipoProveedor, $q) {
+		var res = function (idProveedor, datos) {
+			var delay = $q.defer();
+			AnticipoProveedor.save({ id_proveedor: idProveedor }, datos, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
 	}]);

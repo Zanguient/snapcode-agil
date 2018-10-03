@@ -526,8 +526,9 @@ function ejecutarScriptsComprobantesContabilidad(idModalWizardComprobantesContab
 	crearPopup(idModalWizardComprobantesContabilidadModificar, "100%", 600);
 	aplicarDatePickers();
 }
-function ejecutarScriptsEstadoCuentasClientes(idPopupTablaEstadoCuentasClientes) {
-	crearPopup(idPopupTablaEstadoCuentasClientes, "60%", 550);
+function ejecutarScriptsEstadoCuentasClientes(idPopupTablaEstadoCuentasClientes,idModalPagoDeudaCliente) {
+	crearPopup(idPopupTablaEstadoCuentasClientes, "auto", "auto");
+	crearPopup(idModalPagoDeudaCliente, "auto", "auto");
 	aplicarDatePickers();
 }
 
@@ -701,24 +702,31 @@ function ejecutarScriptsProducto(idPopupEdicion, idPopupVista, idPopupKadex, idP
 	}, 3000);
 }
 
-function ejecutarScriptsProveedor(idPopupEdicion, idPopupVista, idPopupEliminacion, idContenedorEdicion, idContenedorVista) {
+function ejecutarScriptsProveedor(idPopupEdicion, idPopupVista, idPopupEliminacion, idContenedorEdicion, idContenedorVista,
+	IdModalNuevoAnticipo) {
 	crearPopup(idPopupEdicion, "auto", "auto");
 	crearPopup(idPopupVista,"auto", "auto");
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
 	aplicarWizardFormulario(idPopupVista, idContenedorVista);
 	aplicarDatePickers();
 	crearPopup(idPopupEliminacion, "auto", "auto");
+	crearPopup(IdModalNuevoAnticipo, "auto", "auto");
 }
-
+function ejecutarScriptsEstadoCuentaProveedor(idModalPagoDeudaProveedor,
+	idModalTablaEstadoCuenta){
+	
+	crearPopup(idModalTablaEstadoCuenta,"auto", "auto");
+	crearPopup(idModalPagoDeudaProveedor, "auto", "auto");
+}
 function ejecutarScriptsCliente(idPopupEdicion, idPopupVista, idPopupEliminacion, idContenedorEdicion, idContenedorVista, idModalConceptoEdicionCorrelativos
-	, IdModalVerificarCuenta) {
+	, IdModalVerificarCuenta,IdModalNuevoAnticipo) {
 	crearPopup(idPopupEdicion,"auto", "auto");
 	crearPopup(idPopupVista, "auto", "auto");
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
 	aplicarWizardFormulario(idPopupVista, idContenedorVista);
 	aplicarDatePickers();
 	crearPopup(idPopupEliminacion, "auto", "auto");
-	
+	crearPopup(IdModalNuevoAnticipo, 300, "auto");
 	setTimeout(function name(params) {
 		crearPopup(idModalConceptoEdicionCorrelativos, "auto", "auto");
 		crearPopup(IdModalVerificarCuenta, "auto", "auto");

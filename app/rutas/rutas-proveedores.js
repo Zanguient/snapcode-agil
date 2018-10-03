@@ -1,4 +1,4 @@
-module.exports = function (router, sequelize, forEach, decodeBase64Image, fs, Empresa, Proveedor, Compra, CompraReprogramacionPago,Pedido) {
+module.exports = function (router, sequelize, forEach, decodeBase64Image, fs, Empresa, Proveedor, Compra, CompraReprogramacionPago,Pedido,ProveedorAnticipo,Sucursal) {
 
 	router.route('/proveedores')
 
@@ -409,5 +409,47 @@ module.exports = function (router, sequelize, forEach, decodeBase64Image, fs, Em
 				}).catch(function (err) {
 					res.json({ mensaje: (err.stack !== undefined) ? err.stack : err, hasErr: true })
 				})
+		})
+
+		router.route('/anticipo-proveedor/proveedor/:id_proveedor')
+		.post(function (req, res) {
+			Sucursal.find({
+				where: { id: req.body.id_sucursal }
+			}).then(function (sucursalEncontrada) {
+				ProveedorAnticipo.create({
+					id_proveedor: parseInt(req.params.id_proveedor),
+					monto_anticipo: req.body.monto_anticipo,
+					fecha: req.body.fecha,
+					monto_salida: req.body.monto_salida,
+					saldo: req.body.saldo,
+					id_sucursal: req.body.id_sucursal,
+					numero_correlativo_anticipo: sucursalEncontrada.anticipo_proveedor_correlativo,
+					eliminado: false
+				}).then(function (provedorAnticipoCreado) {
+					var correlativo = sucursalEncontrada.anticipo_proveedor_correlativo + 1
+					Sucursal.update({
+						anticipo_proveedor_correlativo: correlativo
+					}, {
+							where: { id: req.body.id_sucursal }
+						}).then(function (Actualizado) {
+							ProveedorAnticipo.find({
+								where:{id:provedorAnticipoCreado.id},
+								include:[{model:Sucursal,as:'sucursal'},{model:Proveedor,as:'proveedor'}]
+							}).then(function(encontrado){
+								res.json({ mensaje: "anticipo guardado satisfactoriamente!",anticipo:encontrado });
+							})
+							
+						})
+
+				});
+			})
+		})
+		.get(function (req, res) {
+			ProveedorAnticipo.findAll({
+				where:{id_proveedor:req.params.id_proveedor,padre:null}
+			}).then(function (clientesAnticipos) {
+				res.json(clientesAnticipos);
+			})
+
 		})
 }

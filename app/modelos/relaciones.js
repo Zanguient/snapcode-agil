@@ -17,7 +17,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
 	RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
 	EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica, CierreCajaChica,
-	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal,ProductoTipoPrecio,ProveedorAnticipo) {
+	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal,ProductoTipoPrecio,ProveedorAnticipo,ClienteAnticipo) {
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lenguaje', as: 'lenguaje' });
@@ -1213,9 +1213,20 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ProveedorAnticipo.belongsTo(Proveedor, { foreignKey: 'id_proveedor', as: 'proveedor' })
 	ProveedorAnticipo.belongsTo(ProveedorAnticipo, { foreignKey: 'id_padre', as: 'pradre' })
 	ProveedorAnticipo.hasMany(ProveedorAnticipo, { foreignKey: 'id_padre', as: 'detallesAnticipo' })
+	ProveedorAnticipo.belongsTo(Sucursal, { foreignKey: 'id_sucursal', as: 'sucursal' })
 
-	PagoCompra.hasMany(ProveedorAnticipo, { foreignKey: 'id_pago_compra', as: 'anticipo' })
+	PagoCompra.hasMany(ProveedorAnticipo, { foreignKey: 'id_pago_compra', as: 'anticipos' })
 	Proveedor.hasMany(ProveedorAnticipo, { foreignKey: 'id_proveedor', as: 'proveedorAnticipos' })
+	Sucursal.hasMany(ProveedorAnticipo, { foreignKey: 'id_sucursal', as: 'provedoresAnticipos' })
 
+	ClienteAnticipo.belongsTo(PagoVenta, { foreignKey: 'id_pago_venta', as: 'pagoVenta' })
+	ClienteAnticipo.belongsTo(Cliente, { foreignKey: 'id_cliente', as: 'cliente' })
+	ClienteAnticipo.belongsTo(ClienteAnticipo, { foreignKey: 'id_padre', as: 'pradre' })
+	ClienteAnticipo.hasMany(ClienteAnticipo, { foreignKey: 'id_padre', as: 'detallesAnticipo' })
+	ClienteAnticipo.belongsTo(Sucursal, { foreignKey: 'id_sucursal', as: 'sucursal' })
+
+	PagoVenta.hasMany(ClienteAnticipo, { foreignKey: 'id_pago_venta', as: 'anticipos' })
+	Cliente.hasMany(ClienteAnticipo, { foreignKey: 'id_cliente', as: 'clienteAnticipos' })
+	Sucursal.hasMany(ClienteAnticipo, { foreignKey: 'id_sucursal', as: 'clientesAnticipos' })
 }
 

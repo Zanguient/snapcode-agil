@@ -145,8 +145,13 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Sucu
 				reiniciar_comprobante_egreso_correlativo: req.body.reiniciar_comprobante_egreso_correlativo,
 				reiniciar_comprobante_traspaso_correlativo: req.body.reiniciar_comprobante_traspaso_correlativo,
 				reiniciar_comprobante_caja_chica_correlativo: req.body.reiniciar_comprobante_caja_chica_correlativo,
-				caja_chica_ingreso_correlativo:req.body.caja_chica_ingreso_correlativo,
-				caja_chica_egreso_correlativo:req.body.caja_chica_egreso_correlativo
+				caja_chica_ingreso_correlativo: req.body.caja_chica_ingreso_correlativo,
+				caja_chica_egreso_correlativo: req.body.caja_chica_egreso_correlativo,
+				anticipo_cliente_correlativo: req.body.anticipo_cliente_correlativo,
+				anticipo_proveedor_correlativo: req.body.anticipo_proveedor_correlativo,
+				anticipo_compensacion_cliente_correlativo: req.body.anticipo_compensacion_cliente_correlativo,
+				anticipo_compensacion_proveedor_correlativo: req.body.anticipo_compensacion_proveedor_correlativo,
+				correlativo_proforma: req.body.correlativo_proforma
 			}, {
 					where: {
 						id: req.params.id_sucursal

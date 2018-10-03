@@ -141,7 +141,23 @@ module.exports = function (sequelize, Sequelize) {
 		caja_chica_egreso_correlativo: {
 			type: Sequelize.INTEGER,
 			field: 'caja_chica_egreso_correlativo'
-		}
+		},
+		anticipo_cliente_correlativo: {
+			type: Sequelize.INTEGER,
+			field: 'anticipo_cliente_correlativo'
+		},
+		anticipo_proveedor_correlativo: {
+			type: Sequelize.INTEGER,
+			field: 'anticipo_proveedor_correlativo'
+		},
+		anticipo_compensacion_cliente_correlativo: {
+			type: Sequelize.INTEGER,
+			field: 'anticipo_compensacion_cliente_correlativo'
+		},
+		anticipo_compensacion_proveedor_correlativo: {
+			type: Sequelize.INTEGER,
+			field: 'anticipo_compensacion_proveedor_correlativo'
+		},
 	}, {
 			freezeTableName: true
 		});

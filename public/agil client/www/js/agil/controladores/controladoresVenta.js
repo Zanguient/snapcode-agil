@@ -1012,16 +1012,19 @@ angular.module('agil.controladores')
 				restante = 0;
 			}
 			blockUI.start();
-			var promesa = PagosVentaCreditos(idVenta, idEmpresa , { pago: pago, id_usuario_cajero: idUsuario, saldoRestante: restante })
+			var promesa = PagosVentaCreditos(idVenta, idEmpresa , { pago: pago, id_usuario_cajero: idUsuario, saldoRestante: restante ,fecha:new Date()})
 			promesa.then(function(data){
 				$scope.mostrarMensaje(data.mensaje);
 				$scope.cerrarPopup($scope.ModalMensajePago);
 				$scope.cerrarPopup($scope.idModalPago);
 				$scope.obtenerVentas();
-				$scope.imprimirRecibo(data, data.venta, pago,restante);
+				
 				if(restante < 0){
-					$scope.imprimirReciboAnticipo(data, data.venta,pago,restante);
-				}	
+					$scope.imprimirRecibo(data, data.venta, saldo,restante);
+					$scope.imprimirReciboAnticipo(data.anticipo);
+				}else{
+					$scope.imprimirRecibo(data, data.venta, pago,restante);
+				}
 				blockUI.stop();
 			})
 			
@@ -1173,7 +1176,8 @@ angular.module('agil.controladores')
 			blockUI.stop();
 		}
 
-		$scope.imprimirReciboAnticipo = function (data, venta, pago,anticipo) {
+		
+		$scope.imprimirReciboAnticipo = function (anticipo) {
 			blockUI.start();
 			var doc = new PDFDocument({ compress: false, size: [227, 353], margin: 10 });
 			var stream = doc.pipe(blobStream());
@@ -1182,13 +1186,13 @@ angular.module('agil.controladores')
 			doc.text($scope.usuario.empresa.razon_social.toUpperCase(), { align: 'center' });
 			doc.moveDown(0.4);
 			doc.font('Helvetica', 7);
-			doc.text(venta.almacen.sucursal.nombre.toUpperCase(), { align: 'center' });
+			doc.text(anticipo.sucursal.nombre.toUpperCase(), { align: 'center' });
 			doc.moveDown(0.4);
-			doc.text(venta.almacen.sucursal.direccion.toUpperCase(), { align: 'center' });
+			doc.text(anticipo.sucursal.direccion.toUpperCase(), { align: 'center' });
 			doc.moveDown(0.4);
-			var telefono = (venta.almacen.sucursal.telefono1 != null ? venta.almacen.sucursal.telefono1 : "") +
-				(venta.almacen.sucursal.telefono2 != null ? "-" + venta.almacen.sucursal.telefono2 : "") +
-				(venta.almacen.sucursal.telefono3 != null ? "-" + venta.almacen.sucursal.telefono3 : "");
+			var telefono = (anticipo.sucursal.telefono1 != null ? anticipo.sucursal.telefono1 : "") +
+				(anticipo.sucursal.telefono2 != null ? "-" + anticipo.sucursal.telefono2 : "") +
+				(anticipo.sucursal.telefono3 != null ? "-" + anticipo.sucursal.telefono3 : "");
 			doc.text("TELF.: " + telefono, { align: 'center' });
 			doc.moveDown(0.4);
 			doc.text("COCHABAMBA - BOLIVIA", { align: 'center' });
@@ -1199,47 +1203,49 @@ angular.module('agil.controladores')
 			doc.moveDown(0.4);
 			doc.text("------------------------------------", { align: 'center' });
 			doc.moveDown(0.4);
-			doc.text(venta.almacen.sucursal.nota_recibo_correlativo, { align: 'center' });
+			doc.text(anticipo.numero_correlativo_anticipo, { align: 'center' });
 			//doc.text("NIT: "+$scope.usuario.empresa.nit,{align:'center'});
 
-			//doc.text("FACTURA No: "+venta.factura,{align:'center'});
+			//doc.text("FACTURA No: "+anticipo.factura,{align:'center'});
 			doc.moveDown(0.4);
-			//doc.text("AUTORIZACIÓN No: "+venta.autorizacion,{align:'center'});
+			//doc.text("AUTORIZACIÓN No: "+anticipo.autorizacion,{align:'center'});
 			doc.moveDown(0.4);
 			doc.text("------------------------------------", { align: 'center' });
 			doc.moveDown(0.4);
-			//doc.text(venta.actividad.nombre,{align:'center'});
+			//doc.text(anticipo.actividad.nombre,{align:'center'});
 			doc.moveDown(0.6);
 			var date = new Date();
 			doc.text("FECHA : " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(), { align: 'left' });
 			doc.moveDown(0.4);
-			doc.text("He recibido de : " + $scope.venta.cliente.razon_social, { align: 'left' });
+			doc.text("He recibido de : " +anticipo.cliente.razon_social, { align: 'left' });
 			doc.moveDown(0.4);
 			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
 			doc.moveDown(0.2);
 			doc.text("       CONCEPTO                                   ", { align: 'left' });
 			doc.moveDown(0.2);
+			
 			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
 			doc.moveDown(0.4);
-			venta.fecha = new Date(venta.fecha);
-			doc.text("Fecha: " + venta.fecha.getDate() + "/" + (venta.fecha.getMonth() + 1) + "/" + venta.fecha.getFullYear(), 15, 210);
-			var textoFact = $scope.venta.movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ? "Factura nro. " + $scope.venta.factura : "Proforma nro. " + $scope.venta.factura;
-			doc.text(textoFact, 105, 210, { width: 100 });
-			if (anticipo >= 0) {
-				doc.text("Saldo Bs " + ((venta.saldo - pago)*-1) + ".-", 105, 220, { width: 100 });
+			anticipo.fecha = new Date(anticipo.fecha);
+			doc.text("Fecha: " + anticipo.fecha.getDate() + "/" + (anticipo.fecha.getMonth() + 1) + "/" + anticipo.fecha.getFullYear(), 15, 210);
+			//var textoFact = $scope.anticipo.movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ? "Factura nro. " + $scope.anticipo.factura : "Proforma nro. " + $scope.anticipo.factura;
+			//doc.text(textoFact, 105, 210, { width: 100 });
+			/* if (anticipo >= 0) {
+				doc.text("Saldo Bs " + ((anticipo.saldo - pago)*-1) + ".-", 105, 220, { width: 100 });
 			}else{
 				doc.text("Saldo Bs " +"0" + ".-", 105, 220, { width: 100 });
-			}
-			
-			doc.text("Bs " + ((venta.saldo - pago)*-1) + ".-", 170, 210, { width: 100 });
+			} */
+			doc.text("Anticipo", 105, 210, { width: 100 });
+			doc.moveDown(0.2);
+			doc.text("Bs " + anticipo.monto_anticipo.toFixed(2) + ".-", 170, 210, { width: 100 });
 
 			doc.text("--------------", 10, 230, { align: 'right' });
 			//oc.text("--------------------",{align:'right'});
 			doc.moveDown(0.3);
-			doc.text("TOTAL Bs.              " + ((venta.saldo - pago)*-1).toFixed(2), { align: 'right' });
+			doc.text("TOTAL Bs.              " + anticipo.monto_anticipo.toFixed(2), { align: 'right' });
 			doc.moveDown(0.4);
 			doc.moveDown(0.4);
-			doc.text("SON: " + data.pago, { align: 'left' });
+			doc.text(ConvertirALiteral(anticipo.monto_anticipo.toFixed(2)), { align: 'left' });
 			doc.moveDown(0.6);
 
 			doc.moveDown(0.4);
@@ -1259,6 +1265,13 @@ angular.module('agil.controladores')
 
 			doc.text("-------------------------                       -------------------------", { align: 'center' });
 			doc.text("ENTREGUE CONFORME            RECIBI CONFORME", { align: 'center' });
+			doc.moveDown(0.4);
+			var fechaActual = new Date();
+			var min = fechaActual.getMinutes();
+			if (min < 10) {
+				min = "0" + min;
+			}
+			doc.text("  Usuario : " + $scope.usuario.nombre_usuario + " -- Fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min + "  ", { align: 'center' });
 			doc.end();
 			stream.on('finish', function () {
 				var fileURL = stream.toBlobURL('application/pdf');
@@ -3846,9 +3859,7 @@ angular.module('agil.controladores')
 				var reader = new FileReader();
 				var name = f.name;
 				reader.onload = function (e) {
-
 					var data = e.target.result;
-
 					var workbook = XLSX.read(data, { type: 'binary' });
 					var first_sheet_name = workbook.SheetNames[0];
 					var row = 2, i = 0, row2 = 2;
@@ -3856,6 +3867,21 @@ angular.module('agil.controladores')
 					var ventas = [];
 					var arregloServicios = []
 					var arregloClientes = []
+					// do {
+					// 	var venta = {}
+					// 	venta.numeroVenta = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+					// 	venta.nitCliente = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+					// 	venta.razon_social = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+					// 	vendedor = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
+					// 	observacion = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
+					// 	venta.vendedor = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
+					// 	venta.observacion = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
+					// 	venta.tipoPago.nombre = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
+					// 	venta.dias_credito = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? parseInt(worksheet['G' + row].v.toString()) : null;
+					// 	venta.a_cuenta = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? parseFloat(worksheet['H' + row].v.toString()) : null;
+						
+
+					// }while(worksheet['A' + row] != undefined)
 					do {
 						row2 = 2
 						var venta = { tipoPago: {}, detallesVenta: [], cliente: {}, fechaTexto: $scope.venta.fecha, sucursal: $scope.venta.sucursal, actividad: $scope.venta.actividad };
@@ -3884,7 +3910,6 @@ angular.module('agil.controladores')
 							}
 						} else {
 							arregloClientes.push(venta.cliente)
-
 						}
 						venta.vendedor = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
 						venta.observacion = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? worksheet['E' + row].v.toString() : null;
@@ -4005,6 +4030,10 @@ angular.module('agil.controladores')
 			promesa.then(function (dato) {
 				blockUI.stop()
 				$scope.mostrarMensaje(dato.mensaje)
+			}).catch(function (err) {
+				var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+				$scope.mostrarMensaje(msg)
+				blockUI.stop()
 			})
 		}
 
@@ -4172,6 +4201,7 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalCotizaciones);
 			$scope.eliminarPopup($scope.idModalDetalleCotizaciones);
 			$scope.eliminarPopup($scope.idModalDetalleCotizacionEditar);
+
 			$scope.eliminarPopup($scope.ModalMensajePago);
 		});
 

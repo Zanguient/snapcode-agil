@@ -1,5 +1,5 @@
 module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Almacen, Sucursal, Empresa, Venta, Cliente, Movimiento, Clase,
-	Inventario, Producto, DetalleVenta, DetalleCompra, Usuario, Diccionario, PagoVenta, Persona, VendedorVenta, UsuarioGrupos) {
+	Inventario, Producto, DetalleVenta, DetalleCompra, Usuario, Diccionario, PagoVenta, Persona, VendedorVenta, UsuarioGrupos,ClienteAnticipo,ProveedorAnticipo,PagoCompra) {
 
 	router.route('/reportes/libro-compras/:id_empresa/gestion/:gestion/mes/:mes')
 		.get(/*ensureAuthorized,*/function (req, res) {
@@ -353,7 +353,8 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 		.get(function (req, res) {
 			Proveedor.findAll({
 				where: { id_empresa: req.params.id_empresa },
-				include: [{ model: Compra, as: 'compras', where: { 'saldo': { $gt: 0 } } }],
+				include: [{ model: Compra, as: 'compras', where: { 'saldo': { $gt: 0 } } ,include: [{ model: Clase, as: 'tipoPago', where: { nombre_corto: Diccionario.TIPO_PAGO_CREDITO } },
+				{ model: PagoCompra, as: 'pagosCompra',required:false,include:[{model:ProveedorAnticipo,as:'anticipos',required:false}] }]}],
 			}).then(function (entidad) {
 				res.json(entidad);
 			});
@@ -433,7 +434,7 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 				include: [{
 					model: Venta, as: 'ventas', where: cuentasLiquidadas,
 					include: [{ model: Clase, as: 'tipoPago', where: { nombre_corto: Diccionario.TIPO_PAGO_CREDITO } },
-					{ model: PagoVenta, as: 'pagosVenta' },
+					{ model: PagoVenta, as: 'pagosVenta',required:false,inclide:[{model:ClienteAnticipo,as:'anticipos',required:false}] },
 					{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
 					{
 						model: Movimiento, as: 'movimiento',
@@ -448,7 +449,7 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 					include: [{
 						model: Venta, as: 'ventas', where: cuentasLiquidadas,
 						include: [{ model: Clase, as: 'tipoPago', where: { nombre_corto: Diccionario.TIPO_PAGO_CREDITO } },
-						{ model: PagoVenta, as: 'pagosVenta' },
+						{ model: PagoVenta, as: 'pagosVenta',required:false,include:[{model:ClienteAnticipo,as:'anticipos',required:false}] },
 						{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
 						{
 							model: Movimiento, as: 'movimiento',
@@ -473,4 +474,5 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 				});
 			});
 		});
+		
 }
