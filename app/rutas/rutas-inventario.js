@@ -344,32 +344,58 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			}*/
 			condicionCompra.usar_producto = true
 			var compras = []
-
-			//Compra.findAll({
-			var operacion1 = {
-				where: condicionCompra,
-				offset: (req.params.items_pagina * (req.params.pagina - 1)),
-				limit: req.params.items_pagina,
-				include: [{model:PagoCompra,as:'pagosCompra'},/*{model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal },*/ {
-					model: Movimiento, as: 'movimiento',
-					include: [{ model: Clase, as: 'clase', }]
-				}, {
-					model: DetalleCompra, as: 'detallesCompra',
-					include: [{ model: Producto, as: 'producto' },
-					{ model: Clase, as: 'centroCosto',/*,where:{nombre_corto:'ALM'}*/ }]
-				},
-				{ model: Clase, as: 'tipoPago', },
-				{ model: Usuario, as: 'usuario', where: condicionUsuario },
-				{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
-				{
-					model: Almacen, as: 'almacen',
-					include: [{
-						model: Sucursal, as: 'sucursal',
-						where: condicionSucursal
-					}]
-				}],
-				//order: ordenar
+			if (req.params.items_pagina == 0) {
+							//Compra.findAll({
+				var operacion1 = {
+					where: condicionCompra,
+					include: [{model:PagoCompra,as:'pagosCompra'},/*{model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal },*/ {
+						model: Movimiento, as: 'movimiento',
+						include: [{ model: Clase, as: 'clase', }]
+					}, {
+						model: DetalleCompra, as: 'detallesCompra',
+						include: [{ model: Producto, as: 'producto' },
+						{ model: Clase, as: 'centroCosto',/*,where:{nombre_corto:'ALM'}*/ }]
+					},
+					{ model: Clase, as: 'tipoPago', },
+					{ model: Usuario, as: 'usuario', where: condicionUsuario },
+					{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
+					{
+						model: Almacen, as: 'almacen',
+						include: [{
+							model: Sucursal, as: 'sucursal',
+							where: condicionSucursal
+						}]
+					}],
+					//order: ordenar
+				}
+			}else{
+							//Compra.findAll({
+				var operacion1 = {
+					where: condicionCompra,
+					offset: (req.params.items_pagina * (req.params.pagina - 1)),
+					limit: req.params.items_pagina,
+					include: [{model:PagoCompra,as:'pagosCompra'},/*{model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal },*/ {
+						model: Movimiento, as: 'movimiento',
+						include: [{ model: Clase, as: 'clase', }]
+					}, {
+						model: DetalleCompra, as: 'detallesCompra',
+						include: [{ model: Producto, as: 'producto' },
+						{ model: Clase, as: 'centroCosto',/*,where:{nombre_corto:'ALM'}*/ }]
+					},
+					{ model: Clase, as: 'tipoPago', },
+					{ model: Usuario, as: 'usuario', where: condicionUsuario },
+					{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
+					{
+						model: Almacen, as: 'almacen',
+						include: [{
+							model: Sucursal, as: 'sucursal',
+							where: condicionSucursal
+						}]
+					}],
+					//order: ordenar
+				}
 			}
+
 			//}).then(function (entity) {
 			//Compra.findAll({
 			var operacion2 = {

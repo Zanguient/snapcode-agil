@@ -1020,6 +1020,7 @@
 									<td ng-if="(compra.id && detalleCompra.id) && configuracionCompraVista.mostrar_lote && usuario.empresa.usar_vencimientos">
 										<input class="col-xs-12" type="text" ng-model="detalleCompra.inventario.lote" />
 									</td>
+									<!--compra.descuento_general &&-->
 									<td ng-if="configuracionCompraVista.mostrar_importe">
 										{{detalleCompra.importe|number:2}}
 									</td>
