@@ -198,6 +198,7 @@ angular.module('agil.controladores')
                             $scope.inicio()
                         }
                         $scope.filtroComensales.empresaCliente = Object.assign({}, cliente)
+                        $scope.obtenerComensales($scope.filtroComensales.empresaCliente, true)
                         break;
                     case 1:
                         if (!$scope.clienteEmpresaAsignacionAlias) {
@@ -257,6 +258,7 @@ angular.module('agil.controladores')
                             $scope.inicio()
                         }
                         $scope.filtroComensales.empresaCliente = Object.assign({}, cliente)
+                        $scope.obtenerComensales($scope.filtroComensales.empresaCliente, true)
                         break;
                     case 1:
                         if (!$scope.clienteEmpresaAsignacionAlias) {
@@ -350,12 +352,14 @@ angular.module('agil.controladores')
                 })
             }
 
-            $scope.obtenerComensales = function (empresa) {
+            $scope.obtenerComensales = function (empresa, filtro) {
                 blockUI.start()
                 var prom;
-                if (empresa) {
+                if (empresa && !filtro) {
                     prom = ObtenerComensales($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaEdicionComensales.empresaCliente.id)
-                } else {
+                } else if (empresa && filtro) {
+                    prom = ObtenerComensales($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente.id)
+                }else{
                     prom = ObtenerComensales($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
                 }
                 prom.then(function (res) {
@@ -374,6 +378,7 @@ angular.module('agil.controladores')
                     blockUI.stop()
                 })
             }
+
             $scope.llenarComensalesMiltiselect = function (datos) {
                 $scope.comensalesMultiselect = datos.map(function (comensal) {
                     var formato = {
@@ -451,7 +456,17 @@ angular.module('agil.controladores')
             $scope.obtenerHistoriales = function (filtrar) {
                 blockUI.start()
                 $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true)
+                var listaComensales;
+                if ($scope.filtroComensales.comensal.length > 0) {
+                    listaComensales = $scope.filtroComensales.comensal.map(function (comensal) {
+                        return comensal.id
+                    })
+                } else {
+                    listaComensales = []
+                }
+                $scope.filtroComensales.comensalesProcesados = listaComensales
                 $scope.paginator.filter = $scope.filtroComensales
+
                 var prom = ObtenerHistorial($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id, $scope.paginator)
                 prom.then(function (res) {
                     $scope.filtroComensales = $scope.filtrarHistorial($scope.filtroComensales, true, true)
@@ -2567,20 +2582,20 @@ angular.module('agil.controladores')
                 var total_almuerzos = 0
                 var total_cenas = 0
                 for (var i = 0; i < reporte.reporte.length; i++) {
-                    if (reporte.reporte[i].cena > 0) {
+                    if (reporte.reporte[i].desayuno > 0) {
                         doc.font('Helvetica', 8).fill('black');
-                        doc.text(reporte.reporte[i].cena, cubeX + 80 + 95 + 9, y + 7).fill('black');
-                        doc.rect(cubeX + 310, y + 3, 80, 20).stroke('black');
+                        doc.text(reporte.reporte[i].desayuno, cubeX + 80 + 95 + 9, y + 7).fill('black');
+                        doc.rect(cubeX + 150, y + 3, 80, 20).stroke('black');
                     }
                     if (reporte.reporte[i].almuerzo > 0) {
                         doc.font('Helvetica', 8).fill('black');
                         doc.text(reporte.reporte[i].almuerzo, cubeX + 80 + 175 + 9, y + 7).fill('black');
                         doc.rect(cubeX + 230, y + 3, 80, 20).stroke('black');
                     }
-                    if (reporte.reporte[i].desayuno > 0) {
+                    if (reporte.reporte[i].cena > 0) {
                         doc.font('Helvetica', 8).fill('black');
-                        doc.text(reporte.reporte[i].desayuno, cubeX + 80 + 255 + 9, y + 7).fill('black');
-                        doc.rect(cubeX + 150, y + 3, 80, 20).stroke('black');
+                        doc.text(reporte.reporte[i].cena, cubeX + 80 + 255 + 9, y + 7).fill('black');
+                        doc.rect(cubeX + 310, y + 3, 80, 20).stroke('black');
                     }
                     var total_comensal = 0
                     doc.font('Helvetica', 8).fill('black');
@@ -2598,7 +2613,7 @@ angular.module('agil.controladores')
                     doc.rect(cubeX + 390, y + 3, 110, 20).stroke('black');
                     doc.text($scope.formatoFechaPDF(reporte.reporte[i].fecha), cubeX + 8, y + 7).fill('black');
                     doc.text(total_comensal, cubeX + 80 + 335 + 9, y + 7).fill('black');
-                    if (reporte.reporte[i].cena === 0) {
+                    if (reporte.reporte[i].desayuno === 0) {
                         doc.font('Helvetica', 8).fill('red');
                         doc.text('Falta', cubeX + 80 + 95 + 9, y + 7).fill('red');
                         doc.rect(cubeX + 310, y + 3, 80, 20).stroke('red');
@@ -2608,7 +2623,7 @@ angular.module('agil.controladores')
                         doc.text('Falta', cubeX + 80 + 175 + 9, y + 7).fill('red');
                         doc.rect(cubeX + 230, y + 3, 80, 20).stroke('red');
                     }
-                    if (reporte.reporte[i].desayuno === 0) {
+                    if (reporte.reporte[i].cena === 0) {
                         doc.font('Helvetica', 8).fill('red');
                         doc.text('Falta', cubeX + 80 + 255 + 9, y + 7).fill('red');
                         doc.rect(cubeX + 150, y + 3, 80, 20).stroke('red');

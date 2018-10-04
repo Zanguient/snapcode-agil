@@ -1,6 +1,6 @@
 angular.module('agil', ['oc.lazyLoad','ngRoute', 'agil.controladores',
     'agil.servicios', 'agil.directivas', 'agil.filtros', 'checklist-model',
-    'blockUI', 'ngStorage', 'ui.bootstrap', 'ngCordova', 'uiGmapgoogle-maps', 'isteven-multi-select',
+    'blockUI', 'ngStorage', 'ui.bootstrap', 'uiGmapgoogle-maps', 'isteven-multi-select',
     'chart.js', 'btford.socket-io','ngMessages','colorpicker'])
 
     .config(['$routeProvider', 'uiGmapGoogleMapApiProvider', '$httpProvider', 'ChartJsProvider', '$ocLazyLoadProvider',function ($routeProvider, uiGmapGoogleMapApiProvider, $httpProvider, ChartJsProvider, $ocLazyLoadProvider) {
