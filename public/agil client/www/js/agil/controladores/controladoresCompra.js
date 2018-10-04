@@ -485,7 +485,7 @@ angular.module('agil.controladores')
 		}
 		$scope.calcularImporte = function () {
 			$scope.detalleCompra.importe = Math.round(($scope.detalleCompra.cantidad * $scope.detalleCompra.costo_unitario) * 1000) / 1000;
-			var descuento, recargo;
+			var descuento, recargo, impTotal;
 			if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
 				if ($scope.compra.tipo_retencion) {
 					if ($scope.detalleCompra.centroCosto.nombre.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN) {
@@ -546,17 +546,40 @@ angular.module('agil.controladores')
 
 					$scope.detalleCompra.total = $scope.detalleCompra.importe - descuento + recargo - $scope.detalleCompra.ice - $scope.detalleCompra.excento;
 				} else {
+					 
+					
 					if ($scope.compra.tipo_descuento) {
 						descuento = $scope.detalleCompra.importe * ($scope.compra.descuento / 100);
 					} else {
-						descuento = $scope.compra.descuento;
+						if ($scope.compra.detallesCompra.length == 0) {
+							descuento = $scope.compra.descuento;
+							$scope.cambioDescuento = descuento;
+							$scope.impTotal = 0;									
+						}else{
+							$scope.impTotal = $scope.compra.importe + $scope.detalleCompra.importe;
+							descuento = ($scope.detalleCompra.importe/$scope.impTotal)*$scope.compra.descuento;	
+							$scope.cambioDescuento = descuento;
+							
+							if ($scope.compra.tipo_recargo) {
+								recargo = $scope.detalleCompra.importe * ($scope.compra.recargo / 100);
+							} else {
+								recargo = $scope.compra.recargo;
+							}						
+							$scope.compra.detallesCompra.forEach(function(dato){
+								dato.descuento = (dato.importe/$scope.impTotal) *$scope.compra.descuento;
+								dato.total = dato.importe - dato.descuento + recargo - $scope.compra.ice - $scope.compra.excento;
+								$scope.cambioDescuento = dato.descuento;
+							})
+							
+						}
+							
 					}
 					if ($scope.compra.tipo_recargo) {
 						recargo = $scope.detalleCompra.importe * ($scope.compra.recargo / 100);
 					} else {
 						recargo = $scope.compra.recargo;
 					}
-
+					$scope.detalleCompra.descuento = descuento;
 					$scope.detalleCompra.total = $scope.detalleCompra.importe - descuento + recargo - $scope.compra.ice - $scope.compra.excento;
 				}
 			}
@@ -1352,9 +1375,9 @@ angular.module('agil.controladores')
 							if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 135, y);
 
 							if (compra.detallesCompra[i].producto) {
-								doc.text(compra.detallesCompra[i].producto.nombre, 170, y - 6, { width: 130 });
+								doc.text(compra.detallesCompra[i].producto.nombre, 170, y , { width: 130 });
 							} else {
-								doc.text(compra.detallesCompra[i].servicio.nombre, 170, y - 6, { width: 130 });
+								doc.text(compra.detallesCompra[i].servicio.nombre, 170, y , { width: 130 });
 							}
 
 							doc.text(compra.detallesCompra[i].costo_unitario.toFixed(2), 280, y);

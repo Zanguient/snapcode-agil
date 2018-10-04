@@ -1023,19 +1023,19 @@
 									<td ng-if="configuracionCompraVista.mostrar_importe">
 										{{detalleCompra.importe|number:2}}
 									</td>
-									<td ng-if="!compra.descuento_general && configuracionCompraVista.mostrar_descuento">
+									<td ng-if="configuracionCompraVista.mostrar_descuento">
 										{{detalleCompra.descuento|number:2}}
 									</td>
-									<td ng-if="!compra.descuento_general && configuracionCompraVista.mostrar_recargo">
+									<td ng-if="configuracionCompraVista.mostrar_recargo">
 										{{detalleCompra.recargo|number:2}}
 									</td>
-									<td ng-if="!compra.descuento_general && configuracionCompraVista.mostrar_ice">
+									<td ng-if="configuracionCompraVista.mostrar_ice">
 										{{detalleCompra.ice|number:2}}
 									</td>
-									<td ng-if="!compra.descuento_general && configuracionCompraVista.mostrar_excento">
+									<td ng-if="configuracionCompraVista.mostrar_excento">
 										{{detalleCompra.excento|number:2}}
 									</td>
-									<td ng-if="compra.descuento_general && configuracionCompraVista.mostrar_descuento">
+									<!--<td ng-if="compra.descuento_general && configuracionCompraVista.mostrar_descuento">
 										{{compra.descuento|number:2}}
 									</td>
 									<td ng-if="compra.descuento_general && configuracionCompraVista.mostrar_recargo">
@@ -1046,7 +1046,7 @@
 									</td>
 									<td ng-if="compra.descuento_general && configuracionCompraVista.mostrar_excento">
 										{{compra.excento|number:2}}
-									</td>
+									</td>-->
 									<td ng-if="configuracionCompraVista.mostrar_total && compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
 										{{detalleCompra.total|number:2}}
 									</td>
