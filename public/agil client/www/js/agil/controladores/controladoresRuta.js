@@ -1,8 +1,8 @@
 angular.module('agil.controladores')
 
 .controller('ControladorRutas', ['$scope','$localStorage','$location','$templateCache','$route','blockUI','$timeout','Clases',
-	'Clientes','Rutas','Ruta','uiGmapGoogleMapApi','$cordovaGeolocation','ClasesTipo','ClientesEmpresa',function($scope,$localStorage,$location,$templateCache,$route,blockUI,$timeout,Clases,
-											Clientes,Rutas,Ruta,uiGmapGoogleMapApi,$cordovaGeolocation,ClasesTipo,ClientesEmpresa){
+	'Clientes','Rutas','Ruta','uiGmapGoogleMapApi','ClasesTipo','ClientesEmpresa',function($scope,$localStorage,$location,$templateCache,$route,blockUI,$timeout,Clases,
+											Clientes,Rutas,Ruta,uiGmapGoogleMapApi,ClasesTipo,ClientesEmpresa){
 	blockUI.start();
 	
 	$scope.usuario=JSON.parse($localStorage.usuario);

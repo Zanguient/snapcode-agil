@@ -1,7 +1,7 @@
 angular.module('agil.controladores')
 	.controller('ControladorEstadoCuentasProveedores', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', '$timeout',
-		'uiGmapGoogleMapApi', '$cordovaGeolocation', 'ReportEstadoCuentasProveedoresDatos', 'InventariosCosto',function ($scope, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
-		uiGmapGoogleMapApi, $cordovaGeolocation, ReportEstadoCuentasProveedoresDatos, InventariosCosto) {
+		'uiGmapGoogleMapApi', 'ReportEstadoCuentasProveedoresDatos', 'InventariosCosto',function ($scope, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
+		uiGmapGoogleMapApi, ReportEstadoCuentasProveedoresDatos, InventariosCosto) {
 		blockUI.start();
 
 
