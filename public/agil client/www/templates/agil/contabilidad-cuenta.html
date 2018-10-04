@@ -102,9 +102,13 @@
 		</form>
 
 		<div align="right">
+			<a class="green" tooltip-placement="left" uib-tooltip="Configuracion Cuentas" ng-click="abrirPopPupConfiguracionCuenta()">
+				<span id="codigo" class="fa fa-key fa-4x"></span>
+			</a>
 			<a tooltip-placement="left" uib-tooltip="Plantilla Ingreso/Egreso" ng-click="abrirPlantillaIngreso()">
 				<span id="codigo" class=" glyphicon glyphicon-cog fa-4x"></span>
 			</a>
+
 		</div>
 		<div class="table-header">
 			<div class="row">
@@ -1061,8 +1065,8 @@
 										<label class="control-label col-xs-4 no-padding-right" for="bimonetaria">¿Bimonetaria?</label>
 										<div class="col-xs-8">
 											<label>
-												<input id="bimonetariaCEdicion" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.bimonetaria"
-												 value="0" />
+												<input id="bimonetariaCEdicion" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
+												 ng-model="cuenta.bimonetaria" value="0" />
 												<span id=check_bimonetaria class="lbl check-descuento" class="col-xs-10 col-sm-8"></span>
 											</label>
 										</div>
@@ -1499,7 +1503,7 @@
 											</label>
 										</div>
 									</div>
-									
+
 								</div>
 								<!-- fin paso 2 -->
 
@@ -1762,4 +1766,81 @@
 
 			<button type="button" class="btn btn-danger" ng-click="eliminarCuenta(cuenta)">Si</button>
 			<button type="button" class="btn btn-success" ng-click="cerrarPopPupConfirmacionEliminacion()">No</button>
+		</div>
+
+		<div id="modal-wizard-configuracion-cuentas">
+			<div class="modal-dialog modal-rh-nuevo">
+				<div class="modal-content">
+					<div class="modal-header bg-success ficha">
+						<h4 class="modal-title" id="myModalLabel">Configuraciones Generales Cuentas</h4>
+					</div>
+					<form novalidate ng-submit="guardarConfiguracionTiposCuentas()">
+
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-4">
+									<p>Tipo Cuenta</p>
+									<select ng-model="configuracionTipoCuenta.tipoCuenta" ng-options="cuentaTipo as cuentaTipo.nombre for cuentaTipo in cuentaTipos">
+
+									</select>
+								</div>
+								<div class="col-md-4">
+									<p> Digitos</p>
+									<input type="number" ng-model="configuracionTipoCuenta.digitos" class="form-control">
+								</div>
+								<div class="col-md-4">
+									<p>&nbsp</p>
+									<button class="btn-primary btn" type="button" ng-click="agregarCofiguracionTipoCuenta(configuracionTipoCuenta)">Agregar</button>
+								</div>
+							</div>
+							<div>
+								<table class="table table-bordered table-hover table-striped">
+									<thead>
+										<tr>
+											<th>
+												Tipo Cuenta
+											</th>
+											<th>
+												Digitos
+											</th>
+											<th>
+												Acciones
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="config in configuracionesGeneralesTipoCuentas">
+											<td>
+												{{config.tipoCuenta.nombre}}
+											</td>
+											<td>
+												{{config.digitos}}
+											</td>
+											<td>
+													<a class="green tooltip-info" href="javascript:void(0)" uib-tooltip="Editar" e-disabled="!aplicacion.puede_modificar"
+													ng-click="modificarConfiguracionTipoCuenta(config)">
+													   <i class="ace-icon fa fa-pencil bigger-130"></i>
+												   </a>
+												</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+
+							<button type="submit" class="btn btn-success btn-sm btn-next" data-last="Finish">
+								Guardar
+								<i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+							</button>
+
+							<button type="button" class="btn btn-danger btn-sm pull-left" data-dismiss="modal" ng-click="cerrarPopPupConfiguracionCuenta()">
+								<i class="ace-icon fa fa-times"></i>
+								Cancelar </button>
+
+						</div>
+					</form>
+				</div>
+			</div>
 		</div>

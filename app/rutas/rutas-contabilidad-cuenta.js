@@ -1,4 +1,4 @@
-module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo, Clase, Usuario, Diccionario, ClienteCuenta, ProveedorCuenta, ConfiguracionCuenta, sequelize, Cliente, Proveedor, MedicoPaciente, Persona) {
+module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo, Clase, Usuario, Diccionario, ClienteCuenta, ProveedorCuenta, ConfiguracionCuenta, sequelize, Cliente, Proveedor, MedicoPaciente, Persona, ContabilidadConfiguracionGeneralTipoCuenta) {
 
 	router.route('/contabilidad-cuentas/empresa/:id_empresa')
 		.get(function (req, res) {
@@ -14,12 +14,49 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 			})
 
 		})
+	router.route('/contabilidad-configuracion-general-tipos-cuentas/empresa/:id_empresa')
+		.post(function (req, res) {
+			req.body.forEach(function (dato, index, array) {
+				if (dato.id) {
+					ContabilidadConfiguracionGeneralTipoCuenta.update({
+						id_tipo_cuenta: dato.tipoCuenta.id,
+						digitos: dato.digitos
+					}, {
+						where: { id_empresa: req.params.id_empresa }
+						}).then(function (actualizado) {
+							if (index === (array.length - 1)) {
+								res.json({mensaje:"Guardado satisfactoriamente!"})
+							}
+						})
+				} else {
+					ContabilidadConfiguracionGeneralTipoCuenta.create({
+						id_tipo_cuenta: dato.tipoCuenta.id,
+						digitos: dato.digitos,
+						id_empresa: req.params.id_empresa
+					}).then(function (creado) {
+						if (index === (array.length - 1)) {
+							res.json({mensaje:"Guardado satisfactoriamente!"})
+						}
+					})
+				}
+			})
+		})
+		.get(function (req, res) {
+			ContabilidadConfiguracionGeneralTipoCuenta.findAll({
+				where: {
+					id_empresa: req.params.id_empresa,
+				},
+				include:[{model:Clase,as:'tipoCuenta'}]
+			}).then(function (ListaCuenta) {
+				res.json(ListaCuenta)
+			})
 
+		})
 	router.route('/validar-codigo/empresa/:id_empresa')
 		.post(function (req, res) {
 			ContabilidadCuenta.find({
 				where: {
-					id_empresa:req.params.id_empresa,
+					id_empresa: req.params.id_empresa,
 					codigo: req.body.codigo,
 					eliminado: false
 				}

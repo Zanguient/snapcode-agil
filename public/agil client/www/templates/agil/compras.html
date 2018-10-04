@@ -650,7 +650,7 @@
 										</td>
 									</tr>
 									<tr class="des-datos" style="display:none;">
-										<th ng-if="!compra.descuento_general">
+										<th>
 											<label>DESC. (-)</label>
 											<label>
 												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleCompra.tipo_descuento" ng-change="recalcular()"
@@ -658,7 +658,7 @@
 												<span class="lbl check-compra"></span>
 											</label>
 										</th>
-										<th ng-if="!compra.descuento_general">
+										<th>
 											<label>REC. (+)</label>
 											<label>
 												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleCompra.tipo_recargo" ng-change="recalcular()"
@@ -666,10 +666,10 @@
 												<span class="lbl check-compra"></span>
 											</label>
 										</th>
-										<th ng-if="!compra.descuento_general">
+										<th>
 											<label>ICE (-)</label>
 										</th>
-										<th ng-if="!compra.descuento_general">
+										<th >
 											<label>EXC. (-)</label>
 										</th>
 										<!--<th>
@@ -677,19 +677,19 @@
 																</th>-->
 									</tr>
 									<tr class="des-datos" style="display:none;">
-										<td ng-if="!compra.descuento_general">
+										<td >
 											<input required ng-change="calcularImporte()" ng-model="detalleCompra.descuento" step="0.001" class="col-xs-12" type="number"
 											 value="0" />
 										</td>
-										<td ng-if="!compra.descuento_general">
+										<td >
 											<input required ng-change="calcularImporte()" ng-model="detalleCompra.recargo" step="0.001" class="col-xs-12" type="number"
 											 value="0" />
 										</td>
-										<td ng-if="!compra.descuento_general">
+										<td >
 											<input required ng-change="calcularImporte()" ng-model="detalleCompra.ice" step="0.001" class="col-xs-12" type="number" value="0"
 											/>
 										</td>
-										<td ng-if="!compra.descuento_general">
+										<td >
 											<input required ng-change="calcularImporte()" ng-model="detalleCompra.excento" step="0.001" class="col-xs-12" type="number"
 											 value="0" />
 										</td>

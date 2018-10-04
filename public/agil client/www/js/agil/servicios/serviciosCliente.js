@@ -156,4 +156,20 @@ angular.module('agil.servicios')
 			return delay.promise;
 		};
 		return res;
+	}])
+	.factory('InformacionClienteEmpresa', ['$resource', function ($resource) {
+		return $resource(restServer + "informacion-cliente/:id_cliente");
+	}])
+
+	.factory('ObtenerInformacionClienteEmpresa', ['InformacionClienteEmpresa', '$q', function (InformacionClienteEmpresa, $q) {
+		var res = function (idCliente) {
+			var delay = $q.defer();
+			InformacionClienteEmpresa.get({ id_cliente: idCliente }, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
 	}]);

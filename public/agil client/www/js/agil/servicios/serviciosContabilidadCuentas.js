@@ -237,3 +237,32 @@ angular.module('agil.servicios')
 	.factory('CuentasEmpresaCreacion', ['$resource',function ($resource) {
 		return $resource(restServer + "cuentas/empresa");
 	}])
+	.factory('ContabilidadConfiguracionGeneralTipoCuenta', ['$resource',function ($resource) {
+		return $resource(restServer + "contabilidad-configuracion-general-tipos-cuentas/empresa/:id_empresa");
+	}])
+
+	.factory('GuardarContabilidadConfiguracionGeneralTipoCuenta', ['ContabilidadConfiguracionGeneralTipoCuenta', '$q', function (ContabilidadConfiguracionGeneralTipoCuenta, $q) {
+		var res = function (idEmpresa, datos) {
+			var delay = $q.defer();
+			ContabilidadConfiguracionGeneralTipoCuenta.save({ id_empresa: idEmpresa},datos, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
+	.factory('ObtenerContabilidadConfiguracionGeneralTipoCuenta', ['ContabilidadConfiguracionGeneralTipoCuenta', '$q', function (ContabilidadConfiguracionGeneralTipoCuenta, $q) {
+		var res = function (idEmpresa) {
+			var delay = $q.defer();
+			ContabilidadConfiguracionGeneralTipoCuenta.query({ id_empresa: idEmpresa}, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])
+	

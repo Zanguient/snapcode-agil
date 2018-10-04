@@ -1,12 +1,13 @@
 angular.module('agil.controladores')
 	.controller('ControladorEstadoCuentasProveedores', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', '$timeout',
-		'uiGmapGoogleMapApi', 'ReportEstadoCuentasProveedoresDatos', 'InventariosCosto',function ($scope, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
-		uiGmapGoogleMapApi, ReportEstadoCuentasProveedoresDatos, InventariosCosto) {
+		'uiGmapGoogleMapApi', 'ReportEstadoCuentasProveedoresDatos', 'InventariosCosto','ObtenerAnticiposProveedor','PagosCompraCreditosAnticipo',function ($scope, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
+		uiGmapGoogleMapApi, ReportEstadoCuentasProveedoresDatos, InventariosCosto,ObtenerAnticiposProveedor,PagosCompraCreditosAnticipo) {
 		blockUI.start();
 
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
-
+		$scope.idModalTablaEstadoCuenta = "tabla-estado-cuenta";
+		$scope.idModalPagoDeudaProveedor='modal-pago-deuda-proveedor'
 		$scope.inicio = function () {
 			$scope.proveedores = ReportEstadoCuentasProveedoresDatos.show({ id_empresa: $scope.usuario.id_empresa });
 			//console.log($scope.proveedores);
@@ -32,7 +33,7 @@ angular.module('agil.controladores')
 
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
-			ejecutarScriptsProveedor('modal-wizard-proveedor', 'modal-wizard-proveedor-vista', 'dialog-eliminar-proveedor', 'modal-wizard-container-proveedor-edicion', 'modal-wizard-container-proveedor-vista');
+			ejecutarScriptsEstadoCuentaProveedor($scope.idModalPagoDeudaProveedor,	$scope.idModalTablaEstadoCuenta);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
@@ -84,6 +85,7 @@ angular.module('agil.controladores')
 				var fileURL = stream.toBlobURL('application/pdf');
 				window.open(fileURL, '_blank', 'location=no');
 			});
+			
 			blockUI.stop();
 
 		}
@@ -138,18 +140,196 @@ angular.module('agil.controladores')
 			doc.font('Helvetica', 8);
 		}
 
+		$scope.abrirEstadoCuentaProveedor = function (proveedor) {
+			//console.log(cliente)
+			$scope.totalPagado = 0;
 
+			for (var i = 0; i < proveedor.compras.length; i++) {
+				var fecha = new Date(proveedor.compras[i].fecha)
+				proveedor.compras[i].totalgeneral = 0;
+				proveedor.compras[i].totalPago = 0;
+				if (i == 0) {
+					proveedor.compras[i].totalgeneral = proveedor.compras[i].totalgeneral + proveedor.compras[i].saldo;
+				} else {
+					proveedor.compras[i].totalgeneral = proveedor.compras[i - 1].totalgeneral + proveedor.compras[i].saldo;
+				}
+				for (var f = 0; f < proveedor.compras[i].pagosCompra.length; f++) {
+					proveedor.compras[i].pagosCompra[f].total = proveedor.compras[i].pagosCompra[f].saldo_anterior - proveedor.compras[i].pagosCompra[f].monto_pagado;
+					proveedor.compras[i].totalPago = proveedor.compras[i].totalPago + proveedor.compras[i].pagosCompra[f].monto_pagado;
+				}
+				proveedor.compras[i].fecha_vencimiento = $scope.sumaFecha(proveedor.compras[i].dias_credito, fecha);
+				//console.log(proveedor.compras[i].tipoPago.nombre)
+			}
+			//console.log($scope.totalPagado)
+
+			var i = proveedor.compras.length - 1;
+			$scope.totalgeneral = 0;
+			$scope.totalgeneral = proveedor.compras[i].totalgeneral;
+			$scope.proveedorCompras = proveedor;
+			$scope.obtenerAnticiposProveedor(proveedor)
+			$scope.abrirPopup($scope.idModalTablaEstadoCuenta);
+		}
+		$scope.click = function () {
+			setTimeout(function () {
+				var element = angular.element(document.getElementsByClassName('verDetallePago'));
+				element.triggerHandler('click');
+
+			}, 0);
+		};	
+		$scope.obtenerAnticiposProveedor=function(proveedor){
+			var promesa=ObtenerAnticiposProveedor(proveedor.id)
+			$scope.totalAnticipos=0
+			promesa.then(function(dato){
+				$scope.proveedorCompras.anticipos=dato
+				dato.forEach(function(anticipo) {
+					$scope.totalAnticipos+=anticipo.saldo
+				});
+			})
+			}	
+		$scope.verDetallePagos = function (compra) {
+
+			var style = $("#" + compra.id_movimiento).css("display");
+			if (style == "none") {
+				$("#" + compra.id_movimiento).css("display", "");
+			} else {
+				$("#" + compra.id_movimiento).css("display", "none");
+			}
+		}
+		$scope.cerrarEstadoCuentaProveedor = function () {
+			$scope.cerrarPopup($scope.idModalTablaEstadoCuenta);
+		}
+		$scope.abrirPagoDeudaProveedor = function (compra) {
+			$scope.compra=compra
+			$scope.abrirPopup($scope.idModalPagoDeudaProveedor);
+		}
+		$scope.cerrarPagoDeudaProveedor = function () {
+			$scope.cerrarPopup($scope.idModalPagoDeudaProveedor);
+		}
+		$scope.guardarCompensacionDeuda=function(pago){
+		if(pago<=$scope.totalAnticipos){
+			$scope.realizarPago($scope.compra.id,$scope.usuario.id_empresa,$scope.compra.id_proveedor,pago,$scope.usuario.id) 
+		}else{
+			$scope.mostrarMensaje("el valor no puede ser mayor al monto total de anticipos que es  "+$scope.totalAnticipos)
+		}
+		}
+		$scope.realizarPago = function(idVenta,idEmpresa,idProveedor,pago,idUsuario){
+			
+			blockUI.start();
+			var promesa = PagosCompraCreditosAnticipo(idVenta, idEmpresa,idProveedor, { pago: pago, id_usuario_cajero: idUsuario,fecha:new Date()})
+			promesa.then(function(data){
+				$scope.mostrarMensaje(data.mensaje);
+				
+				$scope.proveedores = ReportEstadoCuentasProveedoresDatos.show({ id_empresa: $scope.usuario.id_empresa });
+				$scope.cerrarPagoDeudaProveedor()
+				$scope.imprimirReciboNuevo(data, data.compra, pago);
+				$scope.cerrarEstadoCuentaProveedor()
+				blockUI.stop();
+			})
+		}
+		$scope.imprimirReciboNuevo = function (data, venta, pago) {
+			blockUI.start();
+			var doc = new PDFDocument({ compress: false, size: [227, 353], margin: 10 });
+			var stream = doc.pipe(blobStream());
+			doc.moveDown(2);
+			doc.font('Helvetica-Bold', 8);
+			doc.text($scope.usuario.empresa.razon_social.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			doc.font('Helvetica', 7);
+			doc.text(venta.almacen.sucursal.nombre.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text(venta.almacen.sucursal.direccion.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			var telefono = (venta.almacen.sucursal.telefono1 != null ? venta.almacen.sucursal.telefono1 : "") +
+				(venta.almacen.sucursal.telefono2 != null ? "-" + venta.almacen.sucursal.telefono2 : "") +
+				(venta.almacen.sucursal.telefono3 != null ? "-" + venta.almacen.sucursal.telefono3 : "");
+			doc.text("TELF.: " + telefono, { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text("COCHABAMBA - BOLIVIA", { align: 'center' });
+			doc.moveDown(0.5);
+			doc.font('Helvetica-Bold', 8);
+			doc.text("COMPENSACION", { align: 'center' });
+			doc.font('Helvetica', 7);
+			doc.moveDown(0.4);
+			doc.text("------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text(venta.almacen.sucursal.nota_recibo_correlativo, { align: 'center' });
+			//doc.text("NIT: "+$scope.usuario.empresa.nit,{align:'center'});
+
+			//doc.text("FACTURA No: "+venta.factura,{align:'center'});
+			doc.moveDown(0.4);
+			//doc.text("AUTORIZACIÓN No: "+venta.autorizacion,{align:'center'});
+			doc.moveDown(0.4);
+			doc.text("------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			//doc.text(venta.actividad.nombre,{align:'center'});
+			doc.moveDown(0.6);
+			var date = new Date();
+			doc.text("FECHA : " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(), { align: 'left' });
+			doc.moveDown(0.4);
+			doc.text("He recibido de : " + $scope.proveedorCompras.razon_social, { align: 'left' });
+			doc.moveDown(0.4);
+			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+			doc.moveDown(0.2);
+			doc.text("       CONCEPTO                                   ", { align: 'left' });
+			doc.moveDown(0.2);
+			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			venta.fecha = new Date(venta.fecha);
+			doc.text("Fecha: " + venta.fecha.getDate() + "/" + (venta.fecha.getMonth() + 1) + "/" + venta.fecha.getFullYear(), 15, 210);
+			var textoFact = venta.movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ? "Factura nro. " + venta.factura : "Proforma nro. " + venta.factura;
+			doc.text(textoFact, 105, 210, { width: 100 });
+			doc.text("Saldo Bs " + (venta.saldo - pago) + ".-", 105, 220, { width: 100 });
+			doc.text("Bs " + pago + ".-", 170, 210, { width: 100 });
+
+			doc.text("--------------", 10, 230, { align: 'right' });
+			//oc.text("--------------------",{align:'right'});
+			doc.moveDown(0.3);
+			doc.text("TOTAL Bs.              " + pago.toFixed(2), { align: 'right' });
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.text("SON: " + data.pago, { align: 'left' });
+			doc.moveDown(0.6);
+
+			doc.moveDown(0.4);
+
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+
+			doc.text("-------------------------                       -------------------------", { align: 'center' });
+			doc.text("ENTREGUE CONFORME            RECIBI CONFORME", { align: 'center' });
+			doc.end();
+			stream.on('finish', function () {
+				var fileURL = stream.toBlobURL('application/pdf');
+				window.open(fileURL, '_blank', 'location=no');
+			});
+			blockUI.stop();
+		}
+		$scope.$on('$routeChangeStart', function (next, current) {
+			$scope.eliminarPopup($scope.idModalTablaEstadoCuenta);
+			$scope.eliminarPopup($scope.idModalPagoDeudaProveedor);
+		});
 
 
 		$scope.inicio();
 	}])
 	.controller('ControladorEstadoCuentasClientes', ['$scope', '$window', '$localStorage', '$location',
 		'$templateCache', '$route', 'blockUI', '$timeout', 'Paginator',
-		'uiGmapGoogleMapApi', 'ReportEstadoCuentasClientesDatos', 'InventariosCosto', 'ReporteClientesPaginador',function ($scope, $window, $localStorage, $location,
+		'uiGmapGoogleMapApi', 'ReportEstadoCuentasClientesDatos', 'InventariosCosto', 'ReporteClientesPaginador','ObtenerAnticiposCliente','PagosVentaCreditosAnticipo',function ($scope, $window, $localStorage, $location,
 		$templateCache, $route, blockUI, $timeout, Paginator,
-		uiGmapGoogleMapApi, ReportEstadoCuentasClientesDatos, InventariosCosto, ReporteClientesPaginador) {
+		uiGmapGoogleMapApi, ReportEstadoCuentasClientesDatos, InventariosCosto, ReporteClientesPaginador,ObtenerAnticiposCliente,PagosVentaCreditosAnticipo) {
 		blockUI.start();
 		$scope.idModalTablaEstadoCuenta = "tabla-estado-cuenta";
+		$scope.idModalPagoDeudaCliente='modal-pago-deuda-cliente'
 		$scope.usuario = JSON.parse($localStorage.usuario);
 
 		$scope.inicio = function () {
@@ -174,7 +354,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.$on('$viewContentLoaded', function () {
-			ejecutarScriptsCliente($scope.idModalTablaEstadoCuenta);
+			ejecutarScriptsEstadoCuentasClientes($scope.idModalTablaEstadoCuenta,$scope.idModalPagoDeudaCliente);
 			blockUI.stop();
 		});
 
@@ -420,6 +600,7 @@ angular.module('agil.controladores')
 			$scope.totalgeneral = 0;
 			$scope.totalgeneral = cliente.ventas[i].totalgeneral;
 			$scope.clienteVentas = cliente;
+			$scope.obtenerAnticiposCliente(cliente)
 			$scope.abrirPopup($scope.idModalTablaEstadoCuenta);
 		}
 		$scope.verDetallePagos = function (venta) {
@@ -434,15 +615,7 @@ angular.module('agil.controladores')
 		$scope.cerrarEstadoCuentaCliente = function () {
 			$scope.cerrarPopup($scope.idModalTablaEstadoCuenta);
 		}
-		$scope.abrirPopup = function (idPopup) {
-			abrirPopup(idPopup);
-		}
-		$scope.cerrarPopup = function (idPopup) {
-			ocultarPopup(idPopup);
-		}
-		$scope.eliminarPopup = function (idPopup) {
-			eliminarPopup(idPopup);
-		}
+	
 		$scope.imprimirRecibo = function (pagosVenta, venta) {
 			blockUI.start();
 			var doc = new PDFDocument({ size: [227, 353], margin: 10 });
@@ -534,6 +707,138 @@ angular.module('agil.controladores')
 		$scope.$on('$routeChangeStart', function (next, current) {
 			$scope.eliminarPopup($scope.idModalTablaEstadoCuenta);
 		});
+		$scope.obtenerAnticiposCliente=function(cliente){
+			var promesa=ObtenerAnticiposCliente(cliente.id)
+			$scope.totalAnticipos=0
+			promesa.then(function(dato){
+				$scope.clienteVentas.anticipos=dato
+				dato.forEach(function(anticipo) {
+					$scope.totalAnticipos+=anticipo.saldo
+				});
+			})
+			}	
+			$scope.abrirPagoDeudaCliente = function (venta) {
+				$scope.venta=venta
+				$scope.abrirPopup($scope.idModalPagoDeudaCliente);
+			}
+			$scope.cerrarPagoDeudaCliente = function () {
+				$scope.cerrarPopup($scope.idModalPagoDeudaCliente);
+			}
+			$scope.guardarCompensacionDeuda=function(pago){
+			if(pago<=$scope.totalAnticipos){
+				$scope.realizarPago($scope.venta.id,$scope.usuario.id_empresa,$scope.venta.id_cliente,pago,$scope.usuario.id) 
+			}else{
+				$scope.mostrarMensaje("el valor no puede ser mayor al monto total de anticipos que es  "+$scope.totalAnticipos)
+			}
+			}
+			$scope.realizarPago = function(idVenta,idEmpresa,idCliente,pago,idUsuario){
+				
+				blockUI.start();
+				var promesa = PagosVentaCreditosAnticipo(idVenta, idEmpresa,idCliente, { pago: pago, id_usuario_cajero: idUsuario,fecha:new Date()})
+				promesa.then(function(data){
+					$scope.mostrarMensaje(data.mensaje);
+					/* $scope.cerrarPopup($scope.ModalMensajePago);
+					$scope.cerrarPopup($scope.idModalPago);
+					$scope.obtenerVentas(); */
+					$scope.obtenerClientes()
+					$scope.cerrarPagoDeudaCliente()
+					$scope.imprimirReciboNuevo(data, data.venta, pago);
+					$scope.cerrarEstadoCuentaCliente()
+					/* if(restante < 0){
+						$scope.imprimirReciboAnticipo(data, data.venta,pago);
+					}	 */
+					blockUI.stop();
+				})
+			}
+			
+			$scope.imprimirReciboNuevo = function (data, venta, pago) {
+				blockUI.start();
+				var doc = new PDFDocument({ compress: false, size: [227, 353], margin: 10 });
+				var stream = doc.pipe(blobStream());
+				doc.moveDown(2);
+				doc.font('Helvetica-Bold', 8);
+				doc.text($scope.usuario.empresa.razon_social.toUpperCase(), { align: 'center' });
+				doc.moveDown(0.4);
+				doc.font('Helvetica', 7);
+				doc.text(venta.almacen.sucursal.nombre.toUpperCase(), { align: 'center' });
+				doc.moveDown(0.4);
+				doc.text(venta.almacen.sucursal.direccion.toUpperCase(), { align: 'center' });
+				doc.moveDown(0.4);
+				var telefono = (venta.almacen.sucursal.telefono1 != null ? venta.almacen.sucursal.telefono1 : "") +
+					(venta.almacen.sucursal.telefono2 != null ? "-" + venta.almacen.sucursal.telefono2 : "") +
+					(venta.almacen.sucursal.telefono3 != null ? "-" + venta.almacen.sucursal.telefono3 : "");
+				doc.text("TELF.: " + telefono, { align: 'center' });
+				doc.moveDown(0.4);
+				doc.text("COCHABAMBA - BOLIVIA", { align: 'center' });
+				doc.moveDown(0.5);
+				doc.font('Helvetica-Bold', 8);
+				doc.text("COMPENSACION", { align: 'center' });
+				doc.font('Helvetica', 7);
+				doc.moveDown(0.4);
+				doc.text("------------------------------------", { align: 'center' });
+				doc.moveDown(0.4);
+				doc.text(venta.almacen.sucursal.nota_recibo_correlativo, { align: 'center' });
+				//doc.text("NIT: "+$scope.usuario.empresa.nit,{align:'center'});
+	
+				//doc.text("FACTURA No: "+venta.factura,{align:'center'});
+				doc.moveDown(0.4);
+				//doc.text("AUTORIZACIÓN No: "+venta.autorizacion,{align:'center'});
+				doc.moveDown(0.4);
+				doc.text("------------------------------------", { align: 'center' });
+				doc.moveDown(0.4);
+				//doc.text(venta.actividad.nombre,{align:'center'});
+				doc.moveDown(0.6);
+				var date = new Date();
+				doc.text("FECHA : " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(), { align: 'left' });
+				doc.moveDown(0.4);
+				doc.text("He recibido de : " + $scope.clienteVentas.razon_social, { align: 'left' });
+				doc.moveDown(0.4);
+				doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+				doc.moveDown(0.2);
+				doc.text("       CONCEPTO                                   ", { align: 'left' });
+				doc.moveDown(0.2);
+				doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+				doc.moveDown(0.4);
+				venta.fecha = new Date(venta.fecha);
+				doc.text("Fecha: " + venta.fecha.getDate() + "/" + (venta.fecha.getMonth() + 1) + "/" + venta.fecha.getFullYear(), 15, 210);
+				var textoFact = venta.movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ? "Factura nro. " + venta.factura : "Proforma nro. " + venta.factura;
+				doc.text(textoFact, 105, 210, { width: 100 });
+				doc.text("Saldo Bs " + (venta.saldo - pago) + ".-", 105, 220, { width: 100 });
+				doc.text("Bs " + pago + ".-", 170, 210, { width: 100 });
+	
+				doc.text("--------------", 10, 230, { align: 'right' });
+				//oc.text("--------------------",{align:'right'});
+				doc.moveDown(0.3);
+				doc.text("TOTAL Bs.              " + pago.toFixed(2), { align: 'right' });
+				doc.moveDown(0.4);
+				doc.moveDown(0.4);
+				doc.text("SON: " + data.pago, { align: 'left' });
+				doc.moveDown(0.6);
+	
+				doc.moveDown(0.4);
+	
+				doc.moveDown(0.4);
+				doc.moveDown(0.4);
+				doc.moveDown(0.4);
+				doc.moveDown(0.4);
+				doc.moveDown(0.4);
+				doc.moveDown(0.4);
+				doc.moveDown(0.4);
+				doc.moveDown(0.4);
+				doc.moveDown(0.4);
+				doc.moveDown(0.4);
+				doc.moveDown(0.4);
+				doc.moveDown(0.4);
+	
+				doc.text("-------------------------                       -------------------------", { align: 'center' });
+				doc.text("ENTREGUE CONFORME            RECIBI CONFORME", { align: 'center' });
+				doc.end();
+				stream.on('finish', function () {
+					var fileURL = stream.toBlobURL('application/pdf');
+					window.open(fileURL, '_blank', 'location=no');
+				});
+				blockUI.stop();
+			}
 		$scope.inicio();
 	}])
 

@@ -194,7 +194,8 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	var ComensalesMarcacionesClienteEmpresa = require('../modelos/AGIL/comensales-marcaciones-cliente-empresa')(sequelize, Sequelize);
 	//servicios venta
 	var ServicioVenta = require('../modelos/AGIL/servicio-venta')(sequelize, Sequelize);
-	
+	//configuracion plan cuenta
+	var ContabilidadConfiguracionGeneralTipoCuenta= require('../modelos/AGIL/contabilidad-configuracion-general-tipo-cuenta')(sequelize, Sequelize);
 	//*****RELATIONS*****
 	require('../modelos/relaciones.js')(sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, Clase, Aplicacion, RolAplicacion,
 		Empresa, Sucursal, UsuarioSucursal, Cliente, Proveedor, Producto, UsuarioAplicacion,
@@ -215,7 +216,8 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 		RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
 		RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
 		EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica, CierreCajaChica,
-		AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal,ProductoTipoPrecio,ProveedorAnticipo,ClienteAnticipo);
+		AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal,ProductoTipoPrecio,ProveedorAnticipo,ClienteAnticipo,
+		ContabilidadConfiguracionGeneralTipoCuenta);
 	require('../sockets/pantallas.js')(io, socket);
 	//*****ROUTES*****
 	//SYS
@@ -248,7 +250,7 @@ module.exports = function (router, sequelize, Sequelize, jwt, md5, forEach, ensu
 	require('./rutas-cierres-caja')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, CierreCaja, Clase, Sucursal, Usuario,
 		Venta, DetalleVenta, Cliente, Almacen, Sucursal, PagoVenta, PagoCompra, Compra, Proveedor, sequelize, Banco, DetalleCompra,
 		CajaSiguienteTurno, Diccionario, Producto, Inventario, Sequelize);
-	require('./rutas-contabilidad-cuenta')(router, ContabilidadCuenta, ClasificacionCuenta, Tipo, Clase, Usuario, Diccionario, ClienteCuenta, ProveedorCuenta, ConfiguracionCuenta, sequelize, Cliente, Proveedor, MedicoPaciente, Persona);
+	require('./rutas-contabilidad-cuenta')(router, ContabilidadCuenta, ClasificacionCuenta, Tipo, Clase, Usuario, Diccionario, ClienteCuenta, ProveedorCuenta, ConfiguracionCuenta, sequelize, Cliente, Proveedor, MedicoPaciente, Persona,ContabilidadConfiguracionGeneralTipoCuenta);
 	require('./rutas-comprobante-contabilidad')(router, ComprobanteContabilidad, AsientoContabilidad, ContabilidadCuenta, ClasificacionCuenta, Sucursal, Clase, Usuario, Diccionario, Empresa, Persona, Compra, Venta, MonedaTipoCambio, NumeroLiteral, ContabilidadCuentaAuxiliar, Tipo, sequelize); //MonedaTipoCambio
 	// require('./rutas-contabilidad-clasificacion-cuenta')(router,ClasificacionCuenta,tipo,Usuario,Diccionario);
 	require('./rutas-gtm-estibajes')(router, ensureAuthorizedAdministrador, fs, forEach, jwt, md5, GtmEstibaje); //MonedaTipoCambio

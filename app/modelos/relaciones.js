@@ -17,7 +17,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoBeneficioSocial, RrhhEmpleadoBitacoraFicha, UsuarioGrupos, RrhhEmpleadoConfiguracionRopa, GtmVentaKardex, GtmVentaKardexDetalle, RrhhEmpleadoDotacionRopaItem,
 	RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
 	EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica, CierreCajaChica,
-	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal,ProductoTipoPrecio,ProveedorAnticipo,ClienteAnticipo) {
+	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal,ProductoTipoPrecio,ProveedorAnticipo,ClienteAnticipo,
+	ContabilidadConfiguracionGeneralTipoCuenta) {
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lenguaje', as: 'lenguaje' });
@@ -1228,5 +1229,11 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	PagoVenta.hasMany(ClienteAnticipo, { foreignKey: 'id_pago_venta', as: 'anticipos' })
 	Cliente.hasMany(ClienteAnticipo, { foreignKey: 'id_cliente', as: 'clienteAnticipos' })
 	Sucursal.hasMany(ClienteAnticipo, { foreignKey: 'id_sucursal', as: 'clientesAnticipos' })
+
+	ContabilidadConfiguracionGeneralTipoCuenta.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' })
+	Empresa.hasMany(ContabilidadConfiguracionGeneralTipoCuenta, { foreignKey: 'id_empresa', as: 'ConfiguracionesTiposCuentas' })
+	
+	ContabilidadConfiguracionGeneralTipoCuenta.belongsTo(Clase, { foreignKey: 'id_tipo_cuenta', as: 'tipoCuenta' })
+	Clase.hasMany(ContabilidadConfiguracionGeneralTipoCuenta, { foreignKey: 'id_tipo_cuenta', as: 'ConfiguracionesTiposCuentas' })
 }
 

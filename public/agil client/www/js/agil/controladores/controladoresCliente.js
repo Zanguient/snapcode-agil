@@ -3,10 +3,10 @@ angular.module('agil.controladores')
 	.controller('ControladorClientes',['$scope', '$window', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', '$timeout',
 		'ClientesPaginador', 'Cliente', 'Clientes', 'Empresas', 'ClientesEmpresa', 'uiGmapGoogleMapApi',
 		'DatoCodigoSiguienteClienteEmpresa', 'DestinosCliente', 'RazonesSocialesCliente', 'ClasesTipoEmpresa', 'Diccionario', 'Tipos', 'ClasesTipo',
-		'VerificarUsuarioEmpresa', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
+		'VerificarUsuarioEmpresa','ObtenerInformacionClienteEmpresa', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
 		ClientesPaginador, Cliente, Clientes, Empresas, ClientesEmpresa, uiGmapGoogleMapApi,
 		DatoCodigoSiguienteClienteEmpresa, DestinosCliente, RazonesSocialesCliente, ClasesTipoEmpresa, Diccionario, Tipos, ClasesTipo,
-		VerificarUsuarioEmpresa) {
+		VerificarUsuarioEmpresa,ObtenerInformacionClienteEmpresa) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
@@ -191,7 +191,10 @@ angular.module('agil.controladores')
 			$scope.cerrarPopup('modal-wizard-cliente');
 		}
 
-		$scope.modificarCliente = function (cliente) {
+		$scope.modificarCliente = function (clienteB) {
+			var promesa = ObtenerInformacionClienteEmpresa(clienteB.id)
+			promesa.then(function(dato){
+			var cliente = dato.cliente
 			if (cliente.fecha1) {
 				cliente.fecha1 = new Date(cliente.fecha1);
 				cliente.fechatexto1 = cliente.fecha1.getDate() + "/" + (cliente.fecha1.getMonth() + 1) + "/" + cliente.fecha1.getFullYear();
@@ -201,27 +204,28 @@ angular.module('agil.controladores')
 				cliente.fechatexto2 = cliente.fecha2.getDate() + "/" + (cliente.fecha2.getMonth() + 1) + "/" + cliente.fecha2.getFullYear();
 			}
 			$scope.abrirPopupCliente(cliente);
+		})
 		}
 
-		$scope.verCliente = function (cliente) {
+		/* $scope.verCliente = function (cliente) {
 			$scope.cliente = cliente;
 			cliente.fecha1 = new Date(cliente.fecha1);
 			cliente.fecha2 = new Date(cliente.fecha2);
 			$scope.cliente.fechatexto1 = cliente.fecha1.getDate() + "/" + (cliente.fecha1.getMonth() + 1) + "/" + cliente.fecha1.getFullYear();
 			$scope.cliente.fechatexto2 = cliente.fecha2.getDate() + "/" + (cliente.fecha2.getMonth() + 1) + "/" + cliente.fecha2.getFullYear();
 			$scope.abrirPopup('modal-wizard-cliente-vista');
-		}
+		} */
 
-		$scope.cerrarPopPupVista = function () {
+		/* $scope.cerrarPopPupVista = function () {
 			$scope.cerrarPopup('modal-wizard-cliente-vista');
 		}
+ */
 
-
-		$scope.cerrarPopPupNuevoCliente = function () {
+		/* $scope.cerrarPopPupNuevoCliente = function () {
 			$scope.cerrarPopup('modal-wizard-cliente');
-		}
+		} */
 
-		$scope.modificarCliente = function (cliente) {
+		/* $scope.modificarCliente = function (cliente) {
 			if (cliente.fecha1) {
 				cliente.fecha1 = new Date(cliente.fecha1);
 				cliente.fechatexto1 = cliente.fecha1.getDate() + "/" + (cliente.fecha1.getMonth() + 1) + "/" + cliente.fecha1.getFullYear();
@@ -231,7 +235,7 @@ angular.module('agil.controladores')
 				cliente.fechatexto2 = cliente.fecha2.getDate() + "/" + (cliente.fecha2.getMonth() + 1) + "/" + cliente.fecha2.getFullYear();
 			}
 			$scope.abrirPopupCliente(cliente);
-		}
+		} */
 
 		$scope.mostrarConfirmacionEliminacion = function (cliente) {
 			$scope.cliente = new Cliente(cliente);

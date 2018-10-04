@@ -542,7 +542,7 @@ function ejecutarScriptsContabilidadCuentas(idModalWizardCuentaEdicion,
 	idModalEliminarCuenta,
 	idModalPlantilla,
 	idModalWizardTipoCuenta,
-	idModalWizardClasificacionCuenta) {
+	idModalWizardClasificacionCuenta,idModalWizardConfiguracionCuenta) {
 	crearPopup(idModalEliminarCuenta, "20%", 250);
 	crearPopup(idModalWizardCuentaVer, "55%", 500);
 	crearPopup(idModalWizardCuentaEdicion, "60%", "auto");
@@ -553,6 +553,7 @@ function ejecutarScriptsContabilidadCuentas(idModalWizardCuentaEdicion,
 	crearPopup(idModalWizardClasificacionCuenta, "50%", 350);
 	aplicarWizardFormulario(idModalWizardCuentaVer, idModalWizardContainerCuentaVer);
 	aplicarWizardFormulario(idModalWizardCuentaEdicion, idModalWizardContainerCuentaEdicion);
+	crearPopup(idModalWizardConfiguracionCuenta,'auto','auto')
 	aplicarDatePickers();
 }
 

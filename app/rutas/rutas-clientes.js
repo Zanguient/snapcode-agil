@@ -643,13 +643,13 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 					Cliente.findAll({
 						offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
 						where: condicionCliente,
-						include: [{ model: Clase, as: 'tipoPrecioVenta' }, { model: Empresa, as: 'empresa' },
-						{
-							model: ClienteRazon, as: 'clientes_razon'
-						},
-						{
-							model: GtmClienteDestino, as: 'cliente_destinos', include: [{ model: GtmDestino, as: "destino" }]
-						}],
+						/* 	include: [{ model: Clase, as: 'tipoPrecioVenta' }, { model: Empresa, as: 'empresa' },
+							{
+								model: ClienteRazon, as: 'clientes_razon'
+							},
+							{
+								model: GtmClienteDestino, as: 'cliente_destinos', include: [{ model: GtmDestino, as: "destino" }]
+							}], */
 						order: [['id', 'asc']]
 					}).then(function (clientes) {
 						res.json({ clientes: clientes, paginas: Math.ceil(data.count / req.params.items_pagina) });
@@ -664,13 +664,13 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 				}).then(function (data) {
 					Cliente.findAll({
 						where: condicionCliente,
-						include: [{ model: Empresa, as: 'empresa' }, { model: Clase, as: 'tipoPrecioVenta' },
+						/* include: [{ model: Empresa, as: 'empresa' }, { model: Clase, as: 'tipoPrecioVenta' },
 						{
 							model: ClienteRazon, as: 'clientes_razon'
 						},
 						{
 							model: GtmClienteDestino, as: 'cliente_destinos', include: [{ model: GtmDestino, as: "destino" }]
-						}],
+						}], */
 						order: [['id', 'asc']]
 					}).then(function (clientes) {
 						res.json({ clientes: clientes, paginas: 1 });
@@ -740,6 +740,23 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 			});
 		});
 
+	router.route('/informacion-cliente/:id_cliente')
+		.get(function (req, res) {
+			Cliente.find({
+				
+				where: {id:req.params.id_cliente},
+					include: [{ model: Clase, as: 'tipoPrecioVenta' }, { model: Empresa, as: 'empresa' },
+					{
+						model: ClienteRazon, as: 'clientes_razon'
+					},
+					{
+						model: GtmClienteDestino, as: 'cliente_destinos', include: [{ model: GtmDestino, as: "destino" }]
+					}],
+				order: [['id', 'asc']]
+			}).then(function (clienteEncontrado) {
+				res.json({ cliente: clienteEncontrado});
+			});
+		})
 	router.route('/anticipo-cliente/cliente/:id_cliente')
 		.post(function (req, res) {
 			Sucursal.find({
@@ -762,12 +779,12 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 							where: { id: req.body.id_sucursal }
 						}).then(function (Actualizado) {
 							ClienteAnticipo.find({
-								where:{id:clienteCreado.id},
-								include:[{model:Sucursal,as:'sucursal'},{model:Cliente,as:'cliente'}]
-							}).then(function(encontrado){
-								res.json({ mensaje: "anticipo guardado satisfactoriamente!",anticipo:encontrado });
+								where: { id: clienteCreado.id },
+								include: [{ model: Sucursal, as: 'sucursal' }, { model: Cliente, as: 'cliente' }]
+							}).then(function (encontrado) {
+								res.json({ mensaje: "anticipo guardado satisfactoriamente!", anticipo: encontrado });
 							})
-							
+
 						})
 
 				});
@@ -775,12 +792,12 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Clie
 		})
 		.get(function (req, res) {
 			ClienteAnticipo.findAll({
-				where:{id_cliente:req.params.id_cliente,padre:null}
+				where: { id_cliente: req.params.id_cliente, padre: null }
 			}).then(function (clientesAnticipos) {
 				res.json(clientesAnticipos);
 			})
 
 		})
-		
+
 
 }
