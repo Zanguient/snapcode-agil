@@ -758,10 +758,19 @@ angular.module('agil.controladores')
 			sucursal = (sucursal == null || sucursal == undefined) ? 0 : sucursal;
 			var roles = $.grep($scope.usuario.rolesUsuario, function (e) { return e.rol.nombre == $scope.diccionario.ROL_ADMINISTRADOR; });
 			usuario = roles.length > 0 ? ((usuario == "" || usuario == undefined) ? 0 : usuario) : $scope.usuario.nombre_usuario;
+			blockUI.start();
 			inicio = new Date($scope.convertirFecha(inicio));
 			fin = new Date($scope.convertirFecha(fin));
-			
-			$scope.paginator = Paginator();
+				
+			var promesa = Compras(sucursalesUsuario,inicio,fin,razon_social,nit,monto,tipo_pago,sucursal,usuario,$scope.usuario.id,tipo);
+			promesa.then(function (compras) {
+				$scope.compras = compras;
+				//$scope.compras = compras.detalle;
+				//$scope.paginator.setPages(compras.paginas);
+
+				blockUI.stop();
+			});
+			/*$scope.paginator = Paginator();
 			$scope.paginator.column = "fecha";
 			$scope.paginator.direccion = "asc";
 			$scope.filtroDetallesProducto = {
@@ -779,7 +788,7 @@ angular.module('agil.controladores')
 
 			}
 			$scope.paginator.callBack = $scope.paginadorCompras;
-			$scope.paginator.getSearch("", $scope.filtroDetallesProducto, null);
+			$scope.paginator.getSearch("", $scope.filtroDetallesProducto, null);*/
 		}
 
 		$scope.paginadorCompras = function(){

@@ -307,14 +307,14 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		});
 
 
-	router.route('/compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo_compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario/tipo/:tipo/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
+		router.route('/compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario/tipo/:tipo')
 		.get(/*ensureAuthorized,*/function (req, res) {
 			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 			var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
 			var condicionProveedor = {}, condicionCompra = { fecha: { $between: [inicio, fin] } },
 				condicionSucursal = { id: { $in: req.params.idsSucursales.split(',') } },
 				condicionUsuario = {};
-			var ordernar;
+
 
 			if (req.params.razon_social != 0) {
 				condicionProveedor.razon_social = { $like: "%" + req.params.razon_social + "%" };
@@ -334,119 +334,9 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			if (req.params.usuario != 0) {
 				condicionUsuario.nombre_usuario = { $like: "%" + req.params.usuario + "%" };
 			}
-			if (req.params.texto_busqueda != 0) {
-				condicionSucursal.nombre = { $like: "%" + req.params.texto_busqueda + "%" };
-			}
-
-			/*if(req.params.columna != 0 && req.params.direccion != 0){
-
-				ordenar = req.params.columna+" "+req.params.direccion;
-			}*/
 			condicionCompra.usar_producto = true
 			var compras = []
-			if (req.params.items_pagina == 0) {
-							//Compra.findAll({
-				var operacion1 = {
-					where: condicionCompra,
-					include: [{model:PagoCompra,as:'pagosCompra'},/*{model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal },*/ {
-						model: Movimiento, as: 'movimiento',
-						include: [{ model: Clase, as: 'clase', }]
-					}, {
-						model: DetalleCompra, as: 'detallesCompra',
-						include: [{ model: Producto, as: 'producto' },
-						{ model: Clase, as: 'centroCosto',/*,where:{nombre_corto:'ALM'}*/ }]
-					},
-					{ model: Clase, as: 'tipoPago', },
-					{ model: Usuario, as: 'usuario', where: condicionUsuario },
-					{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
-					{
-						model: Almacen, as: 'almacen',
-						include: [{
-							model: Sucursal, as: 'sucursal',
-							where: condicionSucursal
-						}]
-					}],
-					//order: ordenar
-				}
-			}else{
-							//Compra.findAll({
-				var operacion1 = {
-					where: condicionCompra,
-					offset: (req.params.items_pagina * (req.params.pagina - 1)),
-					limit: req.params.items_pagina,
-					include: [{model:PagoCompra,as:'pagosCompra'},/*{model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal },*/ {
-						model: Movimiento, as: 'movimiento',
-						include: [{ model: Clase, as: 'clase', }]
-					}, {
-						model: DetalleCompra, as: 'detallesCompra',
-						include: [{ model: Producto, as: 'producto' },
-						{ model: Clase, as: 'centroCosto',/*,where:{nombre_corto:'ALM'}*/ }]
-					},
-					{ model: Clase, as: 'tipoPago', },
-					{ model: Usuario, as: 'usuario', where: condicionUsuario },
-					{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
-					{
-						model: Almacen, as: 'almacen',
-						include: [{
-							model: Sucursal, as: 'sucursal',
-							where: condicionSucursal
-						}]
-					}],
-					//order: ordenar
-				}
-			}
-
-			//}).then(function (entity) {
-			//Compra.findAll({
-			var operacion2 = {
-				where: condicionCompra,
-				include: [{
-					model: Movimiento, as: 'movimiento',
-					include: [{ model: Clase, as: 'clase', }]
-				},
-				{ model: Clase, as: 'tipoPago', },
-				{ model: Usuario, as: 'usuario', where: condicionUsuario },
-				{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
-				{
-					model: Sucursal, as: 'sucursal',
-					where: condicionSucursal
-				}]
-			}
-			//}).then(function (entity3) {
-			var operacion3 = {
-				//condicionCompra.usar_producto = false
-				//Compra.findAll({
-				where: condicionCompra,
-				include: [{ model: Clase, as: 'tipoMovimiento' }, { model: Sucursal, as: 'sucursal', where: condicionSucursal }, {
-					model: DetalleCompra, as: 'detallesCompra',
-					include: [{ model: Clase, as: 'servicio' }
-					]
-				},
-				{ model: Clase, as: 'tipoPago', },
-				{ model: Usuario, as: 'usuario', where: condicionUsuario },
-				{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
-				]
-			}
-			//	}).then(function (entity2) {
-
-			/*entity = entity.concat(entity3);
-			compras = entity.concat(entity2);
-	
-			if (req.params.tipo == 'productos') {
-				res.json(entity);
-			} else if (req.params.tipo == 'servicios') {
-				res.json(entity2);
-			} else {
-				compras = compras.sort(function (a, b) {
-					return a.fecha - b.fecha;
-				});
-				res.json(compras);
-			}*/
-			//	});
-			//});	
-			//});
-
-			Compra.findAndCountAll({
+			Compra.findAll({
 				where: condicionCompra,
 				include: [/* {model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal }, */ {
 					model: Movimiento, as: 'movimiento',
@@ -466,29 +356,52 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						where: condicionSucursal
 					}]
 				}]
-			}).then(function (conteo) {
-				Compra.findAll(operacion1).then(function (entity) {
-					Compra.findAll(operacion2).then(function (entity3) {
-						Compra.findAll(operacion3).then(function (entity2) {
-							entity = entity.concat(entity3);
-							compras = entity.concat(entity2);
-							if (req.params.tipo == 'productos') {
-								res.json(entity);
-							} else if (req.params.tipo == 'servicios') {
-								res.json(entity2);
-							} else {
-								compras = compras.sort(function (a, b) {
-									return a.fecha - b.fecha;
-								});
+			}).then(function (entity) {
+				Compra.findAll({
+					where: condicionCompra,
+					include: [{
+						model: Movimiento, as: 'movimiento',
+						include: [{ model: Clase, as: 'clase', }]
+					},
+					{ model: Clase, as: 'tipoPago', },
+					{ model: Usuario, as: 'usuario', where: condicionUsuario },
+					{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
+					{
+						model: Sucursal, as: 'sucursal',
+						where: condicionSucursal
+					}]
+				}).then(function (entity3) {
 
-								res.json({ detalle: compras, paginas: Math.ceil(conteo.count / req.params.items_pagina) })
+					condicionCompra.usar_producto = false
+					Compra.findAll({
+						where: condicionCompra,
+						include: [{ model: Clase, as: 'tipoMovimiento' }, { model: Sucursal, as: 'sucursal', where: condicionSucursal }, {
+							model: DetalleCompra, as: 'detallesCompra',
+							include: [{ model: Clase, as: 'servicio' }
+							]
+						},
+						{ model: Clase, as: 'tipoPago', },
+						{ model: Usuario, as: 'usuario', where: condicionUsuario },
+						{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
+						]
+					}).then(function (entity2) {
 
-							}
-						})
-					})
-				})
+						entity = entity.concat(entity3);
+						compras = entity.concat(entity2);
+
+						if (req.params.tipo == 'productos') {
+							res.json(entity);
+						} else if (req.params.tipo == 'servicios') {
+							res.json(entity2);
+						} else {
+							compras = compras.sort(function (a, b) {
+								return a.fecha - b.fecha;
+							});
+							res.json(compras);
+						}
+					});
+				});
 			});
-
 		});
 
 	router.route('/compras/:id')
