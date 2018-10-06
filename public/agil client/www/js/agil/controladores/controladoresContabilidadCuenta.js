@@ -4,13 +4,13 @@ angular.module('agil.controladores')
 		'CuentasClasificaciones', 'ClasesTipo', 'lasClasificaciones', 'losSaldos', 'losMovimientos',
 		'losTiposDeCuentas', 'lasOperacionesCalculos', 'CuentaContabilidad', 'Paginator', 'CuentasEmpresaCreacion',
 		'ClientesNit', 'ProveedoresNit', '$timeout', 'Tipos', 'ConfiguracionCuentaEmpresa', 'ListaContabilidadCuentas', 'ListaCuentasComprobanteContabilidad', 'ConfiguracionCuentas',
-		'CuentasClasificacionesEdicion', 'Diccionario', 'VistaColumnasAplicacion', 'FieldViewer', 'ValidarCodigoCuenta', 'ClaseTexto', 'ClasesTipoEmpresa','GuardarContabilidadConfiguracionGeneralTipoCuenta'
-		,'ObtenerContabilidadConfiguracionGeneralTipoCuenta', function ($scope, blockUI, $localStorage,
+		'CuentasClasificacionesEdicion', 'Diccionario', 'VistaColumnasAplicacion', 'FieldViewer', 'ValidarCodigoCuenta', 'ClaseTexto', 'ClasesTipoEmpresa', 'GuardarContabilidadConfiguracionGeneralTipoCuenta'
+		, 'ObtenerContabilidadConfiguracionGeneralTipoCuenta', function ($scope, blockUI, $localStorage,
 			$location, $templateCache, $window, CuentasPaginador, ContabilidadCuenta,
 			CuentasClasificaciones, ClasesTipo, lasClasificaciones, losSaldos, losMovimientos,
 			losTiposDeCuentas, lasOperacionesCalculos, CuentaContabilidad, Paginator, CuentasEmpresaCreacion,
 			ClientesNit, ProveedoresNit, $timeout, Tipos, ConfiguracionCuentaEmpresa, ListaContabilidadCuentas, ListaCuentasComprobanteContabilidad, ConfiguracionCuentas,
-			CuentasClasificacionesEdicion, Diccionario, VistaColumnasAplicacion, FieldViewer, ValidarCodigoCuenta, ClaseTexto, ClasesTipoEmpresa,GuardarContabilidadConfiguracionGeneralTipoCuenta,
+			CuentasClasificacionesEdicion, Diccionario, VistaColumnasAplicacion, FieldViewer, ValidarCodigoCuenta, ClaseTexto, ClasesTipoEmpresa, GuardarContabilidadConfiguracionGeneralTipoCuenta,
 			ObtenerContabilidadConfiguracionGeneralTipoCuenta) {
 
 
@@ -49,6 +49,7 @@ angular.module('agil.controladores')
 
 			$scope.inicio = function () {
 				$scope.obtenerCuentas();
+				$scope.obtenerConfiguracionTipoCuentas()
 				$scope.obtenerTiposCuenta();
 				$scope.obtenerTiposCuentasAuxilires()
 				$scope.obtenerClasificacionCuenta();
@@ -506,9 +507,6 @@ angular.module('agil.controladores')
 				});
 
 			}
-
-
-
 			$scope.crearNuevaCuenta = function () {
 				$scope.cuenta = new ContabilidadCuenta({
 					id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, tipoCuenta: {}, clasificacion: {}, eliminado: false, bimonetaria: false
@@ -596,6 +594,7 @@ angular.module('agil.controladores')
 			$scope.guardarCuenta = function (valido, cuenta) {
 				// console.log(cuenta)
 				if (valido) {
+					cuenta.usar_ceros_delante = $scope.usuario.empresa.usar_ceros_plan_cuenta
 					var button = $('#siguienteCuenta').text().trim();
 					if (button != "Siguiente") {
 						$scope.ocultarMensajesValidacion();
@@ -807,7 +806,7 @@ angular.module('agil.controladores')
 				}
 			}
 			$scope.guardarCuentas = function (cuentas) {
-				var cuentasEmpresa = new CuentasEmpresaCreacion({ cuentas: cuentas, id_empresa: $scope.usuario.id_empresa });
+				var cuentasEmpresa = new CuentasEmpresaCreacion({ usar_ceros_delante: $scope.usuario.empresa.usar_ceros_plan_cuenta, cuentas: cuentas, id_empresa: $scope.usuario.id_empresa });
 				cuentasEmpresa.$save(function (cuenta) {
 					blockUI.stop();
 					$scope.mostrarMensaje('Guardado Exitosamente!');
@@ -890,17 +889,17 @@ angular.module('agil.controladores')
 				$scope.configuracionTipoCuenta = config
 				$scope.configuracionTipoCuenta.edit = true
 			}
-			$scope.guardarConfiguracionTiposCuentas= function(){
-				var promesa=GuardarContabilidadConfiguracionGeneralTipoCuenta($scope.usuario.id_empresa,$scope.configuracionesGeneralesTipoCuentas)
-				promesa.then(function(dato){
+			$scope.guardarConfiguracionTiposCuentas = function () {
+				var promesa = GuardarContabilidadConfiguracionGeneralTipoCuenta($scope.usuario.id_empresa, $scope.configuracionesGeneralesTipoCuentas)
+				promesa.then(function (dato) {
 					$scope.mostrarMensaje(dato.mensaje)
 					$scope.cerrarPopPupConfiguracionCuenta()
 				})
 			}
-			$scope.obtenerConfiguracionTipoCuentas=function(){
+			$scope.obtenerConfiguracionTipoCuentas = function () {
 				var promesa = ObtenerContabilidadConfiguracionGeneralTipoCuenta($scope.usuario.id_empresa)
-				promesa.then(function(dato){
-					$scope.configuracionesGeneralesTipoCuentas=dato
+				promesa.then(function (dato) {
+					$scope.configuracionesGeneralesTipoCuentas = dato
 				})
 			}
 

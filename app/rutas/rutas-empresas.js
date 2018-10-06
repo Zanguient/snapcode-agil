@@ -43,7 +43,8 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				usar_facturacion_masiva:req.body.usar_facturacion_masiva,
 				usar_cotizacion:req.body.usar_cotizacion,
 				usar_tipo_precio:req.body.usar_tipo_precio,
-				usar_pago_anticipado:req.body.usar_pago_anticipado
+				usar_pago_anticipado:req.body.usar_pago_anticipado,
+				usar_ceros_plan_cuenta:req.body.usar_ceros_plan_cuenta
 			}).then(function (empresaCreada) {
 				Sucursal.create({
 					id_empresa: empresaCreada.id,

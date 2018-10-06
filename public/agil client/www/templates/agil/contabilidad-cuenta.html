@@ -2,18 +2,21 @@
 	<div class="col-xs-12">
 		<h3 class="header smaller lighter blue">PLAN DE CUENTAS</h3>
 
-		<button id="nuevo" ng-disabled="!aplicacion.puede_crear" class="btn btn-primary" ng-click="crearNuevaCuenta()">
+		<button id="nuevo" ng-disabled="!aplicacion.puede_crear || configuracionesGeneralesTipoCuentas.length >= 4" class="btn btn-primary" ng-click="crearNuevaCuenta()">
 			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
 			Nuevo
 		</button>
 		<div class="fileUpload btn btn-primary btn-success">
 			<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
-			<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelCuentas" />&nbsp&nbsp
+			<input ng-disabled="!aplicacion.puede_crear || configuracionesGeneralesTipoCuentas.length >= 4" class="upload" type="file" custom-on-file-change="subirExcelCuentas" />&nbsp&nbsp
+			
 		</div>
+		
 		<a href="/recursos/EJEMPLO-DATOS-CUENTAS.xlsx" class="btn btn-primary btn-danger">
 			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
 			Ejemplo Importación
 		</a>
+		<p ng-if=" configuracionesGeneralesTipoCuentas.length < 4"class="bg-danger" style="color:red">Para poder crear nuevas cuentas o importar primero es nesesario las configuraciones generales de las cuentas</p>
 		<div class="clearfix">
 			<div class="pull-right tableTools-container"></div>
 		</div>
@@ -1780,7 +1783,7 @@
 							<div class="row">
 								<div class="col-md-4">
 									<p>Tipo Cuenta</p>
-									<select ng-model="configuracionTipoCuenta.tipoCuenta" ng-options="cuentaTipo as cuentaTipo.nombre for cuentaTipo in cuentaTipos">
+									<select ng-model="configuracionTipoCuenta.tipoCuenta" ng-options="cuentaTipo as cuentaTipo.nombre for cuentaTipo in cuentaTipos track by cuentaTipo.id">
 
 									</select>
 								</div>

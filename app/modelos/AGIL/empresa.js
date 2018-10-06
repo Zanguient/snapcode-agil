@@ -157,6 +157,10 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'usar_pago_anticipado'
 		},
+		usar_ceros_plan_cuenta:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_ceros_plan_cuenta'
+		}
 	}, {
 			freezeTableName: true
 		});

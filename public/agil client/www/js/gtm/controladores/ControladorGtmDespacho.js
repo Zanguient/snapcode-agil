@@ -2,9 +2,9 @@ angular.module('agil.controladores')
 
     .controller('ControladorGtmDespacho', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'Paginator', 'FieldViewer',
         'GtmDespachos', 'GtmDetalleDespacho', 'GetGtmDetalleDespachoHijos', 'ImprimirPdfDespachos', 'ExportarExelDespachos', 'ListaDetalleKardexFactura', 'GtmDetalleDespachoKardex',
-        'VerificarUsuarioEmpresa', 'CrearDespachoResivo', 'ClasesTipo', 'ListaBancos', 'ClasesTipoEmpresa','ActualizarDatosDespachoDetalle', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
+        'VerificarUsuarioEmpresa', 'CrearDespachoResivo', 'ClasesTipo', 'ListaBancos', 'ClasesTipoEmpresa','ActualizarDatosDespachoDetalle','Tipos', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, Paginator, FieldViewer,
         GtmDespachos, GtmDetalleDespacho, GetGtmDetalleDespachoHijos, ImprimirPdfDespachos, ExportarExelDespachos, ListaDetalleKardexFactura, GtmDetalleDespachoKardex,
-        VerificarUsuarioEmpresa, CrearDespachoResivo, ClasesTipo, ListaBancos, ClasesTipoEmpresa,ActualizarDatosDespachoDetalle) {
+        VerificarUsuarioEmpresa, CrearDespachoResivo, ClasesTipo, ListaBancos, ClasesTipoEmpresa,ActualizarDatosDespachoDetalle,Tipos) {
 
         blockUI.start();
 
@@ -1380,6 +1380,35 @@ angular.module('agil.controladores')
                 $scope.obtenerDespachados()
                 $scope.mostrarMensaje(dato.mensaje)
             })
+        }
+        $scope.agregarConceptoEdicion = function (clase) {
+            if (clase.nombre && clase.nombre_corto) {
+                if ($scope.tipo_edicion.clases.indexOf(clase) == -1) {
+                    $scope.tipo_edicion.clases.push(clase);
+                }
+                $scope.clase = {}
+            }
+        }
+        $scope.modificarConceptoEdicion = function (clase) {
+            $scope.clase = clase;
+        }
+
+        
+        $scope.removerConceptoEdicion = function (clase) {
+            clase.eliminado = true;
+        }
+
+        $scope.guardarConceptoEdicion = function (tipo) {
+            blockUI.start();
+            Tipos.update({ id_tipo: tipo.id }, tipo, function (res) {
+                var promesa = ClasesTipo(tipo.nombre_corto);
+                promesa.then(function (entidad) {
+                    tipo = entidad
+                    blockUI.stop();
+                    $scope.cerrarDialogConceptoEdicion();
+                    $scope.mostrarMensaje('Guardado Exitosamente!');
+                });
+            });
         }
         $scope.$on('$routeChangeStart', function (next, current) {
             $scope.eliminarPopup($scope.idModalAsignacionFactura);
