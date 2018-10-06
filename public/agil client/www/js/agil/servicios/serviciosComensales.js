@@ -65,7 +65,7 @@ angular.module('agil.servicios')
     }])
 
     .factory('AlertaMarcacion',  ['$resource',function ($resource) {
-        return $resource(restServer + "alertas/marcaciones/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:columna/:direccion");
+        return $resource(restServer + "alertas/marcaciones/:id_empresa/:id_usuario/:id_cliente/:desde/:hasta/:columna/:direccion/:descartados");
     }])
 
     .factory('AgregarMarcacion',  ['$resource',function ($resource) {
@@ -437,7 +437,7 @@ angular.module('agil.servicios')
     .factory('ObtenerAlertasMarcacion', ['AlertaMarcacion', '$q', function (AlertaMarcacion, $q) {
         var res = function (idEmpresa, usuario, cliente, filtro) {
             var delay = $q.defer();
-            AlertaMarcacion.get({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente, desde: filtro.desde, hasta: filtro.hasta, columna: filtro.columna, direccion: filtro.direccion }, function (entidades) {
+            AlertaMarcacion.get({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente, desde: filtro.desde, hasta: filtro.hasta, columna: filtro.columna, direccion: filtro.direccion, descartados: (filtro.descartados !== undefined && filtro.descartados !== null) ? filtro.descartados : false }, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

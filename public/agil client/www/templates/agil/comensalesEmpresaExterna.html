@@ -1215,7 +1215,12 @@
                         </th>
                         <th>Desde</th>
                         <th>Hasta</th>
-                        <th></th>
+                        <th>Descartados
+                            <label>
+                                <input name="switch-field-1" tabindex="-1" ng-model="filtroMarcaciones.descartados" class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox">
+                                <span class="lbl check-descuento"></span>
+                            </label>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1230,7 +1235,7 @@
                                 value="{{filtroMarcaciones.hasta | date: 'dd/mm/yyyy'}}">
                         </td>
                         <td>
-                            <button class="btn btn-primary" type="button" , ng-click="filtrarAlertas()">Filtrar
+                            <button class="btn btn-primary" type="button" ng-click="filtrarAlertas()">Filtrar
                                 <i class="ace-icon fa fa-search align-top bigger-125"></i>
                             </button>
                         </td>
@@ -1268,7 +1273,32 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="comensal in alertaMarcacionesFiltradas">
+                        <tr ng-if="!filtroMarcaciones.descartados" ng-repeat="comensal in alertaMarcacionesFiltradas">
+                            <td>{{$index+1}}</td>
+                            <td>
+                                {{comensal.comensal.nombre}}
+                            </td>
+                            <td>
+                                {{comensal.fecha}}
+                            </td>
+                            <td>
+                                {{comensal.comida.nombre}}
+                            </td>
+                            <td>
+                                <a ng-if="comensal.habilitado === undefined || comensal.habilitado === null" class="green tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 1)"
+                                    uib-tooltip="Marcar">
+                                    <i class="glyphicon glyphicon-ok bigger-130"></i>
+                                </a>
+                                <a ng-if="(comensal.habilitado || comensal.habilitado === false)" class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Editar" ng-click="agregarMarcacion(comensal, 3)">
+                                    <i class="ace-icon fa fa-refresh bigger-130"></i>
+                                </a>
+                                <a ng-if="comensal.habilitado === undefined || comensal.habilitado === null" class="red tooltip-info" href="javascript:void(0)" ng-click="agregarMarcacion(comensal, 2)"
+                                    uib-tooltip="Cancelar">
+                                    <i class="ace-icon fa fa-times-circle bigger-130"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr ng-if="filtroMarcaciones.descartados" ng-repeat="comensal in alertaMarcacionesDescartadasFiltradas">
                             <td>{{$index+1}}</td>
                             <td>
                                 {{comensal.comensal.nombre}}

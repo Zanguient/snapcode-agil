@@ -208,7 +208,7 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 	idPopupActualizarCreditoCliente, idPopupActualizarCreditoDeuda, idPopupDeuda, idModalDescuento, idModalTablaVentasPendientes,
 	idModalTablaComprasPendientes, idModalTablaBancosPendientes, idModalTablaOtrosPendientes, idModalInicioSesion, idModalWizardComprobanteEdicion, IdModalOpcionesQr, IdModalRegistrarComprobante, IdModalRevisarComprobante, IdModalLibroMayor, IdModalAsignarCuenta,
 	idModalTablaDespachos, idModalTablaAsignacionDespacho, IdModalEliminarProductoVencido, dialogAlertasProformas, facturarProformas, mensajeConfirmacionComprobante, idModalNuevoPedido, idModalDatosProducto, idModalNuevoClientePedido, idModalNuevaRazonCliente,
-	idModalNuevoDestino,idModalVerificacionCajaChica) {
+	idModalNuevoDestino,idModalVerificacionCajaChica,ModalMensajePago) {
 	crearPopup(idPopupTablaProductos, "70%", "auto");
 	crearPopup(idModalWizardComprobanteEdicion, "100%", "auto");
 	crearPopup(idPopupTablaCreditos, "auto", "auto");
@@ -245,7 +245,8 @@ function ejecutarScriptsInicio(idPopupTablaProductos, idPopupTablaCreditos, idPo
 		crearPopup(idModalNuevoDestino, "36%", 275);
 	}, 2000)
 
-	crearPopup(IdModalEliminarProductoVencido, "60%", 550)
+	crearPopup(IdModalEliminarProductoVencido, "60%", 550);
+	crearPopup(ModalMensajePago,"40%",230);
 	$("#" + idModalInicioSesion).siblings('.ui-dialog-titlebar').remove();
 	aplicarDatePickers();
 	quitarScrollInputNumber()

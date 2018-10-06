@@ -9,7 +9,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
         'GtmTransportistas', 'GtmEstibajes', 'GtmGrupoEstibajes', 'ListasCuentasAuxiliares', 'GtmDetallesDespachoAlerta', '$interval', 'GuardarGtmDetalleDespachoAlerta', 'GtmDetalleDespacho', 'VerificarCorrelativosSucursale',
         'ReiniciarCorrelativoSucursales', 'ClasesTipoEmpresa', 'alertasProformasLista', 'UltimaFechaTipoComprobante', 'FacturaProforma', 'ListaDetallesProformasAFacturar', 'ProformasInfo', 'FacturarProformas', 'ImprimirPdfAlertaDespacho',
         'ExportarExelAlarmasDespachos', 'VencimientoDosificaciones', 'EmpresaDatosInicio', 'VerificacionMensualActivos', 'ProductosPaginador', 'Pedidos', 'ClientesNit', 'GetCliente', 'ClientePedido', 'ClientePedidoRazonSocial', 'ClientePedidoDestino',
-        '$filter', 'ObtenerAlertasCajaChica', 'GuardarVerificadorSolicitud', function($scope, $sce, $rootScope, $route, $templateCache, $location, $window, $localStorage, Sesion, $timeout,
+        '$filter', 'ObtenerAlertasCajaChica', 'GuardarVerificadorSolicitud','PagosVentaCreditos','CompraDatosCredito', function($scope, $sce, $rootScope, $route, $templateCache, $location, $window, $localStorage, Sesion, $timeout,
             blockUI, UsuarioSucursalesAutenticacion, VencimientosProductosEmpresa, VencimientosCreditosEmpresa,
             VencimientosDeudasEmpresa, VentaEmpresaDatos, ClienteVencimientoCredito, socket, $http, Tipos,
             ProveedorVencimientoCredito, Venta, ClasesTipo, Compra, Producto, DatosVenta, DatosCompra,
@@ -18,7 +18,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
             GtmTransportistas, GtmEstibajes, GtmGrupoEstibajes, ListasCuentasAuxiliares, GtmDetallesDespachoAlerta, $interval, GuardarGtmDetalleDespachoAlerta, GtmDetalleDespacho, VerificarCorrelativosSucursale,
             ReiniciarCorrelativoSucursales, ClasesTipoEmpresa, alertasProformasLista, UltimaFechaTipoComprobante, FacturaProforma, ListaDetallesProformasAFacturar, ProformasInfo, FacturarProformas, ImprimirPdfAlertaDespacho,
             ExportarExelAlarmasDespachos, VencimientoDosificaciones, EmpresaDatosInicio, VerificacionMensualActivos, ProductosPaginador, Pedidos, ClientesNit, GetCliente, ClientePedido, ClientePedidoRazonSocial, ClientePedidoDestino,
-            $filter, ObtenerAlertasCajaChica, GuardarVerificadorSolicitud) {
+            $filter, ObtenerAlertasCajaChica, GuardarVerificadorSolicitud,PagosVentaCreditos,CompraDatosCredito) {
             $scope.idModalTablaVencimientoProductos = "tabla-vencimiento-productos";
             $scope.idModalTablaDespachos = "tabla-gtm-despachos";
             $scope.idModalTablaAsignacionDespacho = "tabla-gtm-asignacion-despachos";
@@ -56,6 +56,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
             $scope.facturarProformas = 'proforma-facturacion'
             $scope.mensajeConfirmacionComprobante = 'comprobante-mensaje-confirmacion'
             $scope.idModalTablaComprasPendientes = "tabla-compras-pendientes";
+            $scope.ModalMensajePago = "Modal-Mensaje-Pago";
 
             $scope.$on('$viewContentLoaded', function() {
                 ejecutarScriptsInicio($scope.idModalTablaVencimientoProductos, $scope.idModalTablaVencimientoCreditos, $scope.idModalTablaVencimientoDeudas, $scope.idModalPagoP,
@@ -63,7 +64,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
                     $scope.idModalTablaComprasPendientes, $scope.idModalTablaBancosPendientes, $scope.idModalTablaOtrosPendientes, $scope.idModalInicioSesion,
                     $scope.idModalWizardComprobanteEdicion, $scope.IdModalOpcionesQr, $scope.IdModalRegistrarComprobante, $scope.IdModalRevisarComprobante, $scope.IdModalLibroMayor, $scope.IdModalAsignarCuenta,
                     $scope.idModalTablaDespachos, $scope.idModalTablaAsignacionDespacho, $scope.IdModalEliminarProductoVencido, $scope.dialogAlertasProformas, $scope.facturarProformas, $scope.mensajeConfirmacionComprobante,
-                    $scope.idModalNuevoPedido, $scope.idModalDatosProducto, $scope.idModalNuevoClientePedido, $scope.idModalNuevaRazonCliente, $scope.idModalNuevoDestino, $scope.idModalVerificacionCajaChica);
+                    $scope.idModalNuevoPedido, $scope.idModalDatosProducto, $scope.idModalNuevoClientePedido, $scope.idModalNuevaRazonCliente, $scope.idModalNuevoDestino, $scope.idModalVerificacionCajaChica,
+                    $scope.ModalMensajePago);
 
                 $scope.inicio();
                 blockUI.stop();
@@ -77,6 +79,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
                  $scope.eliminarPopup($scope.IdModalLibroMayor);
                  $scope.eliminarPopup($scope.IdModalOpcionesQr);
                  $scope.eliminarPopup($scope.IdModalAsignarCuenta); */
+                 $scope.eliminarPopup($scope.ModalMensajePago);
             });
 
             $scope.obtenerSucursales = function() {
@@ -2906,9 +2909,30 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
                 $scope.cerrarPopup($scope.idModalPagoDeuda);
             }
 
-            $scope.efectuarPagoVencimientoCredito = function(pago) {
+
+            $scope.realizarPago = function(idVenta,pago,UsuarioIdEmpresa){
+                var restante = 0;
+                var saldo = $scope.venta.saldo;
+                restante = saldo - $scope.pago;
+                if (restante < 0) {
+                    restante = restante;
+                }else if (restante >= 0) {
+                    restante = 0;
+                }
+
                 blockUI.start();
-                VentaEmpresaDatos.update({ id: $scope.venta.id, id_empresa: $scope.usuario.id_empresa }, { pago: pago, id_usuario_cajero: $scope.usuario.id }, function(data) {
+                var promesa = PagosVentaCreditos(idVenta, UsuarioIdEmpresa , { pago: pago, id_usuario_cajero: $scope.usuario.id, saldoRestante:restante });
+                promesa.then(function(data){
+                    $scope.mostrarMensaje(data.mensaje);
+                    $scope.cerrarPopup($scope.ModalMensajePago);
+                    $scope.cerrarPopup($scope.idModalPagoP);
+
+                    $scope.imprimirReciboVencimientoCredito(data, data.venta, pago);
+                    $scope.vencimientoTotal = $scope.vencimientoTotal - $scope.vencimientosCreditos.length;
+                    $scope.verificarVencimientosCreditos($scope.usuario.id_empresa);
+                    blockUI.stop();
+                    /*blockUI.start();
+                    VentaEmpresaDatos.update({ id: $scope.venta.id, id_empresa: $scope.usuario.id_empresa }, { pago: pago, id_usuario_cajero: $scope.usuario.id }, function(data) {
                     $scope.mostrarMensaje(data.mensaje);
                     $scope.cerrarPopup($scope.idModalPagoP);
                     $scope.imprimirReciboVencimientoCredito(data, data.venta, pago);
@@ -2920,11 +2944,81 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
                     $scope.cerrarPopup($scope.idModalPagoP);
                     $scope.obtenerVentas();
                     blockUI.stop();
-                });
+                });*/
+                })
+            }
+
+            $scope.mensaje = function(value){
+                $scope.accion = value;
+                if($scope.accion == true){
+                    $scope.realizarPago($scope.venta.id,$scope.pago,$scope.usuario.id);
+                }else{
+                    $scope.cerrarPopup($scope.ModalMensajePago);
+                }
+            }
+
+            $scope.efectuarPagoVencimientoCredito = function(pago) {
+
+                var tipoPago = $scope.usuario.empresa.usar_pago_anticipado;
+                $scope.pago = pago;
+                if (tipoPago == true) {
+                    //usar pagos anticipados
+                    if(pago <= $scope.venta.saldo){
+                        $scope.realizarPago($scope.venta.id,pago,$scope.usuario.id_empresa);
+                    }else{
+                        $scope.abrirPopup($scope.ModalMensajePago);		
+                    }
+                }else{
+                    //no usar pagos anticipados
+                    if(pago <= $scope.venta.saldo){
+                        $scope.realizarPago($scope.venta.id,pago,$scope.usuario.id);
+                    }else{
+                        $scope.mostrarMensaje("El cobro excede el monto a cobrar");
+                    }
+                }            
+            }
+
+            $scope.realizarPagoDeuda = function(idCompra,pago,idUsuario){
+                var restante = 0;
+                var saldo = $scope.compra.saldo;
+                restante = saldo - $scope.pago;
+                if (restante < 0) {
+                    restante = restante;
+                }else if (restante >= 0) {
+                    restante = 0;
+                }
+                blockUI.start();
+                var promesa = CompraDatosCredito(idCompra , { pago: pago, id_usuario_cajero: idUsuario, saldoRestante:restante });
+                promesa.then(function(data){
+                    $scope.mostrarMensaje(data.mensaje);
+                    $scope.cerrarPopup($scope.ModalMensajePago);
+                    $scope.cerrarPopup($scope.idModalPagoDeuda);
+                    $scope.imprimirReciboVencimientoDeuda(data, data.compra, pago);
+                    $scope.vencimientoTotal = $scope.vencimientoTotal - $scope.vencimientosDeudas.length;
+                    $scope.verificarVencimientosDeudas($scope.usuario.id_empresa);
+                    blockUI.stop();
+                })
             }
 
             $scope.efectuarPagoVencimientoDeuda = function(pago) {
-                blockUI.start();
+                var tipoPago = $scope.usuario.empresa.usar_pago_anticipado;
+                $scope.pago = pago;
+                if (tipoPago == true) {
+                    //usar pagos anticipados
+                    if(pago <= $scope.compra.saldo){
+                        $scope.realizarPagoDeuda($scope.compra.id,pago,$scope.usuario.id);
+                    }else{
+                        $scope.abrirPopup($scope.ModalMensajePago);		
+                    }
+                }else{
+                    //no usar pagos anticipados
+                    if(pago <= $scope.compra.saldo){
+                        $scope.realizarPagoDeuda($scope.compra.id,pago,$scope.usuario.id);
+                    }else{
+                        $scope.mostrarMensaje("El cobro excede el monto a cobrar");
+                    }
+                }
+               /* blockUI.start();
                 Compra.update({ id: $scope.compra.id }, { pago: pago, id_usuario_cajero: $scope.usuario.id }, function(data) {
                     $scope.mostrarMensaje(data.mensaje);
                     $scope.cerrarPopup($scope.idModalPagoDeuda);
@@ -2937,7 +3031,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
                     $scope.cerrarPopup($scope.idModalPagoDeuda);
                     $scope.obtenerCompras();
                     blockUI.stop();
-                });
+                });*/
             }
 
             $scope.imprimirReciboVencimientoCredito = function(data, venta, pago, usar_venta_enviada) {

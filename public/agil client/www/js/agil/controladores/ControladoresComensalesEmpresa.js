@@ -98,14 +98,16 @@ angular.module('agil.controladores')
                     $scope.listaComidasclienteEmpresa = []
                     $scope.listaPrecioComidasclienteEmpresa = []
                     $scope.alertaMarcaciones = []
+                    $scope.alertaMarcacionesDescartadas = []
                     $scope.alertaMarcacionesFiltradas = []
+                    $scope.alertaMarcacionesDescartadasFiltradas = []
                     $scope.historialesDocumentos = []
                     $scope.comensalesSeleccionadosFiltro = []
                     $scope.obtenerComidas()
                     $scope.obtenerGerencias()
                     $scope.obtenerHistoriales()
                     $scope.obtenerComensales()
-                    $scope.filtroMarcaciones = { desde: "", hasta: "", columna: 'fecha', direccion: 'asc' }
+                    $scope.filtroMarcaciones = { desde: "", hasta: "", columna: 'fecha', direccion: 'asc', descartados: false }
                     setTimeout(function () {
                         aplicarDatePickers();
                     }, 200);
@@ -126,16 +128,40 @@ angular.module('agil.controladores')
                 }
             }
 
-            $scope.filtrarAlertas = function () {
-                $scope.alertaMarcacionesFiltradas = $scope.alertaMarcaciones.filter(function (alerta) {
-                    var fecha_alerta = new Date(alerta.fecha.split('/').reverse().join('-') + 'T04:00:00.000Z')
-                    var desde = new Date($scope.filtroMarcaciones.desde.split('/').reverse().join('-') + 'T00:00:00.000Z')
-                    var hasta = new Date($scope.filtroMarcaciones.hasta.split('/').reverse().join('-') + 'T23:59:59.000Z')
-                    if (fecha_alerta >= desde && fecha_alerta <= hasta) {
-                        return true
+            $scope.filtrarAlertas = function (filtrar) {
+                if ($scope.alertaMarcaciones.length > 0 && !$scope.filtroMarcaciones.descartados) {
+                    if ($scope.filtroMarcaciones.desde !== 0 && $scope.filtroMarcaciones.desde !== "" && $scope.filtroMarcaciones.hasta !== 0 && $scope.filtroMarcaciones.hasta !== "") {
+                        $scope.alertaMarcacionesFiltradas = $scope.alertaMarcaciones.filter(function (alerta) {
+                            var fecha_alerta = new Date(alerta.fecha.split('/').reverse().join('-') + 'T04:00:00.000Z')
+                            var desde = new Date($scope.filtroMarcaciones.desde.split('/').reverse().join('-') + 'T00:00:00.000Z')
+                            var hasta = new Date($scope.filtroMarcaciones.hasta.split('/').reverse().join('-') + 'T23:59:59.000Z')
+                            if (fecha_alerta >= desde && fecha_alerta <= hasta) {
+                                return true
+                            }
+                            return false
+                        })
+                    } else {
+                        $scope.alertaMarcacionesFiltradas = Object.assign([], $scope.alertaMarcaciones)
                     }
-                    return false
-                })
+                } else if ($scope.alertaMarcacionesDescartadas.length > 0 && $scope.filtroMarcaciones.descartados) {
+                    if ($scope.filtroMarcaciones.desde !== 0 && $scope.filtroMarcaciones.desde !== "" && $scope.filtroMarcaciones.hasta !== 0 && $scope.filtroMarcaciones.hasta !== "") {
+                        $scope.alertaMarcacionesDescartadasFiltradas = $scope.alertaMarcacionesDescartadas.filter(function (alerta) {
+                            var fecha_alerta = new Date(alerta.fecha.split('/').reverse().join('-') + 'T04:00:00.000Z')
+                            var desde = new Date($scope.filtroMarcaciones.desde.split('/').reverse().join('-') + 'T00:00:00.000Z')
+                            var hasta = new Date($scope.filtroMarcaciones.hasta.split('/').reverse().join('-') + 'T23:59:59.000Z')
+                            if (fecha_alerta >= desde && fecha_alerta <= hasta) {
+                                return true
+                            }
+                            return false
+                        })
+                    } else {
+                        $scope.alertaMarcacionesDescartadasFiltradas = Object.assign([], $scope.alertaMarcacionesDescartadas)
+                    }
+                } else {
+                    if (!filtrar) {
+                        $scope.obtenerAlertas(true)
+                    }
+                }
             }
 
             $scope.buscarComensales = function (query) {
@@ -359,7 +385,7 @@ angular.module('agil.controladores')
                     prom = ObtenerComensales($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaEdicionComensales.empresaCliente.id)
                 } else if (empresa && filtro) {
                     prom = ObtenerComensales($scope.usuario.id_empresa, $scope.usuario.id, $scope.filtroComensales.empresaCliente.id)
-                }else{
+                } else {
                     prom = ObtenerComensales($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
                 }
                 prom.then(function (res) {
@@ -488,7 +514,7 @@ angular.module('agil.controladores')
                 })
             }
 
-            $scope.obtenerAlertas = function () {
+            $scope.obtenerAlertas = function (filtrar) {
                 blockUI.start()
                 $scope.filtroMarcaciones = $scope.filtrarHistorial($scope.filtroMarcaciones, true)
                 var prom = ObtenerAlertasMarcacion($scope.usuario.id_empresa, $scope.usuario.id, $scope.empresaExternaSeleccionada.id, $scope.filtroMarcaciones)
@@ -497,130 +523,165 @@ angular.module('agil.controladores')
                     if (res.hasErr) {
                         $scope.mostrarMensaje(res.mensaje)
                     } else {
-                        $scope.alertaMarcaciones = res.alertas
-                        $scope.Marcaciones = res.alertas
-                        for (var index = 0; index < $scope.alertaMarcaciones.length; index++) {
-                            $scope.alertaMarcaciones[index].marcacionesFaltantes = []
-                            for (var _index = 0; _index < $scope.alertaMarcaciones[index].marcaciones.length; _index++) {
-                                var conteoIndex = -1
-                                if ($scope.alertaMarcaciones[index].marcacionesFaltantes.some(function (dato) {
-                                    conteoIndex += 1
-                                    if (dato.fecha.split('T')[0] === $scope.alertaMarcaciones[index].marcaciones[_index].fecha.split('T')[0].split('-').reverse().join('/')) {
-                                        return true
-                                    }
-                                    return false
-                                })) {
-                                    if ($scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].id_comida) {
-                                        var comida = $scope.listaComidasclienteEmpresa.find(function (food) {
-                                            return food.id === $scope.alertaMarcaciones[index].marcaciones[_index].id_comida//$scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].id_comida
-                                        })
-                                        if (comida) {
-                                            if (comida.nombre.toLowerCase() === 'desayuno') {
-                                                $scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].desayuno.cantidad += 1
-                                            }
-                                            if (comida.nombre.toLowerCase() === 'almuerzo') {
-                                                $scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].almuerzo.cantidad += 1
-                                            }
-                                            if (comida.nombre.toLowerCase() === 'cena') {
-                                                $scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].cena.cantidad += 1
+
+
+                        if (!$scope.filtroMarcaciones.descartados) {
+                            $scope.alertaMarcaciones = res.alertas
+                            for (var index = 0; index < $scope.alertaMarcaciones.length; index++) {
+                                $scope.alertaMarcaciones[index].marcacionesFaltantes = []
+                                for (var _index = 0; _index < $scope.alertaMarcaciones[index].marcaciones.length; _index++) {
+                                    var conteoIndex = -1
+                                    if ($scope.alertaMarcaciones[index].marcacionesFaltantes.some(function (dato) {
+                                        conteoIndex += 1
+                                        if (dato.fecha.split('T')[0] === $scope.alertaMarcaciones[index].marcaciones[_index].fecha.split('T')[0].split('-').reverse().join('/')) {
+                                            return true
+                                        }
+                                        return false
+                                    })) {
+                                        if ($scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].id_comida) {
+                                            var comida = $scope.listaComidasclienteEmpresa.find(function (food) {
+                                                return food.id === $scope.alertaMarcaciones[index].marcaciones[_index].id_comida//$scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].id_comida
+                                            })
+                                            if (comida) {
+                                                if (comida.nombre.toLowerCase() === 'desayuno') {
+                                                    $scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].desayuno.cantidad += 1
+                                                }
+                                                if (comida.nombre.toLowerCase() === 'almuerzo') {
+                                                    $scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].almuerzo.cantidad += 1
+                                                }
+                                                if (comida.nombre.toLowerCase() === 'cena') {
+                                                    $scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].cena.cantidad += 1
+                                                }
+                                            } else {
+                                                $scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].fuera_horario += 1
                                             }
                                         } else {
                                             $scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].fuera_horario += 1
                                         }
                                     } else {
-                                        $scope.alertaMarcaciones[index].marcacionesFaltantes[conteoIndex].fuera_horario += 1
+                                        var chingadera = { cantidad: 0, id_comida: $scope.alertaMarcaciones[index].marcaciones[_index].id_comida }
+                                        var combo = { id_comida: $scope.alertaMarcaciones[index].marcaciones[_index].id_comida, fecha: $scope.alertaMarcaciones[index].marcaciones[_index].fecha.split('T')[0].split('-').reverse().join('/'), desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera), fuera_horario: 0, gerencia: { id: $scope.alertaMarcaciones[index].marcaciones[_index].id_gerencia } }
+                                        var comida = $scope.listaComidasclienteEmpresa.find(function (food) {
+                                            return food.id === $scope.alertaMarcaciones[index].marcaciones[_index].id_comida
+                                        })
+                                        if (comida) {
+                                            if (comida.nombre.toLowerCase() === 'desayuno') {
+                                                combo.desayuno.cantidad += 1
+                                            }
+                                            if (comida.nombre.toLowerCase() === 'almuerzo') {
+                                                combo.almuerzo.cantidad += 1
+                                            }
+                                            if (comida.nombre.toLowerCase() === 'cena') {
+                                                combo.cena.cantidad += 1
+                                            }
+                                        } else {
+                                            combo.fuera_horario += 1
+                                        }
+                                        $scope.alertaMarcaciones[index].marcacionesFaltantes.push(combo)
                                     }
-                                } else {
-                                    var chingadera = { cantidad: 0, id_comida: $scope.alertaMarcaciones[index].marcaciones[_index].id_comida }
-                                    var combo = { id_comida: $scope.alertaMarcaciones[index].marcaciones[_index].id_comida, fecha: $scope.alertaMarcaciones[index].marcaciones[_index].fecha.split('T')[0].split('-').reverse().join('/'), desayuno: Object.assign({}, chingadera), almuerzo: Object.assign({}, chingadera), cena: Object.assign({}, chingadera), fuera_horario: 0, gerencia: { id: $scope.alertaMarcaciones[index].marcaciones[_index].id_gerencia } }
-                                    var comida = $scope.listaComidasclienteEmpresa.find(function (food) {
-                                        return food.id === $scope.alertaMarcaciones[index].marcaciones[_index].id_comida
+                                }
+                            }
+                            var marcasFaltantes = []
+                            for (var index = 0; index < $scope.alertaMarcaciones.length; index++) {
+                                for (var _index = 0; _index < $scope.alertaMarcaciones[index].marcacionesFaltantes.length; _index++) {
+                                    var desayuno = $scope.listaComidasclienteEmpresa.find(function (food) {
+                                        return food.nombre.toLowerCase() === 'desayuno'
                                     })
-                                    if (comida) {
-                                        if (comida.nombre.toLowerCase() === 'desayuno') {
-                                            combo.desayuno.cantidad += 1
-                                        }
-                                        if (comida.nombre.toLowerCase() === 'almuerzo') {
-                                            combo.almuerzo.cantidad += 1
-                                        }
-                                        if (comida.nombre.toLowerCase() === 'cena') {
-                                            combo.cena.cantidad += 1
-                                        }
-                                    } else {
-                                        combo.fuera_horario += 1
-                                    }
-                                    $scope.alertaMarcaciones[index].marcacionesFaltantes.push(combo)
-                                }
-                            }
-                        }
-                        var marcasFaltantes = []
-                        for (var index = 0; index < $scope.alertaMarcaciones.length; index++) {
-                            for (var _index = 0; _index < $scope.alertaMarcaciones[index].marcacionesFaltantes.length; _index++) {
-                                var desayuno = $scope.listaComidasclienteEmpresa.find(function (food) {
-                                    return food.nombre.toLowerCase() === 'desayuno'
-                                })
-                                var almuerzo = $scope.listaComidasclienteEmpresa.find(function (food) {
-                                    return food.nombre.toLowerCase() === 'almuerzo'
-                                })
-                                var cena = $scope.listaComidasclienteEmpresa.find(function (food) {
-                                    return food.nombre.toLowerCase() === 'cena'
-                                })
+                                    var almuerzo = $scope.listaComidasclienteEmpresa.find(function (food) {
+                                        return food.nombre.toLowerCase() === 'almuerzo'
+                                    })
+                                    var cena = $scope.listaComidasclienteEmpresa.find(function (food) {
+                                        return food.nombre.toLowerCase() === 'cena'
+                                    })
 
-                                if ($scope.alertaMarcaciones[index].marcacionesFaltantes[_index].desayuno.cantidad === 0) {
-                                    var marcacion = {
-                                        // habilitado: true,
-                                        comida: desayuno,
-                                        fecha: $scope.alertaMarcaciones[index].marcacionesFaltantes[_index].fecha,
-                                        gerencia: $scope.alertaMarcaciones[index].marcacionesFaltantes[_index].gerencia,
-                                        comensal: {
-                                            id: $scope.alertaMarcaciones[index].id,
-                                            nombre: $scope.alertaMarcaciones[index].nombre,
-                                            id_cliente: $scope.alertaMarcaciones[index].id_cliente,
-                                            id_empresa: $scope.alertaMarcaciones[index].id_empresa,
-                                            tarjeta: $scope.alertaMarcaciones[index].tarjeta,
-                                            tipo: $scope.alertaMarcaciones[index].tipo
+                                    if ($scope.alertaMarcaciones[index].marcacionesFaltantes[_index].desayuno.cantidad === 0) {
+                                        var marcacion = {
+                                            // habilitado: true,
+                                            comida: desayuno,
+                                            fecha: $scope.alertaMarcaciones[index].marcacionesFaltantes[_index].fecha,
+                                            gerencia: $scope.alertaMarcaciones[index].marcacionesFaltantes[_index].gerencia,
+                                            comensal: {
+                                                id: $scope.alertaMarcaciones[index].id,
+                                                nombre: $scope.alertaMarcaciones[index].nombre,
+                                                id_cliente: $scope.alertaMarcaciones[index].id_cliente,
+                                                id_empresa: $scope.alertaMarcaciones[index].id_empresa,
+                                                tarjeta: $scope.alertaMarcaciones[index].tarjeta,
+                                                tipo: $scope.alertaMarcaciones[index].tipo
+                                            }
                                         }
+                                        marcasFaltantes.push(marcacion)
                                     }
-                                    marcasFaltantes.push(marcacion)
-                                }
-                                if ($scope.alertaMarcaciones[index].marcacionesFaltantes[_index].almuerzo.cantidad === 0) {
-                                    var marcacion = {
-                                        // habilitado: true,
-                                        comida: almuerzo,
-                                        fecha: $scope.alertaMarcaciones[index].marcacionesFaltantes[_index].fecha,
-                                        gerencia: $scope.alertaMarcaciones[index].marcacionesFaltantes[_index].gerencia,
-                                        comensal: {
-                                            id: $scope.alertaMarcaciones[index].id,
-                                            nombre: $scope.alertaMarcaciones[index].nombre,
-                                            id_cliente: $scope.alertaMarcaciones[index].id_cliente,
-                                            id_empresa: $scope.alertaMarcaciones[index].id_empresa,
-                                            tarjeta: $scope.alertaMarcaciones[index].tarjeta,
-                                            tipo: $scope.alertaMarcaciones[index].tipo
+                                    if ($scope.alertaMarcaciones[index].marcacionesFaltantes[_index].almuerzo.cantidad === 0) {
+                                        var marcacion = {
+                                            // habilitado: true,
+                                            comida: almuerzo,
+                                            fecha: $scope.alertaMarcaciones[index].marcacionesFaltantes[_index].fecha,
+                                            gerencia: $scope.alertaMarcaciones[index].marcacionesFaltantes[_index].gerencia,
+                                            comensal: {
+                                                id: $scope.alertaMarcaciones[index].id,
+                                                nombre: $scope.alertaMarcaciones[index].nombre,
+                                                id_cliente: $scope.alertaMarcaciones[index].id_cliente,
+                                                id_empresa: $scope.alertaMarcaciones[index].id_empresa,
+                                                tarjeta: $scope.alertaMarcaciones[index].tarjeta,
+                                                tipo: $scope.alertaMarcaciones[index].tipo
+                                            }
                                         }
+                                        marcasFaltantes.push(marcacion)
                                     }
-                                    marcasFaltantes.push(marcacion)
-                                }
-                                if ($scope.alertaMarcaciones[index].marcacionesFaltantes[_index].cena.cantidad === 0) {
-                                    var marcacion = {
-                                        // habilitado: true,
-                                        comida: cena,
-                                        fecha: $scope.alertaMarcaciones[index].marcacionesFaltantes[_index].fecha,
-                                        gerencia: $scope.alertaMarcaciones[index].marcacionesFaltantes[_index].gerencia,
-                                        comensal: {
-                                            id: $scope.alertaMarcaciones[index].id,
-                                            nombre: $scope.alertaMarcaciones[index].nombre,
-                                            id_cliente: $scope.alertaMarcaciones[index].id_cliente,
-                                            id_empresa: $scope.alertaMarcaciones[index].id_empresa,
-                                            tarjeta: $scope.alertaMarcaciones[index].tarjeta,
-                                            tipo: $scope.alertaMarcaciones[index].tipo
+                                    if ($scope.alertaMarcaciones[index].marcacionesFaltantes[_index].cena.cantidad === 0) {
+                                        var marcacion = {
+                                            // habilitado: true,
+                                            comida: cena,
+                                            fecha: $scope.alertaMarcaciones[index].marcacionesFaltantes[_index].fecha,
+                                            gerencia: $scope.alertaMarcaciones[index].marcacionesFaltantes[_index].gerencia,
+                                            comensal: {
+                                                id: $scope.alertaMarcaciones[index].id,
+                                                nombre: $scope.alertaMarcaciones[index].nombre,
+                                                id_cliente: $scope.alertaMarcaciones[index].id_cliente,
+                                                id_empresa: $scope.alertaMarcaciones[index].id_empresa,
+                                                tarjeta: $scope.alertaMarcaciones[index].tarjeta,
+                                                tipo: $scope.alertaMarcaciones[index].tipo
+                                            }
                                         }
+                                        marcasFaltantes.push(marcacion)
                                     }
-                                    marcasFaltantes.push(marcacion)
                                 }
                             }
+                            $scope.alertaMarcaciones = marcasFaltantes
+                            $scope.alertaMarcacionesFiltradas = marcasFaltantes
+                        } else {
+                            $scope.alertaMarcacionesDescartadas = res.alertas
+                            var marcasDescartadas = []
+                            for (var index = 0; index < $scope.alertaMarcacionesDescartadas.length; index++) {
+                                for (var _index = 0; _index < $scope.alertaMarcacionesDescartadas[index].marcaciones.length; _index++) {
+                                    var comida = $scope.listaComidasclienteEmpresa.find(function (food) {
+                                        if (food.id === $scope.alertaMarcacionesDescartadas[index].marcaciones[_index].id_comida) {
+                                            return food.nombre.toLowerCase()
+                                        }
+                                    })
+                                    var marcacion = {
+                                        habilitado: $scope.alertaMarcacionesDescartadas[index].marcaciones[_index].habilitado,
+                                        comida: comida,
+                                        fecha: $scope.alertaMarcacionesDescartadas[index].marcaciones[_index].fecha.split('T')[0].split('-').reverse().join('/'),
+                                        gerencia: $scope.alertaMarcacionesDescartadas[index].marcaciones[_index].gerencia,
+                                        comensal: {
+                                            id: $scope.alertaMarcacionesDescartadas[index].id,
+                                            nombre: $scope.alertaMarcacionesDescartadas[index].nombre,
+                                            id_cliente: $scope.alertaMarcacionesDescartadas[index].id_cliente,
+                                            id_empresa: $scope.alertaMarcacionesDescartadas[index].id_empresa,
+                                            tarjeta: $scope.alertaMarcacionesDescartadas[index].tarjeta,
+                                            tipo: $scope.alertaMarcacionesDescartadas[index].tipo
+                                        }
+                                    }
+                                    marcasDescartadas.push(marcacion)
+                                }
+                            }
+                            $scope.alertaMarcacionesDescartadas = marcasDescartadas
+                            $scope.alertaMarcacionesDescartadasFiltradas = marcasDescartadas
                         }
-                        $scope.alertaMarcaciones = marcasFaltantes
-                        $scope.alertaMarcacionesFiltradas = marcasFaltantes
+                        if (filtrar) {
+                            $scope.filtrarAlertas(true)
+                        }
                         blockUI.stop()
                     }
                     blockUI.stop()
@@ -2995,7 +3056,7 @@ angular.module('agil.controladores')
 
             $scope.cerrardialogAlertaMarcaciones = function () {
                 $scope.activeModal = 0
-                $scope.filtroMarcaciones = { desde: '', hasta: '', columna: 'fecha', direccion: 'asc' }
+                $scope.filtroMarcaciones = { desde: '', hasta: '', columna: 'fecha', direccion: 'asc', descartados: false }
                 $scope.alertaMarcaciones = []
                 $scope.cerrarPopup($scope.dialogAlertasMarcaciones);
             }
