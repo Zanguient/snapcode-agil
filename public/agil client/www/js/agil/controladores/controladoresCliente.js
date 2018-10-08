@@ -3,17 +3,19 @@ angular.module('agil.controladores')
 	.controller('ControladorClientes',['$scope', '$window', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', '$timeout',
 		'ClientesPaginador', 'Cliente', 'Clientes', 'Empresas', 'ClientesEmpresa', 'uiGmapGoogleMapApi',
 		'DatoCodigoSiguienteClienteEmpresa', 'DestinosCliente', 'RazonesSocialesCliente', 'ClasesTipoEmpresa', 'Diccionario', 'Tipos', 'ClasesTipo',
-		'VerificarUsuarioEmpresa','ObtenerInformacionClienteEmpresa', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
+		'VerificarUsuarioEmpresa','GuardarAnticipoCliente','ObtenerInformacionClienteEmpresa', function ($scope, $window, $localStorage, $location, $templateCache, $route, blockUI, $timeout,
 		ClientesPaginador, Cliente, Clientes, Empresas, ClientesEmpresa, uiGmapGoogleMapApi,
 		DatoCodigoSiguienteClienteEmpresa, DestinosCliente, RazonesSocialesCliente, ClasesTipoEmpresa, Diccionario, Tipos, ClasesTipo,
-		VerificarUsuarioEmpresa,ObtenerInformacionClienteEmpresa) {
+		VerificarUsuarioEmpresa,GuardarAnticipoCliente,ObtenerInformacionClienteEmpresa) {
 		blockUI.start();
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		$scope.idModalConceptoEdicionCorrelativos = 'dialog-conceptos-correlativos';
 		$scope.IdModalVerificarCuenta = 'modal-verificar-cuenta';
+		$scope.IdModalNuevoAnticipo = 'modal-anticipo-cliente';
 		$scope.inicio = function () {
 			$scope.diccionario = Diccionario
+			$scope.sucursales = $scope.obtenerSucursales();
 			$scope.obtenerEmpresas();
 			$scope.obtenerClientes();
 			$scope.obtenerDestinos();
@@ -40,7 +42,7 @@ angular.module('agil.controladores')
 
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
-			ejecutarScriptsCliente('modal-wizard-cliente', 'modal-wizard-cliente-vista', 'dialog-eliminar-cliente', 'modal-wizard-container-cliente-edicion', 'modal-wizard-container-cliente-vista', $scope.idModalConceptoEdicionCorrelativos, $scope.IdModalVerificarCuenta);
+			ejecutarScriptsCliente('modal-wizard-cliente', 'modal-wizard-cliente-vista', 'dialog-eliminar-cliente', 'modal-wizard-container-cliente-edicion', 'modal-wizard-container-cliente-vista', $scope.idModalConceptoEdicionCorrelativos, $scope.IdModalVerificarCuenta, $scope.IdModalNuevoAnticipo);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 			blockUI.stop();
 		});
@@ -819,6 +821,140 @@ angular.module('agil.controladores')
 				$scope.tiposPrecios = entidad
 				blockUI.stop();
 			});
+		}
+		$scope.abrirModalNuevoAnticipo = function (cliente) {
+			$scope.cliente=cliente
+			$scope.anticipo={}
+			$scope.abrirPopup($scope.IdModalNuevoAnticipo);
+		}
+		$scope.cerrarModalNuevoAnticipo = function () {
+			$scope.anticipo={}
+			$scope.cerrarPopup($scope.IdModalNuevoAnticipo);
+		}
+		
+		$scope.obtenerSucursales = function () {
+			var sucursales = [];
+			for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
+				sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
+			}
+			return sucursales;
+		}
+		$scope.guardarAnticipoCliente=function(dato){
+			var anticipoCliente={					
+				monto_anticipo:dato.monto,
+				monto_salida:0,
+				saldo:dato.monto,
+				fecha:new Date(),
+				id_sucursal:dato.sucursal.id
+			}
+			var promesa=GuardarAnticipoCliente($scope.cliente.id,anticipoCliente)
+			promesa.then(function(datos){
+				$scope.cerrarModalNuevoAnticipo()
+				$scope.imprimirReciboAnticipo(datos.anticipo)
+				$scope.mostrarMensaje(datos.mensaje)
+			})
+		}
+		$scope.imprimirReciboAnticipo = function (anticipo) {
+			blockUI.start();
+			var doc = new PDFDocument({ compress: false, size: [227, 353], margin: 10 });
+			var stream = doc.pipe(blobStream());
+			doc.moveDown(2);
+			doc.font('Helvetica-Bold', 8);
+			doc.text($scope.usuario.empresa.razon_social.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			doc.font('Helvetica', 7);
+			doc.text(anticipo.sucursal.nombre.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text(anticipo.sucursal.direccion.toUpperCase(), { align: 'center' });
+			doc.moveDown(0.4);
+			var telefono = (anticipo.sucursal.telefono1 != null ? anticipo.sucursal.telefono1 : "") +
+				(anticipo.sucursal.telefono2 != null ? "-" + anticipo.sucursal.telefono2 : "") +
+				(anticipo.sucursal.telefono3 != null ? "-" + anticipo.sucursal.telefono3 : "");
+			doc.text("TELF.: " + telefono, { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text("COCHABAMBA - BOLIVIA", { align: 'center' });
+			doc.moveDown(0.5);
+			doc.font('Helvetica-Bold', 8);
+			doc.text("ANTICIPO", { align: 'center' });
+			doc.font('Helvetica', 7);
+			doc.moveDown(0.4);
+			doc.text("------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			doc.text(anticipo.numero_correlativo_anticipo, { align: 'center' });
+			//doc.text("NIT: "+$scope.usuario.empresa.nit,{align:'center'});
+
+			//doc.text("FACTURA No: "+anticipo.factura,{align:'center'});
+			doc.moveDown(0.4);
+			//doc.text("AUTORIZACIÓN No: "+anticipo.autorizacion,{align:'center'});
+			doc.moveDown(0.4);
+			doc.text("------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			//doc.text(anticipo.actividad.nombre,{align:'center'});
+			doc.moveDown(0.6);
+			var date = new Date();
+			doc.text("FECHA : " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(), { align: 'left' });
+			doc.moveDown(0.4);
+			doc.text("He recibido de : " +anticipo.cliente.razon_social, { align: 'left' });
+			doc.moveDown(0.4);
+			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+			doc.moveDown(0.2);
+			doc.text("       CONCEPTO                                   ", { align: 'left' });
+			doc.moveDown(0.2);
+			
+			doc.text("---------------------------------------------------------------------------------", { align: 'center' });
+			doc.moveDown(0.4);
+			anticipo.fecha = new Date(anticipo.fecha);
+			doc.text("Fecha: " + anticipo.fecha.getDate() + "/" + (anticipo.fecha.getMonth() + 1) + "/" + anticipo.fecha.getFullYear(), 15, 210);
+			//var textoFact = $scope.anticipo.movimiento.clase.nombre_corto == $scope.diccionario.EGRE_FACTURACION ? "Factura nro. " + $scope.anticipo.factura : "Proforma nro. " + $scope.anticipo.factura;
+			//doc.text(textoFact, 105, 210, { width: 100 });
+			/* if (anticipo >= 0) {
+				doc.text("Saldo Bs " + ((anticipo.saldo - pago)*-1) + ".-", 105, 220, { width: 100 });
+			}else{
+				doc.text("Saldo Bs " +"0" + ".-", 105, 220, { width: 100 });
+			} */
+			doc.text("Anticipo", 105, 210, { width: 100 });
+			doc.moveDown(0.2);
+			doc.text("Bs " + anticipo.monto_anticipo.toFixed(2) + ".-", 170, 210, { width: 100 });
+
+			doc.text("--------------", 10, 230, { align: 'right' });
+			//oc.text("--------------------",{align:'right'});
+			doc.moveDown(0.3);
+			doc.text("TOTAL Bs.              " + anticipo.monto_anticipo.toFixed(2), { align: 'right' });
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.text(ConvertirALiteral(anticipo.monto_anticipo.toFixed(2)), { align: 'left' });
+			doc.moveDown(0.6);
+
+			doc.moveDown(0.4);
+
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+			doc.moveDown(0.4);
+
+			doc.text("-------------------------                       -------------------------", { align: 'center' });
+			doc.text("ENTREGUE CONFORME            RECIBI CONFORME", { align: 'center' });
+			doc.moveDown(0.4);
+			var fechaActual = new Date();
+			var min = fechaActual.getMinutes();
+			if (min < 10) {
+				min = "0" + min;
+			}
+			doc.text("  Usuario : " + $scope.usuario.nombre_usuario + " -- Fecha : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + "  " + fechaActual.getHours() + ":" + min + "  ", { align: 'center' });
+			doc.end();
+			stream.on('finish', function () {
+				var fileURL = stream.toBlobURL('application/pdf');
+				window.open(fileURL, '_blank', 'location=no');
+			});
+			blockUI.stop();
 		}
 		$scope.$on('$routeChangeStart', function (next, current) {
 			$scope.eliminarPopup('modal-wizard-cliente');
