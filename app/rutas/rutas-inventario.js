@@ -3446,7 +3446,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					ventas = entity.concat(entity2);
 
 					ventas = ventas.sort(function (a, b) {
-						return a.fecha - b.fecha;
+						return b.factura - a.factura;
 					});
 					res.json(ventas);
 
