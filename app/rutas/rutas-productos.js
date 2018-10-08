@@ -337,7 +337,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 											return producto.id
 										})
 										ProductoTipoPrecio.findAll({
-											where: { id_producto: { $in: idsProductos } },
+											where: { id_producto: { $in: idsProductos }, eliminado: false },
 											include: [{ model: Clase, as: 'tipoPrecio' }]
 										}).then(function (precios) {
 											if (precios.length > 0) {
