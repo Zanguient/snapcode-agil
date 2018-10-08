@@ -852,6 +852,9 @@ angular.module('agil.controladores')
 			$scope.abrirPopPupConfiguracionCuenta = function () {
 				$scope.obtenerConfiguracionTipoCuentas()
 				$scope.configuracionTipoCuenta = {}
+				$scope.dynamicPopoverCargos = {
+					templateUrl: 'myPopoverTemplate.html',
+				};
 				$scope.abrirPopup($scope.idModalWizardConfiguracionCuenta);
 			}
 
@@ -949,7 +952,7 @@ angular.module('agil.controladores')
 					blockUI.stop();
 				})
 			}
-
+		
 			//fin comprobar
 			$scope.$on('$routeChangeStart', function (next, current) {
 				$scope.eliminarPopup($scope.idModalWizardCuentaEdicion);

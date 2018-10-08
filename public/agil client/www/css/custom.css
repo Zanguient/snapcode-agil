@@ -9,6 +9,10 @@
 .myOwnBg {
 	background-color: red;
  }
+ .xlpopover{
+	width: auto;
+	max-width:100%;
+ }
 /* responsive table */
 #map_canvas_despachos ui-gmap-google-map, div[ui-gmap-google-map] {display:block; width:450px !important; height:350px!important;}
 @media screen and (max-width: 600px) {

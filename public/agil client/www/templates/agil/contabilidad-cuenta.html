@@ -2,370 +2,374 @@
 	<div class="col-xs-12">
 		<h3 class="header smaller lighter blue">PLAN DE CUENTAS</h3>
 
-		<button id="nuevo" ng-disabled="!aplicacion.puede_crear || configuracionesGeneralesTipoCuentas.length >= 4" class="btn btn-primary" ng-click="crearNuevaCuenta()">
+		<button id="nuevo" ng-disabled="!aplicacion.puede_crear || configuracionesGeneralesTipoCuentas.length < 4" class="btn btn-primary"
+		 ng-click="crearNuevaCuenta()">
 			<i class="ace-icon fa fa-plus align-top bigger-125"></i>
 			Nuevo
 		</button>
 		<div class="fileUpload btn btn-primary btn-success">
 			<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125">&nbsp&nbspImportar</span>
-			<input ng-disabled="!aplicacion.puede_crear || configuracionesGeneralesTipoCuentas.length >= 4" class="upload" type="file" custom-on-file-change="subirExcelCuentas" />&nbsp&nbsp
-			
+			<input ng-disabled="!aplicacion.puede_crear || configuracionesGeneralesTipoCuentas.length < 4" class="upload" type="file"
+			 custom-on-file-change="subirExcelCuentas" />&nbsp&nbsp
+
 		</div>
-		
+
 		<a href="/recursos/EJEMPLO-DATOS-CUENTAS.xlsx" class="btn btn-danger">
 			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
 			Ejemplo Importación
-		
-		<a href="javascript:void(0)" class="btn btn-primary" ng-click="generarExcelPlanCuentas()">
-			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
-			Descargar Cuentas
-		</a>
-		<p ng-if=" configuracionesGeneralesTipoCuentas.length < 4"class="bg-danger" style="color:red">Para poder crear nuevas cuentas o importar primero es nesesario las configuraciones generales de las cuentas</p>
-		<div class="clearfix">
-			<div class="pull-right tableTools-container"></div>
-		</div>
-		<form name="formularioFiltroCuentas" novalidate ng-submit="paginator.getSearch(paginator.search,filtro,null)">
-			<fieldset>
-				<legend>Filtro Cuentas</legend>
-				<div style="overflow-x:auto;">
-					<table class="table table-striped table-bordered table-hover">
-						<tbody>
-							<tr>
-								<td>
 
-								</td>
-								<td>
-									<label>Desde</label>&nbsp
-								</td>
-								<td>
-									<label>Hasta</label>&nbsp
-								</td>
-								<td>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<label>PERIODO</label>&nbsp
-								</td>
-								<td>
-									<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicio"
-									 ng-model="filtro.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
-								</td>
-								<td>
-									<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafin"
-									 ng-model="filtro.fechaFinTexto" placeholder="Ingrese la fecha final" /> &nbsp
-								</td>
-								<td>
-									<button id="Buscar" type="submit" ng-disabled="formularioFiltroCuentas.$invalid" class="btn-primary btn btn-app btn-xs">
-										<i class="ace-icon fa fa-search align-top bigger-125"></i>
-										BUSCAR
-									</button>
-									<button id="pdf" ng-disabled="!Cuentas" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(Cuentas)">
-										<i class="ace-icon fa fa-print bigger-160"></i>
-										PDF
-									</button>
-									<button id="excel" ng-disabled="!Cuentas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(Cuentas)">
-										<i class="ace-icon fa fa-print bigger-160"></i>
-										Excel
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									&nbsp
-								</td>
-								<td>
-									<label>Clasificación</label>&nbsp
-								</td>
-								<td>
-									<label>Tipo de cuenta</label>&nbsp
-								</td>
-								<td>
-									<label>Monto</label>&nbsp
-								</td>
-							</tr>
-							<tr>
-								<td>
-									FILTRO
-								</td>
-								<td>
-									<select id="filtroClasificacion" name="filtroClasificacion" ng-model="filtro.clasificacion" ng-options="cuentaClasificacion.id as cuentaClasificacion.nombre for cuentaClasificacion in cuentaClasificaciones">
-
-									</select>
-								</td>
-								<td>
-									<select name="filtroTipo_cuenta" id="filtroTipo_cuenta" ng-model="filtro.tipo_cuenta" ng-options="cuentaTipo.id as cuentaTipo.nombre for cuentaTipo in cuentaTipos">
-
-									</select>
-								</td>
-								<td>
-									<input type="number" step="0.01" ng-model="filtro.monto">
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</fieldset>
-		</form>
-
-		<div align="right">
-			<a class="green" tooltip-placement="left" uib-tooltip="Configuracion Cuentas" ng-click="abrirPopPupConfiguracionCuenta()">
-				<span id="codigo" class="fa fa-key fa-4x"></span>
+			<a href="javascript:void(0)" class="btn btn-primary" ng-click="generarExcelPlanCuentas()">
+				<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+				Descargar Cuentas
 			</a>
-			<a tooltip-placement="left" uib-tooltip="Plantilla Ingreso/Egreso" ng-click="abrirPlantillaIngreso()">
-				<span id="codigo" class=" glyphicon glyphicon-cog fa-4x"></span>
-			</a>
+			<p ng-if=" configuracionesGeneralesTipoCuentas.length < 4" class="bg-danger" style="color:red">Para poder crear
+				nuevas cuentas o importar primero es nesesario las configuraciones generales de las cuentas</p>
+			<div class="clearfix">
+				<div class="pull-right tableTools-container"></div>
+			</div>
+			<form name="formularioFiltroCuentas" novalidate ng-submit="paginator.getSearch(paginator.search,filtro,null)">
+				<fieldset>
+					<legend>Filtro Cuentas</legend>
+					<div style="overflow-x:auto;">
+						<table class="table table-striped table-bordered table-hover">
+							<tbody>
+								<tr>
+									<td>
 
-		</div>
-		<div class="table-header">
-			<div class="row">
-				<div class="col-sm-12">
-					<h4 class="col-sm-4 widget-title">Lista de Plan de cuentas</h4>
-					<div class="col-sm-8 inline pos-rel pull-right">
-						<!--   <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle button-columna" aria-expanded="false">
+									</td>
+									<td>
+										<label>Desde</label>&nbsp
+									</td>
+									<td>
+										<label>Hasta</label>&nbsp
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label>PERIODO</label>&nbsp
+									</td>
+									<td>
+										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicio"
+										 ng-model="filtro.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
+									</td>
+									<td>
+										<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafin"
+										 ng-model="filtro.fechaFinTexto" placeholder="Ingrese la fecha final" /> &nbsp
+									</td>
+									<td>
+										<button id="Buscar" type="submit" ng-disabled="formularioFiltroCuentas.$invalid" class="btn-primary btn btn-app btn-xs">
+											<i class="ace-icon fa fa-search align-top bigger-125"></i>
+											BUSCAR
+										</button>
+										<button id="pdf" ng-disabled="!Cuentas" class="btn btn-app btn-danger btn-xs" ng-click="imprimirFiltroCajaCartaOficio(Cuentas)">
+											<i class="ace-icon fa fa-print bigger-160"></i>
+											PDF
+										</button>
+										<button id="excel" ng-disabled="!Cuentas" class="btn btn-app btn-success btn-xs" ng-click="imprimirFiltroExcelCajaCartaOficio(Cuentas)">
+											<i class="ace-icon fa fa-print bigger-160"></i>
+											Excel
+										</button>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										&nbsp
+									</td>
+									<td>
+										<label>Clasificación</label>&nbsp
+									</td>
+									<td>
+										<label>Tipo de cuenta</label>&nbsp
+									</td>
+									<td>
+										<label>Monto</label>&nbsp
+									</td>
+								</tr>
+								<tr>
+									<td>
+										FILTRO
+									</td>
+									<td>
+										<select id="filtroClasificacion" name="filtroClasificacion" ng-model="filtro.clasificacion" ng-options="cuentaClasificacion.id as cuentaClasificacion.nombre for cuentaClasificacion in cuentaClasificaciones">
+
+										</select>
+									</td>
+									<td>
+										<select name="filtroTipo_cuenta" id="filtroTipo_cuenta" ng-model="filtro.tipo_cuenta" ng-options="cuentaTipo.id as cuentaTipo.nombre for cuentaTipo in cuentaTipos">
+
+										</select>
+									</td>
+									<td>
+										<input type="number" step="0.01" ng-model="filtro.monto">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</fieldset>
+			</form>
+
+			<div align="right">
+				<a class="green" tooltip-placement="left" uib-tooltip="Configuracion Cuentas" ng-click="abrirPopPupConfiguracionCuenta()">
+					<span id="codigo" class="fa fa-key fa-4x"></span>
+				</a>
+				<a tooltip-placement="left" uib-tooltip="Plantilla Ingreso/Egreso" ng-click="abrirPlantillaIngreso()">
+					<span id="codigo" class=" glyphicon glyphicon-cog fa-4x"></span>
+				</a>
+
+			</div>
+			<div class="table-header">
+				<div class="row">
+					<div class="col-sm-12">
+						<h4 class="col-sm-4 widget-title">Lista de Plan de cuentas</h4>
+						<div class="col-sm-8 inline pos-rel pull-right">
+							<!--   <a data-toggle="dropdown" href="javascript:void(0)" class="dropdown-toggle button-columna" aria-expanded="false">
 							<i class="glyphicon  glyphicon-list-alt"></i>
 						</a> -->
-						<div ng-include src="'/templates/gral/fields-viewer.html'"></div>
-						
+							<div ng-include src="'/templates/gral/fields-viewer.html'"></div>
+
+						</div>
 					</div>
+					<!-- <div class="col-sm-6"  ng-include src="'/templates/gral/fields-viewer.html'"></div> -->
 				</div>
-				<!-- <div class="col-sm-6"  ng-include src="'/templates/gral/fields-viewer.html'"></div> -->
 			</div>
-		</div>
 
-		<!-- div.table-responsive -->
+			<!-- div.table-responsive -->
 
-		<!-- div.dataTables_borderWrap -->
-		<div>
-			<div id="tabla-productos_wrapper" class="dataTables_wrapper form-inline no-footer">
-				<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
-				</div>
-				<div style="overflow-x:auto;">
-					<table id="tabla-contabilidadCuentas" class="table table-striped table-bordered table-hover">
-						<thead>
-							<tr>
-								<th class="center">N°</th>
-								<th class="center" ng-if="fieldViewer.getConfiguration().codigo.show">
-									<a href="javascript:void(0)" ng-click="paginator.sortColumn('codigo',obtenerLista)">Código
-										<span id="codigo" class="sort fa fa-sort icon-only"></span>
-									</a>
-								</th>
-								<th class="center" ng-if="fieldViewer.getConfiguration().nombre.show">
-									<a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre',obtenerLista)">Nombre
-										<span id="nombre" class="sort fa fa-sort icon-only"></span>
-									</a>
-								</th>
-								<th class="center" ng-if="fieldViewer.getConfiguration().debe.show">
-									<a href="javascript:void(0)" ng-click="paginator.sortColumn('debe',obtenerLista)">Debe
-										<span id="debe" class="sort fa fa-sort icon-only"></span>
-									</a>
-								</th>
-								<th class="center" ng-if="fieldViewer.getConfiguration().haber.show">
-									<a href="javascript:void(0)" ng-click="paginator.sortColumn('haber',obtenerLista)">Haber
-										<span id="haber" class="sort fa fa-sort icon-only"></span>
-									</a>
-								</th>
-								<th class="center" ng-if="fieldViewer.getConfiguration().saldo.show">
-									<a href="javascript:void(0)" ng-click="paginator.sortColumn('saldo',obtenerLista)">Saldo
-										<span id="saldo" class="sort fa fa-sort icon-only"></span>
-									</a>
-								</th>
-								<th class="center" ng-if="fieldViewer.getConfiguration().clasificacion.show">
-									<a href="javascript:void(0)" ng-click="paginator.sortColumn('clasificacion',obtenerLista)">Clasificación
-										<span id="clasificacion" class="sort fa fa-sort icon-only"></span>
-									</a>
-									<a class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Agregar Clasificación" e-disabled="!aplicacion.puede_modificar"
-									 ng-click="agregarClasificacionCuenta()">
-										<i class="ace-icon fa fa-plus bigger-130"></i>
-									</a>
-									<a class="green tooltip-info" href="javascript:void(0)" uib-tooltip="Editar Clasificaciónes" e-disabled="!aplicacion.puede_modificar"
-									 ng-click="modificarClasificacionesCuenta()">
-										<i class="ace-icon fa fa-pencil bigger-130"></i>
-									</a>
-								</th>
-								<th class="center" ng-if="fieldViewer.getConfiguration().tipo_cuenta.show">
-									<a href="javascript:void(0)" ng-click="paginator.sortColumn('tipoCuenta',obtenerLista)">Tipo Cuenta
-										<span id="tipoCuenta" class="sort fa fa-sort icon-only"></span>
-									</a>
-									<a class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Agregar Tipo Cuenta" e-disabled="!aplicacion.puede_crear"
-									 ng-click="agregarTipoCuenta()">
-										<i class="ace-icon fa fa-plus bigger-130"></i>
-									</a>
-									<a class="green tooltip-info" href="javascript:void(0)" uib-tooltip="Editar Tipos Cuentas" e-disabled="!aplicacion.puede_modificar"
-									 ng-click="agregarTipoCuenta()">
-										<i class="ace-icon fa fa-pencil bigger-130"></i>
-									</a>
-								</th>
-								<th class="center">Biomonetario</th>
-								<th class="center">Cálculos</th>
-								<th class="center">Acciones</th>
-							</tr>
-						</thead>
-
-						<tbody>
-							<tr ng-if="!cuenta.eliminado" ng-repeat="cuenta in Cuentas">
-								<td>
-									{{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
-								</td>
-								<td ng-if="fieldViewer.getConfiguration().codigo.show">
-									{{cuenta.codigo}}
-								</td>
-								<td ng-if="fieldViewer.getConfiguration().nombre.show">
-									{{cuenta.nombre}}
-								</td>
-								<td ng-if="fieldViewer.getConfiguration().debe.show">
-									{{cuenta.debe | number:2}}
-								</td>
-								<td ng-if="fieldViewer.getConfiguration().haber.show">{{cuenta.haber | number:2}}</td>
-								<td ng-if="fieldViewer.getConfiguration().saldo.show">{{cuenta.saldo | number:2}}</td>
-
-								<td ng-if="fieldViewer.getConfiguration().clasificacion.show">
-									{{cuenta.clasificacion.nombre}}
-								</td>
-								<td ng-if="fieldViewer.getConfiguration().tipo_cuenta.show">
-									{{cuenta.tipoCuenta.nombre}}
-								</td>
-								<td>
-									<label>
-										<input disabled name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.bimonetaria" />
-										<span class="lbl check-descuento"></span>
-									</label>
-								</td>
-								<td>
-									<label>
-										<input disabled name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.aplicar_calculo" />
-										<span class="lbl check-descuento"></span>
-									</label>
-								</td>
-								<td>
-									<div class="hidden-sm hidden-xs action-buttons">
-										<a class="orange tooltip-info" uib-tooltip="Libros Mayores" href="javascript:void(0)" ng-click="abrirModalLibrosMayores(cuenta);">
-											<i class="ace-icon fa fa-file-text bigger-130"></i>
+			<!-- div.dataTables_borderWrap -->
+			<div>
+				<div id="tabla-productos_wrapper" class="dataTables_wrapper form-inline no-footer">
+					<div class="row" ng-include src="'/templates/gral/paginator-header-1.html'">
+					</div>
+					<div style="overflow-x:auto;">
+						<table id="tabla-contabilidadCuentas" class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr>
+									<th class="center">N°</th>
+									<th class="center" ng-if="fieldViewer.getConfiguration().codigo.show">
+										<a href="javascript:void(0)" ng-click="paginator.sortColumn('codigo',obtenerLista)">Código
+											<span id="codigo" class="sort fa fa-sort icon-only"></span>
 										</a>
-										<a class="green tooltip-info" uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
-										 ng-click="modificarCuenta(cuenta)">
-											<i class="ace-icon fa fa-pencil bigger-130"></i>
+									</th>
+									<th class="center" ng-if="fieldViewer.getConfiguration().nombre.show">
+										<a href="javascript:void(0)" ng-click="paginator.sortColumn('nombre',obtenerLista)">Nombre
+											<span id="nombre" class="sort fa fa-sort icon-only"></span>
 										</a>
-										<a class="blue tooltip-info" uib-tooltip="Ver Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver"
-										 ng-click="verCuenta(cuenta)">
-											<i class="ace-icon fa fa-search-plus bigger-130"></i>
+									</th>
+									<th class="center" ng-if="fieldViewer.getConfiguration().debe.show">
+										<a href="javascript:void(0)" ng-click="paginator.sortColumn('debe',obtenerLista)">Debe
+											<span id="debe" class="sort fa fa-sort icon-only"></span>
 										</a>
-										<a class="red tooltip-info " uib-tooltip="Eliminar" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar"
-										 ng-click="mostrarConfirmacionEliminacion(cuenta)">
-											<i class="ace-icon fa fa-trash-o bigger-130"></i>
+									</th>
+									<th class="center" ng-if="fieldViewer.getConfiguration().haber.show">
+										<a href="javascript:void(0)" ng-click="paginator.sortColumn('haber',obtenerLista)">Haber
+											<span id="haber" class="sort fa fa-sort icon-only"></span>
 										</a>
-										<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_crear" ng-click="crearNuevaCuenta()">
+									</th>
+									<th class="center" ng-if="fieldViewer.getConfiguration().saldo.show">
+										<a href="javascript:void(0)" ng-click="paginator.sortColumn('saldo',obtenerLista)">Saldo
+											<span id="saldo" class="sort fa fa-sort icon-only"></span>
+										</a>
+									</th>
+									<th class="center" ng-if="fieldViewer.getConfiguration().clasificacion.show">
+										<a href="javascript:void(0)" ng-click="paginator.sortColumn('clasificacion',obtenerLista)">Clasificación
+											<span id="clasificacion" class="sort fa fa-sort icon-only"></span>
+										</a>
+										<a class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Agregar Clasificación" e-disabled="!aplicacion.puede_modificar"
+										 ng-click="agregarClasificacionCuenta()">
 											<i class="ace-icon fa fa-plus bigger-130"></i>
 										</a>
-										<a class="purple" ng-if="cuenta.aplicar_calculo" href="javascript:void(0)" e-disabled="!aplicacion.puede_crear"
-										 ng-click="crearNuevaCuenta()">
-											<i class="ace-icon glyphicon glyphicon-th bigger-130"></i>
+										<a class="green tooltip-info" href="javascript:void(0)" uib-tooltip="Editar Clasificaciónes" e-disabled="!aplicacion.puede_modificar"
+										 ng-click="modificarClasificacionesCuenta()">
+											<i class="ace-icon fa fa-pencil bigger-130"></i>
 										</a>
-									</div>
+									</th>
+									<th class="center" ng-if="fieldViewer.getConfiguration().tipo_cuenta.show">
+										<a href="javascript:void(0)" ng-click="paginator.sortColumn('tipoCuenta',obtenerLista)">Tipo Cuenta
+											<span id="tipoCuenta" class="sort fa fa-sort icon-only"></span>
+										</a>
+										<a class="blue tooltip-info" href="javascript:void(0)" uib-tooltip="Agregar Tipo Cuenta" e-disabled="!aplicacion.puede_crear"
+										 ng-click="agregarTipoCuenta()">
+											<i class="ace-icon fa fa-plus bigger-130"></i>
+										</a>
+										<a class="green tooltip-info" href="javascript:void(0)" uib-tooltip="Editar Tipos Cuentas" e-disabled="!aplicacion.puede_modificar"
+										 ng-click="agregarTipoCuenta()">
+											<i class="ace-icon fa fa-pencil bigger-130"></i>
+										</a>
+									</th>
+									<th class="center">Biomonetario</th>
+									<th class="center">Cálculos</th>
+									<th class="center">Acciones</th>
+								</tr>
+							</thead>
 
-									<div class="hidden-md hidden-lg">
-										<div class="inline pos-rel">
-											<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
-												<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
-											</button>
+							<tbody>
+								<tr ng-if="!cuenta.eliminado" ng-repeat="cuenta in Cuentas">
+									<td>
+										{{($index+1)+(paginator.itemsPerPage*(paginator.currentPage-1))}}
+									</td>
+									<td ng-if="fieldViewer.getConfiguration().codigo.show">
+										{{cuenta.codigo}}
+									</td>
+									<td ng-if="fieldViewer.getConfiguration().nombre.show">
+										{{cuenta.nombre}}
+									</td>
+									<td ng-if="fieldViewer.getConfiguration().debe.show">
+										{{cuenta.debe | number:2}}
+									</td>
+									<td ng-if="fieldViewer.getConfiguration().haber.show">{{cuenta.haber | number:2}}</td>
+									<td ng-if="fieldViewer.getConfiguration().saldo.show">{{cuenta.saldo | number:2}}</td>
 
-											<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-												<li>
-													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCuenta(cuenta)" class="tooltip-info"
-													 data-rel="tooltip" title="View">
-														<span class="blue">
-															<i class="ace-icon fa fa-search-plus bigger-120"></i>
-														</span>
-													</a>
-												</li>
-
-												<li>
-													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarCuenta(cuenta)"
-													 class="tooltip-success" data-rel="tooltip" title="Edit">
-														<span class="green">
-															<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-														</span>
-													</a>
-												</li>
-
-												<li>
-													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(cuenta)"
-													 class="tooltip-error" data-rel="tooltip" title="Delete">
-														<span class="red">
-															<i class="ace-icon fa fa-trash-o bigger-120"></i>
-														</span>
-													</a>
-												</li>
-												<li>
-													<a href="javascript:void(0)" ng-click="kardexCuenta(cuenta)" class="tooltip-info" data-rel="tooltip" title="View">
-														<span class="orange">
-															<i class="ace-icon fa fa-file-text bigger-120"></i>
-														</span>
-													</a>
-												</li>
-											</ul>
+									<td ng-if="fieldViewer.getConfiguration().clasificacion.show">
+										{{cuenta.clasificacion.nombre}}
+									</td>
+									<td ng-if="fieldViewer.getConfiguration().tipo_cuenta.show">
+										{{cuenta.tipoCuenta.nombre}}
+									</td>
+									<td>
+										<label>
+											<input disabled name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.bimonetaria" />
+											<span class="lbl check-descuento"></span>
+										</label>
+									</td>
+									<td>
+										<label>
+											<input disabled name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="cuenta.aplicar_calculo" />
+											<span class="lbl check-descuento"></span>
+										</label>
+									</td>
+									<td>
+										<div class="hidden-sm hidden-xs action-buttons">
+											<a class="orange tooltip-info" uib-tooltip="Libros Mayores" href="javascript:void(0)" ng-click="abrirModalLibrosMayores(cuenta);">
+												<i class="ace-icon fa fa-file-text bigger-130"></i>
+											</a>
+											<a class="green tooltip-info" uib-tooltip="Editar Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
+											 ng-click="modificarCuenta(cuenta)">
+												<i class="ace-icon fa fa-pencil bigger-130"></i>
+											</a>
+											<a class="blue tooltip-info" uib-tooltip="Ver Datos" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver"
+											 ng-click="verCuenta(cuenta)">
+												<i class="ace-icon fa fa-search-plus bigger-130"></i>
+											</a>
+											<a class="red tooltip-info " uib-tooltip="Eliminar" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar"
+											 ng-click="mostrarConfirmacionEliminacion(cuenta)">
+												<i class="ace-icon fa fa-trash-o bigger-130"></i>
+											</a>
+											<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_crear" ng-click="crearNuevaCuenta()">
+												<i class="ace-icon fa fa-plus bigger-130"></i>
+											</a>
+											<a class="purple" ng-if="cuenta.aplicar_calculo" href="javascript:void(0)" e-disabled="!aplicacion.puede_crear"
+											 ng-click="crearNuevaCuenta()">
+												<i class="ace-icon glyphicon glyphicon-th bigger-130"></i>
+											</a>
 										</div>
-									</div>
-								</td>
-							</tr>
-						</tbody>
-						<tfoot>
-							<tr>
-								<td ng-if="fieldViewer.getConfiguration().nombre.show"></td>
-								<td ng-if="fieldViewer.getConfiguration().codigo.show"></td>
-								<td ng-if="fieldViewer.getConfiguration().nombre.show">
-									<b>Total</b>
-								</td>
-								<td ng-if="!fieldViewer.getConfiguration().nombre.show">
-									<b>Total</b>
-								</td>
-								<td ng-if="fieldViewer.getConfiguration().debe.show">
-									<b>{{sumaTotales.debe|number:2}}</b>
-								</td>
 
-								<td ng-if="fieldViewer.getConfiguration().haber.show">
-									<b>{{sumaTotales.haber|number:2}}</b>
-								</td>
-								<td ng-if="fieldViewer.getConfiguration().saldo.show">
-									<b>{{sumaTotales.saldo|number:2}}</b>
-								</td>
-								<td ng-if="fieldViewer.getConfiguration().clasificacion.show"></td>
-								<td ng-if="fieldViewer.getConfiguration().tipo_cuenta.show"></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td ng-if="fieldViewer.getConfiguration().nombre.show"></td>
-								<td ng-if="fieldViewer.getConfiguration().codigo.show"></td>
-								<td ng-if="fieldViewer.getConfiguration().nombre.show">
-									<b>Total General</b>
-								</td>
-								<td ng-if="!fieldViewer.getConfiguration().nombre.show">
-									<b>Total General</b>
-								</td>
-								<td ng-if="fieldViewer.getConfiguration().debe.show">
-									<b>{{sumaTotalesGenerales.debe|number:2}}</b>
-								</td>
-								<td ng-if="fieldViewer.getConfiguration().haber.show">
-									<b>{{sumaTotalesGenerales.haber|number:2}}</b>
-								</td>
-								<td ng-if="fieldViewer.getConfiguration().saldo.show">
-									<b>{{sumaTotalesGenerales.saldo|number:2}}</b>
-								</td>
-								<td ng-if="fieldViewer.getConfiguration().clasificacion.show"></td>
-								<td ng-if="fieldViewer.getConfiguration().tipo_cuenta.show"></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
-						</tfoot>
-					</table>
-				</div>
-				<div class="row" ng-include src="'/templates/gral/paginator.html'">
+										<div class="hidden-md hidden-lg">
+											<div class="inline pos-rel">
+												<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+													<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+												</button>
+
+												<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+													<li>
+														<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCuenta(cuenta)" class="tooltip-info"
+														 data-rel="tooltip" title="View">
+															<span class="blue">
+																<i class="ace-icon fa fa-search-plus bigger-120"></i>
+															</span>
+														</a>
+													</li>
+
+													<li>
+														<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarCuenta(cuenta)"
+														 class="tooltip-success" data-rel="tooltip" title="Edit">
+															<span class="green">
+																<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+															</span>
+														</a>
+													</li>
+
+													<li>
+														<a href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacion(cuenta)"
+														 class="tooltip-error" data-rel="tooltip" title="Delete">
+															<span class="red">
+																<i class="ace-icon fa fa-trash-o bigger-120"></i>
+															</span>
+														</a>
+													</li>
+													<li>
+														<a href="javascript:void(0)" ng-click="kardexCuenta(cuenta)" class="tooltip-info" data-rel="tooltip"
+														 title="View">
+															<span class="orange">
+																<i class="ace-icon fa fa-file-text bigger-120"></i>
+															</span>
+														</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+									<td ng-if="fieldViewer.getConfiguration().nombre.show"></td>
+									<td ng-if="fieldViewer.getConfiguration().codigo.show"></td>
+									<td ng-if="fieldViewer.getConfiguration().nombre.show">
+										<b>Total</b>
+									</td>
+									<td ng-if="!fieldViewer.getConfiguration().nombre.show">
+										<b>Total</b>
+									</td>
+									<td ng-if="fieldViewer.getConfiguration().debe.show">
+										<b>{{sumaTotales.debe|number:2}}</b>
+									</td>
+
+									<td ng-if="fieldViewer.getConfiguration().haber.show">
+										<b>{{sumaTotales.haber|number:2}}</b>
+									</td>
+									<td ng-if="fieldViewer.getConfiguration().saldo.show">
+										<b>{{sumaTotales.saldo|number:2}}</b>
+									</td>
+									<td ng-if="fieldViewer.getConfiguration().clasificacion.show"></td>
+									<td ng-if="fieldViewer.getConfiguration().tipo_cuenta.show"></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td ng-if="fieldViewer.getConfiguration().nombre.show"></td>
+									<td ng-if="fieldViewer.getConfiguration().codigo.show"></td>
+									<td ng-if="fieldViewer.getConfiguration().nombre.show">
+										<b>Total General</b>
+									</td>
+									<td ng-if="!fieldViewer.getConfiguration().nombre.show">
+										<b>Total General</b>
+									</td>
+									<td ng-if="fieldViewer.getConfiguration().debe.show">
+										<b>{{sumaTotalesGenerales.debe|number:2}}</b>
+									</td>
+									<td ng-if="fieldViewer.getConfiguration().haber.show">
+										<b>{{sumaTotalesGenerales.haber|number:2}}</b>
+									</td>
+									<td ng-if="fieldViewer.getConfiguration().saldo.show">
+										<b>{{sumaTotalesGenerales.saldo|number:2}}</b>
+									</td>
+									<td ng-if="fieldViewer.getConfiguration().clasificacion.show"></td>
+									<td ng-if="fieldViewer.getConfiguration().tipo_cuenta.show"></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+					<div class="row" ng-include src="'/templates/gral/paginator.html'">
+					</div>
 				</div>
 			</div>
-		</div>
 	</div>
 </div>
 <!-- FIN VISTA DE CUENTAS PRINCIPAL -->
@@ -1799,6 +1803,15 @@
 								<div class="col-md-4">
 									<p>&nbsp</p>
 									<button class="btn-primary btn" type="button" ng-click="agregarCofiguracionTipoCuenta(configuracionTipoCuenta)">Agregar</button>
+									<a popover-placement="left" popover-class="xlpopover" popover-append-to-body="true" uib-popover-template="dynamicPopoverCargos.templateUrl" popover-trigger="mouseenter"
+									 popover-title="Ejemplos" class="blue">
+										<i class="fa fa-list-ol bigger-200 orange" aria-hidden="true"></i>
+									</a>
+									<script type="text/ng-template" id="myPopoverTemplate.html">
+										<div class="form-group">                                              
+												<img height="200" width="600" src="img/ejemploPlanCuenta.png">
+										</div>                                           
+									</script>
 								</div>
 							</div>
 							<div>
@@ -1825,11 +1838,11 @@
 												{{config.digitos}}
 											</td>
 											<td>
-													<a class="green tooltip-info" href="javascript:void(0)" uib-tooltip="Editar" e-disabled="!aplicacion.puede_modificar"
-													ng-click="modificarConfiguracionTipoCuenta(config)">
-													   <i class="ace-icon fa fa-pencil bigger-130"></i>
-												   </a>
-												</td>
+												<a class="green tooltip-info" href="javascript:void(0)" uib-tooltip="Editar" e-disabled="!aplicacion.puede_modificar"
+												 ng-click="modificarConfiguracionTipoCuenta(config)">
+													<i class="ace-icon fa fa-pencil bigger-130"></i>
+												</a>
+											</td>
 										</tr>
 									</tbody>
 								</table>
