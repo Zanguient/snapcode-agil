@@ -1057,7 +1057,8 @@ angular.module('agil.controladores')
 			doc.moveDown(0.4);
 			compra.fecha = new Date(compra.fecha);
 			doc.text("Fecha: " + compra.fecha.getDate() + "/" + (compra.fecha.getMonth() + 1) + "/" + compra.fecha.getFullYear(), 15, 210);
-			var textoFact = $scope.compra.factura;
+			
+			var textoFact ="Doc. Nro " +$scope.compra.factura;
 			doc.text(textoFact, 105, 210, { width: 100 });
 
 			doc.text("Bs " + pago + ".-", 170, 210, { width: 100 });

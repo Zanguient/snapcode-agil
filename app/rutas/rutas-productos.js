@@ -1,6 +1,6 @@
 module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto,
 	Usuario, DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, ProductoBase, sequelize,
-	ContabilidadCuenta, UsuarioGrupos, ActivosFijos, ActivosFijosValores, ProductoTipoPrecio,Diccionario) {
+	ContabilidadCuenta, UsuarioGrupos, ActivosFijos, ActivosFijosValores, ProductoTipoPrecio, Diccionario) {
 
 	router.route('/productos')
 		.post(function (req, res) {
@@ -169,7 +169,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				})
 				Producto.findAll({
 					where: { id_empresa: req.params.id_empresa, codigo: { $not: null }, id_grupo: { $in: gruposUser } },
-					include: [{ model: Empresa, as: 'empresa' },{ model: Clase, as: 'tipoProducto',where:{nombre_corto:Diccionario.TIPO_PRODUCTO_BASE} }],
+					include: [{ model: Empresa, as: 'empresa' }, { model: Clase, as: 'tipoProducto', where: { nombre_corto: Diccionario.TIPO_PRODUCTO_BASE } }],
 					order: [['codigo', 'ASC']]
 				}).then(function (resp) {
 					res.json(resp);
@@ -305,6 +305,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					producto.caracteristica_especial1 LIKE '%"+ req.params.texto_busqueda + "%' or \
 					producto.caracteristica_especial2 LIKE '%"+ req.params.texto_busqueda + "%' or \
 					subgrupo.nombre LIKE '%"+ req.params.texto_busqueda + "%')";
+
 					}
 					if (req.params.id_grupo != 0) {
 						condicionProducto += ' and producto.grupo =' + req.params.id_grupo
@@ -328,19 +329,53 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						LEFT OUTER JOIN gl_clase AS tipoProducto ON (producto.tipo_producto = tipoProducto.id)\
 						LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id)\
 						LEFT OUTER JOIN gl_clase AS subgrupo ON (producto.subgrupo = subgrupo.id)\
-						WHERE "+ condicionProducto + " and producto.grupo in (" + gruposProductos + ") \
+						WHERE "+ condicionProducto + " and producto.grupo in (" + gruposProductos + ")\
 						ORDER BY producto."+ req.params.columna + " " + req.params.direccion + limit, { type: sequelize.QueryTypes.SELECT })
 								.then(function (productos) {
-									res.json({ productos: productos, paginas: paginas });
+									if (productos.length> 0) {
+										var idsProductos = productos.map(function (producto) {
+											return producto.id
+										})
+										ProductoTipoPrecio.findAll({
+											where: { id_producto: { $in: idsProductos } },
+											include: [{ model: Clase, as: 'tipoPrecio' }]
+										}).then(function (precios) {
+											if (precios.length > 0) {
+												for (var index = 0; index < productos.length; index++) {
+													var tiposprecios = precios.filter(function (precio) {
+														return precio.id_producto === productos[index].id
+													})
+													if (tiposprecios.length > 0) {
+														var tiposPrecio = tiposprecios.map(function (data_precio) {
+															// mensajetooltip += (data_precio.tipoPrecio.nombre + ':' + data_precio.precio_unitario + '&#013') // for linebreaks &#013;&#010;
+															var dat = {nombre: data_precio.tipoPrecio.nombre, precio_unitario: data_precio.precio_unitario}
+															return dat
+														})
+														productos[index].tipoPrecio = tiposPrecio
+													}else{
+														productos[index].tipoPrecio = []
+													}
+												}
+												res.json({ productos: productos, paginas: paginas, precios: precios });
+											}else{
+												res.json({ productos: productos, paginas: paginas, precios: precios });
+											}
+										}).catch(function (err) {
+											res.json({ productos: [], hasErr: true, mensaje: err.stack });
+										});
+									}else{
+										res.json({ productos: productos, paginas: paginas});
+									}
+									
 								}).catch(function (err) {
-									res.json({ productos: [], hasError: true, mensaje: err.stack });
+									res.json({ productos: [], hasErr: true, mensaje: err.stack });
 								});
 						}).catch(function (err) {
-							res.json({ productos: [], hasError: true, mensaje: err.stack });
+							res.json({ productos: [], hasErr: true, mensaje: err.stack });
 						});
 				}
 			}).catch(function (err) {
-				res.json({ productos: [], hasError: true, mensaje: err.stack });
+				res.json({ productos: [], hasErr: true, mensaje: err.stack });
 			})
 		});
 
@@ -381,15 +416,15 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 								var tipo_producto;
 								if (producto.tipo_producto === 'base') {
 									tipo_producto = producto_base.id
-									producto.activar_inventario=true
+									producto.activar_inventario = true
 								}
 								if (producto.tipo_producto === 'intermedio') {
 									tipo_producto = producto_intermedio.id
-									producto.activar_inventario=false
+									producto.activar_inventario = false
 								}
 								if (producto.tipo_producto === 'final') {
 									tipo_producto = producto_final.id
-									producto.activar_inventario=false
+									producto.activar_inventario = false
 								}
 								return Producto.find({
 									where: {
@@ -409,7 +444,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 										},
 										transaction: t,
 										lock: t.LOCK.UPDATE
-									}).spread(function(claseGrupoEncontrado, created){
+									}).spread(function (claseGrupoEncontrado, created) {
 										return Clase.findOrCreate({
 											where: {
 												nombre: producto.subgrupo,
@@ -421,7 +456,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 											},
 											transaction: t,
 											lock: t.LOCK.UPDATE
-										}).spread(function(claseSubGrupoEncontrado, created){
+										}).spread(function (claseSubGrupoEncontrado, created) {
 											if (productoEncontrado) {
 												return Producto.update({
 													nombre: producto.nombre,
@@ -444,7 +479,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													marca: producto.marca,
 													id_tipo_producto: tipo_producto ? tipo_producto : producto_base,
 													activo_fijo: req.body.activo_fijo,
-													activar_inventario:producto.activar_inventario
+													activar_inventario: producto.activar_inventario
 												}, {
 														where: {
 															id: productoEncontrado.id
@@ -482,7 +517,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													id_tipo_producto: tipo_producto ? tipo_producto : producto_base,
 													marca: producto.marca,
 													activo_fijo: producto.activo_fijo,
-													activar_inventario:producto.activar_inventario
+													activar_inventario: producto.activar_inventario
 												}, { transaction: t }).then(function (creado) {
 													return new Promise(function (fulfill, reject) {
 														fulfill(creado)
@@ -515,7 +550,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 									res.json({ mensaje: "¡Datos de Productos actualizados satisfactoriamente!" });
 								}
 							}).catch(function (err) {
-								res.json({ hasError: true, mensaje: err.stack?err.stack:err });
+								res.json({ hasError: true, mensaje: err.stack ? err.stack : err });
 							});
 						});
 
@@ -567,14 +602,14 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 									id_producto: productoFinal.dataValues.id,
 									id_producto_base: productoBase.id,
 									formulacion: parseFloat(producto.formulacion)
-								}, { transaction: t,where:{id:ProductoCr.id} }).then(function(dato){
+								}, { transaction: t, where: { id: ProductoCr.id } }).then(function (dato) {
 									return new Promise(function (fullfill, reject) {
 										fullfill()
 									})
 								});
 							}
 						})
-						
+
 					} else {
 						return new Promise(function (fullfill, reject) {
 							fullfill({ hasErr: true, mensaje: 'No se encuentra en la base de datos el producto: ' + producto.nombre_base + ' Código: ' + producto.codigo_base })

@@ -353,7 +353,7 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 		.get(function (req, res) {
 			Proveedor.findAll({
 				where: { id_empresa: req.params.id_empresa },
-				include: [{ model: Compra, as: 'compras', where: { 'saldo': { $gt: 0 } } ,include: [{ model: Clase, as: 'tipoPago', where: { nombre_corto: Diccionario.TIPO_PAGO_CREDITO } },
+				include: [{ model: Compra, as: 'compras', where: { 'saldo': { $gt: 0 } } ,include: [{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }]},{ model: Clase, as: 'tipoPago', where: { nombre_corto: Diccionario.TIPO_PAGO_CREDITO } },
 				{ model: PagoCompra, as: 'pagosCompra',required:false,include:[{model:ProveedorAnticipo,as:'anticipos',required:false}] }]}],
 			}).then(function (entidad) {
 				res.json(entidad);

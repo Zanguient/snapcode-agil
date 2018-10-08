@@ -1022,11 +1022,18 @@ angular.module('agil.controladores')
 
 			}
 
+			$scope.PopoverListaPreciosProductos = {
+				templateUrl: 'PopoverListaPreciosProductos.html',
+				title: 'Precios',
+				isOpen: false
+			};
+
 			$scope.buscarProductos = function () {
 				blockUI.start();
 				$scope.paginator.filter = $scope.grupo !== undefined ? $scope.grupo : { id: 0 }
 				var promesa = ProductosPaginador($scope.usuario.id_empresa, $scope.paginator, $scope.usuario.id);
 				promesa.then(function (dato) {
+					blockUI.stop();
 					if (dato.hasErr) {
 						$scope.mostrarMensaje(dato.mensaje)
 					} else {
@@ -1037,11 +1044,11 @@ angular.module('agil.controladores')
 							$scope.productos[i].activar_inventario = $scope.productos[i].activar_inventario == 1 ? true : false;
 						}
 					}
-					blockUI.stop();
+					
 				}).catch(function (err) {
+					blockUI.stop();
 					var memo = (err.stack !== undefined && err.stack !== null && err.stack !== "") ? err.stack : (err.data !== null && err.data !== undefined & err.data !== "") ? err.data : "Error: se perdio la conexión con el servidor."
 					$scope.mostrarMensaje(memo)
-					blockUI.stop();
 				})
 			}
 
@@ -1315,8 +1322,9 @@ angular.module('agil.controladores')
 				}
 			}
 
-			$scope.abrirDialogConceptoEdicion = function (tipo) {
+			$scope.abrirDialogConceptoEdicion = function (tipo,concepto) {
 				$scope.tipo_edicion = tipo;
+				$scope.conceptoTexto=concepto
 				$scope.clase = {};
 				$scope.abrirPopup($scope.idModalConceptoEdicion);
 			}
@@ -1344,7 +1352,9 @@ angular.module('agil.controladores')
 				Tipos.update({ id_tipo: tipo.id }, tipo, function (res) {
 					var promesa = ClasesTipo(tipo.nombre_corto);
 					promesa.then(function (entidad) {
-						tipo = entidad
+						if($scope.conceptoTexto="tiposPagosC"){
+							$scope.obtenerTiposPrecio()
+						}
 						blockUI.stop();
 						$scope.cerrarDialogConceptoEdicion();
 						$scope.mostrarMensaje('Guardado Exitosamente!');

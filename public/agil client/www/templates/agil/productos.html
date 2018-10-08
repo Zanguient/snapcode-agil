@@ -225,7 +225,24 @@
 									<img ng-src="{{producto.imagen}}" width="50">
 								</td>
 								<td ng-if="fieldViewer.getConfiguration().unidad_medida.show">{{producto.unidad_medida}}</td>
-								<td ng-if="fieldViewer.getConfiguration().precio_unitario.show">{{producto.precio_unitario | number:2}}</td>
+								<script type="text/ng-template" id="PopoverListaPreciosProductos.html">													
+									<div >                            
+											   <p ng-repeat="precio in producto.tipoPrecio track by $index">
+												   {{precio.nombre}} : {{precio.precio_unitario}}
+											   </p>
+										   </div>										  
+								   </script>
+								<td ng-if="fieldViewer.getConfiguration().precio_unitario.show">
+									<div>
+										<a class="green" href="javascript:void(0)" popover-trigger="mouseenter" uib-popover-template="PopoverListaPreciosProductos.templateUrl" popover-placement="left" popover-title="Precios alternativos">
+												{{producto.precio_unitario | number:2}} &nbsp; <i class="fa fa-exclamation-circle green"></i>
+										</a>
+									</div>
+									<!-- <div ng-if="producto.tipoPrecio.length == 0" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Sin información de precios.">
+											{{producto.precio_unitario | number:2}}
+									</div> -->
+									
+								</td>
 
 								<td ng-if="fieldViewer.getConfiguration().inventario_minimo.show">
 									{{producto.inventario_minimo}}
@@ -314,6 +331,7 @@
 						</tbody>
 					</table>
 				</div>
+				
 				<div class="row" ng-include src="'/templates/gral/paginator.html'">
 				</div>
 			</div>
@@ -406,7 +424,7 @@
 							<div class="col-sm-3">
 									<p>Tipo Precio</p>
 								<div class="input-group">									
-									<span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(tiposPrecios)"></span>
+									<span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(tiposPrecios,'tiposPagosC')"></span>
 									<select name="tipoprecio" id="tipoprecio" class="form-control" ng-options="tipoPrecio as tipoPrecio.nombre for tipoPrecio in tiposPrecios.clases | filter:{habilitado:true} track by tipoPrecio.id"
 									 ng-model="tipoDePrecio.tipoPrecio"></select>
 									 <p class="red" ng-show="formularioProducto.tipoprecio.$invalid">Este campo es requerido.</p>
