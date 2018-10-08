@@ -1205,19 +1205,19 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									nombre: detalleCompra.centroCosto.nombre,
 									id_tipo: tipoCentroCosto.id
 								}).then(function (centroCostoCreado) {
-									if (empresaEncontrada.dataValues.usar_peps) {
+								/* 	if (empresaEncontrada.dataValues.usar_peps) { */
 										crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, centroCostoCreado.id, res, compra);
-									} else {
+								/* 	} else {
 										crearDetalleCompraPonderado(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, centroCostoCreado.id, res, compra);
-									}
+									} */
 								});
 							});
 						} else {
-							if (empresaEncontrada.dataValues.usar_peps) {
+							/* if (empresaEncontrada.dataValues.usar_peps) { */
 								crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id, res, compra);
-							} else {
+							/* } else {
 								crearDetalleCompraPonderado(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id, res, compra);
-							}
+							} */
 						}
 					}
 					if (index == (array.length - 1)) {

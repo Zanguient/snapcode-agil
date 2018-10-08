@@ -77,6 +77,7 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
+	
 	.factory('ProductosEmpresaCreacion',  ['$resource',function ($resource) {
 		return $resource(restServer + "productos/empresa");
 	}])
