@@ -1843,9 +1843,21 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     })
             })
         })
-    router.route('/recursos-humanos/empresa/:id_empresa/rolTurno/inicio/:inicio/fin/:fin/grupo/:grupo/pagina/:pagina/items/:items_pagina/campo/:campo/texto_busqueda/:texto_busqueda/direccion/:direccion/columna/:colmuna')
+    router.route('/recursos-humanos/empresa/:id_empresa/rolTurno/inicio/:inicio/fin/:fin/grupo/:grupo/pagina/:pagina/items/:items_pagina/campo/:campo/texto_busqueda/:texto_busqueda/direccion/:direccion/columna/:columna')
         .get(function (req, res) {
-            var condicionRolTurno = { eliminado: false }, condicionRolTurno = {};
+            var condicionRolTurno = { eliminado: false }, ordenArreglo = [], condicionRolTurno = {};
+            if (req.params.columna == "campo") {
+                ordenArreglo.push({ model: Clase, as: 'campo' })
+                ordenArreglo.push('nombre');
+                ordenArreglo.push(req.params.direccion);
+            } else if (req.params.columna == "grupo") {
+                ordenArreglo.push({ model: Clase, as: 'grupo' })
+                ordenArreglo.push('nombre');
+                ordenArreglo.push(req.params.direccion);
+            } else {
+                ordenArreglo.push(req.params.columna);
+                ordenArreglo.push(req.params.direccion);
+            }
             if (req.params.inicio != 0) {
                 var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
                 var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
@@ -1859,14 +1871,14 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
             }
             RrhhEmpleadoRolTurno.findAndCountAll({
                 where: condicionRolTurno,
-                include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }]
-
+                include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }],
+                order: [ordenArreglo]
             }).then(function (datos2) {
                 RrhhEmpleadoRolTurno.findAndCountAll({
                     where: condicionRolTurno,
                     offset: (req.params.items_pagina * (req.params.pagina - 1)), limit: req.params.items_pagina,
-                    include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }]
-
+                    include: [{ model: Clase, as: 'campo' }, { model: Clase, as: 'grupo' }, { model: RrhhEmpleadoFicha, as: 'ficha', include: [{ model: RrhhEmpleadoVacaciones, as: 'vacaciones' }, { model: RrhhEmpleadoAusencia, as: 'ausencias', include: [{ model: RrhhClaseAsuencia, as: 'tipoAusencia', include: [{ model: Tipo, as: 'tipo' }] }] }, { model: MedicoPaciente, as: 'empleado', where: { id_empresa: req.params.id_empresa }, include: [{ model: Persona, as: 'persona' }] }] }],
+                    order: [ordenArreglo]
                 }).then(function (datos) {
                     res.json({ rolesTurno: datos.rows, paginas: Math.ceil(datos2.count / req.params.items_pagina) })
                 })
@@ -2340,17 +2352,17 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                             return Clase.find({
                                                                                                 where: { habilitado: true, nombre: empleado.estado_civil, id_tipo: tipoEncontradoRRHH_EC.dataValues.id }, transaction: t
                                                                                             }).then(function (claseEncontrada) {
-                                                                                                var idEstC= (claseEncontrada) ? claseEncontrada.id : null
+                                                                                                var idEstC = (claseEncontrada) ? claseEncontrada.id : null
                                                                                                 var idNac = (claseNacEncontrada) ? claseNacEncontrada.id : null
                                                                                                 var idDep = (claseDepEncontrada) ? claseDepEncontrada.id : null
-                                                                                                var idProv = (claseMunEncontrada) ? claseMunEncontrada.id : null                                                                                               
+                                                                                                var idProv = (claseMunEncontrada) ? claseMunEncontrada.id : null
                                                                                                 var idLoc = (claseLocEncontrada) ? claseLocEncontrada.id : null
                                                                                                 /*  if (!pacienteFound.persona) {
                                                                                                      console.log(pacienteFound)
                                                                                                      console.log("pacienteFound")
                                                                                                  } */
                                                                                                 return Persona.update({
-                                                                                                    id_estado_civil:idEstC,
+                                                                                                    id_estado_civil: idEstC,
                                                                                                     id_pais_nacimiento: idNac,
                                                                                                     id_ciudad_nacimiento: idDep,
                                                                                                     id_provincia_nacimiento: idProv,
@@ -2557,7 +2569,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                     reject((err.stack !== undefined) ? err.stack : err);
                                                                                 });
                                                                             })
-                                                                        }else{
+                                                                        } else {
                                                                             return new Promise(function (fulfill, reject) {
                                                                                 fulfill();
                                                                             });
@@ -3629,7 +3641,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                     },
                     transaction: t
                 }).then(function (personaActualizada) {
-                    var persona={id:pacienteFound.id_persona}
+                    var persona = { id: pacienteFound.id_persona }
                     return guardarDatosEmpleadoExtension(req, pacienteActual, i, t, tipoCentro,
                         tipoCargo,
                         tipoContrato,

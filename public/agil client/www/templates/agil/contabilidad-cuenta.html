@@ -12,9 +12,13 @@
 			
 		</div>
 		
-		<a href="/recursos/EJEMPLO-DATOS-CUENTAS.xlsx" class="btn btn-primary btn-danger">
+		<a href="/recursos/EJEMPLO-DATOS-CUENTAS.xlsx" class="btn btn-danger">
 			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
 			Ejemplo Importación
+		
+		<a href="javascript:void(0)" class="btn btn-primary" ng-click="generarExcelPlanCuentas()">
+			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
+			Descargar Cuentas
 		</a>
 		<p ng-if=" configuracionesGeneralesTipoCuentas.length < 4"class="bg-danger" style="color:red">Para poder crear nuevas cuentas o importar primero es nesesario las configuraciones generales de las cuentas</p>
 		<div class="clearfix">
@@ -122,6 +126,7 @@
 							<i class="glyphicon  glyphicon-list-alt"></i>
 						</a> -->
 						<div ng-include src="'/templates/gral/fields-viewer.html'"></div>
+						
 					</div>
 				</div>
 				<!-- <div class="col-sm-6"  ng-include src="'/templates/gral/fields-viewer.html'"></div> -->

@@ -903,6 +903,52 @@ angular.module('agil.controladores')
 				})
 			}
 
+			$scope.generarExcelPlanCuentas = function () {
+				var paginator = {
+					filter: {
+						empresa: $scope.usuario.id_empresa,
+						clasificacion: 0,
+						tipo_cuenta: 0,
+						monto: 0,
+
+					},
+					currentPage: 1,
+					itemsPerPage: "0",
+					search: 0,
+					column: "codigo",
+					direction: "asc"
+				}
+				var promesa = CuentaContabilidad(paginator);
+				promesa.then(function (dato) {
+					var data = [["Código","Nombre",'Descripción',"Clasificación","Tipo Cta",'Debe',"Haber","Saldo","Bimonetaria"]]
+					var totalCosto = 0;
+					for (var i = 0; i < dato.cuentas.length; i++) {
+						var cuenta =dato.cuentas[i]
+						var columns = [];
+						
+						columns.push(cuenta.codigo)
+						columns.push(cuenta.nombre)
+						columns.push(cuenta.descripcion)
+						columns.push(cuenta.clasificacion.nombre)
+						columns.push(cuenta.tipoCuenta.nombre)
+						columns.push(cuenta.debe)
+						columns.push(cuenta.haber)
+						columns.push(cuenta.saldo)
+						var bimonetaria= (cuenta.bimonetaria)?"SI":"NO"
+						columns.push(bimonetaria)
+						data.push(columns);
+					}
+
+					var ws_name = "SheetJS";
+					var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+					/* add worksheet to workbook */
+					wb.SheetNames.push(ws_name);
+					wb.Sheets[ws_name] = ws;
+					var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+					saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "LISTA-PLAN-DE-CUENTAS.xlsx");
+					blockUI.stop();
+				})
+			}
 
 			//fin comprobar
 			$scope.$on('$routeChangeStart', function (next, current) {
