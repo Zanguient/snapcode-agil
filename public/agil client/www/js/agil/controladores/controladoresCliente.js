@@ -497,10 +497,36 @@ angular.module('agil.controladores')
 			for (var i = 0; i < $scope.clientes.length; i++) {
 				var columns = [];
 
-				if ($scope.clientes[i].clientes_razon.length > 0) {
-					$scope.clientes[i].clientes_razon.map(function (razon, dex) {
-						if ($scope.clientes[i].cliente_destinos.length > 0) {
-							$scope.clientes[i].cliente_destinos.map(function (destino) {
+				if ($scope.clientes[i].clientes_razon) {
+					if ($scope.clientes[i].clientes_razon.length > 0) {
+						$scope.clientes[i].clientes_razon.map(function (razon, dex) {
+							if ($scope.clientes[i].cliente_destinos.length > 0) {
+								$scope.clientes[i].cliente_destinos.map(function (destino) {
+									columns = [];
+									columns.push((i + 1));
+									columns.push($scope.clientes[i].codigo);
+									columns.push($scope.clientes[i].contacto);
+									columns.push($scope.clientes[i].nit);
+									columns.push($scope.clientes[i].razon_social);
+									columns.push($scope.clientes[i].direccion);
+									columns.push($scope.clientes[i].telefono1);
+									columns.push($scope.clientes[i].telefono2);
+									columns.push($scope.clientes[i].telefono3);
+									columns.push($scope.clientes[i].ubicacion_geografica)
+									columns.push($scope.clientes[i].rubro)
+									columns.push($scope.clientes[i].categoria)
+									columns.push($scope.fechaATexto($scope.clientes[i].fecha1))
+									columns.push($scope.fechaATexto($scope.clientes[i].fecha2))
+									columns.push($scope.clientes[i].texto2)
+									columns.push($scope.clientes[i].texto2)
+									columns.push(razon.razon_social);
+									columns.push(razon.nit);
+									columns.push(razon.codigo_sap);
+									columns.push(destino.destino.destino);
+									columns.push(destino.destino.direccion);
+									data.push(columns);
+								})
+							} else {
 								columns = [];
 								columns.push((i + 1));
 								columns.push($scope.clientes[i].codigo);
@@ -521,6 +547,35 @@ angular.module('agil.controladores')
 								columns.push(razon.razon_social);
 								columns.push(razon.nit);
 								columns.push(razon.codigo_sap);
+								columns.push("sin dato");
+								columns.push("sin dato");
+								data.push(columns);
+							}
+						})
+					} else {
+
+						if ($scope.clientes[i].cliente_destinos.length > 0) {
+							$scope.clientes[i].cliente_destinos.map(function (destino) {
+								columns = [];
+								columns.push((i + 1));
+								columns.push($scope.clientes[i].codigo);
+								columns.push($scope.clientes[i].contacto);
+								columns.push($scope.clientes[i].nit);
+								columns.push($scope.clientes[i].razon_social);
+								columns.push($scope.clientes[i].direccion);
+								columns.push($scope.clientes[i].telefono1);
+								columns.push($scope.clientes[i].telefono2);
+								columns.push($scope.clientes[i].telefono3);
+								columns.push($scope.clientes[i].ubicacion_geografica)
+								columns.push($scope.clientes[i].rubro)
+								columns.push($scope.clientes[i].categoria)
+								columns.push($scope.fechaATexto($scope.clientes[i].fecha1))
+								columns.push($scope.fechaATexto($scope.clientes[i].fecha2))
+								columns.push($scope.clientes[i].texto2)
+								columns.push($scope.clientes[i].texto2)
+								columns.push("sin dato");
+								columns.push("sin dato");
+								columns.push("sin dato");
 								columns.push(destino.destino.destino);
 								columns.push(destino.destino.direccion);
 								data.push(columns);
@@ -543,66 +598,13 @@ angular.module('agil.controladores')
 							columns.push($scope.fechaATexto($scope.clientes[i].fecha2))
 							columns.push($scope.clientes[i].texto2)
 							columns.push($scope.clientes[i].texto2)
-							columns.push(razon.razon_social);
-							columns.push(razon.nit);
-							columns.push(razon.codigo_sap);
+							columns.push("sin dato");
+							columns.push("sin dato");
+							columns.push("sin dato");
 							columns.push("sin dato");
 							columns.push("sin dato");
 							data.push(columns);
 						}
-					})
-				} else {
-
-					if ($scope.clientes[i].cliente_destinos.length > 0) {
-						$scope.clientes[i].cliente_destinos.map(function (destino) {
-							columns = [];
-							columns.push((i + 1));
-							columns.push($scope.clientes[i].codigo);
-							columns.push($scope.clientes[i].contacto);
-							columns.push($scope.clientes[i].nit);
-							columns.push($scope.clientes[i].razon_social);
-							columns.push($scope.clientes[i].direccion);
-							columns.push($scope.clientes[i].telefono1);
-							columns.push($scope.clientes[i].telefono2);
-							columns.push($scope.clientes[i].telefono3);
-							columns.push($scope.clientes[i].ubicacion_geografica)
-							columns.push($scope.clientes[i].rubro)
-							columns.push($scope.clientes[i].categoria)
-							columns.push($scope.fechaATexto($scope.clientes[i].fecha1))
-							columns.push($scope.fechaATexto($scope.clientes[i].fecha2))
-							columns.push($scope.clientes[i].texto2)
-							columns.push($scope.clientes[i].texto2)
-							columns.push("sin dato");
-							columns.push("sin dato");
-							columns.push("sin dato");
-							columns.push(destino.destino.destino);
-							columns.push(destino.destino.direccion);
-							data.push(columns);
-						})
-					} else {
-						columns = [];
-						columns.push((i + 1));
-						columns.push($scope.clientes[i].codigo);
-						columns.push($scope.clientes[i].contacto);
-						columns.push($scope.clientes[i].nit);
-						columns.push($scope.clientes[i].razon_social);
-						columns.push($scope.clientes[i].direccion);
-						columns.push($scope.clientes[i].telefono1);
-						columns.push($scope.clientes[i].telefono2);
-						columns.push($scope.clientes[i].telefono3);
-						columns.push($scope.clientes[i].ubicacion_geografica)
-						columns.push($scope.clientes[i].rubro)
-						columns.push($scope.clientes[i].categoria)
-						columns.push($scope.fechaATexto($scope.clientes[i].fecha1))
-						columns.push($scope.fechaATexto($scope.clientes[i].fecha2))
-						columns.push($scope.clientes[i].texto2)
-						columns.push($scope.clientes[i].texto2)
-						columns.push("sin dato");
-						columns.push("sin dato");
-						columns.push("sin dato");
-						columns.push("sin dato");
-						columns.push("sin dato");
-						data.push(columns);
 					}
 				}
 				// data.push(columns);
