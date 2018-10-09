@@ -358,12 +358,14 @@ angular.module('agil.controladores')
 				for (var i = 0; i < dato.detallesMovimiento.length; i++) {
 					if (dato.detallesMovimiento[i].movimiento) {
 						if(dato.detallesMovimiento[i].movimiento.clase.nombre_corto!="III"){
-							dato.detallesMovimiento[i].costo_unitario = Math.round((dato.detallesMovimiento[i].costo_unitario * 0.87) * 100) / 100;
+							dato.detallesMovimiento[i].costo_unitario = (Math.round((((dato.detallesMovimiento[i].importe-dato.detallesMovimiento[i].descuento) * 0.87)/dato.detallesMovimiento[i].cantidad) * 100) / 100);
+			
 						}
 						if (i == 0 && dato.detallesMovimiento[i].tipo == "SALDO ANTERIOR") {
 							dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].saldoFisico;
 							dato.detallesMovimiento[i].saldoValuado = dato.detallesMovimiento[i].saldoValuado;
-							dato.detallesMovimiento[i].costo_unitario = Math.round((dato.detallesMovimiento[i].costo_unitario * 100 / 87) * 100) / 100;
+							dato.detallesMovimiento[i].costo_unitario = (Math.round((((dato.detallesMovimiento[i].importe-dato.detallesMovimiento[i].descuento) * 0.87)/dato.detallesMovimiento[i].cantidad) * 100) / 100);
+			
 						} else if (i == 0 && dato.detallesMovimiento[i].movimiento.tipo.nombre_corto == $scope.diccionario.MOV_ING && dato.detallesMovimiento[i].movimiento.clase.nombre_corto == $scope.diccionario.ING_INV_INICIAL) {
 							dato.detallesMovimiento[i].saldoFisico = dato.detallesMovimiento[i].cantidad;
 							dato.detallesMovimiento[i].saldoValuado = Math.round((dato.detallesMovimiento[i].saldoFisico * dato.detallesMovimiento[i].costo_unitario) * 100) / 100;
