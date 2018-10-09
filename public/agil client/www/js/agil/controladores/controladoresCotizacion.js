@@ -6,6 +6,11 @@ angular.module('agil.controladores')
 		DatosImpresionCotizacion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit, CotizacionRechazo) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
+		
+		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+			$scope.usuario.empresa.imagen = imagenEmpresa;
+		});
+
 		$scope.idModalWizardCotizacionNueva = 'modal-wizard-cotizacion-nueva';
 		// $scope.idModalWizardCotizacionModificar = 'modal-wizard-cotizacion-modificar';
 		$scope.idModalInventario = "dialog-productos-venta";
