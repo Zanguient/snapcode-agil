@@ -102,7 +102,9 @@
     ScopeConfigWrapper.prototype.getItemsPerPage = function() {
       return this.scope.$eval(this.configurationVariableNames.itemsPerPage) || 10;
     };
-
+    ScopeConfigWrapper.prototype.settItemsPerPage = function(s) {
+      this.configurationVariableNames.itemsPerPage =s;
+    };
     ScopeConfigWrapper.prototype.getCurrentPage = function() {
       return this.scope.$eval(this.configurationVariableNames.currentPage) || 0;
     };
@@ -337,11 +339,13 @@
         } else if (currentPage === numberOfPages - 1) {
           itemCountOnLastPage = list.length % itemsPerPage;
           if (itemCountOnLastPage !== 0) {
+             w.setItemsPerPage(itemCountOnLastPage)
             fillerLength = itemsPerPage - itemCountOnLastPage - 1;
             _results1 = [];
             for (x = _j = _ref1 = list.length, _ref2 = list.length + fillerLength; _ref1 <= _ref2 ? _j <= _ref2 : _j >= _ref2; x = _ref1 <= _ref2 ? ++_j : --_j) {
               _results1.push(x);
             }
+           
             return _results1;
           } else {
             return [];

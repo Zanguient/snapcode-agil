@@ -2688,7 +2688,7 @@
                                                 </div>
                                                 <div class="input-group col-lg-7">
                                                     <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(expeditos)"></span>
-                                                    <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in expeditos.clases track by expedido.id"
+                                                    <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in expeditos.clases | filter:{habilitado:true} track by expedido.id"
                                                         ng-model="paciente.extension"></select>
                                                 </div>
                                             </div>
@@ -2934,7 +2934,7 @@
                                                 </div>
                                                 <div class="input-group- col-lg-7">
                                                     <span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(expeditos)"></span>
-                                                    <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in expeditos.clases track by expedido.id"
+                                                    <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in expeditos.clases | filter:{habilitado:true} track by expedido.id"
                                                         ng-model="paciente.extension"></select>
                                                 </div>
                                             </div>
@@ -3325,7 +3325,7 @@
                         <div class=" row form-group" ng-if="ficha.enfermedad_otros">
                             <div class="col-lg-12">
                                 <label for="">Detalle de la enfermedad / tratamiento /medicamento / resultado</label>
-                                <textarea rows="5" ng-model="ficha.enfermedad_comentario" class="form-control" id="comentario-enfermedad-paciente" placeholder="Default Text"></textarea>
+                                <textarea rows="5" ng-model="ficha.enfermedad_comentario" class="form-control" id="comentario-enfermedad-paciente" placeholder=""></textarea>
                             </div>
                         </div>
 
@@ -3346,7 +3346,7 @@
                                 <div ng-if="ficha.quirurgico_operado">
                                     <label>Algún Comentario</label>
                                     <textarea rows="3" ng-if="ficha.quirurgico_operado" class="form-control" id="antecedentes-operado-bool" ng-model="ficha.quirurgico_comentario"
-                                        placeholder="Default Text"></textarea>
+                                        placeholder=""></textarea>
                                 </div>
                             </div>
                         </div>
@@ -4678,7 +4678,7 @@
                                         </div>
                                         <div class="input-group- col-lg-2">
 
-                                            <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in expeditos track by expedido.id"
+                                            <select class="form-control" required ng-options="expedido as expedido.nombre_corto for expedido in expeditos.clases | filter:{habilitado:true} track by expedido.id"
                                                 ng-model="ficha.paciente.extension"></select>
                                         </div>
                                     </div>
@@ -4707,7 +4707,7 @@
                                             <label for="">Estilo de Vida</label>
                                         </div>
                                         <div class="col-lg-6">
-                                            <textarea class="form-control" ng-model="ficha.estilo_vida" id="estilo_vida-ficha-paciente" placeholder="Default Text"></textarea>
+                                            <textarea class="form-control" ng-model="ficha.estilo_vida" id="estilo_vida-ficha-paciente" placeholder=""></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -4752,7 +4752,7 @@
                                             <label for="">Riesgos de los Procesos de Trabajo</label>
                                         </div>
                                         <div class="col-lg-6">
-                                            <textarea required ng-model="ficha.riesgo" rows="1" class="form-control" id="riesgo-ficha-paciente" placeholder="Default Text"></textarea>
+                                            <textarea required ng-model="ficha.riesgo" rows="1" class="form-control" id="riesgo-ficha-paciente" placeholder=""></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -5010,7 +5010,7 @@
                                         </div>
                                         <div class="col-lg-4" ng-if="ficha.enfermedad_otros">
                                             <label for="ficha.enfermedad_otros">Detalle de la enfermedad / tratamiento /medicamento / resultado</label>
-                                            <textarea rows="2" ng-disabled="" ng-model="ficha.enfermedad_comentario" class="form-control" id="enfermedad-otros-ficha-paciente" placeholder="Default Text"></textarea>
+                                            <textarea rows="2" ng-disabled="" ng-model="ficha.enfermedad_comentario" class="form-control" id="enfermedad-otros-ficha-paciente" placeholder=""></textarea>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -5039,7 +5039,7 @@
                                             <label for="">Algun Comentario</label>
                                         </div>
                                         <div class="col-lg-5" ng-if="ficha.quirurgico_operado">
-                                            <textarea rows="1" class="form-control" id="quirurgico_comentario" ng-model="ficha.quirurgico_comentario" placeholder="Default Text"></textarea>
+                                            <textarea rows="1" class="form-control" id="quirurgico_comentario" ng-model="ficha.quirurgico_comentario" placeholder=""></textarea>
                                         </div>
                                     </div>
                                 </div>

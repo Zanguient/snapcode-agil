@@ -363,7 +363,7 @@ angular.module('agil.servicios')
             arregloCargo,
             arregloContrato,
             arregloExpedido,
-            arregloSegurosSalud, ) {
+            arregloSegurosSalud) {
             var delay = $q.defer();
             EmpleadoEmpresa.save(null, {id_empresa: id_empresa,
                 pacientes: pacientes,

@@ -152,7 +152,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
         .get(function (req, res) {
             RrhhEmpleadoFichaFamiliar.findAll({
                 include: [{ model: Clase, as: 'relacion' }, { model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] }, {
-                    model: MedicoPaciente, as: "empleado", where: { id_empresa: req.params.id_empresa }, include: [{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', include: [{ model: Clase, as: "aporteSeguroLargoPlazo" }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }] }, { model: Clase, as: 'extension' }, {
+                    model: MedicoPaciente, as: "empleado", where: { id_empresa: req.params.id_empresa }, include: [{model: Empresa, as: 'empresa'},{ model: Clase, as: 'campo' }, { model: RrhhEmpleadoFicha, as: 'empleadosFichas', include: [{ model: Clase, as: "aporteSeguroLargoPlazo" }, { model: RrhhEmpleadoCargo, as: 'cargos', include: [{ model: Clase, as: "cargo" }] }] }, { model: Clase, as: 'extension' }, {
                         model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' },
                         { model: Clase, as: 'pais' },
                         { model: Clase, as: 'ciudad' },

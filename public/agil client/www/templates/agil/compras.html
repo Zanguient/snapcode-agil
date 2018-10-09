@@ -197,7 +197,11 @@
 							<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCompra(item)">
 								<i class="ace-icon fa fa-search-plus bigger-130"></i>
 							</a>
-							<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
+							<a class="green" ng-if="item.tipoPago.nombre==diccionario.TIPO_PAGO_CREDITO && item.pagosCompra.length==0" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
+							 ng-click="modificarCompra(item)">
+								<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+							</a>
+							<a class="green" ng-if="item.tipoPago.nombre!=diccionario.TIPO_PAGO_CREDITO" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
 							 ng-click="modificarCompra(item)">
 								<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
 							</a>
