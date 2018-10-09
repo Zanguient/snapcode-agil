@@ -78,8 +78,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
                  $scope.eliminarPopup($scope.idModalWizardComprobanteEdicion);
                  $scope.eliminarPopup($scope.IdModalLibroMayor);
                  $scope.eliminarPopup($scope.IdModalOpcionesQr);
-                 $scope.eliminarPopup($scope.IdModalAsignarCuenta); */
-                 $scope.eliminarPopup($scope.ModalMensajePago);
+                 $scope.eliminarPopup($scope.IdModalAsignarCuenta); 
+                 $scope.eliminarPopup($scope.ModalMensajePago);*/
             });
 
             $scope.obtenerSucursales = function() {

@@ -31,12 +31,13 @@
 									<label>PERIODO</label>&nbsp
 								</td>
 								<td>
-									<input required ng-update-hidden autocomplete="off" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicio"
-									 ng-model="filtro.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
+									<input required ng-update-hidden autocomplete="off" class="form-control date-picker" type="text"
+									 data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="filtro.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
 								</td>
 								<td>
-									<input required ng-update-hidden autocomplete="off" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafin"
-									 ng-model="filtro.fechaFinTexto" autocomplete="off" placeholder="Ingrese la fecha final" /> &nbsp
+									<input required ng-update-hidden autocomplete="off" class="form-control date-picker" type="text"
+									 data-date-format="dd/mm/yyyy" id="fechafin" ng-model="filtro.fechaFinTexto" autocomplete="off" placeholder="Ingrese la fecha final" />
+									&nbsp
 								</td>
 								<td>
 									<button type="submit" ng-disabled="formularioFiltroCompras.$invalid" class="btn btn-primary">
@@ -127,14 +128,127 @@
 		<div class="clearfix">
 			<div class="pull-right tableTools-container"></div>
 		</div>
+
+
 		<div class="table-header">
+				Lista de Compras
+			</div>
+			<div class="bg-info" ng-if="compras.length>0">
+					<label>
+					Mostrar <select ng-model="itemsPerPageCompra"  ng-change="SelectItemPorPagina(itemsPerPageCompra)" class="form-control input-sm" ng-change="filtrarCompras(sucursalesUsuario,filtro.fechaInicioTexto,filtro.fechaFinTexto,filtro.razon_social,filtro.nit,filtro.monto,filtro.tipo_pago,filtro.sucursal,filtro.usuario,filtro.tipo)">
+						  <option value="{{compras.length}}">Todos</option>
+						  <option ng-selected="true" value="10">10</option>
+						  <option value="25">25</option>
+						  <option value="50">50</option>
+						  <option value="100">100</option>
+						</select> Elementos</label>
+					</div>
+		<table  ng-if="compras.length>0" class="table table-striped" at-table at-paginated at-list="compras" at-config="config">
+			<thead></thead>
+			<tbody>
+				<tr>
+					<td at-title="index" height="10">{{($index+1)}}</td>
+					<td at-title="Sucursal" width="150">
+						<p ng-if="item.almacen" >{{item.almacen.sucursal.nombre}}</p>
+						<p ng-if="!item.almacen">{{item.sucursal.nombre}}</p>
+					</td>
+					<td at-title="Razón Social Proveedor" width="150">{{item.proveedor.razon_social}}</td>
+					<td at-title="NIt Proveedor" width="150">{{item.proveedor.nit}}</td>
+					<td at-implicit at-sortable at-attribute="factura" width="150"></td>
+					<td at-sortable at-title="Fecha" width="150">{{item.fecha.split("T")[0].split('-').reverse().join('/')}}</td>
+					<td at-title="Hora fecha" width="150">{{item.fecha | date:"HH:mm"}}&nbsp{{item.fecha.split("T")[0].split('-').reverse().join('/')}}</td>
+					<td at-title="Monto" width="150">{{item.total | number:2}}</td>
+					<td at-title="Tipo de Pago" width="150">{{item.tipoPago.nombre}}</td>
+
+					<td   at-title="Pago" width="300">
+						<div ng-if="item.tipoPago.nombre==diccionario.TIPO_PAGO_CREDITO" class="hidden-sm hidden-xs action-buttons">
+							Plazo: {{item.dias_credito}} días&nbsp A cuenta: Bs {{item.a_cuenta | number:2}}&nbsp Saldo: Bs
+							{{item.saldo | number:2}}&nbsp
+
+							<a class="blue" href="javascript:void(0)" ng-if="item.saldo>0" ng-click="abrirPopupPago(item)">
+								<i class="ace-icon fa fa-exclamation-circle bigger-130"></i>
+							</a>
+						</div>
+						<div ng-if="item.tipoPago.nombre==diccionario.TIPO_PAGO_CREDITO" class="hidden-md hidden-lg">
+							<div class="inline pos-rel">
+								<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+									<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+								</button>
+								Plazo: {{item.dias_credito}} días&nbsp A cuenta: Bs {{item.a_cuenta}}&nbsp Saldo: Bs {{item.saldo}}&nbsp
+								<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+									<li>
+										<a href="javascript:void(0)" ng-if="item.saldo>0" ng-click="abrirPopupPago(item)" class="tooltip-info"
+										 data-rel="tooltip" title="View">
+											<span class="blue">
+												<i class="ace-icon fa fa-exclamation-circle bigger-120"></i>
+											</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</td>
+					<td at-title="Usuario" width="150">{{item.usuario.nombre_usuario}}{{item.pagosCompra.length}}</td>
+					<td at-title="Acciones" width="150">
+						<div class="hidden-sm hidden-xs action-buttons">
+							<a class="green" href="javascript:void(0)" ng-click="imprimirCompra(item)">
+								<i class="ace-icon fa fa-print bigger-130"></i>
+							</a>
+							<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCompra(item)">
+								<i class="ace-icon fa fa-search-plus bigger-130"></i>
+							</a>
+							<a class="green" ng-if="item.pagosCompra.length==0" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
+							 ng-click="modificarCompra(item)">
+								<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+							</a>
+						</div>
+
+						<div class="hidden-md hidden-lg">
+							<div class="inline pos-rel">
+								<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+									<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+								</button>
+
+								<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+									<li>
+										<a href="javascript:void(0)" ng-click="imprimirCompra(item)" class="tooltip-info" data-rel="tooltip" title="View">
+											<span class="green">
+												<i class="ace-icon fa fa-print bigger-120"></i>
+											</span>
+										</a>
+									</li>
+									<li>
+										<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCompra(item)" class="tooltip-info"
+										 data-rel="tooltip" title="View">
+											<span class="blue">
+												<i class="ace-icon fa fa-search-plus bigger-120"></i>
+											</span>
+										</a>
+									</li>
+									<li>
+										<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarCompra(item)"
+										 class="tooltip-success" data-rel="tooltip" title="Edit">
+											<span class="green">
+												<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+											</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<at-pagination ng-if="compras.length>0" at-list="list" at-config="config"></at-pagination>
+		<!-- <div class="table-header">
 			Lista de Compras
-		</div>
+		</div> -->
 
 		<!-- div.table-responsive -->
 
 		<!-- div.dataTables_borderWrap -->
-		<div style="overflow-x:auto;">
+		<!-- <div style="overflow-x:auto;">
 			<table id="tabla-compras" class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
@@ -147,7 +261,7 @@
 						<th>Nº</th>
 						<th>
 							Sucursal
-							
+
 						</th>
 						<th>
 							Razón Social Proveedor
@@ -192,7 +306,8 @@
 						<td>{{compra.tipoPago.nombre}}</td>
 						<td>
 							<div ng-if="compra.tipoPago.nombre==diccionario.TIPO_PAGO_CREDITO" class="hidden-sm hidden-xs action-buttons">
-								Plazo: {{compra.dias_credito}} días&nbsp A cuenta: Bs {{compra.a_cuenta | number:2}}&nbsp Saldo: Bs {{compra.saldo | number:2}}&nbsp
+								Plazo: {{compra.dias_credito}} días&nbsp A cuenta: Bs {{compra.a_cuenta | number:2}}&nbsp Saldo: Bs
+								{{compra.saldo | number:2}}&nbsp
 
 								<a class="blue" href="javascript:void(0)" ng-if="compra.saldo>0" ng-click="abrirPopupPago(compra)">
 									<i class="ace-icon fa fa-exclamation-circle bigger-130"></i>
@@ -206,8 +321,8 @@
 									Plazo: {{compra.dias_credito}} días&nbsp A cuenta: Bs {{compra.a_cuenta}}&nbsp Saldo: Bs {{compra.saldo}}&nbsp
 									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
 										<li>
-											<a href="javascript:void(0)" ng-if="compra.saldo>0" ng-click="abrirPopupPago(compra)" class="tooltip-info" data-rel="tooltip"
-											 title="View">
+											<a href="javascript:void(0)" ng-if="compra.saldo>0" ng-click="abrirPopupPago(compra)" class="tooltip-info"
+											 data-rel="tooltip" title="View">
 												<span class="blue">
 													<i class="ace-icon fa fa-exclamation-circle bigger-120"></i>
 												</span>
@@ -226,7 +341,8 @@
 								<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCompra(compra)">
 									<i class="ace-icon fa fa-search-plus bigger-130"></i>
 								</a>
-								<a class="green" ng-if="compra.pagosCompra.length==0" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarCompra(compra)">
+								<a class="green" ng-if="compra.pagosCompra.length==0" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
+								 ng-click="modificarCompra(compra)">
 									<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
 								</a>
 							</div>
@@ -246,16 +362,16 @@
 											</a>
 										</li>
 										<li>
-											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCompra(compra)" class="tooltip-info" data-rel="tooltip"
-											 title="View">
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCompra(compra)" class="tooltip-info"
+											 data-rel="tooltip" title="View">
 												<span class="blue">
 													<i class="ace-icon fa fa-search-plus bigger-120"></i>
 												</span>
 											</a>
 										</li>
 										<li>
-											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarCompra(compra)" class="tooltip-success"
-											 data-rel="tooltip" title="Edit">
+											<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarCompra(compra)"
+											 class="tooltip-success" data-rel="tooltip" title="Edit">
 												<span class="green">
 													<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
 												</span>
@@ -276,8 +392,8 @@
 
 					</tr>
 				</tbody>
-			</table>	
-		</div>
+			</table>
+		</div> -->
 	</div>
 </div>
 
@@ -306,9 +422,9 @@
 								<tr ng-if="usuario.empresa.usar_funciones_erp">
 									<td>
 										<label>MOVIMIENTO</label>
-										<select style="width:180px" ng-disabled="compra.detallesCompra.length>0" ng-change="verificarMomivmiento(compra)" data-validate="validate(required)"
-										 required id="movimiento" name="movimiento" ng-model="compra.movimiento.clase" data-placeholder="Click para escoger"
-										 ng-options="movimiento as movimiento.nombre for movimiento in movimientosIngreso track by movimiento.id">
+										<select style="width:180px" ng-disabled="compra.detallesCompra.length>0" ng-change="verificarMomivmiento(compra)"
+										 data-validate="validate(required)" required id="movimiento" name="movimiento" ng-model="compra.movimiento.clase"
+										 data-placeholder="Click para escoger" ng-options="movimiento as movimiento.nombre for movimiento in movimientosIngreso track by movimiento.id">
 											<!--<option ng-disabled="movimiento.nombre_corto==diccionario.EGRE_AJUSTE" ng-repeat="movimiento in movimientosEgreso" value="{{movimiento.id}}-{{movimiento.nombre_corto}}">{{movimiento.nombre}}</option>-->
 										</select>
 										<span class="red">(*)</span>
@@ -348,7 +464,8 @@
 										<div class="col-md-6" ng-if="compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS||compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
 											<label uib-tooltip="Tipo Retencion??">
 
-												<input ng-change="calcularImporte()" ng-model="compra.tipo_retencion" checked="checked" type="checkbox" class="ace ace-switch ace-switch-5">
+												<input ng-change="calcularImporte()" ng-model="compra.tipo_retencion" checked="checked" type="checkbox"
+												 class="ace ace-switch ace-switch-5">
 												<span class="lbl" data-lbl="Si&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
 											</label>
 										</div>
@@ -359,18 +476,19 @@
 
 									<td>
 										<label>NIT</label>
-										<input id="nit" ng-keypress="interceptarTecla($event,'razon_social',true)" data-validate="validate(required)" required type="number"
-										 min="0" ng-model="compra.proveedor.nit" placeholder="Ingrese el NIT..." uib-typeahead="proveedor as proveedor.nit for proveedor in buscarProveedor($viewValue)"
-										 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0"
-										 typeahead-on-select="establecerProveedor($item, $model, $label, $event)">
+										<input id="nit" ng-keypress="interceptarTecla($event,'razon_social',true)" data-validate="validate(required)"
+										 required type="number" min="0" ng-model="compra.proveedor.nit" placeholder="Ingrese el NIT..." uib-typeahead="proveedor as proveedor.nit for proveedor in buscarProveedor($viewValue)"
+										 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+										 typeahead-min-length="0" typeahead-on-select="establecerProveedor($item, $model, $label, $event)">
 										<span class="red">(*)</span>
 									</td>
 									<td>
 										<label>RAZÓN SOCIAL</label>
-										<input id="razon_social" ng-keypress="interceptarTecla($event,'factura',true)" data-validate="validate(required)" required
-										 type="text" ng-model="compra.proveedor.razon_social" placeholder="Ingrese la Razon Social" uib-typeahead="proveedor as proveedor.razon_social for proveedor in buscarProveedor($viewValue)"
-										 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0"
-										 typeahead-on-select="establecerProveedor($item, $model, $label, $event)">
+										<input id="razon_social" ng-keypress="interceptarTecla($event,'factura',true)" data-validate="validate(required)"
+										 required type="text" ng-model="compra.proveedor.razon_social" placeholder="Ingrese la Razon Social"
+										 uib-typeahead="proveedor as proveedor.razon_social for proveedor in buscarProveedor($viewValue)"
+										 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+										 typeahead-min-length="0" typeahead-on-select="establecerProveedor($item, $model, $label, $event)">
 										<span class="red">(*)</span>
 									</td>
 								</tr>
@@ -378,8 +496,7 @@
 									<td>
 										<label>NÚM. FACTURA</label>
 										<input id="factura" ng-keypress="interceptarTecla($event,'centro_costo',true)" data-validate="validate(required,number)"
-										 required type="number" placeholder="factura" ng-model="compra.factura" ng-disabled="compra.movimiento.clase.nombre===diccionario.MOVING_POR_IMPORTACION"
-										/>
+										 required type="number" placeholder="factura" ng-model="compra.factura" ng-disabled="compra.movimiento.clase.nombre===diccionario.MOVING_POR_IMPORTACION" />
 										<span class="red">(*)</span>
 									</td>
 									<td>
@@ -392,14 +509,14 @@
 								<tr>
 									<td>
 										<label>FECHA</label>
-										<input data-validate="validate(required)" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-										 id="fechaCompra" ng-model="compra.fechaTexto" placeholder="Ingrese la fecha" />
+										<input data-validate="validate(required)" required ng-update-hidden class="form-control date-picker" type="text"
+										 data-date-format="dd/mm/yyyy" id="fechaCompra" ng-model="compra.fechaTexto" placeholder="Ingrese la fecha" />
 										<span class="red">(*)</span>
 									</td>
 									<td ng-if="compra.movimiento.clase.nombre!=diccionario.MOVING_POR_COMPRA_SIN_FACTURA">
 										<label>CÓDIGO DE CONTROL</label>
-										<input capitalize required type="text" placeholder="codigo de control" ng-model="compra.codigo_control" ng-disabled="compra.movimiento.clase.nombre===diccionario.MOVING_POR_IMPORTACION"
-										/>
+										<input capitalize required type="text" placeholder="codigo de control" ng-model="compra.codigo_control"
+										 ng-disabled="compra.movimiento.clase.nombre===diccionario.MOVING_POR_IMPORTACION" />
 										<span class="red">(*)</span>
 									</td>
 								</tr>
@@ -413,16 +530,18 @@
 									</td>
 									<td ng-if="compra.usar_producto">
 										<label>ALMACEN</label>
-										<select data-validate="validate(required)" required id="almacen" name="almacen" ng-model="compra.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
-										 data-placeholder="Click para escoger" ng-disabled="compra.id"></select>
+										<select data-validate="validate(required)" required id="almacen" name="almacen" ng-model="compra.almacen"
+										 ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id" data-placeholder="Click para escoger"
+										 ng-disabled="compra.id"></select>
 										<span class="red">(*)</span>
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<label>TIPO DE PAGO</label>
-										<select required id="pago" name="pago" ng-change="cambiarTipoPago(compra.tipoPago)" ng-model="compra.tipoPago" ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id"
-										 data-placeholder="Click para escoger" ng-disabled="compra.id"></select>
+										<select required id="pago" name="pago" ng-change="cambiarTipoPago(compra.tipoPago)" ng-model="compra.tipoPago"
+										 ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id" data-placeholder="Click para escoger"
+										 ng-disabled="compra.id"></select>
 										<span class="red">(*)</span>
 
 									</td>
@@ -447,8 +566,8 @@
 								<tr>
 									<td ng-if="!esContado">
 										<label>A CUENTA (Bs)</label>
-										<input data-validate="validate(required,number)" required type="number" step="0.001" ng-model="compra.a_cuenta" value="0.0"
-										 ng-change="calcularSaldo()" />
+										<input data-validate="validate(required,number)" required type="number" step="0.001" ng-model="compra.a_cuenta"
+										 value="0.0" ng-change="calcularSaldo()" />
 										<span class="red">(*)</span>
 									</td>
 									<td ng-if="!esContado">
@@ -473,8 +592,8 @@
 											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="compra.tipo_descuento" ng-change="recalcular()" />
 											<span id="descuentos" class="lbl check-compra"></span>
 										</label>
-										<input required ng-change="calcularImporteGeneral()" ng-model="compra.descuento" step="0.001" class="col-xs-12" type="number"
-										 value="0.0" />
+										<input required ng-change="calcularImporteGeneral()" ng-model="compra.descuento" step="0.001" class="col-xs-12"
+										 type="number" value="0.0" />
 										<span class="red">(*)</span>
 									</td>
 									<td ng-if="compra.descuento_general">
@@ -483,35 +602,35 @@
 											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="compra.tipo_recargo" ng-change="recalcular()" />
 											<span id="recargos" class="lbl check-compra"></span>
 										</label>
-										<input required ng-change="calcularImporteGeneral()" ng-model="compra.recargo" step="0.001" class="col-xs-12" type="number"
-										 value="0" />
+										<input required ng-change="calcularImporteGeneral()" ng-model="compra.recargo" step="0.001" class="col-xs-12"
+										 type="number" value="0" />
 										<span class="red">(*)</span>
 									</td>
 								</tr>
 								<tr>
 									<td ng-if="compra.descuento_general">
 										<label>ICE (-)</label>
-										<input required ng-change="calcularImporteGeneral()" ng-model="compra.ice" step="0.001" class="col-xs-12" type="number" value="0"
-										/>
+										<input required ng-change="calcularImporteGeneral()" ng-model="compra.ice" step="0.001" class="col-xs-12"
+										 type="number" value="0" />
 										<span class="red">(*)</span>
 									</td>
 									<td ng-if="compra.descuento_general">
 										<label>EXCENTOS (-)</label>
-										<input required ng-change="calcularImporteGeneral()" ng-model="compra.excento" step="0.001" class="col-xs-12" type="number"
-										 value="0" />
+										<input required ng-change="calcularImporteGeneral()" ng-model="compra.excento" step="0.001" class="col-xs-12"
+										 type="number" value="0" />
 										<span class="red">(*)</span>
 									</td>
-									<tr>
-										<td colspan="2">
-											<a class="green" href="javascript:void(0)" ng-click="compra.usarObservacion=(compra.usarObservacion)?false:true">
-												<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-											</a>
-											<label ng-if="compra.usarObservacion">
-												<b>OBSERVACIÓN</b>
-											</label>
-											<input ng-if="compra.usarObservacion" ng-model="compra.observacion" type="text" class="form-control">
-										</td>
-									</tr>
+								<tr>
+									<td colspan="2">
+										<a class="green" href="javascript:void(0)" ng-click="compra.usarObservacion=(compra.usarObservacion)?false:true">
+											<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
+										</a>
+										<label ng-if="compra.usarObservacion">
+											<b>OBSERVACIÓN</b>
+										</label>
+										<input ng-if="compra.usarObservacion" ng-model="compra.observacion" type="text" class="form-control">
+									</td>
+								</tr>
 								</tr>
 							</table>
 						</div>
@@ -581,18 +700,19 @@
 									<tr>
 										<td>
 											<input id="centro_costo" autocomplete="off" ng-keypress="interceptarTecla($event,'id_producto',true)" style="width:130px;"
-											 capitalize required ng-disabled="!compra.almacen.id" type="text" ng-model="detalleCompra.centroCosto.nombre" placeholder="Ingrese el centro del costo..."
-											 uib-typeahead="centroCosto as centroCosto.nombre for centroCosto in centrosCosto | filter:{nombre:$viewValue}"
-											 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0"
-											 typeahead-on-select="establecerCentroCosto($item, $model, $label, $event)">
+											 capitalize required ng-disabled="!compra.almacen.id" type="text" ng-model="detalleCompra.centroCosto.nombre"
+											 placeholder="Ingrese el centro del costo..." uib-typeahead="centroCosto as centroCosto.nombre for centroCosto in centrosCosto | filter:{nombre:$viewValue}"
+											 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+											 typeahead-min-length="0" typeahead-on-select="establecerCentroCosto($item, $model, $label, $event)">
 
 										</td>
 										<td>
 
 											<input id="id_producto" ng-keypress="interceptarTecla($event,'fecha_vencimiento',true)" required ng-disabled="!compra.almacen.id"
-											 type="text" ng-model="detalleCompra.producto.nombre" placeholder="Ingrese el nombre del producto..." uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.unidad_medida+'-'+producto.descripcion) for producto in buscarProducto($viewValue)"
-											 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
-											 typeahead-on-select="establecerProducto($item, $model, $label, $event)">
+											 type="text" ng-model="detalleCompra.producto.nombre" placeholder="Ingrese el nombre del producto..."
+											 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.unidad_medida+'-'+producto.descripcion) for producto in buscarProducto($viewValue)"
+											 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+											 typeahead-min-length="3" typeahead-on-select="establecerProducto($item, $model, $label, $event)">
 										</td>
 										<!--<td ng-if="detalleCompra.producto.nombre.id">
 																	{{detalleCompra.producto.nombre.codigo}}
@@ -608,28 +728,28 @@
 										</td>
 										<td ng-if="usuario.empresa.usar_vencimientos">
 											<input id="fecha_vencimiento" ng-keypress="interceptarTecla($event,'lote',true)" ng-update-hidden class="form-control date-picker"
-											 type="text" data-date-format="dd/mm/yyyy" ng-model="detalleCompra.fechaVencimientoTexto" placeholder="Ingrese la fecha"
-											/>
+											 type="text" data-date-format="dd/mm/yyyy" ng-model="detalleCompra.fechaVencimientoTexto" placeholder="Ingrese la fecha" />
 										</td>
 										<td ng-if="usuario.empresa.usar_vencimientos">
-											<input id="lote" ng-keypress="interceptarTecla($event,'costo_unitario',true)" type="text" ng-model="detalleCompra.lote" class="col-xs-12"
-											/>
+											<input id="lote" ng-keypress="interceptarTecla($event,'costo_unitario',true)" type="text" ng-model="detalleCompra.lote"
+											 class="col-xs-12" />
 
 										</td>
 										<td style="text-align:  center;">
-											<input onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)" required class="col-xs-12"
-											 ng-change="calcularImporte()" step="0.001" ng-model="detalleCompra.costo_unitario" value="{{detalleCompra.producto.inventarios.length>0?detalleCompra.producto.nombre.inventarios[0].costo_unitario:0}}"
+											<input onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)"
+											 required class="col-xs-12" ng-change="calcularImporte()" step="0.001" ng-model="detalleCompra.costo_unitario"
+											 value="{{detalleCompra.producto.inventarios.length>0?detalleCompra.producto.nombre.inventarios[0].costo_unitario:0}}"
 											 type="number" />
 
 											<span class="blue">
 												Último precio
 											</span>
-											<span class="label label-danger label-white middle tooltip-info" ng-if="precio_inventario" data-rel="tooltip" tooltip-placement="top"
-											 uib-tooltip="Último precio de compra">{{precio_inventario}}</span>
+											<span class="label label-danger label-white middle tooltip-info" ng-if="precio_inventario" data-rel="tooltip"
+											 tooltip-placement="top" uib-tooltip="Último precio de compra">{{precio_inventario}}</span>
 										</td>
 										<td>
-											<input onfocus="this.select();" id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" required
-											 class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleCompra.cantidad" type="number" />
+											<input onfocus="this.select();" id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)"
+											 required class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleCompra.cantidad" type="number" />
 										</td>
 										<td>
 											{{detalleCompra.importe|number:2}}
@@ -649,23 +769,22 @@
 										<th>
 											<label>DESC. (-)</label>
 											<label>
-												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleCompra.tipo_descuento" ng-change="recalcular()"
-												/>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleCompra.tipo_descuento"
+												 ng-change="recalcular()" />
 												<span class="lbl check-compra"></span>
 											</label>
 										</th>
 										<th>
 											<label>REC. (+)</label>
 											<label>
-												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleCompra.tipo_recargo" ng-change="recalcular()"
-												/>
+												<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleCompra.tipo_recargo" ng-change="recalcular()" />
 												<span class="lbl check-compra"></span>
 											</label>
 										</th>
 										<th>
 											<label>ICE (-)</label>
 										</th>
-										<th >
+										<th>
 											<label>EXC. (-)</label>
 										</th>
 										<!--<th>
@@ -673,21 +792,21 @@
 																</th>-->
 									</tr>
 									<tr class="des-datos" style="display:none;">
-										<td >
-											<input required ng-change="calcularImporte()" ng-model="detalleCompra.descuento" step="0.001" class="col-xs-12" type="number"
-											 value="0" />
+										<td>
+											<input required ng-change="calcularImporte()" ng-model="detalleCompra.descuento" step="0.001" class="col-xs-12"
+											 type="number" value="0" />
 										</td>
-										<td >
-											<input required ng-change="calcularImporte()" ng-model="detalleCompra.recargo" step="0.001" class="col-xs-12" type="number"
-											 value="0" />
+										<td>
+											<input required ng-change="calcularImporte()" ng-model="detalleCompra.recargo" step="0.001" class="col-xs-12"
+											 type="number" value="0" />
 										</td>
-										<td >
-											<input required ng-change="calcularImporte()" ng-model="detalleCompra.ice" step="0.001" class="col-xs-12" type="number" value="0"
-											/>
+										<td>
+											<input required ng-change="calcularImporte()" ng-model="detalleCompra.ice" step="0.001" class="col-xs-12"
+											 type="number" value="0" />
 										</td>
-										<td >
-											<input required ng-change="calcularImporte()" ng-model="detalleCompra.excento" step="0.001" class="col-xs-12" type="number"
-											 value="0" />
+										<td>
+											<input required ng-change="calcularImporte()" ng-model="detalleCompra.excento" step="0.001" class="col-xs-12"
+											 type="number" value="0" />
 										</td>
 										<!--<td>
 																	{{detalleCompra.total}}
@@ -734,21 +853,22 @@
 												<span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-click="abrirDialogServicios(datosServicios)"></span>
 
 
-												<input id="id_servicio" autocomplete="off" ng-keypress="interceptarTecla($event,'fecha_vencimiento',true)" required ng-disabled="!compra.sucursal.id"
-												 type="text" ng-model="detalleCompra.servicio" placeholder="Ingrese el nombre del servicio..." uib-typeahead="servicio as (servicio.nombre+'-'+servicio.nombre_corto) for servicio in datosServicios.clases"
-												 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
-												 typeahead-on-select="establecerServicio($item, $model, $label, $event)">
+												<input id="id_servicio" autocomplete="off" ng-keypress="interceptarTecla($event,'fecha_vencimiento',true)"
+												 required ng-disabled="!compra.sucursal.id" type="text" ng-model="detalleCompra.servicio" placeholder="Ingrese el nombre del servicio..."
+												 uib-typeahead="servicio as (servicio.nombre+'-'+servicio.nombre_corto) for servicio in datosServicios.clases"
+												 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+												 typeahead-min-length="3" typeahead-on-select="establecerServicio($item, $model, $label, $event)">
 											</div>
 										</td>
 
 										<td>
-											<input autofocus onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)" required
-											 class="col-xs-12" ng-change="calcularImporte()" step="0.001" ng-model="detalleCompra.costo_unitario" type="number"
-											/>
+											<input autofocus onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)"
+											 required class="col-xs-12" ng-change="calcularImporte()" step="0.001" ng-model="detalleCompra.costo_unitario"
+											 type="number" />
 										</td>
 										<td>
-											<input id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" required class="col-xs-12" ng-change="calcularImporte()"
-											 ng-model="detalleCompra.cantidad" type="number" />
+											<input id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" required class="col-xs-12"
+											 ng-change="calcularImporte()" ng-model="detalleCompra.cantidad" type="number" />
 										</td>
 										<td>
 											{{detalleCompra.importe|number:2}}
@@ -782,40 +902,40 @@
 								<ul id="campos-detalle-compra" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret">
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_producto" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_producto"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>NOMBRE</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_codigo_producto" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_codigo_producto"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>CÓD. ITEM</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_unidad_producto" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_unidad_producto"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>UNID. MED.</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_costo_unitario" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_costo_unitario"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>C.U. (Bs/u)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_cantidad" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_cantidad"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>CANT. (u)</label>
@@ -830,80 +950,80 @@
 									</li>
 									<li ng-if="usuario.empresa.usar_vencimientos">
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_lote" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_lote"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>LOTE</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_importe" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_importe"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>IMP. (Bs)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_descuento" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_descuento"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>DESC. (-)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_recargo" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_recargo"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>REC. (+)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_ice" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_ice"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>ICE (-)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_excento" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_excento"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>EXC. (-)</label>
 									</li>
 									<li ng-if="compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_total" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_total"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>SUJETO A CF</label>
 									</li>
 									<li ng-if="usuario.empresa.usar_funciones_erp && compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_it_retencion" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_it_retencion"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>IT</label>
 									</li>
 									<li ng-if="usuario.empresa.usar_funciones_erp && compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_iue" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_iue"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>IUE</label>
 									</li>
 									<li ng-if="usuario.empresa.usar_funciones_erp && compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_pagado" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_pagado"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>PAGADO</label>
@@ -996,12 +1116,12 @@
 										{{detalleCompra.cantidad}}
 									</td>
 									<td ng-if="compra.id && configuracionCompraVista.mostrar_costo_unitario">
-										<input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.costo_unitario"
-										 type="number" min="0.001" />
+										<input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001"
+										 ng-model="detalleCompra.costo_unitario" type="number" min="0.001" />
 									</td>
 									<td ng-if="compra.id && configuracionCompraVista.mostrar_cantidad">
-										<input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.cantidad"
-										 type="number" min="0.001" />
+										<input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001"
+										 ng-model="detalleCompra.cantidad" type="number" min="0.001" />
 									</td>
 									<td ng-if="(!compra.id || !detalleCompra.id) && configuracionCompraVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
 										{{detalleCompra.fechaVencimientoTexto}}
@@ -1137,40 +1257,40 @@
 								<ul id="campos-detalle-compra" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret">
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_producto" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_producto"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>NOMBRE</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_codigo_producto" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_codigo_producto"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>CÓD. ITEM</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_unidad_producto" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_unidad_producto"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>UNID. MED.</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_costo_unitario" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_costo_unitario"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>C.U. (Bs/u)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_cantidad" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_cantidad"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>CANT. (u)</label>
@@ -1185,80 +1305,80 @@
 									</li>
 									<li ng-if="usuario.empresa.usar_vencimientos">
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_lote" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_lote"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>LOTE</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_importe" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_importe"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>IMP. (Bs)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_descuento" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_descuento"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>DESC. (-)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_recargo" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_recargo"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>REC. (+)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_ice" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_ice"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>ICE (-)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_excento" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_excento"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>EXC. (-)</label>
 									</li>
 									<li ng-if="compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_total" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_total"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>SUJETO A CF</label>
 									</li>
 									<li ng-if="usuario.empresa.usar_funciones_erp && compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_it_retencion" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_it_retencion"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>IT</label>
 									</li>
 									<li ng-if="usuario.empresa.usar_funciones_erp && compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_iue" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_iue"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>IUE</label>
 									</li>
 									<li ng-if="usuario.empresa.usar_funciones_erp && compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_pagado" ng-change="guardarConfiguracionCompraVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_pagado"
+											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>PAGADO</label>
@@ -1351,12 +1471,12 @@
 										{{detalleCompra.cantidad}}
 									</td>
 									<td ng-if="compra.id && configuracionCompraVista.mostrar_costo_unitario">
-										<input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.costo_unitario"
-										 type="number" min="0.001" />
+										<input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001"
+										 ng-model="detalleCompra.costo_unitario" type="number" min="0.001" />
 									</td>
 									<td ng-if="compra.id && configuracionCompraVista.mostrar_cantidad">
-										<input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001" ng-model="detalleCompra.cantidad"
-										 type="number" min="0.001" />
+										<input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001"
+										 ng-model="detalleCompra.cantidad" type="number" min="0.001" />
 									</td>
 									<td ng-if="(!compra.id || !detalleCompra.id) && configuracionCompraVista.mostrar_fecha_vencimiento && usuario.empresa.usar_vencimientos">
 										{{detalleCompra.fechaVencimientoTexto}}
@@ -1650,8 +1770,8 @@
 								</td>
 								<td ng-if="compra.descuento_general">
 									<label>ICE (-)</label>
-									<input required ng-change="calcularImporteGeneral()" ng-model="compra.ice" step="0.001" class="col-xs-12" type="number" value="0"
-									/>
+									<input required ng-change="calcularImporteGeneral()" ng-model="compra.ice" step="0.001" class="col-xs-12" type="number"
+									 value="0" />
 								</td>
 								<td ng-if="compra.descuento_general">
 									<label>EXCENTOS (-)</label>
@@ -1792,7 +1912,8 @@
 </div>
 <div id="dialog-eliminar-compra" title="¿Eliminación de Compra?">
 	<p>
-		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar la sucursal seleccionada?</p>
+		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar la
+		sucursal seleccionada?</p>
 	<button type="button" class="btn btn-danger" ng-click="eliminarSucursal(sucursal)">Si</button>
 	<button type="button" class="btn btn-success" ng-click="cerrarConfirmacionEliminacion()">No</button>
 </div>
@@ -1889,7 +2010,8 @@
 						</label>
 					</td>
 					<td>
-						<a href="javascript:void(0)" role="button" data-rel="tooltip" data-placement="top" uib-tooltip="Anticipos Regulares" ng-click="establecerServicioSeleccionado(clase)">
+						<a href="javascript:void(0)" role="button" data-rel="tooltip" data-placement="top" uib-tooltip="Anticipos Regulares"
+						 ng-click="establecerServicioSeleccionado(clase)">
 							<span class="badge badge-success ">
 								<span class="fa fa-check bigger-200" aria-hidden="true"></span>
 							</span>
@@ -1946,8 +2068,8 @@
 					<td>{{pedido.fecha | date:"dd/MM/yyyy"}}</td>
 
 					<td>
-						<label ng-if="!pedido.eliminado"> 
-							<a  ng-click="abrirDialogDetallePedidos(pedido)">
+						<label ng-if="!pedido.eliminado">
+							<a ng-click="abrirDialogDetallePedidos(pedido)">
 								<i class="fa fa-check bigger-200"></i>
 							</a>
 						</label>
@@ -1971,19 +2093,21 @@
 </div>
 <!-- ========= fin pedidos ========= -->
 <div id="dialog-eliminar-pedido" title="¿Eliminación de pedido?">
-		<p>
-			<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el pedido seleccionado?
-		</p>
-		<button type="button" class="btn btn-danger" ng-click="EliminarPedido(pedido)">Si</button>
-		<button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarPedido()">No</button>
-	</div>
-	<div id="dialog-eliminar-producto-pedido" title="¿Eliminación de pedido?">
-		<p>
-			<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el producto seleccionado?
-		</p>
-		<button type="button" class="btn btn-danger" ng-click="EliminarPedidoDetalle(detalle)">Si</button>
-		<button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarPedido()">No</button>
-	</div>
+	<p>
+		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el
+		pedido seleccionado?
+	</p>
+	<button type="button" class="btn btn-danger" ng-click="EliminarPedido(pedido)">Si</button>
+	<button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarPedido()">No</button>
+</div>
+<div id="dialog-eliminar-producto-pedido" title="¿Eliminación de pedido?">
+	<p>
+		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el
+		producto seleccionado?
+	</p>
+	<button type="button" class="btn btn-danger" ng-click="EliminarPedidoDetalle(detalle)">Si</button>
+	<button type="button" class="btn btn-success" ng-click="cerrarDialogEliminarPedido()">No</button>
+</div>
 <!-- === modal detalle pedidos"==== -->
 <div id="dialog-detalle-pedidos" class="modal" t item-width="500">
 	<div class="modal-header bg-primary">
@@ -2032,16 +2156,16 @@
 									<th ng-if="verDescuento">
 										<label>DESC. (-)</label>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalle.detalleCompra.tipo_descuento" ng-change="recalcular()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalle.detalleCompra.tipo_descuento"
+											 ng-change="recalcular()" />
 											<span class="lbl check-compra"></span>
 										</label>
 									</th>
 									<th ng-if="verDescuento">
 										<label>REC. (+)</label>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalle.detalleCompra.tipo_recargo" ng-change="recalcular()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalle.detalleCompra.tipo_recargo"
+											 ng-change="recalcular()" />
 											<span class="lbl check-compra"></span>
 										</label>
 									</th>
@@ -2073,17 +2197,18 @@
 										{{detalle.detalleCompra.producto.unidad_medida}}
 									</td>
 									<td ng-if="usuario.empresa.usar_vencimientos">
-										<input ng-keypress="interceptarTecla($event,'lote',true)" ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-										 ng-model="detalle.detalleCompra.fechaVencimientoTexto" placeholder="Ingrese la fecha" />
+										<input ng-keypress="interceptarTecla($event,'lote',true)" ng-update-hidden class="form-control date-picker"
+										 type="text" data-date-format="dd/mm/yyyy" ng-model="detalle.detalleCompra.fechaVencimientoTexto" placeholder="Ingrese la fecha" />
 									</td>
 									<td ng-if="usuario.empresa.usar_vencimientos">
-										<input ng-keypress="interceptarTecla($event,'costo_unitario',true)" type="text" ng-model="detalle.detalleCompra.lote" class="col-xs-12"
-										/>
+										<input ng-keypress="interceptarTecla($event,'costo_unitario',true)" type="text" ng-model="detalle.detalleCompra.lote"
+										 class="col-xs-12" />
 									</td>
 									<td>
-										<input required onfocus="this.select();" ng-keypress="interceptarTecla($event,'cantidad',true)" class="col-xs-12" ng-change="calcularImportePedido(detalle.detalleCompra)"
-										 step="0.001" min="0.001" ng-model="detalle.detalleCompra.costo_unitario" value="{{detalle.detalleCompra.producto.inventarios.length>0?detalle.detalleCompra.producto.nombre.inventarios[0].costo_unitario:0}}"
-										 type="number" required/>
+										<input required onfocus="this.select();" ng-keypress="interceptarTecla($event,'cantidad',true)" class="col-xs-12"
+										 ng-change="calcularImportePedido(detalle.detalleCompra)" step="0.001" min="0.001" ng-model="detalle.detalleCompra.costo_unitario"
+										 value="{{detalle.detalleCompra.producto.inventarios.length>0?detalle.detalleCompra.producto.nombre.inventarios[0].costo_unitario:0}}"
+										 type="number" required />
 									</td>
 									<td>
 										<!-- <input onfocus="this.select();" id="cantidad" ng-keypress="interceptarTecla($event,'agregar_detalle_compra',false)" required
@@ -2092,20 +2217,20 @@
 									</td>
 
 									<td ng-if="verDescuento">
-										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.descuento" step="0.001"
-										 class="col-xs-12" type="number" value="0" />
+										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.descuento"
+										 step="0.001" class="col-xs-12" type="number" value="0" />
 									</td>
 									<td ng-if="verDescuento">
-										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.recargo" step="0.001"
-										 class="col-xs-12" type="number" value="0" />
+										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.recargo"
+										 step="0.001" class="col-xs-12" type="number" value="0" />
 									</td>
 									<td ng-if="verDescuento">
-										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.ice" step="0.001"
-										 class="col-xs-12" type="number" value="0" />
+										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.ice"
+										 step="0.001" class="col-xs-12" type="number" value="0" />
 									</td>
 									<td ng-if="verDescuento">
-										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.excento" step="0.001"
-										 class="col-xs-12" type="number" value="0" />
+										<input required ng-change="calcularImportePedido(detalle.detalleCompra)" ng-model="detalle.detalleCompra.excento"
+										 step="0.001" class="col-xs-12" type="number" value="0" />
 									</td>
 									<td>
 										{{detalle.detalleCompra.importe|number:2}}
@@ -2143,20 +2268,22 @@
 
 <!--==========Mensaje de pago de compra =========== -->
 <div id="Modal-Mensaje-Pago" class="modal wizard-posicion">
-		<div class="modal-header bg-primary">
-			<h4 class='smaller text-white text-uppercase'>			
-				<center>Mensaje</center>
-			</h4>
-		</div>
-		<div class="modal-body">
-			<div class="modal-content">
-				<h5><center>El pago excede el monto de la deuda, desea continuar 
-					(se registrará como pago anticipado)</center></h5>
-			</div>		
-		</div>
-		<div class="modal-footer wizard-actions">
-			<button class="btn btn-success btn-sm" ng-click="mensaje(true)">Continuar</button>
-			<button class="btn btn-danger btn-sm pull-left" ng-click="mensaje(false)">Cancelar</button>
+	<div class="modal-header bg-primary">
+		<h4 class='smaller text-white text-uppercase'>
+			<center>Mensaje</center>
+		</h4>
+	</div>
+	<div class="modal-body">
+		<div class="modal-content">
+			<h5>
+				<center>El pago excede el monto de la deuda, desea continuar
+					(se registrará como pago anticipado)</center>
+			</h5>
 		</div>
 	</div>
-	<!-- ==============Fin mensaje=============-->
+	<div class="modal-footer wizard-actions">
+		<button class="btn btn-success btn-sm" ng-click="mensaje(true)">Continuar</button>
+		<button class="btn btn-danger btn-sm pull-left" ng-click="mensaje(false)">Cancelar</button>
+	</div>
+</div>
+<!-- ==============Fin mensaje=============-->

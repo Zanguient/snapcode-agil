@@ -458,80 +458,146 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 			if (req.body.especifica_texto3) {
 				id_texto3 = req.body.especifica_texto3.id
 			}
-			ContabilidadCuenta.update({
-				id_empresa: req.body.id_empresa,
-				codigo: req.body.codigo,
-				nombre: req.body.nombre,
-				descripcion: req.body.descripcion,
-				debe: req.body.debe,
-				haber: req.body.haber,
-				saldo: req.body.saldo,
-				id_clasificacion: (req.body.clasificacion ? req.body.clasificacion.id : null),
-				id_tipo_cuenta: (req.body.tipoCuenta ? req.body.tipoCuenta.id : null),
-				bimonetaria: req.body.bimonetaria,
-				aplicar_calculo: req.body.aplicar_calculo,
-				monto: req.body.monto,
-				eliminado: req.body.eliminado,
-				id_tipo_auxiliar: idTipoAux,
-				especifica: req.body.especifica,
-				id_especifica_texto1: id_texto1,
-				id_especifica_texto2: id_texto2,
-				id_especifica_texto3: id_texto3,
-				tipo_especifica: req.body.tipo_especifica,
-				vincular_cuenta: req.body.vincular_cuenta,
-				cuenta_activo: req.body.cuenta_activo,
-				estado_resultado: req.body.estado_resultado
-			}, {
-					where: {
-						id: req.body.id
-					}
-				}).then(function (ContabilidadCuentaActualizada) {
-					if (req.body.cuentaC != null) {
-						ClienteCuenta.findOrCreate({
-							where: { id_cuenta: req.body.id },
-							defaults: {
-								id_cuenta: req.body.id,
-								id_cliente: req.body.cuentaC.cliente.id
-							}
-						}).spread(function (ficha, created) {
-							if (!created) {
-								ClienteCuenta.update({
-									id_cliente: req.body.cuentaC.cliente.id
-								}, {
-										where: { id_cuenta: req.body.id },
-									}).then(function (actualizado) {
-										guardarCuentaespecificas(req, res, Clase)
-									})
-							} else {
-								guardarCuentaespecificas(req, res, Clase)
-							}
-						})
-					} else if (req.body.cuentaP != null) {
-						ProveedorCuenta.findOrCreate({
-							where: { id_cuenta: req.body.id },
-							defaults: {
-								id_cuenta: req.body.id,
-								id_proveedor: req.body.cuentaP.proveedor.id
-							}
-						}).spread(function (ficha, created) {
-							if (!created) {
-								ProveedorCuenta.update({
-									id_proveedor: req.body.proveedor.id
-								}, {
-										where: { id_cuenta: req.body.id },
-									}).then(function (actualizado) {
-										guardarCuentaespecificas(req, res, Clase)
-									})
-							} else {
-								guardarCuentaespecificas(req, res, Clase)
-							}
-						})
+			ContabilidadConfiguracionGeneralTipoCuenta.findAll({
+				where: {
+					id_empresa: req.body.id_empresa,
+				},
+				include: [{ model: Clase, as: 'tipoCuenta' }]
+			}).then(function (configTipoCuenta) {
+				var tipoConfiguracion = configTipoCuenta.find(function (dato) {
+					return dato.id_tipo_cuenta === req.body.tipoCuenta.id
+				})
+				sequelize.transaction(function (t) {
+					if (req.body.tipoCuenta.nombre_corto == 1) {
+						var codigoCuentaPadre = null
+						return ActualizarCuenta(idTipoAux,req,res,t,
+							id_texto1,
+							id_texto2,
+							id_texto3,null)
 					} else {
-						guardarCuentaespecificas(req, res, Clase)
+						var codigoCuentaPadre = obtenercodigoCuentaPadre(req.body.codigo, req.body.tipoCuenta, tipoConfiguracion, req.body.usar_ceros_delante, configTipoCuenta);
+						return ContabilidadCuenta.find({
+							where: {
+								$or: [{ codigo: codigoCuentaPadre }],
+								id_empresa: req.body.id_empresa
+							},
+							transaction: t
+						}).then(function (cuentaPadreEncontrada) {
+							return ActualizarCuenta(idTipoAux,req,res,t,
+								id_texto1,
+								id_texto2,
+								id_texto3,cuentaPadreEncontrada.id)
+						})
 					}
-				});
-		})
+					
+				}).then(function (result) {
+					res.json({ mensaje: "¡Cuenta creada satisfactoriamente!" });
 
+				}).catch(function (err) {
+					res.json({ hasError: true, mensaje: err.stack ? err.stack : err });
+				});
+			})
+		})
+function ActualizarCuenta(idTipoAux,req,res,t,
+	id_texto1,
+	id_texto2,
+	id_texto3,idPadre){
+	return ContabilidadCuenta.update({
+		id_empresa: req.body.id_empresa,
+		codigo: req.body.codigo,
+		nombre: req.body.nombre,
+		descripcion: req.body.descripcion,
+		debe: req.body.debe,
+		haber: req.body.haber,
+		saldo: req.body.saldo,
+		id_clasificacion: (req.body.clasificacion ? req.body.clasificacion.id : null),
+		id_tipo_cuenta: (req.body.tipoCuenta ? req.body.tipoCuenta.id : null),
+		bimonetaria: req.body.bimonetaria,
+		aplicar_calculo: req.body.aplicar_calculo,
+		monto: req.body.monto,
+		eliminado: req.body.eliminado,
+		id_tipo_auxiliar: idTipoAux,
+		especifica: req.body.especifica,
+		id_especifica_texto1: id_texto1,
+		id_especifica_texto2: id_texto2,
+		id_especifica_texto3: id_texto3,
+		tipo_especifica: req.body.tipo_especifica,
+		vincular_cuenta: req.body.vincular_cuenta,
+		cuenta_activo: req.body.cuenta_activo,
+		estado_resultado: req.body.estado_resultado,
+		id_cuenta_padre:idPadre
+	}, {
+			where: {
+				id: req.body.id
+			}, transaction: t
+		}).then(function (ContabilidadCuentaActualizada) {
+			if (req.body.cuentaC != null) {
+				return ClienteCuenta.findOrCreate({
+					where: { id_cuenta: req.body.id },
+					defaults: {
+						id_cuenta: req.body.id,
+						id_cliente: req.body.cuentaC.cliente.id
+					}, transaction: t,
+					lock: t.LOCK.UPDATE
+				}).spread(function (ficha, created) {
+					if (!created) {
+						return ClienteCuenta.update({
+							id_cliente: req.body.cuentaC.cliente.id
+						}, {
+								where: { id_cuenta: req.body.id }, transaction: t
+							}).then(function (actualizado) {
+								return guardarCuentaespecificas(req, res, Clase)
+							}).catch(function (err) {
+								return new Promise(function (fulfill, reject) {
+									reject((err.stack !== undefined) ? err.stack : err);
+								});
+							})
+					} else {
+						return guardarCuentaespecificas(req, res, Clase)
+					}
+				}).catch(function (err) {
+					return new Promise(function (fulfill, reject) {
+						reject((err.stack !== undefined) ? err.stack : err);
+					});
+				})
+			} else if (req.body.cuentaP != null) {
+				return ProveedorCuenta.findOrCreate({
+					where: { id_cuenta: req.body.id },
+					defaults: {
+						id_cuenta: req.body.id,
+						id_proveedor: req.body.cuentaP.proveedor.id
+					}, transaction: t,
+					lock: t.LOCK.UPDATE
+				}).spread(function (ficha, created) {
+					if (!created) {
+						ProveedorCuenta.update({
+							id_proveedor: req.body.proveedor.id
+						}, {
+								where: { id_cuenta: req.body.id }, transaction: t
+							}).then(function (actualizado) {
+								return guardarCuentaespecificas(req, res, Clase)
+							}).catch(function (err) {
+								return new Promise(function (fulfill, reject) {
+									reject((err.stack !== undefined) ? err.stack : err);
+								});
+							})
+					} else {
+						return guardarCuentaespecificas(req, res, Clase)
+					}
+				}).catch(function (err) {
+					return new Promise(function (fulfill, reject) {
+						reject((err.stack !== undefined) ? err.stack : err);
+					});
+				})
+			} else {
+				return guardarCuentaespecificas(req, res, Clase)
+			}
+		}).catch(function (err) {
+			return new Promise(function (fulfill, reject) {
+				reject((err.stack !== undefined) ? err.stack : err);
+			});
+		});
+}
 	router.route('/contabilidad-cuenta')
 		.post(function (req, res) {
 			sequelize.transaction(function (t) {
@@ -922,16 +988,16 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 	}
 	function obtenercodigoCuentaPadre(codigo, tipoCuenta, tipoConfiguracion, usar_ceros_delante, configTipoCuenta) {
 		if (usar_ceros_delante) {
-		/* 	var totalDigitos = 0
-			configTipoCuenta.forEach(function (dato) {
-				totalDigitos += dato.digitos
-			}) */			
+			/* 	var totalDigitos = 0
+				configTipoCuenta.forEach(function (dato) {
+					totalDigitos += dato.digitos
+				}) */
 			nuevoString = codigo.slice(0, (-tipoConfiguracion.digitos));
 			for (var i = 0; i < tipoConfiguracion.digitos; i++) {
-				nuevoString+="0"
+				nuevoString += "0"
 			}
 			console.log(nuevoString)
-		} else {		
+		} else {
 			/* var tipoConfiguracion2 = configTipoCuenta.find(function (dato) {
 				return dato.id_tipo_cuenta === tipoCuenta.id
 			}) */
@@ -941,17 +1007,17 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 	}
 	router.route('/cuentas/empresa')
 		.post(function (req, res) {
-			var promises=[]
+			var promises = []
 			ContabilidadConfiguracionGeneralTipoCuenta.findAll({
 				where: {
 					id_empresa: req.body.id_empresa,
 				},
 				include: [{ model: Clase, as: 'tipoCuenta' }]
 			}).then(function (configTipoCuenta) {
-			
+
 				sequelize.transaction(function (t) {
 					req.body.cuentas.forEach(function (cuenta, index, array) {
-					
+
 						promises.push(ClasificacionCuenta.findOrCreate({
 							where: { nombre: cuenta.clasificacion.nombre, id_empresa: req.body.id_empresa },
 							defaults: { nombre: cuenta.clasificacion.nombre, id_empresa: req.body.id_empresa },
@@ -1046,7 +1112,7 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 												id_tipo_cuenta: claseEncontrada[0].id,
 												bimonetaria: cuenta.bimonetaria,
 												eliminado: false,
-		
+
 											}, { transaction: t }).then(function (cuentaCreada) {
 												var codigoCuentaPadre = obtenercodigoCuentaPadre(cuentaCreada.codigo, claseEncontrada[0], tipoConfiguracion, req.body.usar_ceros_delante, configTipoCuenta);
 												return ContabilidadCuenta.find({
@@ -1105,17 +1171,17 @@ module.exports = function (router, ContabilidadCuenta, ClasificacionCuenta, Tipo
 								reject((err.stack !== undefined) ? err.stack : err);
 							});
 						}))
-		
+
 					});
 					return Promise.all(promises)
-				}).then(function (result) {					
-						res.json({ mensaje: "¡Cuentas creados satisfactoriamente!" });				
+				}).then(function (result) {
+					res.json({ mensaje: "¡Cuentas creados satisfactoriamente!" });
 				}).catch(function (err) {
 					res.json({ hasError: true, message: err.stack });
 				});
 			})
 
-			
+
 		});
 
 	router.route('/cuentas-auxiliares/empresa/:id_empresa/tipo/:tipo')
