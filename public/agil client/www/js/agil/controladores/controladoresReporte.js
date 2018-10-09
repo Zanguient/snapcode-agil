@@ -1087,7 +1087,7 @@ angular.module('agil.controladores')
 					doc.text((ventas[i].activa ? "V" : "A"), 215, y);
 					doc.text(ventas[i].activa ? ventas[i].cliente.nit : '0', 235, y);
 					doc.font('Helvetica', 6);
-					doc.text(ventas[i].activa ? ventas[i].cliente.razon_social : 'ANULADO', 283, y - 6, { width: 150 });
+					doc.text(ventas[i].activa ? ventas[i].cliente.razon_social : 'ANULADO', 283, y - 6, { width: 100 });
 					doc.font('Helvetica', 8)
 					doc.text(ventas[i].activa ? ventas[i].importe : 0, 385, y);
 					doc.text(0, 430, y);
