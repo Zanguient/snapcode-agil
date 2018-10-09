@@ -1013,7 +1013,7 @@ angular.module('agil.controladores')
 					columns.push(0);
 					columns.push(ventas[i].activa ? ventas[i].total : 0);
 					columns.push(ventas[i].activa ? Math.round((ventas[i].total * 0.13) * 100) / 100 : 0);
-					columns.push((ventas[i].codigo_control) ? ventas[i].codigo_control : "");
+					columns.push(ventas[i].activa ? (ventas[i].codigo_control) ? ventas[i].codigo_control : "" : '0');
 					sumaImporte = ventas[i].activa ? sumaImporte + ventas[i].importe : sumaImporte;
 					sumaImporteIce = 0;
 					sumaImporteExp = 0;
@@ -1074,8 +1074,8 @@ angular.module('agil.controladores')
 					doc.text(i + 1, 45, y);
 					doc.text(ventas[i].fecha.getDate() + "/" + (ventas[i].fecha.getMonth() + 1) + "/" + ventas[i].fecha.getFullYear(), 65, y);
 					doc.text(ventas[i].factura, 110, y);
-					doc.text(ventas[i].autorizacion, 145, y);
-					doc.text((ventas[i].activa ? "V" : "A"), 210, y);
+					doc.text(ventas[i].autorizacion, 143, y);
+					doc.text((ventas[i].activa ? "V" : "A"), 215, y);
 					doc.text(ventas[i].activa ? ventas[i].cliente.nit : '0', 235, y);
 					doc.text(ventas[i].activa ? ventas[i].cliente.razon_social : 'Anulado', 283, y - 6, { width: 100 });
 					doc.text(ventas[i].activa ? ventas[i].importe : 0, 385, y);
@@ -1086,7 +1086,7 @@ angular.module('agil.controladores')
 					doc.text(0, 580, y);
 					doc.text(ventas[i].activa ? ventas[i].total : 0, 615, y);
 					doc.text(ventas[i].activa ? (Math.round((ventas[i].total * 0.13) * 100) / 100) : 0, 650, y);
-					doc.text(ventas[i].codigo_control, 685, y);
+					doc.text(ventas[i].activa ? ventas[i].codigo_control : 0, 685, y);
 					y = y + 30;
 					sumaSubImporte = (ventas[i].activa ? sumaSubImporte + ventas[i].importe : 0);
 					sumaSubImporteIce = 0;
