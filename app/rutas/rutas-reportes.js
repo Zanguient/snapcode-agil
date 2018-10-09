@@ -68,7 +68,7 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 
 						var  entity = ventas.concat(ventas2);
 						entity = entity.sort(function (a, b) {
-							return b.factura - a.factura;
+							return a.factura - b.factura;
 						});
 						// entity = entity.sort(function (a, b) {
 						// 	return a.fecha - b.fecha;
