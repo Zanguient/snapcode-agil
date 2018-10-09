@@ -714,7 +714,7 @@ angular.module('agil.controladores')
 		$scope.imprimirCotizacion = function (cotizacionId) {
 			console.log('cotizacion id')
 			console.log(cotizacionId)
-			var promesa = DatosImpresionCotizacion(cotizacionId, $scope.usuario.id_empresa);
+			var promesa = DatosImpresionCotizacion(cotizacionId.id, $scope.usuario.id_empresa);
 			promesa.then(function (datos) {
 				console.log('datos')
 				console.log(datos.cotizacion)
