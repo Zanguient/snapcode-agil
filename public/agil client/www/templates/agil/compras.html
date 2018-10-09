@@ -197,7 +197,7 @@
 							<a class="blue" href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verCompra(item)">
 								<i class="ace-icon fa fa-search-plus bigger-130"></i>
 							</a>
-							<a class="green" ng-if="item.pagosCompra.length==0" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
+							<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar"
 							 ng-click="modificarCompra(item)">
 								<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
 							</a>
@@ -240,7 +240,9 @@
 				</tr>
 			</tbody>
 		</table>
+		<div class="pull-right">
 		<at-pagination ng-if="compras.length>0" at-list="list" at-config="config"></at-pagination>
+	</div>
 		<!-- <div class="table-header">
 			Lista de Compras
 		</div> -->
