@@ -2,9 +2,9 @@ angular.module('agil.controladores')
     .controller('ControladorComprobantes', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI','CodigoControl', 'Paginator', 'ComprobantePaginador', 'ClasesTipo', 'ListaCuentasComprobanteContabilidad',
     'ListaAsientosComprobanteContabilidad', 'NuevoComprobanteContabilidad', 'ClasesTipo', 'LibroMayorCuenta', 'ComprobanteRevisarPaginador','AsignarComprobanteFavorito', 'Diccionario', 'ObtenerCambioMoneda', 'ImprimirComprobante',
     'ComprasComprobante', 'VerificarUsuarioEmpresa', 'FieldViewer', 'DatosComprobante', 'EliminarComprobante', 'ListaCambioMoneda', 'ActualizarCambioMoneda', 'GuardarComprobantesImportados',
-        'ComprobanteTotalGeneralEmpresa', 'EdicionComprobanteContabilidad', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl, Paginator, ComprobantePaginador, ClasesTipo, ListaCuentasComprobanteContabilidad, ListaAsientosComprobanteContabilidad, NuevoComprobanteContabilidad, ClasesTipo, LibroMayorCuenta, ComprobanteRevisarPaginador,
+        'ComprobanteTotalGeneralEmpresa', 'EdicionComprobanteContabilidad','DescargarListaAsientosDeComprobantes', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, CodigoControl, Paginator, ComprobantePaginador, ClasesTipo, ListaCuentasComprobanteContabilidad, ListaAsientosComprobanteContabilidad, NuevoComprobanteContabilidad, ClasesTipo, LibroMayorCuenta, ComprobanteRevisarPaginador,
         AsignarComprobanteFavorito, Diccionario, ObtenerCambioMoneda, ImprimirComprobante, ComprasComprobante, VerificarUsuarioEmpresa, FieldViewer, DatosComprobante, EliminarComprobante, ListaCambioMoneda, ActualizarCambioMoneda, GuardarComprobantesImportados,
-        ComprobanteTotalGeneralEmpresa, EdicionComprobanteContabilidad) {
+        ComprobanteTotalGeneralEmpresa, EdicionComprobanteContabilidad,DescargarListaAsientosDeComprobantes) {
         blockUI.start();
         $scope.asientoNuevo = false
         $scope.usuario = JSON.parse($localStorage.usuario);
@@ -488,7 +488,42 @@ angular.module('agil.controladores')
             });
            // $scope.paginator.itemsPerPage = 10;
         }
-
+        $scope.generarExcelAsientosDeComprobantes = function (inicio,fin) {         
+            $scope.mostrarMensaje("Descargando archivo, porfabor espere esto puede tardar varios minutos...") 
+            var promesa = DescargarListaAsientosDeComprobantes($scope.usuario.id_empresa,inicio,fin);
+            promesa.then(function (dato) {
+                var data = [["TIPO COMPROBANTE","NUMERACION",'FECHA',"SUCURSAL","GLOSA GENERAL",'NRO. CUENTA',"CUENTA","GLOSA INDIVIDUAL","DEBE","HABER","CENTRO DE COSTO","AUXILIARES"]]
+                var totalCosto = 0;
+                for (var i = 0; i < dato.comprobantes.length; i++) {
+                    var comprobante =dato.comprobantes[i]
+                    var columns = [];
+                    
+                    columns.push(comprobante.tipo_comprobante)
+                    columns.push(comprobante.numero_comprobante)
+                    columns.push(new Date(comprobante.fecha_comprobante))
+                    columns.push(comprobante.nombre_sucursal)
+                    columns.push(comprobante.gloza_comprobante)
+                    columns.push(comprobante.numero_cuenta)
+                    columns.push(comprobante.nombre_cuenta)
+                    columns.push(comprobante.gloza)                  
+                    columns.push(comprobante.debe_bs)        
+                    columns.push(comprobante.haber_bs)    
+                 
+                  console.log(i)
+                    data.push(columns);
+                }                
+                var ws_name = "SheetJS";
+                var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+                /* add worksheet to workbook */
+                wb.SheetNames.push(ws_name);
+                wb.Sheets[ws_name] = ws;
+                
+                var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+                saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "LISTA-ASIENTOS-CONTABLES-DE-COMPROBANTES.xlsx");
+                $scope.mostrarMensaje("Descarga Completa")
+                blockUI.stop();
+            })
+        }
         $scope.inicio();
 
     }]);

@@ -18,6 +18,10 @@
             <i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
             Ejemplo Importación
         </a>
+        <button id="nuevo" ng-disabled="!aplicacion.puede_crear" class="btn btn-primary" ng-click="generarExcelAsientosDeComprobantes(filtro.inicio,filtro.fin)">
+                <i class="ace-icon fa fa-plus align-top bigger-125"></i>
+                DESCARGAR ASIENTOS CONTABLES
+            </button>
         <a id="cambioMoneda" href="javascript:void(0)" ng-click="abrirCambioMoneda()" class="tooltip-success" data-rel="tooltip"
             title="Edit">
             <span class="blue">

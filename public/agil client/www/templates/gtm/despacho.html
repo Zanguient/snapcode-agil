@@ -138,8 +138,8 @@
 		<span ng-if="!verDatosCobroDespachos">Lista de Despachos</span>
 		<span ng-if="verDatosCobroDespachos">Lista de Cobros</span>
 		<div class=" pos-rel pull-left">
-			<a ng-if="!verDatosCobroDespachos" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="right" uib-tooltip="Ver Info. Cobros"
-			 ng-click="verDatosCobros()">
+			<a ng-if="!verDatosCobroDespachos" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="right"
+			 uib-tooltip="Ver Info. Cobros" ng-click="verDatosCobros()">
 				<span class="fa fa-money fa-2x text-white margin-0-5"></span>
 			</a>
 			<a ng-if="verDatosCobroDespachos" href="javascript:void(0)" data-rel="tooltip" tooltip-placement="right" uib-tooltip="Ver info. Despacho"
@@ -149,8 +149,10 @@
 		</div>
 		<div class="inline pos-rel pull-right">
 
-			<span ng-if="verDatosCobroDespachos">Producto: &nbsp{{totalesDespachos.producto|number:2}}&nbsp&nbsp&nbsp&nbsp </span>
-			<span ng-if="verDatosCobroDespachos">S Trasporte: &nbsp{{totalesDespachos.servicio_transporte|number:2}}&nbsp&nbsp&nbsp&nbsp</span>
+			<span ng-if="verDatosCobroDespachos">Producto: &nbsp{{totalesDespachos.producto|number:2}}&nbsp&nbsp&nbsp&nbsp
+			</span>
+			<span ng-if="verDatosCobroDespachos">S Trasporte:
+				&nbsp{{totalesDespachos.servicio_transporte|number:2}}&nbsp&nbsp&nbsp&nbsp</span>
 			<span ng-if="verDatosCobroDespachos">Total: &nbsp{{totalesDespachos.total|number:2}}&nbsp&nbsp&nbsp&nbsp</span>
 			<a class="green pull-right" href="javascript:void(0)" ng-click="abrirModalVentaKardexFactura()">
 				<i class="fa fa-unlock fa-2x text-white margin-0-5"></i>
@@ -184,6 +186,7 @@
 							<th ng-if="!verDatosCobroDespachos">Tipo Estibaje</th>
 							<th ng-if="!verDatosCobroDespachos">Costo Estibaje</th>
 
+							<th ng-if="verDatosCobroDespachos">Cantidad</th>
 							<th ng-if="verDatosCobroDespachos">Producto</th>
 							<th ng-if="verDatosCobroDespachos">Total</th>
 							<th ng-if="verDatosCobroDespachos">Pago ac</th>
@@ -212,7 +215,9 @@
 
 							<td ng-if="!verDatosCobroDespachos">{{gtm_detalle_despacho.estibaje.nombre}}</td>
 							<td ng-if="!verDatosCobroDespachos">{{gtm_detalle_despacho.estibaje.costo*gtm_detalle_despacho.cantidad_despacho|number:2}}</td>
-
+							<td ng-if="verDatosCobroDespachos">
+								{{gtm_detalle_despacho.cantidad_despacho}}
+							</td>
 
 							<td ng-if="verDatosCobroDespachos">
 								{{gtm_detalle_despacho.precio_unitario*gtm_detalle_despacho.cantidad_despacho|number:2}}
@@ -230,7 +235,8 @@
 								<p>
 									<span ng-class="gtm_detalle_despacho.estado.nombre=='DEUDA'?'label-danger':
 									gtm_detalle_despacho.estado.nombre=='PARCIAL'?'label-warning':
-									gtm_detalle_despacho.estado.nombre=='PAGADO'?'label-success':'label-danger'" class="label arrowed-in arrowed-in-right">{{gtm_detalle_despacho.estado.nombre}}</span>
+									gtm_detalle_despacho.estado.nombre=='PAGADO'?'label-success':'label-danger'"
+									 class="label arrowed-in arrowed-in-right">{{gtm_detalle_despacho.estado.nombre}}</span>
 								</p>
 								<!-- <p ng-if="gtm_detalle_despacho.saldo_pago_ac>0 && gtm_detalle_despacho.total>gtm_detalle_despacho.saldo_pago_ac">
 									<span class="label label-warning arrowed-in arrowed-in-right">Parcial</span>
@@ -255,7 +261,8 @@
 									 ng-click="abrirModalAsignacionFactura(gtm_detalle_despacho)">
 										<i class="ace-icon fa fa-unlock bigger-130"></i>
 									</a>
-									<a class="red" e-disabled="!aplicacion.puede_modificar" ng-if="gtm_detalle_despacho.factura" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(gtm_detalle_despacho,'despacho')">
+									<a class="red" e-disabled="!aplicacion.puede_modificar" ng-if="gtm_detalle_despacho.factura" href="javascript:void(0)"
+									 ng-click="abrirModalVerificarCuenta(gtm_detalle_despacho,'despacho')">
 										<i class="ace-icon fa fa-lock bigger-130"></i>
 									</a>
 
@@ -274,7 +281,8 @@
 		
 											</span>
 										</a> -->
-									<a class="red" e-disabled="!aplicacion.puede_eliminar" ng-if="!gtm_detalle_despacho.factura" href="javascript:void(0)" ng-click="abrirPopupConfirmacionEliminacion(removerDetalleDespacho,gtm_detalle_despacho)">
+									<a class="red" e-disabled="!aplicacion.puede_eliminar" ng-if="!gtm_detalle_despacho.factura" href="javascript:void(0)"
+									 ng-click="abrirPopupConfirmacionEliminacion(removerDetalleDespacho,gtm_detalle_despacho)">
 										<i class="ace-icon fa fa-trash-o bigger-130"></i>
 									</a>
 
@@ -315,87 +323,87 @@
 						</tr>
 					</tbody>
 				</table>
-				</div>
-				<div class="row" ng-include src="'/templates/gral/paginator.html'" ng-if="despachos.length > 0">
-				</div>
+			</div>
+			<div class="row" ng-include src="'/templates/gral/paginator.html'" ng-if="despachos.length > 0">
 			</div>
 		</div>
 	</div>
+</div>
 
-	<div id="modal-asignacion-factura">
-		<form name="asig" ng-submit="establecerFactura(detalle_despacho)">
-			<div class="modal-header bg-primary">
-				<h4 class='smaller text-white text-uppercase'>
-					<label>Asignacion Factura</label>
-				</h4>
-			</div>
-
-			<div class="modal-body">
-
-				<div class="form-group">
-					<label for="ciudad">N° Factura</label>
-					<input type="number" required ng-model="detalle_despacho.factura" ng-model-options="{updateOn: 'submit'}" class="form-control">
-				</div>
-
-
-				<div class="form-group">
-					<label for="ciudad">Fecha</label>
-					<input type="text" data-date-format="dd/mm/yyyy" ng-update-hidden class="date-picker form-control" ng-model="detalle_despacho.fecha_factura">
-				</div>
-
-			</div>
-
-			<div class="modal-footer wizard-actions">
-				<button type="submit" class="btn btn-primary btn-sm">
-					<i class="glyphicon glyphicon-floppy-disk"></i>Asignar
-				</button>
-				<button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAsignacionFactura()">
-					<i class="ace-icon fa fa-times"></i>Cancelar
-				</button>
-			</div>
-
-		</form>
-	</div>
-	<div id="modal-asignacion-factura-kardex">
+<div id="modal-asignacion-factura">
+	<form name="asig" ng-submit="establecerFactura(detalle_despacho)">
 		<div class="modal-header bg-primary">
 			<h4 class='smaller text-white text-uppercase'>
 				<label>Asignacion Factura</label>
 			</h4>
 		</div>
-		<form name="asig" ng-submit="establecerFacturaKardex(detalle_kardex)">
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="form-group">
-						<label for="ciudad">N° Factura</label>
-						<input type="number" required ng-model-options="{updateOn: 'blur'}" ng-model="detalle_kardex.factura">
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="modal-footer wizard-actions">
-						<button type="submit" class="btn btn-primary btn-sm">
-							<i class="glyphicon glyphicon-floppy-disk"></i>Asignar
-						</button>
-						<button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAsignacionFacturaKardex()">
-							<i class="ace-icon fa fa-times"></i>Cancelar
-						</button>
-					</div>
-				</div>
-			</div>
-		</form>
-	</div>
 
-	<div id="modal-detalle-kardex">
-		<div class="modal-header bg-primary">
-			<h4 class='smaller text-white text-uppercase'>
-				<label>Observaciones</label>
-			</h4>
-		</div>
 		<div class="modal-body">
 
-			<p align="center" class="text-primary">{{kardex.cliente.razon_social}}</p>
-			<!-- <table class="table table-striped table-hover">
+			<div class="form-group">
+				<label for="ciudad">N° Factura</label>
+				<input type="number" required ng-model="detalle_despacho.factura" ng-model-options="{updateOn: 'submit'}" class="form-control">
+			</div>
+
+
+			<div class="form-group">
+				<label for="ciudad">Fecha</label>
+				<input type="text" data-date-format="dd/mm/yyyy" ng-update-hidden class="date-picker form-control" ng-model="detalle_despacho.fecha_factura">
+			</div>
+
+		</div>
+
+		<div class="modal-footer wizard-actions">
+			<button type="submit" class="btn btn-primary btn-sm">
+				<i class="glyphicon glyphicon-floppy-disk"></i>Asignar
+			</button>
+			<button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAsignacionFactura()">
+				<i class="ace-icon fa fa-times"></i>Cancelar
+			</button>
+		</div>
+
+	</form>
+</div>
+<div id="modal-asignacion-factura-kardex">
+	<div class="modal-header bg-primary">
+		<h4 class='smaller text-white text-uppercase'>
+			<label>Asignacion Factura</label>
+		</h4>
+	</div>
+	<form name="asig" ng-submit="establecerFacturaKardex(detalle_kardex)">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="form-group">
+					<label for="ciudad">N° Factura</label>
+					<input type="number" required ng-model-options="{updateOn: 'blur'}" ng-model="detalle_kardex.factura">
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="modal-footer wizard-actions">
+					<button type="submit" class="btn btn-primary btn-sm">
+						<i class="glyphicon glyphicon-floppy-disk"></i>Asignar
+					</button>
+					<button type="button" class="btn btn-danger btn-sm" ng-click="cerrarAsignacionFacturaKardex()">
+						<i class="ace-icon fa fa-times"></i>Cancelar
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+<div id="modal-detalle-kardex">
+	<div class="modal-header bg-primary">
+		<h4 class='smaller text-white text-uppercase'>
+			<label>Observaciones</label>
+		</h4>
+	</div>
+	<div class="modal-body">
+
+		<p align="center" class="text-primary">{{kardex.cliente.razon_social}}</p>
+		<!-- <table class="table table-striped table-hover">
 			<thead>
 				<tr>
 					<th>N°</th>
@@ -419,330 +427,331 @@
 
 			</tbody>
 		</table> -->
-			<p>{{kardex.observacion}}</p>
-		</div>
-		<div class="modal-footer wizard-actions">
-			<button type="button" class="btn btn-primary btn-sm">
-				<i class=" fa fa-print align-top "></i>
-				Pdf
-			</button>
-			<button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDetalleKardex()">
-				<i class="ace-icon fa fa-times"></i>Cancelar
-			</button>
-		</div>
+		<p>{{kardex.observacion}}</p>
 	</div>
-	<div id="modal-venta-kardex-factura">
-		<div class="modal-header bg-primary">
-			<h4 class='smaller text-white text-uppercase'>
-				<i class='icono-prerequisito'></i>
-				<label> &nbsp;Factura Kardex </label>
-			</h4>
-		</div>
-		<div class="modal-body">
-			<form ng-submit="obtenerVentaKardexFactura(filtroVentaKardex)">
-				<div class="row">
-					<div class="form-group col-sm-3">
-						<label for="nombres">Desde</label>
-						<input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVentaKardex.inicio"
-						 data-date-format="dd/mm/yyyy" placeholder="Desde">
-					</div>
-					<div class="form-group col-sm-3">
-						<label for="ap-paterno">Hasta</label>
-						<input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVentaKardex.fin"
-						 data-date-format="dd/mm/yyyy" placeholder="Hasta">
-					</div>
-					<div class="form-group col-sm-2">
+	<div class="modal-footer wizard-actions">
+		<button type="button" class="btn btn-primary btn-sm">
+			<i class=" fa fa-print align-top "></i>
+			Pdf
+		</button>
+		<button type="button" class="btn btn-danger btn-sm" ng-click="cerrarDetalleKardex()">
+			<i class="ace-icon fa fa-times"></i>Cancelar
+		</button>
+	</div>
+</div>
+<div id="modal-venta-kardex-factura">
+	<div class="modal-header bg-primary">
+		<h4 class='smaller text-white text-uppercase'>
+			<i class='icono-prerequisito'></i>
+			<label> &nbsp;Factura Kardex </label>
+		</h4>
+	</div>
+	<div class="modal-body">
+		<form ng-submit="obtenerVentaKardexFactura(filtroVentaKardex)">
+			<div class="row">
+				<div class="form-group col-sm-3">
+					<label for="nombres">Desde</label>
+					<input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVentaKardex.inicio"
+					 data-date-format="dd/mm/yyyy" placeholder="Desde">
+				</div>
+				<div class="form-group col-sm-3">
+					<label for="ap-paterno">Hasta</label>
+					<input type="text" class="form-control date-picker" autocomplete="off" ng-update-hidden ng-model="filtroVentaKardex.fin"
+					 data-date-format="dd/mm/yyyy" placeholder="Hasta">
+				</div>
+				<div class="form-group col-sm-2">
 
-						<!-- <label>
+					<!-- <label>
 						
 					</label> -->
 
-						<label>
-							<b>Pendientes</b>
-							<input ng-value="true" name="switch-field-1" autofocus class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
-							 type="checkbox" ng-model="filtroVentaKardex.pendiente">
-							<span class="lbl check-descuento"></span>
-						</label>
+					<label>
+						<b>Pendientes</b>
+						<input ng-value="true" name="switch-field-1" autofocus class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-empty"
+						 type="checkbox" ng-model="filtroVentaKardex.pendiente">
+						<span class="lbl check-descuento"></span>
+					</label>
 
 
+				</div>
+				<div class="form-group col-sm-4">
+					<div class="buttons-align">
+						<button type="submit" class="btn btn-primary btn-sm">
+							<i class=" fa fa-search-plus align-top "></i>
+							Filtrar
+						</button>
 					</div>
-					<div class="form-group col-sm-4">
-						<div class="buttons-align">
-							<button type="submit" class="btn btn-primary btn-sm">
-								<i class=" fa fa-search-plus align-top "></i>
-								Filtrar
-							</button>
-						</div>
-					</div>
-				</div>
-			</form>
-			<div class="table-fixed-header">
-				<table class="table table-striped table-bordered table-hover ">
-					<thead fix-head class="table-head-color">
-						<tr>
-							<th>N°</th>
-							<th>Fecha</th>
-							<th>Usuario</th>
-							<th>Cliente</th>
-							<th>Producto</th>
-							<th>Cantidad</th>
-							<th>P/u</th>
-							<th>Total</th>
-							<th>Pedidos</th>
-							<th>Saldo</th>
-							<th>Factura</th>
-							<th>Acciones</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="kardex in detalleKardexFactura track by $index">
-							<td>{{$index+1}}</td>
-							<td>{{kardex.fecha |date:'dd/MM/yyyy'}}</td>
-							<td>{{kardex.usuario.persona.nombre_completo}}</td>
-							<td>{{kardex.cliente.razon_social}}</td>
-							<td>{{kardex.detalles_kardex[0].producto.nombre}}</td>
-							<td>{{kardex.detalles_kardex[0].cantidad}}</td>
-							<td>{{kardex.detalles_kardex[0].producto.precio_unitario}}</td>
-							<td>{{kardex.detalles_kardex[0].cantidad*kardex.detalles_kardex[0].precio_unitario}}</td>
-							<td>{{kardex.detalles_kardex[0].cantidad-kardex.detalles_kardex[0].saldo}}</td>
-							<td>{{kardex.detalles_kardex[0].saldo}}</td>
-							<td>{{kardex.detalles_kardex[0].factura}}</td>
-							<td>
-								<a class="green" ng-if="!kardex.detalles_kardex[0].factura" href="javascript:void(0)" ng-click="abrirModalAsignacionFacturaKardex(kardex.detalles_kardex[0])">
-									<i class="ace-icon fa fa-unlock bigger-130"></i>
-								</a>
-								<a class="red" ng-if="kardex.detalles_kardex[0].factura" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(kardex.detalles_kardex[0],'despachoKardex')">
-									<i class="ace-icon fa fa-lock bigger-130"></i>
-								</a>
-								<a class="blue">
-									<i class="ace-icon fa fa-folder-open bigger-130" ng-click="abrirModalDetalleKardex(kardex)"></i>
-								</a>
-							</td>
-						</tr>
-
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="modal-footer wizard-actions">
-			<button class="btn btn-danger btn-sm" ng-click="cerrarVentaKardexFactura()">
-				<i class="ace-icon fa fa-times"></i>Cancelar
-			</button>
-		</div>
-	</div>
-	<!-- inicio confirmar usuario -->
-	<div id="modal-verificar-cuenta" title="Asignar Cuenta">
-		<form name="formularioAsignarCuenta" ng-submit="verificarCuentaAdmin(cuenta,$index)">
-			<div class="modal-header">
-				<p>
-					<h3>Verificar Cuenta</h3>
-				</p>
-			</div>
-			<div class="modal-body">
-				<div>
-					<span>Nombre Usuario: </span>
-					<input required class="form-control" type="text" ng-model="cuenta.nombre_usuario">
-				</div>
-				<div>
-					<span>Clave</span>
-					<input required class="form-control" type="password" name="contra" ng-model="cuenta.clave">
-				</div>
-			</div>
-			<div class="modal-footer">
-				<div class="col-sm-6">
-					<button type="submit" class="btn btn-success">Guardar</button>
-				</div>
-
-
-				<div class="col-sm-6">
-					<button type="button" class="btn btn-danger" ng-click="cerrarModalVerificarCuenta()">Cancelar</button>
 				</div>
 			</div>
 		</form>
+		<div class="table-fixed-header">
+			<table class="table table-striped table-bordered table-hover ">
+				<thead fix-head class="table-head-color">
+					<tr>
+						<th>N°</th>
+						<th>Fecha</th>
+						<th>Usuario</th>
+						<th>Cliente</th>
+						<th>Producto</th>
+						<th>Cantidad</th>
+						<th>P/u</th>
+						<th>Total</th>
+						<th>Pedidos</th>
+						<th>Saldo</th>
+						<th>Factura</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="kardex in detalleKardexFactura track by $index">
+						<td>{{$index+1}}</td>
+						<td>{{kardex.fecha |date:'dd/MM/yyyy'}}</td>
+						<td>{{kardex.usuario.persona.nombre_completo}}</td>
+						<td>{{kardex.cliente.razon_social}}</td>
+						<td>{{kardex.detalles_kardex[0].producto.nombre}}</td>
+						<td>{{kardex.detalles_kardex[0].cantidad}}</td>
+						<td>{{kardex.detalles_kardex[0].producto.precio_unitario}}</td>
+						<td>{{kardex.detalles_kardex[0].cantidad*kardex.detalles_kardex[0].precio_unitario}}</td>
+						<td>{{kardex.detalles_kardex[0].cantidad-kardex.detalles_kardex[0].saldo}}</td>
+						<td>{{kardex.detalles_kardex[0].saldo}}</td>
+						<td>{{kardex.detalles_kardex[0].factura}}</td>
+						<td>
+							<a class="green" ng-if="!kardex.detalles_kardex[0].factura" href="javascript:void(0)" ng-click="abrirModalAsignacionFacturaKardex(kardex.detalles_kardex[0])">
+								<i class="ace-icon fa fa-unlock bigger-130"></i>
+							</a>
+							<a class="red" ng-if="kardex.detalles_kardex[0].factura" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(kardex.detalles_kardex[0],'despachoKardex')">
+								<i class="ace-icon fa fa-lock bigger-130"></i>
+							</a>
+							<a class="blue">
+								<i class="ace-icon fa fa-folder-open bigger-130" ng-click="abrirModalDetalleKardex(kardex)"></i>
+							</a>
+						</td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div>
 	</div>
-	<!-- fin confirmar usuario -->
-
-	<div id="modal-cobros" title="Asignar Cuenta" class="modal">
-		<form name="formularioAsignarCuenta" ng-submit="crearDespachoResivo(detalle_despacho.resivo)">
-			<div class="modal-header bg-success">
-				<p>
-					<h4 class="modal-title text-center">RECIBO DE INGRESO</h4>
-					<p class="text-center">
-						<b>{{detalle_despacho.despacho.cliente.razon_social}}&nbsp;</b>
-					</p>
-					<p class="text-center">
-						<b>Pedido Nro. {{detalle_despacho.numero_correlativo}}&nbsp;</b>
-					</p>
-				</p>
+	<div class="modal-footer wizard-actions">
+		<button class="btn btn-danger btn-sm" ng-click="cerrarVentaKardexFactura()">
+			<i class="ace-icon fa fa-times"></i>Cancelar
+		</button>
+	</div>
+</div>
+<!-- inicio confirmar usuario -->
+<div id="modal-verificar-cuenta" title="Asignar Cuenta">
+	<form name="formularioAsignarCuenta" ng-submit="verificarCuentaAdmin(cuenta,$index)">
+		<div class="modal-header">
+			<p>
+				<h3>Verificar Cuenta</h3>
+			</p>
+		</div>
+		<div class="modal-body">
+			<div>
+				<span>Nombre Usuario: </span>
+				<input required class="form-control" type="text" ng-model="cuenta.nombre_usuario">
 			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="col-md-2">
-							<p>Sucursal.:</p>
-						</div>
-						<div class="col-md-10">
+			<div>
+				<span>Clave</span>
+				<input required class="form-control" type="password" name="contra" ng-model="cuenta.clave">
+			</div>
+		</div>
+		<div class="modal-footer">
+			<div class="col-sm-6">
+				<button type="submit" class="btn btn-success">Guardar</button>
+			</div>
 
-							<select required class="form-control" required ng-model="detalle_despacho.resivo.sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales">
-								<option value="">--Seleccionar--</option>
-							</select>
-						</div>
+
+			<div class="col-sm-6">
+				<button type="button" class="btn btn-danger" ng-click="cerrarModalVerificarCuenta()">Cancelar</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- fin confirmar usuario -->
+
+<div id="modal-cobros" title="Asignar Cuenta" class="modal">
+	<form name="formularioAsignarCuenta" ng-submit="crearDespachoResivo(detalle_despacho.resivo)">
+		<div class="modal-header bg-success">
+			<p>
+				<h4 class="modal-title text-center">RECIBO DE INGRESO</h4>
+				<p class="text-center">
+					<b>{{detalle_despacho.despacho.cliente.razon_social}}&nbsp;</b>
+				</p>
+				<p class="text-center">
+					<b>Pedido Nro. {{detalle_despacho.numero_correlativo}}&nbsp;</b>
+				</p>
+			</p>
+		</div>
+		<div class="modal-body">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="col-md-2">
+						<p>Sucursal.:</p>
 					</div>
-					<div class="col-md-8">
+					<div class="col-md-10">
 
-						<div class="col-md-3">
-							<p>Usuario.:</p>
-						</div>
-						<div class="col-md-9">
-							<p>{{detalle_despacho.despacho.usuario.persona.nombre_completo}}&nbsp;</p>
-						</div>
-						<div class="col-md-3">
-							<p>Factura.:</p>
-						</div>
-						<div class="col-md-9">
-							<p>{{detalle_despacho.despacho.cliente_razon.razon_social}}&nbsp;</p>
-						</div>
+						<select required class="form-control" required ng-model="detalle_despacho.resivo.sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales">
+							<option value="">--Seleccionar--</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-8">
 
-						<div class="col-md-3">
-							<p>Nit.:</p>
-						</div>
-						<div class="col-md-9">
-							<p>{{detalle_despacho.despacho.cliente.nit}}&nbsp;</p>
-						</div>
+					<div class="col-md-3">
+						<p>Usuario.:</p>
+					</div>
+					<div class="col-md-9">
+						<p>{{detalle_despacho.despacho.usuario.persona.nombre_completo}}&nbsp;</p>
+					</div>
+					<div class="col-md-3">
+						<p>Factura.:</p>
+					</div>
+					<div class="col-md-9">
+						<p>{{detalle_despacho.despacho.cliente_razon.razon_social}}&nbsp;</p>
+					</div>
+
+					<div class="col-md-3">
+						<p>Nit.:</p>
+					</div>
+					<div class="col-md-9">
+						<p>{{detalle_despacho.despacho.cliente.nit}}&nbsp;</p>
+					</div>
 
 
-						<div class="col-md-3">
-							<p>Detalle.:</p>
-						</div>
-						<div class="col-md-9">
-							<p>{{detalle_despacho.cantidad_despacho}} {{detalle_despacho.producto.nombre.toUpperCase()}}&nbsp;</p>
-						</div>
+					<div class="col-md-3">
+						<p>Detalle.:</p>
+					</div>
+					<div class="col-md-9">
+						<p>{{detalle_despacho.cantidad_despacho}} {{detalle_despacho.producto.nombre.toUpperCase()}}&nbsp;</p>
+					</div>
 
-						<div class="col-md-3">
-							<p>Fecha.:</p>
-						</div>
-						<div class="col-md-9">
-							<input type="text" required style="width:180px;" class="form-control date-picker" ng-model="detalle_despacho.resivo.fecha"
-							 data-date-format="dd/mm/yyyy" ng-update-hidden>
+					<div class="col-md-3">
+						<p>Fecha.:</p>
+					</div>
+					<div class="col-md-9">
+						<input type="text" required style="width:180px;" class="form-control date-picker" ng-model="detalle_despacho.resivo.fecha"
+						 data-date-format="dd/mm/yyyy" ng-update-hidden>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<a href="javascript:void(0)" ng-click="verinfo=(verinfo)?false:true">
+						<i class="fa fa-exclamation-circle bigger-160 red"></i>
+					</a>
+					<div ng-show="verinfo" class="row" style="border: thin solid green">
+
+						<p class="col-sm-6">Producto</p>
+						<p class="col-sm-6">{{detalle_despacho.precio_unitario*detalle_despacho.cantidad_despacho|number:2}}</p>
+						<p class="col-sm-6">Servicio</p>
+						<p class="col-sm-6">{{detalle_despacho.servicio_transporte|number:2}}</p>
+						<p class="col-sm-6">
+							<b>TOTAL</b>
+						</p>
+						<p class="col-sm-6">{{detalle_despacho.total|number:2}}</p>
+						<P class="col-sm-12 red">Pago a/c</P>
+						<P class="col-sm-6">Total Pagos</P>
+						<p class="col-sm-6">{{detalle_despacho.pago_ac|number:2}}</p>
+						<p class="col-sm-6 red">
+							<b>Saldo bs.</b>
+						</p>
+						<p class="col-sm-6">
+							<b>{{detalle_despacho.saldo_pago_ac|number:2}}</b>
+						</p>
+
+
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="col-md-2">
+						<p>Monto.:</p>
+					</div>
+					<div class="col-md-4">
+						<input type="number" ng-if="detalle_despacho.resivo.tipo_moneda" step="0.01" ng-change="montoDolar(detalle_despacho)"
+						 max="{{detalle_despacho.saldo_pago_ac}}" required ng-model="detalle_despacho.resivo.monto" class="form-control">
+						<input type="number" ng-if="!detalle_despacho.resivo.tipo_moneda" step="0.01" ng-change="CalcularMontoEnDolar(detalle_despacho)"
+						 ng-change="montoDolar(detalle_despacho)" max="{{detalle_despacho.resivo.maxmonto_dolar}}" required ng-model="detalle_despacho.resivo.monto_dolar"
+						 class="form-control">
+						<p ng-if="!detalle_despacho.resivo.tipo_moneda">
+							<b>{{detalle_despacho.resivo.monto|number:2}} Bs.</b>
+						</p>
+					</div>
+					<div class="col-md-2">
+						<div class="center-block width150">
+							<label>
+								<input name="" autofocus ng-model="detalle_despacho.resivo.tipo_moneda" class="ace ace-switch ace-switch-5 big-switch"
+								 type="checkbox" ng-model="filtroBeneficioEmpresa.tipo" ng-change="CalcularMontoEnDolar(detalle_despacho)">
+								<span class="lbl" data-lbl="&nbsp;&nbsp;&nbsp;&nbsp;Bs.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sus."></span>
+							</label>
 						</div>
 					</div>
 					<div class="col-md-4">
-						<a href="javascript:void(0)" ng-click="verinfo=(verinfo)?false:true">
-							<i class="fa fa-exclamation-circle bigger-160 red"></i>
-						</a>
-						<div ng-show="verinfo" class="row" style="border: thin solid green">
-
-							<p class="col-sm-6">Producto</p>
-							<p class="col-sm-6">{{detalle_despacho.precio_unitario*detalle_despacho.cantidad_despacho|number:2}}</p>
-							<p class="col-sm-6">Servicio</p>
-							<p class="col-sm-6">{{detalle_despacho.servicio_transporte|number:2}}</p>
-							<p class="col-sm-6">
-								<b>TOTAL</b>
-							</p>
-							<p class="col-sm-6">{{detalle_despacho.total|number:2}}</p>
-							<P class="col-sm-12 red">Pago a/c</P>
-							<P class="col-sm-6">Total Pagos</P>
-							<p class="col-sm-6">{{detalle_despacho.pago_ac|number:2}}</p>
-							<p class="col-sm-6 red">
-								<b>Saldo bs.</b>
-							</p>
-							<p class="col-sm-6">
-								<b>{{detalle_despacho.saldo_pago_ac|number:2}}</b>
-							</p>
-
-
-						</div>
-					</div>
-					<div class="col-md-12">
-						<div class="col-md-2">
-							<p>Monto.:</p>
-						</div>
-						<div class="col-md-4">
-							<input type="number" ng-if="detalle_despacho.resivo.tipo_moneda" step="0.01" ng-change="montoDolar(detalle_despacho)" max="{{detalle_despacho.saldo_pago_ac}}"
-							 required ng-model="detalle_despacho.resivo.monto" class="form-control">
-							<input type="number" ng-if="!detalle_despacho.resivo.tipo_moneda" step="0.01" ng-change="CalcularMontoEnDolar(detalle_despacho)"
-							 ng-change="montoDolar(detalle_despacho)" max="{{detalle_despacho.resivo.maxmonto_dolar}}" required ng-model="detalle_despacho.resivo.monto_dolar"
-							 class="form-control">
-							<p ng-if="!detalle_despacho.resivo.tipo_moneda">
-								<b>{{detalle_despacho.resivo.monto|number:2}} Bs.</b>
-							</p>
-						</div>
-						<div class="col-md-2">
-							<div class="center-block width150">
-								<label>
-									<input name="" autofocus ng-model="detalle_despacho.resivo.tipo_moneda" class="ace ace-switch ace-switch-5 big-switch" type="checkbox"
-									 ng-model="filtroBeneficioEmpresa.tipo" ng-change="CalcularMontoEnDolar(detalle_despacho)">
-									<span class="lbl" data-lbl="&nbsp;&nbsp;&nbsp;&nbsp;Bs.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sus."></span>
-								</label>
-							</div>
-						</div>
-						<div class="col-md-4">
-							<input required ng-change="CalcularMontoEnDolar(detalle_despacho)" step="0.01" ng-if="!detalle_despacho.resivo.tipo_moneda"
-							 type="number" class="form-control" ng-model="detalle_despacho.resivo.cambio_moneda">
-						</div>
-					</div>
-					<div class="col-md-12">
-						<div class="col-md-2">
-							<p>Concept.:</p>
-						</div>
-						<div class="col-md-10">
-							<textarea required class="form-control" ng-model="detalle_despacho.resivo.concepto" cols="30" rows="2"></textarea>
-						</div>
-					</div>
-					<div class="col-md-12">
-						<div class="col-md-2">
-							<p>tipo.:</p>
-						</div>
-						<div class="col-md-4">
-							<!--< select required ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPagosResivo track by tipoPago.id"
-						 ng-model="detalle_despacho.resivo.tipoPago"><option value="">--Seleccionar--</option></select> -->
-							<div class="control-group">
-
-								<div class="radio" ng-repeat="pago in tiposPagosResivo track by pago.id">
-									<label>
-
-										<input required name="form-field-radio" ng-value="pago" ng-selected="tiposPagosResivo[0]" ng-model="detalle_despacho.resivo.tipoPago"
-										 type="radio" class="ace">
-										<span class="lbl">{{pago.nombre}}</span>
-									</label>
-								</div>
-
-							</div>
-						</div>
-						<div class="col-md-6" ng-if="detalle_despacho.resivo.tipoPago.nombre=='DEPOSITO' || detalle_despacho.resivo.tipoPago.nombre=='CHEQUE'">
-							<p>Numero Cuenta.:</p>
-							<input type="text" required ng-model="detalle_despacho.resivo.numero_cuenta" class="form-control">
-						</div>
-						<div class="col-md-6 input-group" ng-if="detalle_despacho.resivo.tipoPago.nombre=='DEPOSITO' || detalle_despacho.resivo.tipoPago.nombre=='CHEQUE'">
-							<p>Banco.:</p>
-							<select required ng-if="detalle_despacho.resivo.tipoPago.nombre=='DEPOSITO'" ng-model="detalle_despacho.resivo.banco" class="form-control"
-							 id="motivo-retiro" name="motivo-retiro" ng-options="cuenta as (cuenta.nombre+'- cuenta: '+cuenta.numero) for cuenta in cuentasBancos track by cuenta.id">
-								<option value="">Ninguno</option>
-							</select>
-							<span ng-if="detalle_despacho.resivo.tipoPago.nombre=='CHEQUE'" class="input-group-addon glyphicon glyphicon-pencil point-edit green"
-							 ng-click="abrirDialogConceptoEdicion(otrosBancos)"></span>
-							<select ng-if="detalle_despacho.resivo.tipoPago.nombre=='CHEQUE'" required class="form-control" style="width:150px" ng-options="banco as banco.nombre for banco in otrosBancos.clases | filter:{habilitado:true} track by banco.id"
-							 ng-model="detalle_despacho.resivo.otroBanco">
-								<option value="">Ninguno</option>
-							</select>
-
-						</div>
+						<input required ng-change="CalcularMontoEnDolar(detalle_despacho)" step="0.01" ng-if="!detalle_despacho.resivo.tipo_moneda"
+						 type="number" class="form-control" ng-model="detalle_despacho.resivo.cambio_moneda">
 					</div>
 				</div>
+				<div class="col-md-12">
+					<div class="col-md-2">
+						<p>Concept.:</p>
+					</div>
+					<div class="col-md-10">
+						<textarea required class="form-control" ng-model="detalle_despacho.resivo.concepto" cols="30" rows="2"></textarea>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="col-md-2">
+						<p>tipo.:</p>
+					</div>
+					<div class="col-md-4">
+						<!--< select required ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPagosResivo track by tipoPago.id"
+						 ng-model="detalle_despacho.resivo.tipoPago"><option value="">--Seleccionar--</option></select> -->
+						<div class="control-group">
 
-			</div>
-			<div class="modal-footer">
-				<button ng-disabled="!aplicacion.puede_crear" ng-if="detalle_despacho.saldo_pago_ac>0" type="submit" class="btn btn-success">
-					<i class="ace-icon fa fa-floppy-o bigger-160"></i>Guardar</button>
+							<div class="radio" ng-repeat="pago in tiposPagosResivo track by pago.id">
+								<label>
 
-				<button type="button" class="btn btn-danger pull-left" ng-click="cerrarModalCobros()">
-					<i class="ace-icon fa fa-times-circle bigger-160"></i>Cancelar</button>
-				<button type="button" ng-click="abrirModalHistorialCobros()" class="btn btn-white  btn-bold btn-danger pull-left ">
-					<i class="ace-icon fa fa-h-square  bigger-210"></i>Historial
-				</button>
+									<input required name="form-field-radio" ng-value="pago" ng-selected="tiposPagosResivo[0]" ng-model="detalle_despacho.resivo.tipoPago"
+									 type="radio" class="ace">
+									<span class="lbl">{{pago.nombre}}</span>
+								</label>
+							</div>
+
+						</div>
+					</div>
+					<div class="col-md-6" ng-if="detalle_despacho.resivo.tipoPago.nombre=='DEPOSITO' || detalle_despacho.resivo.tipoPago.nombre=='CHEQUE'">
+						<p>Numero Cuenta.:</p>
+						<input type="text" required ng-model="detalle_despacho.resivo.numero_cuenta" class="form-control">
+					</div>
+					<div class="col-md-6 input-group" ng-if="detalle_despacho.resivo.tipoPago.nombre=='DEPOSITO' || detalle_despacho.resivo.tipoPago.nombre=='CHEQUE'">
+						<p>Banco.:</p>
+						<select required ng-if="detalle_despacho.resivo.tipoPago.nombre=='DEPOSITO'" ng-model="detalle_despacho.resivo.banco"
+						 class="form-control" id="motivo-retiro" name="motivo-retiro" ng-options="cuenta as (cuenta.nombre+'- cuenta: '+cuenta.numero) for cuenta in cuentasBancos track by cuenta.id">
+							<option value="">Ninguno</option>
+						</select>
+						<span ng-if="detalle_despacho.resivo.tipoPago.nombre=='CHEQUE'" class="input-group-addon glyphicon glyphicon-pencil point-edit green"
+						 ng-click="abrirDialogConceptoEdicion(otrosBancos)"></span>
+						<select ng-if="detalle_despacho.resivo.tipoPago.nombre=='CHEQUE'" required class="form-control" style="width:150px"
+						 ng-options="banco as banco.nombre for banco in otrosBancos.clases | filter:{habilitado:true} track by banco.id"
+						 ng-model="detalle_despacho.resivo.otroBanco">
+							<option value="">Ninguno</option>
+						</select>
+
+					</div>
+				</div>
 			</div>
-	</div>
-	</form>
+
+		</div>
+		<div class="modal-footer">
+			<button ng-disabled="!aplicacion.puede_crear" ng-if="detalle_despacho.saldo_pago_ac>0" type="submit" class="btn btn-success">
+				<i class="ace-icon fa fa-floppy-o bigger-160"></i>Guardar</button>
+
+			<button type="button" class="btn btn-danger pull-left" ng-click="cerrarModalCobros()">
+				<i class="ace-icon fa fa-times-circle bigger-160"></i>Cancelar</button>
+			<button type="button" ng-click="abrirModalHistorialCobros()" class="btn btn-white  btn-bold btn-danger pull-left ">
+				<i class="ace-icon fa fa-h-square  bigger-210"></i>Historial
+			</button>
+		</div>
+</div>
+</form>
 </div>
 <div id="modal-historial-cobros" title="Asignar Cuenta" class="modal">
 	<div class="modal-header bg-success">

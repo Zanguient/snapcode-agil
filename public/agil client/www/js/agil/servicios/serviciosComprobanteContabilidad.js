@@ -118,4 +118,22 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	
+	.factory('ListaAsientosDeComprobantes',  ['$resource',function ($resource) {
+		return $resource(restServer + "lista-asientos-contabilidad-comprobantes/empresa/:id_empresa/inicio/:inicio/fin/:fin", null,
+		{
+			'update': { method: 'PUT' }
+		});
+	}])
+
+	.factory('DescargarListaAsientosDeComprobantes', ['ListaAsientosDeComprobantes', '$q', function (ListaAsientosDeComprobantes, $q) {
+		var res = function (idEmpresa,inicio,fin) {
+			var delay = $q.defer();			
+			ListaAsientosDeComprobantes.get({id_empresa:idEmpresa, inicio: inicio,fin:fin }, function (entidades) {
+				delay.resolve(entidades);
+			}, function (error) {
+				delay.reject(error);
+			});
+			return delay.promise;
+		};
+		return res;
+	}])

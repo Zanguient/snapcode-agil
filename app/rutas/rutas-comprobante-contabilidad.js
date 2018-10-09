@@ -103,7 +103,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			ComprobanteContabilidad.findAndCountAll({
 				where: condicionComprobante,
 				include: [//{ model: AsientoContabilidad, as: 'asientosContables', where: { eliminado: false } }, { model: Clase, as: 'tipoComprobante' }, { model: Usuario, as: 'usuario', include: [{ model: Persona, as: 'persona', where: condicionPersona }] },
-					{ model: Sucursal, as: 'sucursal', attributes:['id','nombre'], where: condicionSucursal }],
+					{ model: Sucursal, as: 'sucursal', attributes: ['id', 'nombre'], where: condicionSucursal }],
 			}).then(function (data) {
 				if (req.params.items_pagina == "0") {
 					ComprobanteContabilidad.findAll({
@@ -116,7 +116,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 							{
 								model: Sucursal, as: 'sucursal', attributes: ['id', 'nombre'], where: condicionSucursal,
 								/*  include: [{ model: Empresa, as: 'empresa' }]  */
-}],
+							}],
 						order: [ordenArreglo]
 					}).then(function (comprobantes) {
 						res.json({ comprobantes: comprobantes });
@@ -133,7 +133,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 							{
 								model: Sucursal, as: 'sucursal', attributes: ['id', 'nombre'], where: condicionSucursal,
 								/*  include: [{ model: Empresa, as: 'empresa' }] */
-}],
+							}],
 						order: [ordenArreglo]
 					}).then(function (comprobantes) {
 						res.json({ comprobantes: comprobantes, paginas: Math.ceil(data.count / req.params.items_pagina) });
@@ -145,7 +145,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 	router.route('/comprobante-contabilidad-edicion/id/:id')
 		.get(function (req, res) {
 			ComprobanteContabilidad.find({
-				where: {id:req.params.id},
+				where: { id: req.params.id },
 				include: [{ model: MonedaTipoCambio, as: 'tipoCambio' },
 				{ model: AsientoContabilidad, as: 'asientosContables', where: { eliminado: false }, include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'centroCosto' }, { model: ContabilidadCuenta, as: 'cuenta', include: [{ model: ContabilidadCuentaAuxiliar, as: 'cuentaAux' }, { model: Clase, as: 'tipoAuxiliar' }] }] },
 				{ model: Clase, as: 'tipoComprobante' },
@@ -158,7 +158,46 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				res.json({ comprobante: comprobante });
 			});
 		})
-
+	router.route('/lista-asientos-contabilidad-comprobantes/empresa/:id_empresa/inicio/:inicio/fin/:fin')
+		.get(function (req, res) {
+			//{ model: AsientoContabilidad, as: 'asientosContables', where: { eliminado: false }}
+			/* AsientoContabilidad.findAll({	
+				where: { eliminado: false },			
+				include:[{ model: ContabilidadCuenta, as: 'cuenta'},
+				{model:ComprobanteContabilidad,as: 'comprobante',
+				include: [{ model: Clase, as: 'tipoComprobante',attributes:['id','nombre'] },				
+				{
+					model: Sucursal, as: 'sucursal',attributes:['id','nombre','empresa'],
+					include: [{ model: Empresa, as: 'empresa',attributes:['id'],where:{id:req.params.id_empresa} }]
+				}]}],
+				order: [[{model: ComprobanteContabilidad, as: 'comprobante'},'numero', 'DESC']]
+			}).then(function (comprobantes) {
+				res.json({ comprobantes: comprobantes });
+			}); */
+			sequelize.query("SELECT\
+			`agil_asiento_contabilidad`.`debe_bs` AS debe_bs,\
+			`agil_asiento_contabilidad`.`haber_bs` AS haber_bs,\
+			`agil_asiento_contabilidad`.`glosa`  AS gloza,\
+			`cuenta`.`codigo` AS codigo_cuenta,\
+			`cuenta`.`nombre` AS nombre_cuenta,\
+			`comprobante`.`numero` AS `numero_comprobante`,\
+			`comprobante`.`fecha` AS `fecha_comprobante`,\
+			`comprobante`.`gloza` AS `gloza_comprobante`,\
+			`comprobante.tipoComprobante`.`nombre` AS `tipo_comprobante`,\
+			`comprobante.sucursal`.`nombre` AS `nombre_sucursal` FROM\
+				`agil_asiento_contabilidad` AS `agil_asiento_contabilidad`\
+				LEFT OUTER JOIN `agil_contabilidad_cuenta` AS `cuenta` ON `agil_asiento_contabilidad`.`cuenta` = `cuenta`.`id`\
+				LEFT OUTER JOIN `agil_comprobante_contabilidad` AS `comprobante` ON `agil_asiento_contabilidad`.`comprobante` = `comprobante`.`id`\
+				LEFT OUTER JOIN `gl_clase` AS `comprobante.tipoComprobante` ON `comprobante`.`tipo` = `comprobante.tipoComprobante`.`id`\
+				LEFT OUTER JOIN `agil_sucursal` AS `comprobante.sucursal` ON `comprobante`.`sucursal` = `comprobante.sucursal`.`id`\
+				INNER JOIN `agil_empresa` AS `comprobante.sucursal.empresa` ON `comprobante.sucursal`.`empresa` = `comprobante.sucursal.empresa`.`id` \
+				AND `comprobante.sucursal.empresa`.`id` =" + req.params.id_empresa + " and `comprobante`.`fecha`  BETWEEN '"+req.params.inicio.split('/').reverse().join('-')+" 00:00:00' AND '"+req.params.fin.split('/').reverse().join('-')+" 23:59:59' WHERE \
+				`agil_asiento_contabilidad`.`eliminado` = FALSE \
+			ORDER BY \
+				`comprobante`.`numero` DESC;", { type: sequelize.QueryTypes.SELECT }).then(function (result) {
+					res.json({ comprobantes: result })
+				})
+		})
 	router.route('/comprobante-contabilidad/usuario/:id_usuario')
 		.get(function (req, res) {
 			ComprobanteContabilidad.findAll({
