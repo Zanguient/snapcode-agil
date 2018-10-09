@@ -970,7 +970,7 @@ angular.module('agil.controladores')
 					linea = linea + (ventas[i].autorizacion) + "|";
 					linea = linea + (ventas[i].activa ? "V" : "A") + "|";
 					linea = linea + (ventas[i].activa ? ventas[i].cliente.nit : '0') + "|";
-					linea = linea + (ventas[i].activa ? ventas[i].cliente.razon_social :'Anulado') + "|";
+					linea = linea + (ventas[i].activa ? ventas[i].cliente.razon_social :'ANULADO') + "|";
 					linea = linea + (ventas[i].activa ? ventas[i].importe : 0) + "|";
 					linea = linea + 0 + "|";
 					linea = linea + 0 + "|";
@@ -1004,7 +1004,7 @@ angular.module('agil.controladores')
 					columns.push((ventas[i].autorizacion) ? ventas[i].autorizacion : "");
 					columns.push((ventas[i].activa ? "V" : "A"));
 					columns.push(ventas[i].activa ? ventas[i].cliente.nit : '0');
-					columns.push(ventas[i].activa ? ventas[i].cliente.razon_social: 'Anulado');
+					columns.push(ventas[i].activa ? ventas[i].cliente.razon_social: 'ANULADO');
 					columns.push(ventas[i].activa ? ventas[i].importe : 0);
 					columns.push(0);
 					columns.push(0);
@@ -1055,6 +1055,14 @@ angular.module('agil.controladores')
 			});
 		}
 
+		$scope.formatoFechaPDF = function (fecha) {
+			var MyDate = new Date(fecha);
+			var MyDateString;
+			MyDate.setDate(MyDate.getDate());
+			MyDateString = ('0' + MyDate.getDate()).slice(-2) + '/' + ('0' + (MyDate.getMonth() + 1)).slice(-2) + '/' + MyDate.getFullYear();
+			return MyDateString
+		}
+
 		$scope.generarPdfLibroVentas = function (reporte) {
 			blockUI.start();
 			var promesa = ReporteLibroVentasDatos($scope.usuario.id_empresa, reporte.gestion, reporte.mes.split("-")[0], reporte.movimiento);
@@ -1069,15 +1077,18 @@ angular.module('agil.controladores')
 				var sumaImporte = 0, sumaImporteIce = 0, sumaImporteExp = 0, sumaImporteGrab = 0, sumaTotal = 0, sumaDescuentos = 0, sumaImporteBase = 0, sumaCredito = 0;
 				var sumaSubImporte = 0, sumaSubImporteIce = 0, sumaSubImporteExp = 0, sumaSubImporteGrab = 0, sumaSubTotal = 0, sumaSubDescuentos = 0, sumaSubImporteBase = 0, sumaSubCredito = 0;
 				for (var i = 0; i < ventas.length && items <= itemsPorPagina; i++) {
+					doc.font('Helvetica', 7);
 					doc.rect(40, y - 10, 720, 30).stroke();
 					ventas[i].fecha = new Date(ventas[i].fecha);
 					doc.text(i + 1, 45, y);
-					doc.text(ventas[i].fecha.getDate() + "/" + (ventas[i].fecha.getMonth() + 1) + "/" + ventas[i].fecha.getFullYear(), 65, y);
+					doc.text($scope.formatoFechaPDF(ventas[i].fecha), 65, y);
 					doc.text(ventas[i].factura, 110, y);
 					doc.text(ventas[i].autorizacion, 143, y);
 					doc.text((ventas[i].activa ? "V" : "A"), 215, y);
 					doc.text(ventas[i].activa ? ventas[i].cliente.nit : '0', 235, y);
-					doc.text(ventas[i].activa ? ventas[i].cliente.razon_social : 'Anulado', 283, y - 6, { width: 100 });
+					doc.font('Helvetica', 6);
+					doc.text(ventas[i].activa ? ventas[i].cliente.razon_social : 'ANULADO', 283, y - 6, { width: 150 });
+					doc.font('Helvetica', 8)
 					doc.text(ventas[i].activa ? ventas[i].importe : 0, 385, y);
 					doc.text(0, 430, y);
 					doc.text(0, 465, y);
@@ -1088,11 +1099,11 @@ angular.module('agil.controladores')
 					doc.text(ventas[i].activa ? (Math.round((ventas[i].total * 0.13) * 100) / 100) : 0, 650, y);
 					doc.text(ventas[i].activa ? ventas[i].codigo_control : 0, 685, y);
 					y = y + 30;
-					sumaSubImporte = (ventas[i].activa ? sumaSubImporte + ventas[i].importe : 0);
+					sumaSubImporte = (ventas[i].activa ? sumaSubImporte + ventas[i].importe : sumaSubImporte);
 					sumaSubImporteIce = 0;
 					sumaSubImporteExp = 0;
 					sumaSubImporteGrab = 0;
-					sumaSubTotal = ventas[i].activa ? sumaSubTotal + ventas[i].importe : 0;
+					sumaSubTotal = ventas[i].activa ? sumaSubTotal + ventas[i].importe : sumaSubTotal;
 					sumaSubDescuentos = ventas[i].activa ? sumaSubDescuentos + 0 : sumaSubDescuentos;
 					sumaSubImporteBase = ventas[i].activa ? sumaSubImporteBase + ventas[i].total : sumaSubImporteBase;
 					sumaSubCredito = ventas[i].activa ? sumaSubCredito + (Math.round((ventas[i].total * 0.13) * 100) / 100) : sumaSubCredito;
@@ -1100,9 +1111,9 @@ angular.module('agil.controladores')
 					sumaImporteIce = 0;
 					sumaImporteExp = 0;
 					sumaImporteGrab = 0;
-					sumaTotal = ventas[i].activa ? sumaTotal + ventas[i].importe : 0;
+					sumaTotal = ventas[i].activa ? sumaTotal + ventas[i].importe : sumaTotal;
 					sumaDescuentos = sumaDescuentos + 0;
-					sumaImporteBase = ventas[i].activa ? sumaImporteBase + ventas[i].total : 0;
+					sumaImporteBase = ventas[i].activa ? sumaImporteBase + ventas[i].total : sumaImporteBase;
 					sumaCredito = ventas[i].activa ? sumaCredito + (Math.round((ventas[i].total * 0.13) * 100) / 100) : sumaCredito;
 					items++;
 
