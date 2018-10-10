@@ -194,7 +194,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 				AND `comprobante.sucursal.empresa`.`id` =" + req.params.id_empresa + " and `comprobante`.`fecha`  BETWEEN '"+req.params.inicio.split('/').reverse().join('-')+" 00:00:00' AND '"+req.params.fin.split('/').reverse().join('-')+" 23:59:59' WHERE \
 				`agil_asiento_contabilidad`.`eliminado` = FALSE \
 			ORDER BY \
-				`comprobante`.`numero` DESC;", { type: sequelize.QueryTypes.SELECT }).then(function (result) {
+				`comprobante`.`numero` ASC;", { type: sequelize.QueryTypes.SELECT }).then(function (result) {
 					res.json({ comprobantes: result })
 				})
 		})
