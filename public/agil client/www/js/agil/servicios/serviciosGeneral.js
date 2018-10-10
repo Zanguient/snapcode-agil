@@ -2047,7 +2047,7 @@ angular.module('agil.servicios')
 							doc.text("CASA MATRIX", 60,yAltura-30);
 							doc.font('Helvetica', 7);
 
-							doc.text(venta.sucursalPrincipal[0].direccion, 60,yAltura-23,{width: 150});
+							doc.text(venta.sucursalPrincipal[0].direccion, 60,yAltura-22,{width: 150});
 							var longitudCaracteres = venta.sucursalPrincipal[0].direccion.length;
 							var yDescDir = (longitudCaracteres <= 36)? yAltura - 5 : yAltura + 4  ;
 		
@@ -2057,12 +2057,12 @@ angular.module('agil.servicios')
 							doc.text("TELF: "+telefono,60,yDescDir-10);
 							yDescDir += 10;
 							doc.font('Helvetica-Bold', 8);
-							doc.text("COCHABAMBA - BOLIVIA", 60, yDescDir-10);
+							doc.text("COCHABAMBA - BOLIVIA", 60, yDescDir-13);
                             yDescDir += 10;
                             doc.font('Helvetica-Bold', 8);
 							doc.text("Sucursal "+venta.sucursal.numero, 60,yDescDir-10,{width: 150});
 							doc.font('Helvetica', 7);
-							doc.text(venta.sucursal.direccion.toLowerCase(), 60,yDescDir,{width: 150});
+							doc.text(venta.sucursal.direccion.toLowerCase(), 60,yDescDir-2,{width: 150});
 							var longitudSucursal = venta.sucursal.direccion.length;
 							if(longitudSucursal >= 80){
 								yTamDir = yDescDir + 20
@@ -2077,10 +2077,10 @@ angular.module('agil.servicios')
 							var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 							(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 							(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
-							doc.text("TELF: "+telefono,60,yTamDir );
+							doc.text("TELF: "+telefono,60,yTamDir - 5);
 							doc.font('Helvetica-Bold', 8);
 							yTamDir += 10;
-							doc.text(venta.sucursal.nombre+" - BOLIVIA", 60, yTamDir );
+							doc.text(venta.sucursal.nombre+" - BOLIVIA", 60, yTamDir - 7);
 
 						}else{
 							var alturaImagen = 80;
@@ -2105,8 +2105,8 @@ angular.module('agil.servicios')
 							var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 								(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 								(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
-							doc.text("TELF.: " + telefono, 60, yDescDir + 9);
-							doc.text("COCHABAMBA - BOLIVIA", 60, yDescDir + 18);
+							doc.text("TELF.: " + telefono, 60, yDescDir + 5);
+							doc.text("COCHABAMBA - BOLIVIA", 60, yDescDir + 5);
 						}
 						
 					}
