@@ -2039,37 +2039,48 @@ angular.module('agil.servicios')
 						if(venta.sucursalPrincipal != undefined){
 							var alturaImagen = 80;
 							if (usuario.empresa.imagen.length > 100) {
-								doc.image(usuario.empresa.imagen, 60, 25, { fit: [60, 60] });
+								doc.image(usuario.empresa.imagen, 60, 25, { fit: [50, 50] });
 								alturaImagen = usuario.altura_imagen;
 							} //width: 50, height: 50
 							var yAltura = (alturaImagen <= 1.95) ? alturaImagen + 85 : ((alturaImagen > 2 && alturaImagen <= 80) ? 105 : 105);
 							doc.font('Helvetica-Bold', 8);
-							doc.text("CASA MATRIX", 60,yAltura-20);
+							doc.text("CASA MATRIX", 60,yAltura-30);
 							doc.font('Helvetica', 7);
 
-						
-							doc.text(venta.sucursalPrincipal[0].direccion, 60,yAltura-13,{width: 150});
+							doc.text(venta.sucursalPrincipal[0].direccion, 60,yAltura-23,{width: 150});
 							var longitudCaracteres = venta.sucursalPrincipal[0].direccion.length;
-							var yDescDir = (longitudCaracteres >= 30) ? yAltura -5 : yAltura -15 ;
+							var yDescDir = (longitudCaracteres <= 36)? yAltura - 5 : yAltura + 4  ;
 		
 							var telefono = (venta.sucursalPrincipal[0].telefono1 != null ? venta.sucursalPrincipal[0].telefono1 : "") +
 							(venta.sucursalPrincipal[0].telefono2 != null ? "-" + venta.sucursalPrincipal[0].telefono2 : "") +
 							(venta.sucursalPrincipal[0].telefono3 != null ? "-" + venta.sucursalPrincipal[0].telefono3 : "");
-							doc.text("TELF: "+telefono,60,yDescDir + 9);
+							doc.text("TELF: "+telefono,60,yDescDir-10);
+							yDescDir += 10;
 							doc.font('Helvetica-Bold', 8);
-							doc.text("COCHABAMBA - BOLIVIA", 60, yDescDir + 16);
-
-							doc.text("Sucursal "+venta.sucursal.numero, 60,yDescDir + 27,{width: 150});
+							doc.text("COCHABAMBA - BOLIVIA", 60, yDescDir-10);
+                            yDescDir += 10;
+                            doc.font('Helvetica-Bold', 8);
+							doc.text("Sucursal "+venta.sucursal.numero, 60,yDescDir-10,{width: 150});
 							doc.font('Helvetica', 7);
-							doc.text(venta.sucursal.direccion, 60,yDescDir+35,{width: 150});
+							doc.text(venta.sucursal.direccion.toLowerCase(), 60,yDescDir,{width: 150});
 							var longitudSucursal = venta.sucursal.direccion.length;
-							var yTamDir = (longitudSucursal >= 30)? yDescDir + 40: yDescDir + 35;
+							if(longitudSucursal >= 80){
+								yTamDir = yDescDir + 20
+							}else if(longitudSucursal >= 36){
+								yTamDir = yDescDir + 10;
+							}else{
+								yTamDir = yDescDir - 10;
+							}
+							//var yTamDir = (longitudSucursal <= 36)? yDescDir + 10: yDescDir + 10;
+
+							
 							var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 							(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 							(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
-							doc.text("TELF: "+telefono,60,yTamDir + 9);
+							doc.text("TELF: "+telefono,60,yTamDir );
 							doc.font('Helvetica-Bold', 8);
-							doc.text("COCHABAMBA - BOLIVIA", 60, yTamDir + 16);
+							yTamDir += 10;
+							doc.text(venta.sucursal.nombre+" - BOLIVIA", 60, yTamDir );
 
 						}else{
 							var alturaImagen = 80;

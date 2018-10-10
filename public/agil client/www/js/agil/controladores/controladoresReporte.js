@@ -1118,7 +1118,7 @@ angular.module('agil.controladores')
 					items++;
 
 					if (items == itemsPorPagina || i + 1 == ventas.length) {
-						doc.font('Helvetica-Bold', 8);
+						doc.font('Helvetica-Bold', 7);
 						doc.text("SUBTOTALES", 283, y);
 						doc.text(Math.round((sumaSubImporte) * 100) / 100, 385, y);
 						doc.text(Math.round((sumaSubImporteIce) * 100) / 100, 430, y);
@@ -1133,7 +1133,7 @@ angular.module('agil.controladores')
 						sumaSubImporte = 0; sumaSubImporteNo = 0; sumaSubTotal = 0; sumaSubDescuentos = 0; sumaSubImporteBase = 0; sumaSubCredito = 0;
 
 						if (i + 1 == ventas.length) {
-							doc.font('Helvetica-Bold', 8);
+							doc.font('Helvetica-Bold', 7);
 							doc.text("TOTALES", 283, y + 30);
 							doc.text(Math.round((sumaImporte) * 100) / 100, 385, y + 30);
 							doc.text(Math.round((sumaImporteIce) * 100) / 100, 430, y + 30);
