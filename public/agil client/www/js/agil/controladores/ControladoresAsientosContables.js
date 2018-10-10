@@ -489,7 +489,7 @@ angular.module('agil.controladores')
            // $scope.paginator.itemsPerPage = 10;
         }
         $scope.generarExcelAsientosDeComprobantes = function (inicio,fin) {         
-            $scope.mostrarMensaje("Descargando archivo, porfabor espere esto puede tardar varios minutos...") 
+            $scope.mostrarMensaje("Descargando archivo, por favor espere esto puede tardar varios minutos...") 
             var promesa = DescargarListaAsientosDeComprobantes($scope.usuario.id_empresa,inicio,fin);
             promesa.then(function (dato) {
                 var data = [["TIPO COMPROBANTE","NUMERACION",'FECHA',"SUCURSAL","GLOSA GENERAL",'NRO. CUENTA',"CUENTA","GLOSA INDIVIDUAL","DEBE","HABER","CENTRO DE COSTO","AUXILIARES"]]

@@ -709,6 +709,24 @@ angular.module('agil.servicios')
 			return delay.promise;
 		};
 		return res;
+	}])
+	.factory('ImportacionComprasIngresoDiario',  ['$resource',function ($resource) {
+		return $resource(restServer + "importar-compras-ingresos-diarios/empresa/:id_empresa", { id_empresa: '@id_empresa' },
+			{
+				'update': { method: 'PUT' }
+			});
+	}])
+	.factory('GuardarImportacionComprasIngresoDiario', ['ImportacionComprasIngresoDiario', '$q', function (ImportacionComprasIngresoDiario, $q) {
+		var res = function (compras,proveedores,centrosCosto,productos,idEmpresa) {
+			var delay = $q.defer();
+			ImportacionComprasIngresoDiario.save({id_empresa:idEmpresa},{proveedores:proveedores,compras:compras,centrosCosto:centrosCosto,productos:productos}, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
 	}]);
 	
 	/* .factory('VentaServico',  ['$resource',function ($resource) {
@@ -729,4 +747,5 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}]);
+	
  */

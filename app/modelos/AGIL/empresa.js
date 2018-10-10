@@ -160,6 +160,14 @@ module.exports = function (sequelize, Sequelize) {
 		usar_ceros_plan_cuenta:{
 			type: Sequelize.BOOLEAN,
 			field: 'usar_ceros_plan_cuenta'
+		},
+		usar_importacion_compra:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_importacion_compra'
+		},
+		usar_importacion_venta:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_importacion_venta'
 		}
 	}, {
 			freezeTableName: true

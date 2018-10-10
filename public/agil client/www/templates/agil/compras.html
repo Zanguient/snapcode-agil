@@ -132,6 +132,52 @@
 
 		<div class="table-header">
 				Lista de Compras
+				<div class="pos-rel pull-right" ng-if="usuario.empresa.usar_importacion_compra">
+                    <a data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" id="zoomBtn">
+                        <i class="ace-icon fa fa-wrench  bigger-110 icon-only "></i>
+                    </a>
+                    <ul class="dropdown-menu-right dropdown-navbar navbar-orange dropdown-menu dropdown-caret dropdown-close importar-text">
+                        <li class="dropdown-header header-importar">
+                            <i class="ace-icon fa fa-wrench white"></i>
+                            Importaciones
+                        </li>
+                        <li class="dropdown-content">
+                            <ul class="dropdown-menu dropdown-navbar navbar-pink">
+                                <li>
+                                    <div class="clearfix">
+                                        <span class="pull-left" style="color:rgb(85, 128, 163) !important">
+                                            Compras(Ingresos Diarios)
+                                        </span>
+
+                                        <a href="/recursos/EJEMPLO-DATOS-COMPRAS(INGRESOS-DIARIOS).xlsx" class="boton-importar pull-right">
+                                            <i class="fa  fa-cloud-download green"></i>
+                                        </a>
+
+                                        <div class="fileUpload boton-importar pull-right">
+                                            <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+                                            <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelComprasIngresosDiarios" />
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="clearfix">
+                                        <span class="pull-left" style="color:rgb(85, 128, 163) !important">
+                                            Pagos Compras Credito
+                                        </span>
+                                        <a href="/recursos/EJEMPLO-DATOS-FICHAS-EMPLEADOS.xlsx" class="boton-importar pull-right">
+                                            <i class="fa  fa-cloud-download green"></i>
+                                        </a>
+                                        <div class="fileUpload boton-importar pull-right">
+                                            <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+                                            <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelFicha" />
+                                        </div>
+                                    </div>
+                                </li>                                                                                               
+                            </ul>
+                        </li>
+                        <li class="dropdown-footer"></li>
+                    </ul>
+                </div>
 			</div>
 			<div class="bg-info" ng-if="compras.length>0">
 					<label>

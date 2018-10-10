@@ -1,7 +1,7 @@
 module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCompra, Almacen, Sucursal, Empresa, sequelize, Sequelize,
 	Tipo, Clase, Proveedor, Producto, Movimiento, DetalleMovimiento, Inventario, Venta, DetalleVenta,
 	Cliente, CodigoControl, NumeroLiteral, Diccionario, SucursalActividadDosificacion, Dosificacion,
-	ConfiguracionGeneralFactura, ConfiguracionFactura, PagoVenta, PagoCompra, Usuario, DetalleVentaNoConsolidada, ClienteCuenta, ContabilidadCuenta, ProveedorCuenta, UsuarioGrupos, Pedido, DetallesPedido, ProductoBase, ServicioVenta, DetalleVentaProductoFinal, ClienteAnticipo,ProveedorAnticipo) {
+	ConfiguracionGeneralFactura, ConfiguracionFactura, PagoVenta, PagoCompra, Usuario, DetalleVentaNoConsolidada, ClienteCuenta, ContabilidadCuenta, ProveedorCuenta, UsuarioGrupos, Pedido, DetallesPedido, ProductoBase, ServicioVenta, DetalleVentaProductoFinal, ClienteAnticipo, ProveedorAnticipo) {
 	router.route('/compra/pedido/empresa/:id_empresa')
 		.get(function (req, res) {
 			Pedido.findAll({
@@ -307,7 +307,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		});
 
 
-		router.route('/compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario/tipo/:tipo')
+	router.route('/compras/:idsSucursales/inicio/:inicio/fin/:fin/razon-social/:razon_social/nit/:nit/monto/:monto/tipo-compra/:tipo_compra/sucursal/:sucursal/usuario/:usuario/user/:id_usuario/tipo/:tipo')
 		.get(/*ensureAuthorized,*/function (req, res) {
 			var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
 			var fin = new Date(req.params.fin); fin.setHours(23, 59, 59, 0, 0);
@@ -437,7 +437,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			} else {
 				var anticipo = req.body.saldoRestante * (-1);
 			}
-			var pagoV = req.body.pago - anticipo			
+			var pagoV = req.body.pago - anticipo
 			if (req.body.esModificacion) {
 				var compra = req.body;
 				if (req.body.usar_producto) {
@@ -749,10 +749,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										}
 									}).then(function (affectedRows) {
 										if (anticipo != 0) {
-											 Sucursal.find({
+											Sucursal.find({
 												where: { id: compraEncontrada.almacen.sucursal.id }
 											}).then(function (sucursalEncontrada) {
-												 ProveedorAnticipo.create({
+												ProveedorAnticipo.create({
 													id_proveedor: parseInt(compraEncontrada.id_proveedor),
 													monto_anticipo: anticipo,
 													fecha: req.body.fecha,
@@ -762,29 +762,29 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 													numero_correlativo_anticipo: sucursalEncontrada.anticipo_proveedor_correlativo,
 													eliminado: false
 												}).then(function (ProvedorAnticipoCreado) {
-														var correlativo = sucursalEncontrada.anticipo_proveedor_correlativo + 1
-														 Sucursal.update({
-															anticipo_proveedor_correlativo: correlativo
-														}, {
-																where: { id: compraEncontrada.almacen.sucursal.id }
-															}).then(function (Actualizado) {
-																 ProveedorAnticipo.find({
-																	where: { id: ProvedorAnticipoCreado.id },
-																	include: [{ model: Sucursal, as: 'sucursal' }, { model: Proveedor, as: 'proveedor' }]
-																}).then(function (encontrado) {
-																	var pago = NumeroLiteral.Convertir(parseFloat(pagoV).toFixed(2).toString());
-																	res.json({anticipo:encontrado, mensaje: "¡Saldo de cuenta actualizado satisfactoriamente!", pago: pago, compra: compraEncontrada });
-																})
-
+													var correlativo = sucursalEncontrada.anticipo_proveedor_correlativo + 1
+													Sucursal.update({
+														anticipo_proveedor_correlativo: correlativo
+													}, {
+															where: { id: compraEncontrada.almacen.sucursal.id }
+														}).then(function (Actualizado) {
+															ProveedorAnticipo.find({
+																where: { id: ProvedorAnticipoCreado.id },
+																include: [{ model: Sucursal, as: 'sucursal' }, { model: Proveedor, as: 'proveedor' }]
+															}).then(function (encontrado) {
+																var pago = NumeroLiteral.Convertir(parseFloat(pagoV).toFixed(2).toString());
+																res.json({ anticipo: encontrado, mensaje: "¡Saldo de cuenta actualizado satisfactoriamente!", pago: pago, compra: compraEncontrada });
 															})
 
-													})
+														})
+
+												})
 											})
-										}else{
+										} else {
 											var pago = NumeroLiteral.Convertir(parseFloat(pagoV).toFixed(2).toString());
-										res.json({anticipo:{}, mensaje: "¡Saldo de cuenta actualizado satisfactoriamente!", pago: pago, compra: compraEncontrada });
+											res.json({ anticipo: {}, mensaje: "¡Saldo de cuenta actualizado satisfactoriamente!", pago: pago, compra: compraEncontrada });
 										}
-										
+
 									});
 							});
 						});
@@ -1205,16 +1205,16 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									nombre: detalleCompra.centroCosto.nombre,
 									id_tipo: tipoCentroCosto.id
 								}).then(function (centroCostoCreado) {
-								/* 	if (empresaEncontrada.dataValues.usar_peps) { */
-										crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, centroCostoCreado.id, res, compra);
-								/* 	} else {
-										crearDetalleCompraPonderado(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, centroCostoCreado.id, res, compra);
-									} */
+									/* 	if (empresaEncontrada.dataValues.usar_peps) { */
+									crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, centroCostoCreado.id, res, compra);
+									/* 	} else {
+											crearDetalleCompraPonderado(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, centroCostoCreado.id, res, compra);
+										} */
 								});
 							});
 						} else {
 							/* if (empresaEncontrada.dataValues.usar_peps) { */
-								crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id, res, compra);
+							crearDetalleCompra(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id, res, compra);
 							/* } else {
 								crearDetalleCompraPonderado(detalleCompra, idMovimiento, compraCreada.id, compra.almacen.id, detalleCompra.producto.id, detalleCompra.centroCosto.id, res, compra);
 							} */
@@ -3457,59 +3457,139 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 	router.route('/ventas/:id/empresa/:id_empresa')
 		.get(function (req, res) {
 			Sucursal.findAll({
-				where:{id_empresa: req.params.id_empresa, 
-					numero: 0}
-			}).then(function(sucursalPrincipalEncontrada){
-			Venta.find({
 				where: {
-					id: req.params.id
-				},
-				include: [{ model: Cliente, as: 'cliente' },
-				{
-					model: DetalleVenta, as: 'detallesVenta',
-					include: [{ model: Producto, as: 'producto' }, { model: ServicioVenta, as: 'servicio' },
-					{ model: Inventario, as: 'inventario' }]
-				}, { model: Sucursal, as: 'sucursal' }, { model: Clase, as: 'movimientoServicio' },
-				{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
-				{ model: Almacen, as: 'almacenTraspaso', include: [{ model: Sucursal, as: 'sucursal' }], required: false },
-				{ model: Clase, as: 'actividad' },
-				{ model: Clase, as: 'tipoPago' },
-				{ model: Movimiento, as: 'movimiento', include: [{ model: Clase, as: 'clase' }] }]
-			}).then(function (venta) {
-				if (venta.sucursal) {
-					venta.numero_literal = NumeroLiteral.Convertir(parseFloat(venta.total).toFixed(2).toString());
-				} else {
-					venta.sucursal = venta.almacen.sucursal;
-					if (venta.movimiento.clase.nombre_corto == Diccionario.EGRE_FACTURACION ||
-						venta.movimiento.clase.nombre_corto == Diccionario.EGRE_PROFORMA) {
-						venta.numero_literal = NumeroLiteral.Convertir(parseFloat(venta.total).toFixed(2).toString());
-					}
+					id_empresa: req.params.id_empresa,
+					numero: 0
 				}
-				ConfiguracionGeneralFactura.find({
+			}).then(function (sucursalPrincipalEncontrada) {
+				Venta.find({
 					where: {
-						id_empresa: req.params.id_empresa
+						id: req.params.id
 					},
-					include: [{ model: Clase, as: 'impresionFactura' },
-					{ model: Clase, as: 'tipoFacturacion' },
-					{ model: Clase, as: 'tamanoPapelFactura' },
-					{ model: Clase, as: 'tituloFactura' },
-					{ model: Clase, as: 'subtituloFactura' },
-					{ model: Clase, as: 'pieFactura' },
-					{ model: Clase, as: 'tamanoPapelNotaVenta' },
+					include: [{ model: Cliente, as: 'cliente' },
+					{
+						model: DetalleVenta, as: 'detallesVenta',
+						include: [{ model: Producto, as: 'producto' }, { model: ServicioVenta, as: 'servicio' },
+						{ model: Inventario, as: 'inventario' }]
+					}, { model: Sucursal, as: 'sucursal' }, { model: Clase, as: 'movimientoServicio' },
+					{ model: Almacen, as: 'almacen', include: [{ model: Sucursal, as: 'sucursal' }] },
+					{ model: Almacen, as: 'almacenTraspaso', include: [{ model: Sucursal, as: 'sucursal' }], required: false },
+					{ model: Clase, as: 'actividad' },
+					{ model: Clase, as: 'tipoPago' },
+					{ model: Movimiento, as: 'movimiento', include: [{ model: Clase, as: 'clase' }] }]
+				}).then(function (venta) {
+					if (venta.sucursal) {
+						venta.numero_literal = NumeroLiteral.Convertir(parseFloat(venta.total).toFixed(2).toString());
+					} else {
+						venta.sucursal = venta.almacen.sucursal;
+						if (venta.movimiento.clase.nombre_corto == Diccionario.EGRE_FACTURACION ||
+							venta.movimiento.clase.nombre_corto == Diccionario.EGRE_PROFORMA) {
+							venta.numero_literal = NumeroLiteral.Convertir(parseFloat(venta.total).toFixed(2).toString());
+						}
+					}
+					ConfiguracionGeneralFactura.find({
+						where: {
+							id_empresa: req.params.id_empresa
+						},
+						include: [{ model: Clase, as: 'impresionFactura' },
+						{ model: Clase, as: 'tipoFacturacion' },
+						{ model: Clase, as: 'tamanoPapelFactura' },
+						{ model: Clase, as: 'tituloFactura' },
+						{ model: Clase, as: 'subtituloFactura' },
+						{ model: Clase, as: 'pieFactura' },
+						{ model: Clase, as: 'tamanoPapelNotaVenta' },
 
-					{ model: Clase, as: 'tamanoPapelFacturaServicio' },
-					{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
-					{ model: Clase, as: 'tamanoPapelNotaBaja' },
-					{ model: Clase, as: 'tamanoPapelNotaPedido' },
-					{ model: Clase, as: 'tamanoPapelCierreCaja' },
-					{ model: Clase, as: 'formatoPapelFactura' },
-					{ model: Clase, as: 'formatoColorFactura' },
-					{ model: Clase, as: 'formatoPapelFacturaServicio' },
-					{ model: Clase, as: 'formatoColorFacturaServicio' },
-					{ model: Clase, as: 'tipoConfiguracion' }]
-				}).then(function (configuracionGeneralFactura) {
-					if (venta.movimiento) {
-						if (venta.movimiento.clase.nombre_corto == Diccionario.EGRE_FACTURACION) {
+						{ model: Clase, as: 'tamanoPapelFacturaServicio' },
+						{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
+						{ model: Clase, as: 'tamanoPapelNotaBaja' },
+						{ model: Clase, as: 'tamanoPapelNotaPedido' },
+						{ model: Clase, as: 'tamanoPapelCierreCaja' },
+						{ model: Clase, as: 'formatoPapelFactura' },
+						{ model: Clase, as: 'formatoColorFactura' },
+						{ model: Clase, as: 'formatoPapelFacturaServicio' },
+						{ model: Clase, as: 'formatoColorFacturaServicio' },
+						{ model: Clase, as: 'tipoConfiguracion' }]
+					}).then(function (configuracionGeneralFactura) {
+						if (venta.movimiento) {
+							if (venta.movimiento.clase.nombre_corto == Diccionario.EGRE_FACTURACION) {
+								SucursalActividadDosificacion.find({
+									where: {
+										id_actividad: venta.actividad.id,
+										id_sucursal: venta.sucursal.id,
+										expirado: false
+									},
+									include: [{ model: Dosificacion, as: 'dosificacion', include: [{ model: Clase, as: 'pieFactura' }] }]
+								}).then(function (sucursalActividadDosificacion) {
+									var dosificacion = sucursalActividadDosificacion.dosificacion;
+									if (configuracionGeneralFactura.usar) {
+										res.json({
+											sucursalPrincipal: sucursalPrincipalEncontrada, venta: venta, configuracion: configuracionGeneralFactura, sucursal: venta.sucursal,
+											numero_literal: venta.numero_literal, pieFactura: dosificacion.pieFactura, sucursalDestino: ((venta.almacenTraspaso) ? venta.almacenTraspaso.sucursal : null)
+										});
+									} else {
+										ConfiguracionFactura.find({
+											where: {
+												id_sucursal: venta.sucursal.id
+											},
+											include: [{ model: Clase, as: 'impresionFactura' },
+											{ model: Clase, as: 'tipoFacturacion' },
+											{ model: Clase, as: 'tamanoPapelFactura' },
+											{ model: Clase, as: 'tituloFactura' },
+											{ model: Clase, as: 'subtituloFactura' },
+											{ model: Clase, as: 'tamanoPapelNotaVenta' },
+
+											{ model: Clase, as: 'tamanoPapelFacturaServicio' },
+											{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
+											{ model: Clase, as: 'tamanoPapelNotaBaja' },
+											{ model: Clase, as: 'tamanoPapelNotaPedido' },
+											{ model: Clase, as: 'tamanoPapelCierreCaja' },
+											{ model: Clase, as: 'formatoPapelFactura' },
+											{ model: Clase, as: 'formatoColorFactura' },
+											{ model: Clase, as: 'formatoPapelFacturaServicio' },
+											{ model: Clase, as: 'formatoColorFacturaServicio' },
+											{ model: Clase, as: 'tipoConfiguracion' }]
+										}).then(function (configuracionFactura) {
+											res.json({
+												sucursalPrincipal: sucursalPrincipalEncontrada,
+												venta: venta,
+												configuracion: configuracionFactura,
+												sucursal: venta.sucursal,
+												numero_literal: venta.numero_literal,
+												pieFactura: dosificacion.pieFactura, sucursalDestino: ((venta.almacenTraspaso) ? venta.almacenTraspaso.sucursal : null)
+											});
+										});
+									}
+								});
+							} else {
+								if (configuracionGeneralFactura.usar) {
+									res.json({
+										sucursalPrincipal: sucursalPrincipalEncontrada,
+										venta: venta, configuracion: configuracionGeneralFactura, sucursal: venta.sucursal,
+										numero_literal: venta.numero_literal, sucursalDestino: ((venta.almacenTraspaso) ? venta.almacenTraspaso.sucursal : null)
+									});
+								} else {
+									ConfiguracionFactura.find({
+										where: {
+											id_sucursal: venta.sucursal.id
+										},
+										include: [{ model: Clase, as: 'impresionFactura' },
+										{ model: Clase, as: 'tipoFacturacion' },
+										{ model: Clase, as: 'tamanoPapelFactura' },
+										{ model: Clase, as: 'tituloFactura' },
+										{ model: Clase, as: 'subtituloFactura' },
+										{ model: Clase, as: 'tamanoPapelNotaVenta' }]
+									}).then(function (configuracionFactura) {
+										res.json({
+											sucursalPrincipal: sucursalPrincipalEncontrada,
+											venta: venta,
+											configuracion: configuracionFactura,
+											sucursal: venta.sucursal,
+											numero_literal: venta.numero_literal, sucursalDestino: ((venta.almacenTraspaso) ? venta.almacenTraspaso.sucursal : null)
+										});
+									});
+								}
+							}
+						} else {
 							SucursalActividadDosificacion.find({
 								where: {
 									id_actividad: venta.actividad.id,
@@ -3521,7 +3601,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								var dosificacion = sucursalActividadDosificacion.dosificacion;
 								if (configuracionGeneralFactura.usar) {
 									res.json({
-										sucursalPrincipal:sucursalPrincipalEncontrada,venta: venta, configuracion: configuracionGeneralFactura, sucursal: venta.sucursal,
+										sucursalPrincipal: sucursalPrincipalEncontrada,
+										venta: venta, configuracion: configuracionGeneralFactura, sucursal: venta.sucursal,
 										numero_literal: venta.numero_literal, pieFactura: dosificacion.pieFactura, sucursalDestino: ((venta.almacenTraspaso) ? venta.almacenTraspaso.sucursal : null)
 									});
 								} else {
@@ -3548,7 +3629,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										{ model: Clase, as: 'tipoConfiguracion' }]
 									}).then(function (configuracionFactura) {
 										res.json({
-											sucursalPrincipal:sucursalPrincipalEncontrada,
+											sucursalPrincipal: sucursalPrincipalEncontrada,
 											venta: venta,
 											configuracion: configuracionFactura,
 											sucursal: venta.sucursal,
@@ -3558,90 +3639,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 									});
 								}
 							});
-						} else {
-							if (configuracionGeneralFactura.usar) {
-								res.json({
-									sucursalPrincipal:sucursalPrincipalEncontrada,
-									venta: venta, configuracion: configuracionGeneralFactura, sucursal: venta.sucursal,
-									numero_literal: venta.numero_literal, sucursalDestino: ((venta.almacenTraspaso) ? venta.almacenTraspaso.sucursal : null)
-								});
-							} else {
-								ConfiguracionFactura.find({
-									where: {
-										id_sucursal: venta.sucursal.id
-									},
-									include: [{ model: Clase, as: 'impresionFactura' },
-									{ model: Clase, as: 'tipoFacturacion' },
-									{ model: Clase, as: 'tamanoPapelFactura' },
-									{ model: Clase, as: 'tituloFactura' },
-									{ model: Clase, as: 'subtituloFactura' },
-									{ model: Clase, as: 'tamanoPapelNotaVenta' }]
-								}).then(function (configuracionFactura) {
-									res.json({
-										sucursalPrincipal:sucursalPrincipalEncontrada,
-										venta: venta,
-										configuracion: configuracionFactura,
-										sucursal: venta.sucursal,
-										numero_literal: venta.numero_literal, sucursalDestino: ((venta.almacenTraspaso) ? venta.almacenTraspaso.sucursal : null)
-									});
-								});
-							}
 						}
-					} else {
-						SucursalActividadDosificacion.find({
-							where: {
-								id_actividad: venta.actividad.id,
-								id_sucursal: venta.sucursal.id,
-								expirado: false
-							},
-							include: [{ model: Dosificacion, as: 'dosificacion', include: [{ model: Clase, as: 'pieFactura' }] }]
-						}).then(function (sucursalActividadDosificacion) {
-							var dosificacion = sucursalActividadDosificacion.dosificacion;
-							if (configuracionGeneralFactura.usar) {
-								res.json({
-									sucursalPrincipal:sucursalPrincipalEncontrada,
-									venta: venta, configuracion: configuracionGeneralFactura, sucursal: venta.sucursal,
-									numero_literal: venta.numero_literal, pieFactura: dosificacion.pieFactura, sucursalDestino: ((venta.almacenTraspaso) ? venta.almacenTraspaso.sucursal : null)
-								});
-							} else {
-								ConfiguracionFactura.find({
-									where: {
-										id_sucursal: venta.sucursal.id
-									},
-									include: [{ model: Clase, as: 'impresionFactura' },
-									{ model: Clase, as: 'tipoFacturacion' },
-									{ model: Clase, as: 'tamanoPapelFactura' },
-									{ model: Clase, as: 'tituloFactura' },
-									{ model: Clase, as: 'subtituloFactura' },
-									{ model: Clase, as: 'tamanoPapelNotaVenta' },
+					});
 
-									{ model: Clase, as: 'tamanoPapelFacturaServicio' },
-									{ model: Clase, as: 'tamanoPapelNotaTraspaso' },
-									{ model: Clase, as: 'tamanoPapelNotaBaja' },
-									{ model: Clase, as: 'tamanoPapelNotaPedido' },
-									{ model: Clase, as: 'tamanoPapelCierreCaja' },
-									{ model: Clase, as: 'formatoPapelFactura' },
-									{ model: Clase, as: 'formatoColorFactura' },
-									{ model: Clase, as: 'formatoPapelFacturaServicio' },
-									{ model: Clase, as: 'formatoColorFacturaServicio' },
-									{ model: Clase, as: 'tipoConfiguracion' }]
-								}).then(function (configuracionFactura) {
-									res.json({
-										sucursalPrincipal:sucursalPrincipalEncontrada,
-										venta: venta,
-										configuracion: configuracionFactura,
-										sucursal: venta.sucursal,
-										numero_literal: venta.numero_literal,
-										pieFactura: dosificacion.pieFactura, sucursalDestino: ((venta.almacenTraspaso) ? venta.almacenTraspaso.sucursal : null)
-									});
-								});
-							}
-						});
-					}
 				});
-
-			});
-		})
+			})
 		})
 
 		.put(function (req, res) {
@@ -3653,35 +3655,35 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				}
 				var pagoV = req.body.pago - anticipo
 				return Venta.find({
-				where: { id: req.params.id },
-				include: [{
-					model: Almacen, as: 'almacen',
-					include: [{ model: Sucursal, as: 'sucursal' }]
+					where: { id: req.params.id },
+					include: [{
+						model: Almacen, as: 'almacen',
+						include: [{ model: Sucursal, as: 'sucursal' }]
 					}], transaction: t
-			}).then(function (ventaEncontrada) {
+				}).then(function (ventaEncontrada) {
 					return Venta.update({
 						a_cuenta: ventaEncontrada.a_cuenta + pagoV,
 						saldo: ventaEncontrada.total - (ventaEncontrada.a_cuenta + pagoV)
-				}, {
-						where: {
-							id: ventaEncontrada.id
+					}, {
+							where: {
+								id: ventaEncontrada.id
 							}, transaction: t
-					}).then(function (affectedRows) {
+						}).then(function (affectedRows) {
 							return PagoVenta.create({
-							id_venta: ventaEncontrada.id,
-							a_cuenta_anterior: ventaEncontrada.a_cuenta,
-							saldo_anterior: ventaEncontrada.saldo,
+								id_venta: ventaEncontrada.id,
+								a_cuenta_anterior: ventaEncontrada.a_cuenta,
+								saldo_anterior: ventaEncontrada.saldo,
 								monto_pagado: pagoV,
-							id_usuario: req.body.id_usuario_cajero,
-							numero_documento: ventaEncontrada.almacen.sucursal.nota_recibo_correlativo
+								id_usuario: req.body.id_usuario_cajero,
+								numero_documento: ventaEncontrada.almacen.sucursal.nota_recibo_correlativo
 							}, {
 									transaction: t
-						}).then(function (detalleVentaCreada) {
+								}).then(function (detalleVentaCreada) {
 									return Sucursal.update({
-								nota_recibo_correlativo: ventaEncontrada.almacen.sucursal.nota_recibo_correlativo + 1
-							}, {
-									where: {
-										id: ventaEncontrada.almacen.sucursal.id
+										nota_recibo_correlativo: ventaEncontrada.almacen.sucursal.nota_recibo_correlativo + 1
+									}, {
+											where: {
+												id: ventaEncontrada.almacen.sucursal.id
 											}, transaction: t
 										}).then(function (affectedRows) {
 											if (anticipo != 0) {
@@ -3698,7 +3700,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 														numero_correlativo_anticipo: sucursalEncontrada.anticipo_cliente_correlativo,
 														eliminado: false
 													}, {
-														transaction: t
+															transaction: t
 														}).then(function (clienteCreado) {
 															var correlativo = sucursalEncontrada.anticipo_cliente_correlativo + 1
 															return Sucursal.update({
@@ -3736,12 +3738,12 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 														reject((err.stack !== undefined) ? err.stack : err);
 													});
 												});
-											}else{
+											} else {
 												var pago = NumeroLiteral.Convertir(parseFloat(pagoV).toFixed(2).toString());
 												return new Promise(function (fulfill, reject) {
 													fulfill({ anticipo: {}, mensaje: "¡Saldo de cuenta actualizado satisfactoriamente!", pago: pago, venta: ventaEncontrada });
 												})
-									}
+											}
 										}).catch(function (err) {
 											return new Promise(function (fulfill, reject) {
 												reject((err.stack !== undefined) ? err.stack : err);
@@ -3789,7 +3791,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							where: {
 								id: ventaEncontrada.id
 							}, transaction: t
-								}).then(function (affectedRows) {
+						}).then(function (affectedRows) {
 							return PagoVenta.create({
 								id_venta: ventaEncontrada.id,
 								a_cuenta_anterior: ventaEncontrada.a_cuenta,
@@ -3897,25 +3899,25 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								where: { id: clienteCreado.id },
 								include: [{ model: Sucursal, as: 'sucursal' }, { model: Cliente, as: 'cliente' }], transaction: t
 							}).then(function (encontrado) {
-									var pago = NumeroLiteral.Convertir(parseFloat(req.body.pago).toFixed(2).toString());
+								var pago = NumeroLiteral.Convertir(parseFloat(req.body.pago).toFixed(2).toString());
 								return new Promise(function (fulfill, reject) {
 									fulfill({ mensaje: "¡Saldo de cuenta actualizado satisfactoriamente!", pago: pago, venta: ventaEncontrada, anticipo: encontrado });
 								});
 							}).catch(function (err) {
 								return new Promise(function (fulfill, reject) {
 									reject((err.stack !== undefined) ? err.stack : err);
-						});
+								});
 							})
 						}).catch(function (err) {
 							return new Promise(function (fulfill, reject) {
 								reject((err.stack !== undefined) ? err.stack : err);
-					});
+							});
 						})
 				}).catch(function (err) {
 					return new Promise(function (fulfill, reject) {
 						reject((err.stack !== undefined) ? err.stack : err);
-			});
-		});
+					});
+				});
 		}).catch(function (err) {
 			return new Promise(function (fulfill, reject) {
 				reject((err.stack !== undefined) ? err.stack : err);
@@ -3998,7 +4000,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			}).catch(function (err) {
 				res.json({ hasError: true, mensaje: err.stack ? err.stack : err });
 			});
-		});		
+		});
 	function guardarAnticiposProveedor(req, res, AnticiposEncontrados, sucursal, pago, compraEncontrada, t, PagoCompraCreado) {
 		var cantidadTotal = req.body.pago
 		var promises = []
@@ -4644,7 +4646,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			})
 		})
 
-	function aaaaaaaVentaServicio(req, index, y, res,  dosificacion, sucursalActividadDosificacion) {
+	function aaaaaaaVentaServicio(req, index, y, res, dosificacion, sucursalActividadDosificacion) {
 		var movimiento = req.body.ventas[index].movimiento.nombre_corto;
 		var id_movimiento = req.body.ventas[index].movimiento.id;
 		return Cliente.find({
@@ -4805,6 +4807,311 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				res.json({ hasError: true, mensaje: err.stack ? err.stack : err });
 			});
 		})
+	router.route('/importar-compras-ingresos-diarios/empresa/:id_empresa')
+		.post(function (req, res) {
+			Tipo.find({
+				where: { nombre_corto: 'MOVING' }
+			}).then(function (tipoMovimiento) {
+				Tipo.find({
+					where: { nombre_corto: 'CCO' }
+				}).then(function (tipoCentroCosto) {
+					var promises = []
+					sequelize.transaction(function (t) {
+						req.body.proveedores.forEach(function (proveedor, index, array) {
+							promises.push(Proveedor.findOrCreate({
+								where: {
+									id_empresa: req.params.id_empresa,
+									nit: proveedor.nit,
+									razon_social: proveedor.razon_social
+								},
+								defaults: {
+									id_empresa: req.params.id_empresa,
+									nit: proveedor.nit,
+									razon_social: proveedor.razon_social
+								},
+								transaction: t,
+								lock: t.LOCK.UPDATE,
+							}).spread(function (proveedorCreado, created) {
+								return new Promise(function (fulfill, reject) {
+									fulfill(proveedorCreado);
+								});
+							}).catch(function (err) {
+								return new Promise(function (fulfill, reject) {
+									reject(err);
+								});
+							}));
+						})
+						if(req.body.centrosCosto.length>0){
+						req.body.centrosCosto.forEach(function (centroCosto, index, array) {
+							promises.push(Clase.findOrCreate(
+								{
+									where: {
+										nombre: centroCosto.nombre,
+										id_tipo: tipoCentroCosto.id
+									},
+									defaults: {
+										nombre: centroCosto.nombre,
+										id_tipo: tipoCentroCosto.id
+									},
+									transaction: t,
+									lock: t.LOCK.UPDATE,
+								}).spread(function (centroCostoCreado, created) {
+									return new Promise(function (fulfill, reject) {
+										fulfill(centroCostoCreado);
+									});
+								}).catch(function (err) {
+									return new Promise(function (fulfill, reject) {
+										reject(err);
+									});
+								}));
+						})
+					}
+					if(req.body.productos.length>0){
+						req.body.productos.forEach(function (producto, index, array) {
+							promises.push(Producto.findOrCreate({
+								where: {
+									nombre: producto.nombre,
+									codigo: producto.codigo,
+									id_empresa: req.params.id_empresa
+								},
+								defaults: {
+									nombre: producto.nombre,
+									codigo: producto.codigo,
+									unidad_medida: producto.unidad_medida,
+									id_empresa: req.params.id_empresa
+								},
+								transaction: t,
+								lock: t.LOCK.UPDATE,
+							}).spread(function (productoCreado, created) {
+								return new Promise(function (fulfill, reject) {
+									fulfill(productoCreado);
+								});
+							}).catch(function (err) {
+								return new Promise(function (fulfill, reject) {
+									reject(err);
+								});
+							}));
+						})
+					}
+						req.body.compras.forEach(function (compra, index, array) {
+							conceptoMovimiento = compra.movimiento
+							promises.push(Almacen.find({
+								where: { nombre: compra.almacen.nombre }, transaction: t,
+								include: [{ model: Sucursal, as: 'sucursal', where: { id_empresa: compra.id_empresa } }]
+							}).then(function (almacenEncontrado) {
+								return Movimiento.create({
+									id_tipo: tipoMovimiento.id,
+									id_clase: conceptoMovimiento.id,
+									id_almacen: almacenEncontrado.id,
+									fecha: compra.fecha
+								}, {
+										transaction: t
+									}).then(function (movimientoCreado) {
+										return Proveedor.findOrCreate({
+											where: {
+												id_empresa: compra.id_empresa,
+												nit: compra.proveedor.nit,
+												razon_social: compra.proveedor.razon_social
+											},
+											defaults: {
+												id_empresa: compra.id_empresa,
+												nit: compra.proveedor.nit,
+												razon_social: compra.proveedor.razon_social
+											},
+											transaction: t,
+											lock: t.LOCK.UPDATE,
+										}).spread(function (proveedorCreado, created) {
 
+											return crearCompraImportacion(compra, res, proveedorCreado.id, movimientoCreado.id, conceptoMovimiento.id, tipoCentroCosto, almacenEncontrado, t);
+										}).catch(function (err) {
+											return new Promise(function (fulfill, reject) {
+												reject(err);
+											});
+										});
+									}).catch(function (err) {
+										return new Promise(function (fulfill, reject) {
+											reject(err);
+										});
+									});
+							}).catch(function (err) {
+								return new Promise(function (fulfill, reject) {
+									reject(err);
+								});
+							}));
+
+						})
+						return Promise.all(promises)
+					}).then(function name(result) {
+						res.json({ mensaje: "Importación satisfactoriamente!" })
+					}).catch(function (err) {
+						res.json({ hasError: true, mensaje: err.stack ? err.stack : err });
+					})
+				})
+			})
+		})
+	function crearCompraImportacion(compra, res, idProveedor, idMovimiento, idTipo, tipoCentroCosto, almacenEncontrado, t) {
+		return Compra.create({
+			id_tipo_movimiento: idTipo,
+			id_almacen: almacenEncontrado.id,
+			id_proveedor: idProveedor,
+			id_movimiento: idMovimiento,
+			factura: compra.factura,
+			autorizacion: compra.autorizacion,
+			fecha: compra.fecha,
+			codigo_control: compra.codigo_control,
+			importe: compra.importe,
+			id_tipo_pago: compra.tipoPago.id,
+			dias_credito: compra.dias_credito,
+			a_cuenta: compra.a_cuenta,
+			saldo: compra.saldo,
+			descuento_general: compra.descuento_general,
+			descuento: compra.descuento,
+			recargo: compra.recargo,
+			ice: compra.ice,
+			excento: compra.excento,
+			tipo_descuento: compra.tipo_descuento,
+			tipo_recargo: compra.tipo_recargo,
+			total: compra.total,
+			id_usuario: compra.id_usuario,
+			usar_producto: compra.usar_producto,
+			observacion: compra.observacion,
+			dui: compra.dui,
+			tipo_retencion: compra.tipo_retencion
+		}, {
+				transaction: t
+			}).then(function (compraCreada) {
+				var promises = []
+				compra.detallesCompra.forEach(function (detalleCompra, index, array) {
+					promises.push(Producto.find({
+						where: {
+							nombre: detalleCompra.producto.nombre,
+							codigo: detalleCompra.producto.codigo,
+							id_empresa: compra.id_empresa
+						},
+						transaction: t						
+					}).then(function (productoCreado) {
+						return Clase.find(
+							{
+								where: {
+									nombre: detalleCompra.centroCosto.nombre,
+									id_tipo: tipoCentroCosto.id
+								},
+								transaction: t,							
+							}).then(function (centroCostoCreado) {
+								return crearDetalleCompraImportacion(detalleCompra, idMovimiento, compraCreada.id, almacenEncontrado.id, productoCreado.id, centroCostoCreado, res, compra, t);
+							}).catch(function (err) {
+								return new Promise(function (fulfill, reject) {
+									reject("el producto con nombre:"+detalleCompra.producto.nombre +" y codigo:"+detalleCompra.producto.codigo +" o el centro de costo: "+detalleCompra.centroCosto.nombre +" no se pueden encontrar");
+								});
+							});
+					}).catch(function (err) {
+						return new Promise(function (fulfill, reject) {
+							reject(err);
+						});
+					}));
+				});
+				return Promise.all(promises)
+			}).catch(function (err) {
+				return new Promise(function (fulfill, reject) {
+					reject(err);
+				});
+			});
+	}
+	function crearDetalleCompraImportacion(detalleCompra, idMovimiento, idCompra, idAlmacen, idProducto, centroCosto, res, compra, t) {
+		if (centroCosto.nombre_corto == "ALM") {
+			return Inventario.create({
+				id_almacen: idAlmacen,
+				id_producto: idProducto,
+				cantidad: detalleCompra.cantidad,
+				costo_unitario: detalleCompra.costo_unitario,
+				costo_total: detalleCompra.costo_unitario * detalleCompra.cantidad,
+				fecha_vencimiento: detalleCompra.fecha_vencimiento,
+				lote: detalleCompra.lote
+			}, {
+					transaction: t
+				}).then(function (inventarioCreado) {
+					return DetalleCompra.create({
+						id_compra: idCompra,
+						id_producto: idProducto,
+						id_centro_costo: centroCosto.id,
+						costo_unitario: detalleCompra.costo_unitario,
+						cantidad: detalleCompra.cantidad,
+						importe: detalleCompra.importe,
+						descuento: detalleCompra.descuento,
+						recargo: detalleCompra.recargo,
+						ice: detalleCompra.ice,
+						excento: detalleCompra.excento,
+						tipo_descuento: detalleCompra.tipo_descuento.toUpperCase() == "%" ? true : false,
+						tipo_recargo: detalleCompra.tipo_recargo.toUpperCase() == "%" ? true : false,
+						total: detalleCompra.total,
+						id_inventario: inventarioCreado.id,
+					}, {
+							transaction: t
+						}).then(function (detalleCompraCreada) {
+							return DetalleMovimiento.create({
+								id_movimiento: idMovimiento,
+								id_producto: idProducto,
+								costo_unitario: detalleCompra.costo_unitario,
+								cantidad: detalleCompra.cantidad,
+								importe: (detalleCompra.costo_unitario * detalleCompra.cantidad),
+								descuento: detalleCompra.descuento,
+								recargo: detalleCompra.recargo,
+								ice: detalleCompra.ice,
+								excento: detalleCompra.excento,
+								tipo_descuento: detalleCompra.tipo_descuento.toUpperCase() == "%" ? true : false,
+								tipo_recargo: detalleCompra.tipo_recargo.toUpperCase() == "%" ? true : false,
+								total: detalleCompra.total,
+								fecha_vencimiento: detalleCompra.fecha_vencimiento,
+								lote: detalleCompra.lote,
+								id_inventario: inventarioCreado.id
+							}, {
+									transaction: t
+								}).then(function (detalleMovimientoCreado) {
+									return new Promise(function (fulfill, reject) {
+										fulfill();
+									});
+								}).catch(function (err) {
+									return new Promise(function (fulfill, reject) {
+										reject(err);
+									});
+								});
+						}).catch(function (err) {
+							return new Promise(function (fulfill, reject) {
+								reject(err);
+							});
+						});
+				}).catch(function (err) {
+					return new Promise(function (fulfill, reject) {
+						reject(err);
+					});
+				});
+		} else {
+			DetalleCompra.create({
+				id_compra: idCompra,
+				id_producto: idProducto,
+				id_centro_costo: centroCosto.id,
+				costo_unitario: detalleCompra.costo_unitario,
+				cantidad: detalleCompra.cantidad,
+				importe: detalleCompra.importe,
+				descuento: detalleCompra.descuento,
+				recargo: detalleCompra.recargo,
+				ice: detalleCompra.ice,
+				excento: detalleCompra.excento,
+				tipo_descuento: detalleCompra.tipo_descuento,
+				tipo_recargo: detalleCompra.tipo_recargo,
+				total: detalleCompra.total,
+				it: detalleCompra.it,
+				iue: detalleCompra.iue
+			}).then(function (detalleCompraCreada) {
+				return new Promise(function (fulfill, reject) {
+					fulfill();
+				});
+			}).catch(function (err) {
+				return new Promise(function (fulfill, reject) {
+					reject(err);
+				});
+			});
+		}
+	}
 
 }

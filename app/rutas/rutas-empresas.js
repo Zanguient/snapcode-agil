@@ -36,15 +36,17 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				usar_correlativos_clientes: req.body.usar_correlativos_clientes,
 				usar_correlativos_destinos: req.body.usar_correlativos_destinos,
 				usar_funciones_erp: req.body.usar_funciones_erp,
-				usar_estado_resultados_no_contables:req.body.usar_estado_resultados_no_contables,
+				usar_estado_resultados_no_contables: req.body.usar_estado_resultados_no_contables,
 				usar_peps: req.body.usar_peps,
-				usar_edicion_venta:req.body.usar_edicion_venta,
-				usar_venta_servicio:req.body.usar_venta_servicio,
-				usar_facturacion_masiva:req.body.usar_facturacion_masiva,
-				usar_cotizacion:req.body.usar_cotizacion,
-				usar_tipo_precio:req.body.usar_tipo_precio,
-				usar_pago_anticipado:req.body.usar_pago_anticipado,
-				usar_ceros_plan_cuenta:req.body.usar_ceros_plan_cuenta
+				usar_edicion_venta: req.body.usar_edicion_venta,
+				usar_venta_servicio: req.body.usar_venta_servicio,
+				usar_facturacion_masiva: req.body.usar_facturacion_masiva,
+				usar_cotizacion: req.body.usar_cotizacion,
+				usar_tipo_precio: req.body.usar_tipo_precio,
+				usar_pago_anticipado: req.body.usar_pago_anticipado,
+				usar_ceros_plan_cuenta: req.body.usar_ceros_plan_cuenta,
+				usar_importacion_compra: req.body.usar_importacion_compra,
+				usar_importacion_venta: req.body.usar_importacion_venta
 			}).then(function (empresaCreada) {
 				Sucursal.create({
 					id_empresa: empresaCreada.id,
@@ -245,14 +247,17 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				usar_correlativos_clientes: req.body.usar_correlativos_clientes,
 				usar_correlativos_destinos: req.body.usar_correlativos_destinos,
 				usar_funciones_erp: req.body.usar_funciones_erp,
-				usar_estado_resultados_no_contables:req.body.usar_estado_resultados_no_contables,
+				usar_estado_resultados_no_contables: req.body.usar_estado_resultados_no_contables,
 				usar_peps: req.body.usar_peps,
-				usar_edicion_venta:req.body.usar_edicion_venta,
-				usar_venta_servicio:req.body.usar_venta_servicio,
-				usar_facturacion_masiva:req.body.usar_facturacion_masiva,
-				usar_cotizacion:req.body.usar_cotizacion,
-				usar_tipo_precio:req.body.usar_tipo_precio,
-				usar_pago_anticipado:req.body.usar_pago_anticipado
+				usar_edicion_venta: req.body.usar_edicion_venta,
+				usar_venta_servicio: req.body.usar_venta_servicio,
+				usar_facturacion_masiva: req.body.usar_facturacion_masiva,
+				usar_cotizacion: req.body.usar_cotizacion,
+				usar_tipo_precio: req.body.usar_tipo_precio,
+				usar_pago_anticipado: req.body.usar_pago_anticipado,
+				usar_ceros_plan_cuenta: req.body.usar_ceros_plan_cuenta,
+				usar_importacion_compra: req.body.usar_importacion_compra,
+				usar_importacion_venta: req.body.usar_importacion_venta
 			}, {
 					where: {
 						id: req.params.id_empresa
@@ -319,24 +324,24 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 		.get(function (req, res) {
 			if (req.query.app.length > 0) {
 				Aplicacion.findAll({
-					where:{id:{ $in:req.query.app.split(',') }}
+					where: { id: { $in: req.query.app.split(',') } }
 				}).then(function (Aplicaciones) {
 					res.json(Aplicaciones);
 				});
 			} else {
 				Aplicacion.findAll({
-				
+
 				}).then(function (Aplicaciones) {
 					res.json(Aplicaciones);
 				});
 			}
-			
+
 		})
 	router.route('/sistema/aplicaciones/empresa/:id_empresa')
 		.get(function (req, res) {
 			EmpresaAplicacion.findAll({
 				where: { id_empresa: req.params.id_empresa },
-				include:[{model:Aplicacion,as:'aplicacion'}]
+				include: [{ model: Aplicacion, as: 'aplicacion' }]
 			}).then(function (Aplicaciones) {
 				res.json(Aplicaciones);
 			});
@@ -433,16 +438,16 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 		});
 
 	router.route('/empresa/:id_empresa')
-		.get(function (req,res){
+		.get(function (req, res) {
 			Empresa.findAll({
-				include:[{
-					model: Usuario, as:'usuarios', where: {id_empresa: req.params.id_empresa}
-						}]
-			}).then(function(empresa){
+				include: [{
+					model: Usuario, as: 'usuarios', where: { id_empresa: req.params.id_empresa }
+				}]
+			}).then(function (empresa) {
 				res.json(empresa);
 			})
 		})
-	
+
 	router.route('/subgrupos/empresa/:id_empresa')
 		.get(function (req, res) {
 			sequelize.query("SELECT gl_clase.id, gl_clase.nombre, gl_clase.habilitado FROM gl_clase,gl_tipo where gl_tipo.nombre_corto='SUBGRUPOS PRODUCTOS' and gl_clase.tipo=gl_tipo.id and gl_tipo.empresa=" + req.params.id_empresa, { type: sequelize.QueryTypes.SELECT })

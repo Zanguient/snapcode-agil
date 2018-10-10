@@ -3,15 +3,15 @@ angular.module('agil.controladores')
 	.controller('ControladorCompras', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'DatosCompra', '$timeout',
 		'Compra', 'Compras', 'Proveedores', 'ProveedoresNit', 'ListaProductosEmpresaUsuario', 'ClasesTipo', 'CompraDatos',
 		'ConfiguracionCompraVistaDatos', 'ConfiguracionCompraVista', 'ConfiguracionesCuentasEmpresa', 'ClasesTipoEmpresa', 'Tipos', 'SaveCompra', 'ListaCompraPedidosEmpresa', 'EliminarPedidoEmpresa', 'EliminarDetallePedidoEmpresa',
-		'CompraDatosCredito', 'Paginator', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, DatosCompra, $timeout,
+		'CompraDatosCredito', 'Paginator', 'GuardarImportacionComprasIngresoDiario', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, DatosCompra, $timeout,
 			Compra, Compras, Proveedores, ProveedoresNit, ListaProductosEmpresaUsuario, ClasesTipo, CompraDatos,
 			ConfiguracionCompraVistaDatos, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ClasesTipoEmpresa, Tipos, SaveCompra, ListaCompraPedidosEmpresa, EliminarPedidoEmpresa,
-			EliminarDetallePedidoEmpresa, CompraDatosCredito, Paginator) {
+			EliminarDetallePedidoEmpresa, CompraDatosCredito, Paginator, GuardarImportacionComprasIngresoDiario) {
 			blockUI.start();
 
 			$scope.usuario = JSON.parse($localStorage.usuario);
-			$scope.list ==[]
-			$scope.itemsPerPageCompra=10
+			$scope.list == []
+			$scope.itemsPerPageCompra = 10
 			$scope.idModalPago = 'dialog-pago';
 			$scope.idModalWizardCompraEdicion = 'modal-wizard-compra-edicion';
 			$scope.idModalWizardCompraVista = 'modal-wizard-compra-vista';
@@ -54,10 +54,10 @@ angular.module('agil.controladores')
 
 				$scope.busquedaProductoHabilidato = false;
 				if ($scope.usuario.empresa.usar_funciones_erp) {
-					$scope.obtenerMovimientosIngreso()
+
 					$scope.obtenerconfiuracionCuentas()
 				}
-
+				$scope.obtenerMovimientosIngreso()
 				$scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
 			}
 			$scope.obtenerconfiuracionCuentas = function () {
@@ -767,7 +767,7 @@ angular.module('agil.controladores')
 				var promesa = Compras(sucursalesUsuario, inicio, fin, razon_social, nit, monto, tipo_pago, sucursal, usuario, $scope.usuario.id, tipo);
 				promesa.then(function (compras) {
 					$scope.compras = compras;
-					$scope.list=compras
+					$scope.list = compras
 					//$scope.compras = compras.detalle;
 					//$scope.paginator.setPages(compras.paginas);
 
@@ -801,7 +801,7 @@ angular.module('agil.controladores')
 				promesa.then(function (compras) {
 					//$scope.compras = compras;
 					$scope.compras = compras.detalle;
-					$scope.list=compras
+					$scope.list = compras
 					$scope.paginator.setPages(compras.paginas);
 
 					blockUI.stop();
@@ -1649,12 +1649,192 @@ angular.module('agil.controladores')
 				itemsPerPage: $scope.itemsPerPageCompra,
 				fillLastPage: true
 			}
-			$scope.SelectItemPorPagina=function(itemsPerPageCompra){
+			$scope.SelectItemPorPagina = function (itemsPerPageCompra) {
 				$scope.config = {
 					itemsPerPage: itemsPerPageCompra,
 					fillLastPage: true
 				}
 			}
+
+			$scope.subirExcelComprasIngresosDiarios = function (event) {
+				//console.log('iniciando carga de pacientes')
+				var files = event.target.files;
+				var i, f;
+				for (i = 0, f = files[i]; i != files.length; ++i) {
+					//console.log('iniciando lectura de excel(s)')
+					var reader = new FileReader();
+					var name = f.name;
+					reader.onload = function (e) {
+						var data = e.target.result;
+						var workbook = XLSX.read(data, { type: 'binary' });
+						var first_sheet_name = workbook.SheetNames[0];
+						var row = 2, i = 0, row2 = 2;
+						var worksheet = workbook.Sheets[first_sheet_name];
+						var compras = [];
+						var arregloProveedores = []
+						var arregloCentrosCosto = []
+						var arregloProductos = []
+						do {
+							row2 = row
+							var compra = { usar_producto: true, sucursal: {}, almacen: {}, tipoPago: {}, detallesCompra: [], proveedor: {} };
+							compra.proveedor.nit = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+							compra.proveedor.razon_social = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+							var bandera = false
+							if (arregloProveedores.length > 0) {
+								for (var i = 0; i < arregloProveedores.length; i++) {
+									var element = arregloProveedores[i].nit;
+									if (compra.proveedor.nit != null) {
+										if (element == compra.proveedor.nit) {
+											bandera = true
+										}
+									}
+								}
+								if (!bandera) {
+
+									arregloProveedores.push(compra.proveedor)
+
+								}
+							} else {
+								arregloProveedores.push(compra.proveedor)
+							}
+							compra.factura = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+							/* if (row == 2) {
+								var facturaComparacion = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+							} else {
+								var facturaComparacion = worksheet['A' + (row - 1)] != undefined && worksheet['A' + (row - 1)] != "" ? worksheet['A' + (row - 1)].v.toString() : null;
+							} */
+							compra.autorizacion = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
+							compra.fechaTexto = worksheet['E' + row] != undefined && worksheet['E' + row] != "" ? new Date($scope.fecha_excel_angular(worksheet['E' + row].v.toString())) : null;
+							compra.codigo_control = worksheet['F' + row] != undefined && worksheet['F' + row] != "" ? worksheet['F' + row].v.toString() : null;
+							compra.sucursal.nombre = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
+							compra.almacen.nombre = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? worksheet['H' + row].v.toString() : null;
+							compra.tipoPago.nombre = worksheet['I' + row2] != undefined && worksheet['I' + row2] != "" ? worksheet['I' + row2].v.toString() : null;
+							compra.dias_credito = worksheet['J' + row2] != undefined && worksheet['J' + row2] != "" ? worksheet['J' + row2].v.toString() : null;
+							compra.a_cuenta = worksheet['K' + row2] != undefined && worksheet['K' + row2] != "" ? parseFloat(worksheet['K' + row2].v.toString()) : null;
+							compra.observacion = worksheet['L' + row2] != undefined && worksheet['L' + row2] != "" ? worksheet['L' + row2].v.toString() : null;
+
+							do {
+								var NumeroCompraA = worksheet['C' + row2] != undefined && worksheet['C' + row2] != "" ? worksheet['C' + row2].v.toString() : null;
+								if (NumeroCompraA == compra.factura) {
+									var detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false, eliminado: false }
+									detalleCompra.centroCosto.nombre = worksheet['M' + row2] != undefined && worksheet['M' + row2] != "" ? worksheet['M' + row2].v.toString() : null;
+									var bandera = false
+									detalleCompra.producto.codigo = worksheet['N' + row2] != undefined && worksheet['N' + row2] != "" ? worksheet['N' + row2].v.toString() : null;
+										detalleCompra.producto.nombre = worksheet['O' + row2] != undefined && worksheet['O' + row2] != "" ? worksheet['O' + row2].v.toString() : null;
+									if (detalleCompra.centroCosto.nombre.toUpperCase() != "ALMACEN") {
+										if (arregloCentrosCosto.length > 0) {
+											for (var i = 0; i < arregloCentrosCosto.length; i++) {
+												var element = arregloCentrosCosto[i].nombre;
+												if (detalleCompra.centroCosto.nombre != null) {
+													if (element == detalleCompra.centroCosto.nombre) {
+														bandera = true
+													}
+												}
+											}
+											if (!bandera) {
+												arregloCentrosCosto.push(detalleCompra.centroCosto)
+											}
+										} else {
+											arregloCentrosCosto.push(detalleCompra.centroCosto)
+										}
+										
+										var bandera = false
+										if (arregloProductos.length > 0) {
+											for (var i = 0; i < arregloProductos.length; i++) {
+												var element = arregloProductos[i].codigo;
+												if (detalleCompra.producto.codigo != null) {
+													if (element == detalleCompra.producto.codigo) {
+														bandera = true
+													}
+												}
+											}
+											if (!bandera) {
+												arregloProductos.push(detalleCompra.producto)
+											}
+										} else {
+											arregloProductos.push(detalleCompra.producto)
+										}
+									}
+									detalleCompra.fecha_vencimiento = worksheet['P' + row2] != undefined && worksheet['P' + row2] != "" ? worksheet['P' + row2].v.toString() : null;
+									detalleCompra.lote = worksheet['Q' + row2] != undefined && worksheet['Q' + row2] != "" ? worksheet['Q' + row2].v.toString() : null;
+									detalleCompra.costo_unitario = worksheet['R' + row2] != undefined && worksheet['R' + row2] != "" ? parseFloat(worksheet['R' + row2].v.toString()) : null;
+									detalleCompra.cantidad = worksheet['S' + row2] != undefined && worksheet['S' + row2] != "" ? parseFloat(worksheet['S' + row2].v.toString()) : null;
+									detalleCompra.importe = detalleCompra.costo_unitario * detalleCompra.cantidad
+									detalleCompra.tipo_descuento = worksheet['T' + row2] != undefined && worksheet['T' + row2] != "" ? worksheet['T' + row2].v.toString() : null;
+									detalleCompra.descuento = worksheet['U' + row2] != undefined && worksheet['U' + row2] != "" ? parseFloat(worksheet['U' + row2].v.toString()) : null;
+									detalleCompra.tipo_recargo = worksheet['V' + row2] != undefined && worksheet['V' + row2] != "" ? worksheet['V' + row2].v.toString() : null;
+									detalleCompra.recargo = worksheet['W' + row2] != undefined && worksheet['W' + row2] != "" ? parseFloat(worksheet['W' + row2].v.toString()) : null;
+									detalleCompra.ice = worksheet['X' + row2] != undefined && worksheet['X' + row2] != "" ? parseFloat(worksheet['X' + row2].v.toString()) : null;
+									detalleCompra.excento = worksheet['Y' + row2] != undefined && worksheet['Y' + row2] != "" ? parseFloat(worksheet['Y' + row2].v.toString()) : null;
+									var recargo = detalleCompra.recargo
+									if (detalleCompra.tipo_recargo == "%") {
+										recargo = detalleCompra.importe * (detalleCompra.recargo / 100);
+									}
+									var descuento = detalleCompra.descuento
+									if (detalleCompra.tipo_descuento == "%") {
+										descuento = detalleCompra.importe * (detalleCompra.descuento / 100);
+									}
+									detalleCompra.total = Math.round((detalleCompra.importe - descuento + recargo - detalleCompra.ice - detalleCompra.excento) * 1000) / 1000;
+
+
+									compra.detallesCompra.push(detalleCompra);
+									row2++;
+								}
+
+							} while (NumeroCompraA == compra.factura);
+
+							row = (row2 - 1)
+
+							/* if (NumeroVenta != NumeroVentaComparacion || row == 2)  {*/
+							var sumaImporte = 0;
+							for (var i = 0; i < compra.detallesCompra.length; i++) {
+								sumaImporte = sumaImporte + compra.detallesCompra[i].importe;
+							}
+							compra.importe = Math.round((sumaImporte) * 1000) / 1000;
+							var sumaTotal = 0;
+							for (var i = 0; i < compra.detallesCompra.length; i++) {
+								sumaTotal = sumaTotal + compra.detallesCompra[i].total;
+							}
+							compra.total = Math.round((sumaTotal) * 1000) / 1000;
+							var tipo_pago = $scope.tiposPago.filter(function (dato) {
+								return dato.nombre == compra.tipoPago.nombre
+							})
+							compra.tipoPago = tipo_pago[0]
+							if (compra.tipoPago.nombre == "CREDITO") {
+								compra.saldo = compra.total - compra.a_cuenta;
+							} else {
+								compra.saldo = null
+							}
+							compra.id_usuario = $scope.usuario.id
+							var mov = $scope.movimientosIngreso.filter(function (dato) {
+								return dato.nombre == $scope.diccionario.MOVING_DIARIO
+							})
+							compra.movimiento = mov[0]
+							compra.id_empresa = $scope.usuario.id_empresa
+							compra.fecha = compra.fechaTexto
+							/* ventas.push(venta); */
+							/* } */
+							compras.push(compra);
+							row++;
+							i++;
+
+						} while (worksheet['A' + row] != undefined);
+						$scope.guardarImportacionComprasIngresoDiario(compras, arregloProveedores, arregloCentrosCosto, arregloProductos);
+					};
+					reader.readAsBinaryString(f);
+
+				}
+			}
+			$scope.guardarImportacionComprasIngresoDiario = function (compras, arregloProveedores, arregloCentrosCosto, arregloProductos) {
+				blockUI.start();
+				var promesa = GuardarImportacionComprasIngresoDiario(compras, arregloProveedores, arregloCentrosCosto, arregloProductos, $scope.usuario.id_empresa)
+				promesa.then(function (dato) {
+					blockUI.stop()
+					$scope.mostrarMensaje(dato.mensaje)
+					$scope.recargarItemsTabla()
+				})
+			}
+
 			$scope.$on('$routeChangeStart', function (next, current) {
 				$scope.eliminarPopup($scope.idModalWizardCompraEdicion);
 				$scope.eliminarPopup($scope.idModalWizardCompraVista);
