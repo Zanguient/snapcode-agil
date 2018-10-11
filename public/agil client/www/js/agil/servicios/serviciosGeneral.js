@@ -2062,14 +2062,16 @@ angular.module('agil.servicios')
                             doc.font('Helvetica-Bold', 8);
 							doc.text("Sucursal "+venta.sucursal.numero, 60,yDescDir-10,{width: 150});
 							doc.font('Helvetica', 7);
-							doc.text(venta.sucursal.direccion.toLowerCase(), 60,yDescDir-2,{width: 150});
-							var longitudSucursal = venta.sucursal.direccion.length;
+							var sucursalDireccion= venta.sucursal.direccion.toLowerCase;
+							var direccionCapitalizada = sucursalDireccion.replace(/\b[a-z]/g,c=>c.toUpperCase());
+							doc.text(direccionCapitalizada, 60,yDescDir-2,{width: 150});
+							var longitudSucursal = direccionCapitalizada.length;
 							if(longitudSucursal >= 80){
-								yTamDir = yDescDir + 20
-							}else if(longitudSucursal >= 36){
-								yTamDir = yDescDir + 10;
+								yTamDir = yDescDir + 30
+							}else if(longitudSucursal >= 45){
+								yTamDir = yDescDir + 20;
 							}else{
-								yTamDir = yDescDir - 10;
+								yTamDir = yDescDir + 13;
 							}
 							//var yTamDir = (longitudSucursal <= 36)? yDescDir + 10: yDescDir + 10;
 
@@ -2077,10 +2079,10 @@ angular.module('agil.servicios')
 							var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
 							(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
 							(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
-							doc.text("TELF: "+telefono,60,yTamDir - 5);
+							doc.text("TELF: "+telefono,60,yTamDir - 8);
 							doc.font('Helvetica-Bold', 8);
 							yTamDir += 10;
-							doc.text(venta.sucursal.nombre+" - BOLIVIA", 60, yTamDir - 7);
+							doc.text(venta.sucursal.nombre+" - BOLIVIA", 60, yTamDir - 11);
 
 						}else{
 							var alturaImagen = 80;
