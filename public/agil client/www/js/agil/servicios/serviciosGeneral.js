@@ -2062,11 +2062,11 @@ angular.module('agil.servicios')
                             doc.font('Helvetica-Bold', 8);
 							doc.text("Sucursal "+venta.sucursal.numero, 60,yDescDir-10,{width: 150});
 							doc.font('Helvetica', 7);
-							var sucursalDireccion= venta.sucursal.direccion.toLowerCase;
+							var sucursalDireccion = venta.sucursal.direccion.toLowerCase();
 							var direccionCapitalizada = sucursalDireccion.replace(/\b[a-z]/g,c=>c.toUpperCase());
 							doc.text(direccionCapitalizada, 60,yDescDir-2,{width: 150});
 							var longitudSucursal = direccionCapitalizada.length;
-							if(longitudSucursal >= 80){
+							if(longitudSucursal > 80){
 								yTamDir = yDescDir + 30
 							}else if(longitudSucursal >= 45){
 								yTamDir = yDescDir + 20;
