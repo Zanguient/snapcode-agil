@@ -1828,7 +1828,7 @@ angular.module('agil.controladores')
 
                 } else {
                     doc.addPage({ margin: 0, bufferPages: true });
-                    y = 150;
+                    y = 185;
                     items = 0;
                     pagina = pagina + 1;
                     $scope.dibujarCabeceraPDFReporteHijos(doc, detallesHijos, detalle, pagina,imagenEmpresa);
