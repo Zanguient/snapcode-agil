@@ -3910,4 +3910,8 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
                
                 $scope.ocultarMenu = true;
             }
+
+            $scope.capitalizar = function(texto){
+                return texto.replace(/(^|[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ])([a-záéíóúüñ])/g,c=>c.toUpperCase());
+            }
         }]);

@@ -102,7 +102,7 @@
     ScopeConfigWrapper.prototype.getItemsPerPage = function() {
       return this.scope.$eval(this.configurationVariableNames.itemsPerPage) || 10;
     };
-    ScopeConfigWrapper.prototype.settItemsPerPage = function(s) {
+    ScopeConfigWrapper.prototype.setItemsPerPage = function(s) {
       this.configurationVariableNames.itemsPerPage =s;
     };
     ScopeConfigWrapper.prototype.getCurrentPage = function() {
