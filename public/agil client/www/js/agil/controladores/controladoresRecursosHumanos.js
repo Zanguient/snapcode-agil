@@ -1718,22 +1718,22 @@ angular.module('agil.controladores')
             $scope.cerrarDialogReporteHijos = function () {
                 $scope.cerrarPopup($scope.idModalReporteHijos);
             }
-            $scope.abrirReportePDFHijos = function(desde, hasta, todos){
-                
+            $scope.abrirReportePDFHijos = function (desde, hasta, todos) {
+
                 if (desde == null || hasta == null) {
                     $scope.mostrarMensaje("Ingrese los rangos!");
                 }
-                
+
                 blockUI.start();
-				var promesa = ListaHijosEmpleadosEmpresa($scope.usuario.id_empresa);
-				promesa.then(function (datos) {
+                var promesa = ListaHijosEmpleadosEmpresa($scope.usuario.id_empresa);
+                promesa.then(function (datos) {
                     var fechaActual = new Date()
                     var hijosReporte = []
                     if (todos != true) {
                         todos = false;
                     }
-                  
-                    var detalle = {"desde":desde,"hasta":hasta,"todos":todos};
+
+                    var detalle = { "desde": desde, "hasta": hasta, "todos": todos };
                     datos.forEach(function (hijo, index, array) {
                         console.log("falta funcionalidad")
                         fechaNacimiento = new Date(hijo.persona.fecha_nacimiento)
@@ -1745,27 +1745,27 @@ angular.module('agil.controladores')
                                     if (hijo.edad >= desde && hijo.edad <= hasta) {
                                         hijosReporte.push(hijo)
                                         if (index === (array.length - 1)) {
-                                            $scope.generarReprotePDFHijos(hijosReporte,detalle)
+                                            $scope.generarReprotePDFHijos(hijosReporte, detalle)
                                         }
                                     } else {
                                         if (index === (array.length - 1)) {
-                                            $scope.generarReprotePDFHijos(hijosReporte,detalle)
+                                            $scope.generarReprotePDFHijos(hijosReporte, detalle)
                                         }
                                     }
                                 } else if (hijo.empleado.eliminado == false) {
                                     if (hijo.edad >= desde && hijo.edad <= hasta) {
                                         hijosReporte.push(hijo)
                                         if (index === (array.length - 1)) {
-                                            $scope.generarReprotePDFHijos(hijosReporte,detalle)
+                                            $scope.generarReprotePDFHijos(hijosReporte, detalle)
                                         }
                                     } else {
                                         if (index === (array.length - 1)) {
-                                            $scope.generarReprotePDFHijos(hijosReporte,detalle)
+                                            $scope.generarReprotePDFHijos(hijosReporte, detalle)
                                         }
                                     }
                                 } else {
                                     if (index === (array.length - 1)) {
-                                        $scope.generarReprotePDFHijos(hijosReporte,detalle)
+                                        $scope.generarReprotePDFHijos(hijosReporte, detalle)
                                     }
                                 }
 
@@ -1773,60 +1773,95 @@ angular.module('agil.controladores')
                         }
                     })
                     blockUI.stop();
-				});
+                });
             }
 
-    $scope.generarReprotePDFHijos = function(reporteHijos,detalle){
+            $scope.generarReprotePDFHijos = function (reporteHijos, detalle) {
 
-        convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-        
-        var detallesHijos = reporteHijos;
-        var doc = new PDFDocument({ compress: false, margin: 10 });
-        var stream = doc.pipe(blobStream());
+                convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
 
-        doc.font('Helvetica', 8);
-        var y = 185, itemsPorPagina = 15, items = 0, pagina = 1;
-       $scope.dibujarCabeceraPDFReporteHijos(doc, detallesHijos, detalle, pagina,imagenEmpresa);
+                    var detallesHijos = reporteHijos;
+                    var doc = new PDFDocument({ compress: false, margin: 10 });
+                    var stream = doc.pipe(blobStream());
 
-        for (var i = 0; i < detallesHijos.length && items <= itemsPorPagina; i++) {
-            
-            doc.font('Helvetica',8);
-            doc.rect(40, y-5, 60, 20).stroke();
-            doc.text(detallesHijos[i].empleado.codigo,45,y);
-            doc.rect(100, y-5, 110, 20).stroke();
-            doc.text(detallesHijos[i].empleado.persona.nombre_completo.toLowerCase(),105,y,{width:100});
+                    doc.font('Helvetica', 8);
+                    var y = 185, itemsPorPagina = 15, items = 0, pagina = 1;
+                    $scope.dibujarCabeceraPDFReporteHijos(doc, detallesHijos, detalle, pagina, imagenEmpresa);
 
-            doc.rect(210, y-5, 110, 20).stroke();
-            var apellido_materno = detallesHijos[i].persona.apellido_materno;
-            var apellido_paterno = detallesHijos[i].persona.apellido_paterno;
-            var nombre = detallesHijos[i].persona.nombres;
-            var nombre_completo = nombre+" "+apellido_paterno+" "+apellido_materno;
-            doc.text(nombre_completo.toLowerCase(),215,y,{width:100});
+                    for (var i = 0; i < detallesHijos.length && items <= itemsPorPagina; i++) {
 
-            doc.rect(320, y-5, 60, 20).stroke();
-            var fecha = new Date(detallesHijos[i].persona.fecha_nacimiento);
-            var año = fecha.getFullYear();
-            var mes = fecha.getMonth() + 1;
-            var dia = fecha.getDate();
-            var fecha_completa = dia+"/"+mes+"/"+año;
-            doc.text(fecha_completa,325,y);
+                        doc.font('Helvetica', 8);
+                        doc.rect(40, y - 5, 60, 20).stroke();
+                        doc.text(detallesHijos[i].empleado.codigo, 45, y);
+                        doc.rect(100, y - 5, 110, 20).stroke();
+                        doc.text(detallesHijos[i].empleado.persona.nombre_completo.toLowerCase(), 105, y, { width: 100 });
 
-            doc.rect(380, y-5, 60, 20).stroke();
-            doc.text(detallesHijos[i].persona.genero.nombre.toLowerCase(),385,y);
+                        doc.rect(210, y - 5, 110, 20).stroke();
+                        var apellido_materno = detallesHijos[i].persona.apellido_materno;
+                        var apellido_paterno = detallesHijos[i].persona.apellido_paterno;
+                        var nombre = detallesHijos[i].persona.nombres;
+                        var nombre_completo = nombre + " " + apellido_paterno + " " + apellido_materno;
+                        doc.text(nombre_completo.toLowerCase(), 215, y, { width: 100 });
 
-            doc.rect(440, y-5, 40, 20).stroke();
-            doc.text(detallesHijos[i].edad,450,y);
+                        doc.rect(320, y - 5, 60, 20).stroke();
+                        var fecha = new Date(detallesHijos[i].persona.fecha_nacimiento);
+                        var año = fecha.getFullYear();
+                        var mes = fecha.getMonth() + 1;
+                        var dia = fecha.getDate();
+                        var fecha_completa = dia + "/" + mes + "/" + año;
+                        doc.text(fecha_completa, 325, y);
 
-            doc.rect(480, y-5, 75, 20).stroke();
-            doc.text(detallesHijos[i].relacion.nombre.toLowerCase(),500,y);
+                        doc.rect(380, y - 5, 60, 20).stroke();
+                        doc.text(detallesHijos[i].persona.genero.nombre.toLowerCase(), 385, y);
 
-            y = y + 20;
-            items++;
+                        doc.rect(440, y - 5, 40, 20).stroke();
+                        doc.text(detallesHijos[i].edad, 450, y);
 
-            if (items == itemsPorPagina || i + 1 == detallesHijos.length) {
-                if (i + 1 == detallesHijos.length) {
+                        doc.rect(480, y - 5, 75, 20).stroke();
+                        doc.text(detallesHijos[i].relacion.nombre.toLowerCase(), 500, y);
 
+                        y = y + 20;
+                        items++;
+
+                        if (items == itemsPorPagina || i + 1 == detallesHijos.length) {
+                            if (i + 1 == detallesHijos.length) {
+
+                            } else {
+                                doc.addPage({ margin: 0, bufferPages: true });
+                                y = 150;
+                                items = 0;
+                                pagina = pagina + 1;
+                                $scope.dibujarCabeceraPDFReporteHijos(doc, detallesHijos, detalle, pagina, imagenEmpresa);
+                                doc.font('Helvetica', 8);
+                            }
+                        }
+                    }
+                    /*var fechaActual = new Date();
+                    var min = fechaActual.getMinutes();
+                    if (min < 10) {
+                        min = "0" + min;
+                    }
+                    doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, y);
+                    doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, y);*/
+                    doc.end();
+                    stream.on('finish', function () {
+                        var fileURL = stream.toBlobURL('application/pdf');
+                        window.open(fileURL, '_blank', 'location=no');
+                    });
+                });
+            }
+
+            $scope.dibujarCabeceraPDFReporteHijos = function (doc, datos, detalle, pagina, imagenEmpresa) {
+                doc.font('Helvetica-Bold', 12);
+
+                doc.image(imagenEmpresa, 60, 50, { fit: [75, 75] });
+
+                doc.text("REPORTE DE HIJOS", 0, 100, { align: "center" });
+                var tipo;
+                if (detalle.todos == true) {
+                    tipo = "ACTIVO";
                 } else {
+                    tipo = "TODOS";
                     doc.addPage({ margin: 0, bufferPages: true });
                     y = 185;
                     items = 0;
@@ -1834,59 +1869,30 @@ angular.module('agil.controladores')
                     $scope.dibujarCabeceraPDFReporteHijos(doc, detallesHijos, detalle, pagina,imagenEmpresa);
                     doc.font('Helvetica', 8);
                 }
+                doc.font('Helvetica-Bold', 8);
+                doc.text("TIPO " + tipo, 0, 115, { align: "center" });
+                doc.text("EDAD  " + detalle.desde + " A " + detalle.hasta + " AÑOS", 0, 130, { align: "center" });
+                doc.rect(40, 150, 170, 15).stroke();
+                doc.text("EMPLEADOS", 80, 155);
+                doc.rect(210, 150, 345, 15).stroke();
+                doc.text("HIJOS", 350, 155);
+
+                doc.rect(40, 165, 60, 15).stroke();
+                doc.text("CODIGO", 50, 170);
+                doc.rect(100, 165, 110, 15).stroke();
+                doc.text("NOMBRE", 130, 170);
+
+                doc.rect(210, 165, 110, 15).stroke();
+                doc.text("NOMBRE", 245, 170);
+                doc.rect(320, 165, 60, 15).stroke();
+                doc.text("FECHA_NAC", 325, 170);
+                doc.rect(380, 165, 60, 15).stroke();
+                doc.text("SEXO", 400, 170);
+                doc.rect(440, 165, 40, 15).stroke();
+                doc.text("EDAD", 450, 170);
+                doc.rect(480, 165, 75, 15).stroke();
+                doc.text("RELACION", 495, 170);
             }
-        }
-        /*var fechaActual = new Date();
-        var min = fechaActual.getMinutes();
-        if (min < 10) {
-            min = "0" + min;
-        }
-        doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, y);
-        doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, y);*/
-        doc.end();
-        stream.on('finish', function () {
-            var fileURL = stream.toBlobURL('application/pdf');
-            window.open(fileURL, '_blank', 'location=no');
-        });
-        });
-    }  
-
-    $scope.dibujarCabeceraPDFReporteHijos = function (doc, datos, detalle, pagina,imagenEmpresa) {
-        doc.font('Helvetica-Bold', 12);
-       
-            doc.image(imagenEmpresa, 60, 50, { fit: [75, 75] }); 
-        
-        doc.text("REPORTE DE HIJOS", 0, 100, { align: "center" });
-        var tipo ;
-        if (detalle.todos == true) {
-            tipo = "ACTIVO";
-        }else{
-            tipo = "TODOS";
-        }
-        doc.font('Helvetica-Bold', 8);
-        doc.text("TIPO "+tipo,0,115,{align:"center"});
-        doc.text("EDAD  " + detalle.desde+" A "+detalle.hasta+" AÑOS", 0, 130, { align: "center" });
-        doc.rect(40, 150, 170, 15).stroke();
-        doc.text("EMPLEADOS",80,155);
-        doc.rect(210, 150, 345, 15).stroke();
-        doc.text("HIJOS",350,155);
-
-        doc.rect(40, 165, 60, 15).stroke();
-        doc.text("CODIGO",50,170);
-        doc.rect(100, 165, 110, 15).stroke();
-        doc.text("NOMBRE",130,170);
-
-        doc.rect(210, 165, 110, 15).stroke();
-        doc.text("NOMBRE",245,170);
-        doc.rect(320, 165, 60, 15).stroke();
-        doc.text("FECHA_NAC",325,170);
-        doc.rect(380, 165, 60, 15).stroke();
-        doc.text("SEXO",400,170);
-        doc.rect(440, 165, 40, 15).stroke();
-        doc.text("EDAD",450,170);
-        doc.rect(480, 165, 75, 15).stroke();
-        doc.text("RELACION",495,170);
-    }
 
 
             $scope.abrirDialogReporteVeneficios = function () {
@@ -1930,10 +1936,18 @@ angular.module('agil.controladores')
                 $scope.obtenerHistorialEmpresaAusenciasMedicas(filtroAusencias)
                 $scope.abrirPopup($scope.idModalReporteBajasMedicas);
             }
+
             $scope.cerrarDialogReporteBajasMedicas = function () {
                 $scope.cerrarPopup($scope.idModalReporteBajasMedicas);
             }
+
             $scope.abrirDialogReporteRolTurnos = function () {
+                shortcut.add("ESC", function() {
+                    $scope.cerrarDialogReporteRolTurnos()
+                    $scope.obtenerRecursosHumanos()
+                   
+                })
+
                 /*     $scope.filtroRol = { inicio: 0, fin: 0, grupo: 0 } */
                 $scope.paginator = Paginator();
                 $scope.paginator.column = "id";
@@ -1950,7 +1964,10 @@ angular.module('agil.controladores')
                 /* $scope.obtenerlistaRolTurnoEmpresa($scope.filtroRol) */
                 $scope.abrirPopup($scope.idModalReporteRolTurnos);
             }
+
             $scope.cerrarDialogReporteRolTurnos = function () {
+                shortcut.remove("ESC", function() {
+                })
                 $scope.cerrarPopup($scope.idModalReporteRolTurnos);
             }
             $scope.abrirDialogReporteTurnosDetallado = function () {
@@ -2194,7 +2211,7 @@ angular.module('agil.controladores')
             //fun nuevo 
 
             // recuperar lista principal
-            $scope.obtenerRecursosHumanos = function () {
+            $scope.obtenerRecursosHumanos = function (filter) {
                 blockUI.start();
                 $scope.paginator = Paginator();
                 $scope.paginator.column = "id";
@@ -2202,7 +2219,11 @@ angular.module('agil.controladores')
                 $scope.dynamicPopoverCargos = {
                     templateUrl: 'myPopoverTemplate.html',
                 };
-                $scope.filtro = { empresa: $scope.usuario.id_empresa, codigo: "", nombres: "", ci: "", campo: "", cargo: "", busquedaEmpresa: "", estado: "", grupo_sanguineo: "" };
+                if (filter) {
+                    $scope.filtro = filter
+                } else {
+                    $scope.filtro = { empresa: $scope.usuario.id_empresa, codigo: "", nombres: "", ci: "", campo: "", cargo: "", busquedaEmpresa: "", estado: "", grupo_sanguineo: "" };
+                }
                 $scope.paginator.callBack = $scope.buscarRecursosHumanos;
                 $scope.paginator.getSearch("", $scope.filtro, null);
                 blockUI.stop();
@@ -2624,7 +2645,7 @@ angular.module('agil.controladores')
                     $scope.recargarItemsTabla();
                     blockUI.stop();
                 }
-                
+
             }
             $scope.subirExcelRTurnoEmpleados = function (event) {
                 blockUI.start();
@@ -5489,6 +5510,7 @@ angular.module('agil.controladores')
 
 
             }
+            
             $scope.listaRolTurnoCal = function () {
                 blockUI.start()
                 var promesa = ListaRolTurnosCalendario($scope.paginator)
@@ -9223,13 +9245,18 @@ angular.module('agil.controladores')
                         var fin = new Date($scope.convertirFecha(filtro.fin)).getMonth()
                         var diaInicio = new Date($scope.convertirFecha(filtro.inicio)).getDate()
                         var diafin = new Date($scope.convertirFecha(filtro.fin)).getDate()
+                        var anioInicio = new Date($scope.convertirFecha(filtro.inicio)).getFullYear()
+                        var aniofin = new Date($scope.convertirFecha(filtro.fin)).getFullYear()
                         if (filtro.inicio2) {
                             inicio = new Date($scope.convertirFecha(filtro.inicio2)).getMonth()
                             diaInicio = new Date($scope.convertirFecha(filtro.inicio2)).getDate()
+                            var anioInicio = new Date($scope.convertirFecha(filtro.inicio2)).getFullYear()
+                          
                         }
                         if (filtro.fin2) {
                             var fin = new Date($scope.convertirFecha(filtro.fin2)).getMonth()
                             var diafin = new Date($scope.convertirFecha(filtro.fin2)).getDate()
+                            var aniofin = new Date($scope.convertirFecha(filtro.fin2)).getFullYear()
                         }
                     }
                 }
