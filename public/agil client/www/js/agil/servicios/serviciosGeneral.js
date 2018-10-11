@@ -2044,7 +2044,7 @@ angular.module('agil.servicios')
 							} //width: 50, height: 50
 							var yAltura = (alturaImagen <= 1.95) ? alturaImagen + 85 : ((alturaImagen > 2 && alturaImagen <= 80) ? 105 : 105);
 							doc.font('Helvetica-Bold', 8);
-							doc.text("CASA MATRIX", 60,yAltura-30);
+							doc.text(venta.sucursalPrincipal[0].nombre, 60,yAltura-30);
 							doc.font('Helvetica', 7);
 
 							doc.text(venta.sucursalPrincipal[0].direccion, 60,yAltura-22,{width: 150});
