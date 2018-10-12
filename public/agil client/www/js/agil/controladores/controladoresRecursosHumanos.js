@@ -1926,7 +1926,7 @@ angular.module('agil.controladores')
                 $scope.obtenerHistorialEmpresaVacacion($scope.filtroVacacion)
                 $scope.abrirPopup($scope.idModalReporteVacaciones);
             }
-            ss
+            
             $scope.cerrarDialogReporteVacaciones = function () {
                 $scope.cerrarPopup($scope.idModalReporteVacaciones);
             }
