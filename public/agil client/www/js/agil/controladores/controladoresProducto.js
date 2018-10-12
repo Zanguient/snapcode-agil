@@ -290,7 +290,7 @@ angular.module('agil.controladores')
 			}
 
 
-			$scope.obtenerDetallesEmpresa = function (idProducto, idAlmacen, fechaInicio, fechaFin, lote) {
+			/*$scope.obtenerDetallesEmpresa = function (idProducto, idAlmacen, fechaInicio, fechaFin, lote) {
 				//$scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote
 				$scope.paginator = Paginator();
 				$scope.paginator.column = "razon_social";
@@ -306,7 +306,7 @@ angular.module('agil.controladores')
 				$scope.paginator.getSearch("", $scope.filtroDetallesProducto, null);
 
 
-			}
+			}*/
 
 			$scope.buscarKardexProducto = function (idProducto, almacen, filtro) {
 				blockUI.start();
@@ -331,17 +331,17 @@ angular.module('agil.controladores')
 						});
 					})
 				} else {
-					$scope.obtenerDetallesEmpresa($scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote);
+					//$scope.obtenerDetallesEmpresa($scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote);
 
-					/*var promesa = ProductoKardex($scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote);
+					var promesa = ProductoKardex($scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote);
 					promesa.then(function (detMovs) {
 						$scope.generarKardexProducto(detMovs);
 						blockUI.stop();
-					})*/
+					})
 				}
 			}
 
-			$scope.filtroProductoKardex = function () {
+			/*$scope.filtroProductoKardex = function () {
 				//blockUI.start();
 				var promesa = ProductoKardex($scope.paginator);
 				promesa.then(function (datos) {
@@ -349,7 +349,7 @@ angular.module('agil.controladores')
 					$scope.paginator.setPages(datos.paginas);
 					blockUI.stop();
 				})
-			}
+			}*/
 
 			$scope.generarKardexProducto = function (detMovs) {
 				var dato = $scope.producto;

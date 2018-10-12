@@ -1094,7 +1094,7 @@ angular.module('agil.controladores')
 					doc.text(0, 465, y);
 					doc.text(0, 507, y);
 					doc.text(ventas[i].activa ? ventas[i].importe : 0, 540, y);
-					doc.text(0, 580, y);
+					doc.text(ventas[i].activa ? ventas[i].total_descuento : 0, 580, y);
 					doc.text(ventas[i].activa ? ventas[i].total : 0, 615, y);
 					doc.text(ventas[i].activa ? (Math.round((ventas[i].total * 0.13) * 100) / 100) : 0, 650, y);
 					doc.text(ventas[i].activa ? ventas[i].codigo_control : 0, 685, y);

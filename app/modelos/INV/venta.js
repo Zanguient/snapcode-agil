@@ -117,6 +117,10 @@ module.exports = function (sequelize, Sequelize) {
 		id_sucursal: {
 			type: Sequelize.INTEGER,
 			field: 'sucursal',
+		},
+		total_descuento: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'descuento_general'
 		}
 	}, {
 			freezeTableName: true

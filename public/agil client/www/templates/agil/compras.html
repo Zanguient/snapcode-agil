@@ -181,7 +181,7 @@
 			</div>
 			<div class="bg-info" ng-if="compras.length>0">
 					<label>
-					Mostrar <select ng-model="itemsPerPageCompra"  ng-change="SelectItemPorPagina(itemsPerPageCompra)" class="form-control input-sm" ng-change="filtrarCompras(sucursalesUsuario,filtro.fechaInicioTexto,filtro.fechaFinTexto,filtro.razon_social,filtro.nit,filtro.monto,filtro.tipo_pago,filtro.sucursal,filtro.usuario,filtro.tipo)">
+					Mostrar <select ng-model="itemsPerPageCompra" class="form-control input-sm" ng-change="SelectItemPorPagina(itemsPerPageCompra);filtrarCompras(sucursalesUsuario,filtro.fechaInicioTexto?filtro.fechaInicioTexto:null,filtro.fechaFinTexto?filtro.fechaFinTexto:null,filtro.razon_social,filtro.nit,filtro.monto,filtro.tipo_pago,filtro.sucursal,filtro.usuario,filtro.tipo)">
 						  <option value="{{compras.length}}">Todos</option>
 						  <option ng-selected="true" value="10">10</option>
 						  <option value="25">25</option>
@@ -234,7 +234,7 @@
 							</div>
 						</div>
 					</td>
-					<td at-title="Usuario" width="150">{{item.usuario.nombre_usuario}}{{item.pagosCompra.length}}</td>
+					<td at-title="Usuario" width="150">{{item.usuario.nombre_usuario}}</td>
 					<td at-title="Acciones" width="150">
 						<div class="hidden-sm hidden-xs action-buttons">
 							<a class="green" href="javascript:void(0)" ng-click="imprimirCompra(item)">
@@ -251,6 +251,7 @@
 							 ng-click="modificarCompra(item)">
 								<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
 							</a>
+							
 						</div>
 
 						<div class="hidden-md hidden-lg">

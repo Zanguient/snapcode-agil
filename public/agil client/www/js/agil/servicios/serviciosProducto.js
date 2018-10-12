@@ -38,14 +38,14 @@ angular.module('agil.servicios')
 
 	
 	.factory('ProductosKardex',  ['$resource',function ($resource) {
-		return $resource(restServer + "productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion",null,
+		return $resource(restServer + "productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote",null,
 		{
 			'update': { method: 'PUT' }
 		});
 	}])
 
 	.factory('ProductoKardex', ['ProductosKardex', '$q', function (ProductosKardex, $q) {
-		/*var res = function (idProducto, idAlmacen, fechaInicio, fechaFin, lote) {
+		var res = function (idProducto, idAlmacen, fechaInicio, fechaFin, lote) {
 			var delay = $q.defer();
 			ProductosKardex.query({ id_producto: idProducto, id_almacen: idAlmacen, fecha_inicio: fechaInicio, fecha_fin: fechaFin, lote: lote }, function (entidades) {
 				delay.resolve(entidades);
@@ -53,8 +53,8 @@ angular.module('agil.servicios')
 					delay.reject(error);
 				});
 			return delay.promise;
-		};*/
-		var res = function(paginador){
+		};
+		/*var res = function(paginador){
 			var delay = $q.defer();
 			ProductosKardex.get({ 
 					id_producto:paginador.filter.id_producto,
@@ -74,7 +74,7 @@ angular.module('agil.servicios')
 					delay.reject(error);
 				});
 			return delay.promise;
-		};
+	};*/
 		return res;
 	}])
 	

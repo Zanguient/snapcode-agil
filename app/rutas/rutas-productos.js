@@ -176,8 +176,9 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				});
 			})
 		});
-	router.route('/productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion')
+	router.route('/productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote')
 		.get(function (req, res) {
+			///pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion
 			var fechaInicial = req.params.fecha_inicio == 0 ? new Date(2016, 1, 0) : new Date(req.params.fecha_inicio);
 			var fechaFinal = req.params.fecha_fin == 0 ? new Date() : new Date(req.params.fecha_fin);
 			var condicionMovimiento = { id_almacen: req.params.id_almacen }
@@ -244,7 +245,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				}
 			}
 
-			DetalleMovimiento.findAndCountAll({
+			DetalleMovimiento.findAll({
 				where: { id_producto: req.params.id_producto },
 				include: [{ model: Inventario, as: 'inventario' },
 				{
@@ -268,12 +269,13 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				],
 				order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
 
-			}).then(function (datosCount) {
-				DetalleMovimiento.findAll(limite).then(function (productos) {
+			}).then(function (productos) {
+				res.json(productos);
+				/*DetalleMovimiento.findAll(limite).then(function (productos) {
 					res.json({ kardex: productos, paginas: Math.ceil(datosCount.count / req.params.items_pagina) })
 
 					//res.json(productos);
-				});
+				});*/
 			});
 		});
 

@@ -727,6 +727,24 @@ angular.module('agil.servicios')
 			return delay.promise;
 		};
 		return res;
+	}])
+	.factory('ImportacionVentasFacturacion',  ['$resource',function ($resource) {
+		return $resource(restServer + "importar-ventas-facturacion/empresa/:id_empresa", { id_empresa: '@id_empresa' },
+			{
+				'update': { method: 'PUT' }
+			});
+	}])
+	.factory('GuardarImportacionVentasFacturacion', ['ImportacionVentasFacturacion', '$q', function (ImportacionVentasFacturacion, $q) {
+		var res = function (ventas,clientes,idEmpresa) {
+			var delay = $q.defer();
+			ImportacionVentasFacturacion.save({id_empresa:idEmpresa},{clientes:clientes,ventas:ventas}, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
 	}]);
 	
 	/* .factory('VentaServico',  ['$resource',function ($resource) {
