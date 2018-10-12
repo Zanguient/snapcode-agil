@@ -1104,7 +1104,7 @@ angular.module('agil.controladores')
 					sumaSubImporteExp = 0;
 					sumaSubImporteGrab = 0;
 					sumaSubTotal = ventas[i].activa ? sumaSubTotal + ventas[i].importe : sumaSubTotal;
-					sumaSubDescuentos = ventas[i].activa ? sumaSubDescuentos + 0 : sumaSubDescuentos;
+					sumaSubDescuentos = ventas[i].activa ? sumaSubDescuentos + ventas[i].total_descuento : sumaSubDescuentos;
 					sumaSubImporteBase = ventas[i].activa ? sumaSubImporteBase + ventas[i].total : sumaSubImporteBase;
 					sumaSubCredito = ventas[i].activa ? sumaSubCredito + (Math.round((ventas[i].total * 0.13) * 100) / 100) : sumaSubCredito;
 					sumaImporte = ventas[i].activa ? sumaImporte + ventas[i].importe : sumaImporte;
@@ -1112,7 +1112,7 @@ angular.module('agil.controladores')
 					sumaImporteExp = 0;
 					sumaImporteGrab = 0;
 					sumaTotal = ventas[i].activa ? sumaTotal + ventas[i].importe : sumaTotal;
-					sumaDescuentos = sumaDescuentos + 0;
+					sumaDescuentos = ventas[i].activa ? sumaDescuentos + ventas[i].total_descuento : sumaDescuentos;
 					sumaImporteBase = ventas[i].activa ? sumaImporteBase + ventas[i].total : sumaImporteBase;
 					sumaCredito = ventas[i].activa ? sumaCredito + (Math.round((ventas[i].total * 0.13) * 100) / 100) : sumaCredito;
 					items++;
