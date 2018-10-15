@@ -29,7 +29,7 @@ angular.module('agil.controladores')
 				$scope.obtenerGruposProductosEmpresaUsuario();
 				$scope.obtenerSubGruposProductosEmpresa();
 				$scope.obtenerTiposPrecio();
-				$scope.filtroKardexProducto = {sucursal:$scope.sucursales[0], almacen: $scope.almacenes[0], fechaInicioTexto: "", fechaFinTexto:"", lote:""}
+				$scope.filtroKardexProducto = {sucursal: null, almacen: null, fechaInicioTexto: "", fechaFinTexto:"", lote:""}
 				$scope.usarValuado = true
 			}
 			$scope.obtenerColumnasAplicacion = function () {
@@ -262,7 +262,7 @@ angular.module('agil.controladores')
 				$scope.obtenerProductos()
 				$scope.cerrarPopup($scope.idModalWizardProductoKardex);
 				// $scope.search.inventario.lote = "";
-				$scope.filtroKardexProducto = {sucursal:$scope.sucursales[0], almacen: $scope.almacenes[0], fechaInicioTexto: "", fechaFinTexto:"", lote:""}
+				$scope.filtroKardexProducto = {sucursal: null, almacen: null, fechaInicioTexto: "", fechaFinTexto:"", lote:""}
 			}
 			$scope.abrirModalReporteProductosKardex = function () {
 				$scope.abrirPopup($scope.idModalReporteProductosKardex);
