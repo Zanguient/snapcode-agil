@@ -4989,7 +4989,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							nombre: detalleCompra.producto.nombre,
 							codigo: detalleCompra.producto.codigo,
 							id_empresa: compra.id_empresa
-						},
+						},  
 						transaction: t
 					}).then(function (productoCreado) {
 						return Clase.find(
@@ -5003,7 +5003,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								return crearDetalleCompraImportacion(detalleCompra, idMovimiento, compraCreada.id, almacenEncontrado.id, productoCreado.id, centroCostoCreado, res, compra, t);
 							}).catch(function (err) {
 								return new Promise(function (fulfill, reject) {
-									reject("el producto con nombre:" + detalleCompra.producto.nombre + " y codigo:" + detalleCompra.producto.codigo + " o el centro de costo: " + detalleCompra.centroCosto.nombre + " no se pueden encontrar");
+									reject(err);
 								});
 							});
 					}).catch(function (err) {
@@ -5660,4 +5660,86 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		});
 	}
 
+	router.route('/importar-pagos-compra/empresa/:id_empresa')
+		.post(function (req, res) {
+			sequelize.transaction(function (t) {
+				req.body.pagos.forEach(function (pago, index, array) {
+					Compra.find({
+						where: { id: req.params.id },
+						include: [{
+							model: Almacen, as: 'almacen',
+							include: [{ model: Sucursal, as: 'sucursal' }]
+						}]
+					}).then(function (compraEncontrada) {
+						Compra.update({
+							a_cuenta: compraEncontrada.a_cuenta + pagoV,
+							saldo: compraEncontrada.total - (compraEncontrada.a_cuenta + pagoV)
+						}, {
+								where: {
+									id: compraEncontrada.id
+								}
+							}).then(function (affectedRows) {
+								PagoCompra.create({
+									id_compra: compraEncontrada.id,
+									a_cuenta_anterior: compraEncontrada.a_cuenta,
+									saldo_anterior: compraEncontrada.saldo,
+									monto_pagado: pagoV,
+									id_usuario: req.body.id_usuario_cajero,
+									numero_documento: compraEncontrada.almacen.sucursal.nota_recibo_correlativo
+								}).then(function (detalleVentaCreada) {
+									Sucursal.update({
+										nota_recibo_correlativo: compraEncontrada.almacen.sucursal.nota_recibo_correlativo + 1
+									}, {
+											where: {
+												id: compraEncontrada.almacen.sucursal.id
+											}
+										}).then(function (affectedRows) {
+											if (anticipo != 0) {
+												Sucursal.find({
+													where: { id: compraEncontrada.almacen.sucursal.id }
+												}).then(function (sucursalEncontrada) {
+													ProveedorAnticipo.create({
+														id_proveedor: parseInt(compraEncontrada.id_proveedor),
+														monto_anticipo: anticipo,
+														fecha: req.body.fecha,
+														monto_salida: 0,
+														saldo: anticipo,
+														id_sucursal: compraEncontrada.almacen.sucursal.id,
+														numero_correlativo_anticipo: sucursalEncontrada.anticipo_proveedor_correlativo,
+														eliminado: false
+													}).then(function (ProvedorAnticipoCreado) {
+														var correlativo = sucursalEncontrada.anticipo_proveedor_correlativo + 1
+														Sucursal.update({
+															anticipo_proveedor_correlativo: correlativo
+														}, {
+																where: { id: compraEncontrada.almacen.sucursal.id }
+															}).then(function (Actualizado) {
+																ProveedorAnticipo.find({
+																	where: { id: ProvedorAnticipoCreado.id },
+																	include: [{ model: Sucursal, as: 'sucursal' }, { model: Proveedor, as: 'proveedor' }]
+																}).then(function (encontrado) {
+																	var pago = NumeroLiteral.Convertir(parseFloat(pagoV).toFixed(2).toString());
+																	res.json({ anticipo: encontrado, mensaje: "¡Saldo de cuenta actualizado satisfactoriamente!", pago: pago, compra: compraEncontrada });
+																})
+	
+															})
+	
+													})
+												})
+											} else {
+												var pago = NumeroLiteral.Convertir(parseFloat(pagoV).toFixed(2).toString());
+												res.json({ anticipo: {}, mensaje: "¡Saldo de cuenta actualizado satisfactoriamente!", pago: pago, compra: compraEncontrada });
+											}
+	
+										});
+								});
+							});
+					});
+				})
+			}).then(function name(result) {
+				res.json({ mensaje: "Importación satisfactoriamente!" })
+			}).catch(function (err) {
+				res.json({ hasError: true, mensaje: err.stack ? err.stack : err });
+			})
+		})
 }

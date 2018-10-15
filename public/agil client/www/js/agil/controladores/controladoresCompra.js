@@ -3,10 +3,10 @@ angular.module('agil.controladores')
 	.controller('ControladorCompras', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'DatosCompra', '$timeout',
 		'Compra', 'Compras', 'Proveedores', 'ProveedoresNit', 'ListaProductosEmpresaUsuario', 'ClasesTipo', 'CompraDatos',
 		'ConfiguracionCompraVistaDatos', 'ConfiguracionCompraVista', 'ConfiguracionesCuentasEmpresa', 'ClasesTipoEmpresa', 'Tipos', 'SaveCompra', 'ListaCompraPedidosEmpresa', 'EliminarPedidoEmpresa', 'EliminarDetallePedidoEmpresa',
-		'CompraDatosCredito', 'Paginator', 'GuardarImportacionComprasIngresoDiario', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, DatosCompra, $timeout,
+		'CompraDatosCredito', 'Paginator', 'GuardarImportacionComprasIngresoDiario','GuardarImportacionPagosCompras', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, DatosCompra, $timeout,
 			Compra, Compras, Proveedores, ProveedoresNit, ListaProductosEmpresaUsuario, ClasesTipo, CompraDatos,
 			ConfiguracionCompraVistaDatos, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ClasesTipoEmpresa, Tipos, SaveCompra, ListaCompraPedidosEmpresa, EliminarPedidoEmpresa,
-			EliminarDetallePedidoEmpresa, CompraDatosCredito, Paginator, GuardarImportacionComprasIngresoDiario) {
+			EliminarDetallePedidoEmpresa, CompraDatosCredito, Paginator, GuardarImportacionComprasIngresoDiario,GuardarImportacionPagosCompras) {
 			blockUI.start();
 
 			$scope.usuario = JSON.parse($localStorage.usuario);
@@ -1720,7 +1720,7 @@ angular.module('agil.controladores')
 									detalleCompra.centroCosto.nombre = worksheet['M' + row2] != undefined && worksheet['M' + row2] != "" ? worksheet['M' + row2].v.toString() : null;
 									var bandera = false
 									detalleCompra.producto.codigo = worksheet['N' + row2] != undefined && worksheet['N' + row2] != "" ? worksheet['N' + row2].v.toString() : null;
-										detalleCompra.producto.nombre = worksheet['O' + row2] != undefined && worksheet['O' + row2] != "" ? worksheet['O' + row2].v.toString() : null;
+									detalleCompra.producto.nombre = worksheet['O' + row2] != undefined && worksheet['O' + row2] != "" ? worksheet['O' + row2].v.toString() : null;
 									if (detalleCompra.centroCosto.nombre.toUpperCase() != "ALMACEN") {
 										if (arregloCentrosCosto.length > 0) {
 											for (var i = 0; i < arregloCentrosCosto.length; i++) {
@@ -1737,7 +1737,7 @@ angular.module('agil.controladores')
 										} else {
 											arregloCentrosCosto.push(detalleCompra.centroCosto)
 										}
-										
+
 										var bandera = false
 										if (arregloProductos.length > 0) {
 											for (var i = 0; i < arregloProductos.length; i++) {
@@ -1755,7 +1755,7 @@ angular.module('agil.controladores')
 											arregloProductos.push(detalleCompra.producto)
 										}
 									}
-									detalleCompra.fecha_vencimiento = worksheet['P' + row2] != undefined && worksheet['P' + row2] != "" ? worksheet['P' + row2].v.toString() : null;
+									detalleCompra.fecha_vencimiento = worksheet['P' + row2] != undefined && worksheet['P' + row2] != "" ? new Date($scope.fecha_excel_angular(worksheet['P' + row2].v.toString())) : null;
 									detalleCompra.lote = worksheet['Q' + row2] != undefined && worksheet['Q' + row2] != "" ? worksheet['Q' + row2].v.toString() : null;
 									detalleCompra.costo_unitario = worksheet['R' + row2] != undefined && worksheet['R' + row2] != "" ? parseFloat(worksheet['R' + row2].v.toString()) : null;
 									detalleCompra.cantidad = worksheet['S' + row2] != undefined && worksheet['S' + row2] != "" ? parseFloat(worksheet['S' + row2].v.toString()) : null;
@@ -1834,7 +1834,43 @@ angular.module('agil.controladores')
 					$scope.recargarItemsTabla()
 				})
 			}
+			$scope.subirExcelPagosCompras = function () {
+				var files = event.target.files;
+				var i, f;
+				for (i = 0, f = files[i]; i != files.length; ++i) {
+					//console.log('iniciando lectura de excel(s)')
+					var reader = new FileReader();
+					var name = f.name;
+					reader.onload = function (e) {
+						var data = e.target.result;
+						var workbook = XLSX.read(data, { type: 'binary' });
+						var first_sheet_name = workbook.SheetNames[0];
+						var row = 2, i = 0, row2 = 2;
+						var worksheet = workbook.Sheets[first_sheet_name];
+						var pagos = []
+						do {
+							var pago = []
+							pago.factura = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+							pago.fecha = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+							pago.monto = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+							pagos.push(pago)
 
+						} while (worksheet['A' + row] != undefined);
+						$scope.guardarImportacionPagosCompras(pagos);
+					};
+					reader.readAsBinaryString(f);
+
+				}
+			}
+			$scope.guardarImportacionPagosCompras = function (pagos) {
+				blockUI.start();
+				var promesa = GuardarImportacionPagosCompras(pagos,$scope.usuario.id_empresa)
+				promesa.then(function (dato) {
+					blockUI.stop()
+					$scope.mostrarMensaje(dato.mensaje)
+					$scope.recargarItemsTabla()
+				})
+			}
 			$scope.$on('$routeChangeStart', function (next, current) {
 				$scope.eliminarPopup($scope.idModalWizardCompraEdicion);
 				$scope.eliminarPopup($scope.idModalWizardCompraVista);

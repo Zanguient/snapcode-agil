@@ -745,8 +745,25 @@ angular.module('agil.servicios')
 			return delay.promise;
 		};
 		return res;
+	}])
+	.factory('ImportacionPagosCompras',  ['$resource',function ($resource) {
+		return $resource(restServer + "importar-pagos-compra/empresa/:id_empresa", { id_empresa: '@id_empresa' },
+			{
+				'update': { method: 'PUT' }
+			});
+	}])
+	.factory('GuardarImportacionPagosCompras', ['ImportacionPagosCompras', '$q', function (ImportacionPagosCompras, $q) {
+		var res = function (pagos,idEmnpresa) {
+			var delay = $q.defer();
+			ImportacionPagosCompras.save({id_empresa:idEmpresa},{pagos:pagos}, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
 	}]);
-	
 	/* .factory('VentaServico',  ['$resource',function ($resource) {
 		return $resource(restServer + "venta/servicios/:id", { id: '@id' },
 			{
