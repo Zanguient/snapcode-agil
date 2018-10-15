@@ -232,9 +232,9 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			if (req.params.fecha_inicio != 0) {
 				condicionSaldoAnterior.fecha = { $between: [fechaInicial, fechaFinal] }
 			}
-			var condicionInventario = {};
+			var condicionInventario = {id_producto: req.params.id_producto};
 			if (req.params.lote != "0") {
-				condicionInventario = { id_producto: req.params.id_producto, lote: req.params.lote }
+				condicionInventario.lote = req.params.lote
 			}
 			if (req.params.saldo != "0") {
 				DetalleMovimiento.findAll({
@@ -264,7 +264,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				}).then(function (productosSaldoAnterior) {
 					DetalleMovimiento.findAll({
 						where: { id_producto: req.params.id_producto },
-						include: [{ model: Inventario, as: 'inventario' },
+						include: [{ model: Inventario, as: 'inventario', where: condicionInventario },
 						{
 							model: Movimiento, as: 'movimiento',
 							where: condicionMovimiento,
@@ -298,7 +298,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			} else {
 				DetalleMovimiento.findAll({
 					where: { id_producto: req.params.id_producto },
-					include: [{ model: Inventario, as: 'inventario' },
+					include: [{ model: Inventario, as: 'inventario', where: condicionInventario },
 					{
 						model: Movimiento, as: 'movimiento',
 						where: condicionMovimiento,

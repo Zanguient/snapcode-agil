@@ -956,7 +956,7 @@
 								</thead>
 
 								<tbody>
-									<tr ng-repeat="detalleMovimiento in kardexproduto.detallesMovimiento | filter:search:strict| filtroKardex:{lote:filtro.lote,datos:kardexproduto.detallesMovimiento}">
+									<tr ng-repeat="detalleMovimiento in kardexproduto.detallesMovimiento">
 										<td>{{detalleMovimiento.movimiento.fecha | date: 'dd/MM/yy HH:mm'}}</td>
 										<td>
 											<p ng-if="detalleMovimiento.movimiento.id_tipo != '7'">{{detalleMovimiento.tipo}} {{detalleMovimiento.movimiento.compra.proveedor.razon_social}}</p>
