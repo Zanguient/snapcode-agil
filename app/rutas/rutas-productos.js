@@ -180,7 +180,6 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 		.get(function (req, res) {
 			///pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion
 			var condicionMovimiento = { id_almacen: req.params.id_almacen }
-
 			var desde = false
 			var hasta = false
 			var fecha_desde;
@@ -194,14 +193,15 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			// 	condicionMovimiento.fecha = { $between: [fecha_desde, fecha_hasta] }
 			// } else {
 				if (req.params.fecha_inicio != "0") {
-					fecha_desde = new Date(req.params.fecha_inicio.split('/').reverse()); fecha_desde.setHours(0, 0, 0, 0, 0);
+					fecha_desde = req.params.fecha_inicio.split('/').reverse().join('-') + "T00:00:00.000Z"; 
+					// fecha_desde.setHours(0, 0, 0, 0, 0);
 					desde = true
 				}
 				if (req.params.fecha_fin != "0") {
-					fecha_hasta = new Date(req.params.fecha_fin.split('/').reverse());
-					fecha_hasta.setHours(23)
-					fecha_hasta.setMinutes(59)
-					fecha_hasta.setSeconds(59)
+					fecha_hasta = req.params.fecha_fin.split('/').reverse().join('-') + "T23:59:59.000Z";
+					// fecha_hasta.setHours(23)
+					// fecha_hasta.setMinutes(59)
+					// fecha_hasta.setSeconds(59)
 					hasta = true
 				}
 			// }
@@ -226,11 +226,13 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			// 	}
 			// 	condicionMovimiento.fecha = { $between: [fecha_desde, fecha_hasta] }
 			// }
-			var fechaInicial = req.params.fecha_inicio == 0 ? new Date(2016, 1, 0) : new Date(2016, 1, 0)//new Date(req.params.fecha_inicio.split('/').reverse().join('-') + "T00:00:00.000Z");
-			var fechaFinal = req.params.fecha_inicio == 0 ? new Date() : new Date(req.params.fecha_inicio.split('/').reverse().join('-') + "T23:59:59.000Z");
-			var condicionSaldoAnterior = { id_almacen: req.params.id_almacen }
+			// var fechaInicial = req.params.fecha_inicio == 0 ? new Date(2016, 1, 0) : new Date(2016, 1, 0)//new Date(req.params.fecha_inicio.split('/').reverse().join('-') + "T00:00:00.000Z");
+			// var fechaFinal = req.params.fecha_inicio == 0 ? new Date() : new Date(req.params.fecha_inicio.split('/').reverse().join('-') + "T00:00:00.000Z");
+			
+			var condicionMovimientoSaldo = { id_almacen: req.params.id_almacen }
+			var condicionDetalleMovimientoSaldoAnterior = { id_producto: req.params.id_producto }
 			if (req.params.fecha_inicio != 0) {
-				condicionSaldoAnterior.fecha = { $between: [fechaInicial, fechaFinal] }
+				condicionMovimientoSaldo.fecha = { $lte: [req.params.fecha_inicio.split('/').reverse().join('-') + "T00:00:00.000Z"] }
 			}
 			var condicionInventario = {id_producto: req.params.id_producto};
 			if (req.params.lote != "0") {
@@ -238,11 +240,11 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			}
 			if (req.params.saldo != "0") {
 				DetalleMovimiento.findAll({
-					where: { id_producto: req.params.id_producto },
-					include: [{ model: Inventario, as: 'inventario' },
+					where: condicionDetalleMovimientoSaldoAnterior,
+					include: [{ model: Inventario, as: 'inventario', where: condicionInventario },
 					{
 						model: Movimiento, as: 'movimiento',
-						where: condicionSaldoAnterior,
+						where: condicionMovimientoSaldo,
 						include: [{
 							model: Compra, as: 'compra', required: false,
 							include: [{ model: Proveedor, as: 'proveedor' }]
@@ -260,7 +262,6 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					}
 					],
 					order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
-
 				}).then(function (productosSaldoAnterior) {
 					DetalleMovimiento.findAll({
 						where: { id_producto: req.params.id_producto },
@@ -293,8 +294,12 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 		
 							//res.json(productos);
 						});*/
-					});
-				});
+					}).catch(function (err) {
+						res.json({ mensaje: err.stack, hasErr: true })
+					})
+				}).catch(function (err) {
+                    res.json({ mensaje: err.stack, hasErr: true })
+                })
 			} else {
 				DetalleMovimiento.findAll({
 					where: { id_producto: req.params.id_producto },
@@ -327,8 +332,9 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 	
 						//res.json(productos);
 					});*/
-				});
-
+				}).catch(function (err) {
+                    res.json({ mensaje: err.stack, hasErr: true })
+                })
 			}
 
 

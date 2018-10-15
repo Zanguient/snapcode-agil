@@ -341,6 +341,11 @@ angular.module('agil.controladores')
 					var promesa = ProductoKardex(idProducto, $scope.filtroKardexProducto, true); //primero obtener el saldo anterior
 					$scope.filtroKardexProducto = $scope.filtrarFiltro($scope.filtroKardexProducto, true, true)
 					promesa.then(function (detMovsSaldo) {
+						blockUI.stop();
+						if (detMovsSaldo.hasErr) {
+							$scope.mostrarMensaje(detMovsSaldo.mensaje)
+							return 
+						}
 						var detalleMovimientoSaldoAnterior = $scope.obtenerSaldo(detMovsSaldo.saldoAnterior);
 						if (detalleMovimientoSaldoAnterior != 0) {
 							detalleMovimientoSaldoAnterior.catidad = ""
@@ -354,7 +359,7 @@ angular.module('agil.controladores')
 						// 		detMovs.unshift(detalleMovimientoSaldoAnterior);
 						// 	}
 						// 	$scope.generarKardexProducto(detMovs);
-							blockUI.stop();
+							
 						// });
 					}).catch(function (err) {
                         var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
@@ -362,7 +367,7 @@ angular.module('agil.controladores')
                         blockUI.stop()
                     })
 				} else {
-					var promesa = ProductoKardex(idProducto, $scope.filtroKardexProducto, false); //primero obtener el saldo anterior
+					var promesa = ProductoKardex(idProducto, $scope.filtroKardexProducto, false);
 					$scope.filtroKardexProducto = $scope.filtrarFiltro($scope.filtroKardexProducto, true, true)
 					promesa.then(function (detMovsSaldo) {
 						// var detalleMovimientoSaldoAnterior = $scope.obtenerSaldo(detMovsSaldo.saldoAnterior);
