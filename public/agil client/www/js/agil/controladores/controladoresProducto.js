@@ -29,7 +29,7 @@ angular.module('agil.controladores')
 				$scope.obtenerGruposProductosEmpresaUsuario();
 				$scope.obtenerSubGruposProductosEmpresa();
 				$scope.obtenerTiposPrecio();
-
+				$scope.filtroKardexProducto = {sucursal:$scope.sucursales[0], almacen: $scope.almacenes[0], fechaInicioTexto: "", fechaFinTexto:"", lote:""}
 				$scope.usarValuado = true
 			}
 			$scope.obtenerColumnasAplicacion = function () {
@@ -261,15 +261,14 @@ angular.module('agil.controladores')
 			$scope.cerrarPopPupKardex = function () {
 				$scope.obtenerProductos()
 				$scope.cerrarPopup($scope.idModalWizardProductoKardex);
-				$scope.search.inventario.lote = "";
+				// $scope.search.inventario.lote = "";
+				$scope.filtroKardexProducto = {sucursal:$scope.sucursales[0], almacen: $scope.almacenes[0], fechaInicioTexto: "", fechaFinTexto:"", lote:""}
 			}
 			$scope.abrirModalReporteProductosKardex = function () {
-				$scope.imp = {}
 				$scope.abrirPopup($scope.idModalReporteProductosKardex);
 			}
 
 			$scope.cerrarModalReporteProductosKardex = function () {
-				$scope.imp = {}
 				$scope.cerrarPopup($scope.idModalReporteProductosKardex);
 			}
 
@@ -277,12 +276,11 @@ angular.module('agil.controladores')
 
 				$scope.producto = producto;
 				$scope.kardexproduto = null;
-				$scope.filtro = {};
-				$scope.imp = {};
-				$scope.imp.sucursal = $scope.sucursales.length == 1 ? $scope.sucursales[0] : null;
-				if ($scope.imp.sucursal) {
-					$scope.obtenerAlmacenes($scope.imp.sucursal.id);
-					$scope.imp.almacen = $scope.almacenes.length == 1 ? $scope.almacenes[0] : null;
+
+				$scope.filtroKardexProducto.sucursal = $scope.sucursales.length == 1 ? $scope.sucursales[0] : null;
+				if ($scope.filtroKardexProducto.sucursal) {
+					$scope.obtenerAlmacenes($scope.filtroKardexProducto.sucursal.id);
+					$scope.filtroKardexProducto.almacen = $scope.almacenes.length == 1 ? $scope.almacenes[0] : null;
 				}
 				$("#modal-wizard-producto-kardex").dialog({ closeOnEscape: false });
 				$scope.abrirPopup($scope.idModalWizardProductoKardex);
@@ -308,36 +306,83 @@ angular.module('agil.controladores')
 
 			}*/
 
-			$scope.buscarKardexProducto = function (idProducto, almacen, filtro) {
+			$scope.filtrarFiltro = function (filtro, _, __) {
+				if (__ !== undefined) {
+                    for (var key in filtro) {
+                        if (filtro[key] == 0) {
+                            filtro[key] = ""
+                        }
+                    }
+                } else {
+                    for (var key in filtro) {
+                        if (filtro[key] === "" || filtro[key] === null) {
+                            filtro[key] = 0
+                        }
+                    }
+                }
+                if (_ === undefined || !_) {
+                    // $scope.obtenerHistoriales(true)
+                } else {
+                    return filtro
+                }
+			}
+
+			$scope.buscarKardexProducto = function (idProducto, almacen) {
 				blockUI.start();
-				var fechaInicio = filtro.fechaInicioTexto == "" || filtro.fechaInicioTexto == undefined ? 0 : new Date($scope.convertirFecha(filtro.fechaInicioTexto));
-				var fechaFin = filtro.fechaFinTexto == "" || filtro.fechaFinTexto == undefined ? 0 : new Date($scope.convertirFecha(filtro.fechaFinTexto));
-				var lote = filtro.lote == "" || filtro.lote == undefined ? 0 : filtro.lote;
-				$scope.idProducto = idProducto;
-				$scope.idAlmacen = almacen.id;
+				$scope.filtroKardexProducto = $scope.filtrarFiltro($scope.filtroKardexProducto, true)
+				// var fechaInicio = filtro.fechaInicioTexto == "" || filtro.fechaInicioTexto == undefined ? 0 : new Date($scope.convertirFecha(filtro.fechaInicioTexto));
+				// var fechaFin = filtro.fechaFinTexto == "" || filtro.fechaFinTexto == undefined ? 0 : new Date($scope.convertirFecha(filtro.fechaFinTexto));
+				// var lote = filtro.lote == "" || filtro.lote == undefined ? 0 : filtro.lote;
+				// $scope.idProducto = idProducto;
+				// $scope.idAlmacen = almacen.id;
 				$scope.kardexproduto = null;
 
-				if (fechaInicio != 0) {
-					var promesa = ProductoKardex(idProducto, almacen.id, 0, fechaInicio, lote);
+				if ($scope.filtroKardexProducto.fechaInicioTexto != 0) {
+					var promesa = ProductoKardex(idProducto, $scope.filtroKardexProducto, true); //primero obtener el saldo anterior
+					$scope.filtroKardexProducto = $scope.filtrarFiltro($scope.filtroKardexProducto, true, true)
 					promesa.then(function (detMovsSaldo) {
-						var detalleMovimientoSaldoAnterior = $scope.obtenerSaldo(detMovsSaldo);
-						promesa = ProductoKardex($scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote);
-						promesa.then(function (detMovs) {
-							if (detalleMovimientoSaldoAnterior != 0) {
-								detMovs.unshift(detalleMovimientoSaldoAnterior);
-							}
-							$scope.generarKardexProducto(detMovs);
+						var detalleMovimientoSaldoAnterior = $scope.obtenerSaldo(detMovsSaldo.saldoAnterior);
+						if (detalleMovimientoSaldoAnterior != 0) {
+							detalleMovimientoSaldoAnterior.catidad = ""
+							detalleMovimientoSaldoAnterior.total = ""
+							detMovsSaldo.kardex.unshift(detalleMovimientoSaldoAnterior);
+						}
+						$scope.generarKardexProducto(detMovsSaldo.kardex);
+						// promesa = ProductoKardex($scope.idProducto, $scope.filtroKardexProducto);
+						// promesa.then(function (detMovs) {
+						// 	if (detalleMovimientoSaldoAnterior != 0) {
+						// 		detMovs.unshift(detalleMovimientoSaldoAnterior);
+						// 	}
+						// 	$scope.generarKardexProducto(detMovs);
 							blockUI.stop();
-						});
-					})
+						// });
+					}).catch(function (err) {
+                        var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                        $scope.mostrarMensaje(msg)
+                        blockUI.stop()
+                    })
 				} else {
-					//$scope.obtenerDetallesEmpresa($scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote);
-
-					var promesa = ProductoKardex($scope.idProducto, $scope.idAlmacen, fechaInicio, fechaFin, lote);
-					promesa.then(function (detMovs) {
-						$scope.generarKardexProducto(detMovs);
-						blockUI.stop();
-					})
+					var promesa = ProductoKardex(idProducto, $scope.filtroKardexProducto, false); //primero obtener el saldo anterior
+					$scope.filtroKardexProducto = $scope.filtrarFiltro($scope.filtroKardexProducto, true, true)
+					promesa.then(function (detMovsSaldo) {
+						// var detalleMovimientoSaldoAnterior = $scope.obtenerSaldo(detMovsSaldo.saldoAnterior);
+						// if (detalleMovimientoSaldoAnterior != 0) {
+						// 	detMovs.unshift(detalleMovimientoSaldoAnterior);
+						// }
+						$scope.generarKardexProducto(detMovsSaldo.kardex);
+						// promesa = ProductoKardex($scope.idProducto, $scope.filtroKardexProducto);
+						// promesa.then(function (detMovs) {
+						// 	if (detalleMovimientoSaldoAnterior != 0) {
+						// 		detMovs.unshift(detalleMovimientoSaldoAnterior);
+						// 	}
+						// 	$scope.generarKardexProducto(detMovs);
+							blockUI.stop();
+						// });
+					}).catch(function (err) {
+                        var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                        $scope.mostrarMensaje(msg)
+                        blockUI.stop()
+                    })
 				}
 			}
 
@@ -459,11 +504,11 @@ angular.module('agil.controladores')
 				}
 				$scope.kardexproduto = dato;
 			}
-			$scope.verificarLote = function (filtro, alma) {
-				if (filtro.lote == "") {
-					$scope.buscarKardexProducto($scope.producto.id, alma, filtro)
-				}
-			}
+			// $scope.verificarLote = function (filtro, alma) {
+			// 	if (filtro.lote == "") {
+			// 		$scope.buscarKardexProducto($scope.producto.id, alma, filtro)
+			// 	}
+			// }
 			$scope.obtenerSaldo = function (detMovs) {
 				var dato = {};
 				dato.detallesMovimiento = detMovs;
@@ -841,6 +886,7 @@ angular.module('agil.controladores')
 					sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
 				}
 				$scope.sucursales = sucursales;
+				$scope.obtenerAlmacenes($scope.sucursales[0].id);
 			}
 			$scope.obtenerAlmacenes = function (idSucursal) {
 				$scope.almacenes = [];

@@ -36,12 +36,13 @@
 									<label>PERIODO</label>&nbsp
 								</td>
 								<td>
-									<input required autocomplete="off" ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-									 id="fechainicio" ng-model="fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
+									<input required autocomplete="off" ng-update-hidden class="form-control date-picker" type="text"
+									 data-date-format="dd/mm/yyyy" id="fechainicio" ng-model="fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
 								</td>
 								<td>
-									<input required autocomplete="off" ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-									 id="fechafin" ng-model="fechaFinTexto" placeholder="Ingrese la fecha final" /> &nbsp
+									<input required autocomplete="off" ng-update-hidden class="form-control date-picker" type="text"
+									 data-date-format="dd/mm/yyyy" id="fechafin" ng-model="fechaFinTexto" placeholder="Ingrese la fecha final" />
+									&nbsp
 								</td>
 								<td>
 									<button type="submit" ng-disabled="formularioFiltroVentas.$invalid" class="btn btn-primary">
@@ -59,8 +60,8 @@
 									<label class="pull-lefth inline">
 										<small class="muted smaller-90">Detalle:</small>
 
-										<input id="id-button-detalle" ng-disabled="!ventas" ng-click="verDetalle()" name="switch-view-detail" checked="checked" type="checkbox"
-										 class="ace ace-switch ace-switch-4">
+										<input id="id-button-detalle" ng-disabled="!ventas" ng-click="verDetalle()" name="switch-view-detail" checked="checked"
+										 type="checkbox" class="ace ace-switch ace-switch-4">
 										<span class="lbl check-detalle"></span>
 									</label>
 
@@ -68,8 +69,8 @@
 
 								</td>
 								<td ng-if="usuario.usar_importacion_venta_servicio">
-									<a href="javascript:void(0)" ng-click="abrirModalImportacionVentaServicio()" role="button" data-rel="tooltip" data-placement="top"
-									 uib-tooltip="Importacion Ventas Servicios">
+									<a href="javascript:void(0)" ng-click="abrirModalImportacionVentaServicio()" role="button" data-rel="tooltip"
+									 data-placement="top" uib-tooltip="Importacion Ventas Servicios">
 										<img height="70" width="70" src="img/importacion_venta_servicio.png">
 									</a>
 								</td>
@@ -193,52 +194,52 @@
 				</a>
 			</div>
 			<div class="pos-rel pull-right" ng-if="usuario.empresa.usar_importacion_compra">
-                    <a data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" id="zoomBtn">
-                        <i class="ace-icon fa fa-wrench  bigger-110 icon-only "></i>
-                    </a>
-                    <ul class="dropdown-menu-right dropdown-navbar navbar-orange dropdown-menu dropdown-caret dropdown-close importar-text">
-                        <li class="dropdown-header header-importar">
-                            <i class="ace-icon fa fa-wrench white"></i>
-                            Importaciones
-                        </li>
-                        <li class="dropdown-content">
-                            <ul class="dropdown-menu dropdown-navbar navbar-pink">
-                                <li>
-                                    <div class="clearfix">
-                                        <span class="pull-left" style="color:rgb(85, 128, 163) !important">
-                                            Ventas(Facturación)
-                                        </span>
+				<a data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" id="zoomBtn">
+					<i class="ace-icon fa fa-wrench  bigger-110 icon-only "></i>
+				</a>
+				<ul class="dropdown-menu-right dropdown-navbar navbar-orange dropdown-menu dropdown-caret dropdown-close importar-text">
+					<li class="dropdown-header header-importar">
+						<i class="ace-icon fa fa-wrench white"></i>
+						Importaciones
+					</li>
+					<li class="dropdown-content">
+						<ul class="dropdown-menu dropdown-navbar navbar-pink">
+							<li>
+								<div class="clearfix">
+									<span class="pull-left" style="color:rgb(85, 128, 163) !important">
+										Ventas(Facturación)
+									</span>
 
-                                        <a href="/recursos/EJEMPLO-DATOS-VENTAS(FACTURACIÓN).xlsx" class="boton-importar pull-right">
-                                            <i class="fa  fa-cloud-download green"></i>
-                                        </a>
+									<a href="/recursos/EJEMPLO-DATOS-VENTAS(FACTURACIÓN).xlsx" class="boton-importar pull-right">
+										<i class="fa  fa-cloud-download green"></i>
+									</a>
 
-                                        <div class="fileUpload boton-importar pull-right">
-                                            <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
-                                            <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelVentasFacturacion" />
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="clearfix">
-                                        <span class="pull-left" style="color:rgb(85, 128, 163) !important">
-                                            Pagos Ventas Credito
-                                        </span>
-                                        <a href="/recursos/EJEMPLO-DATOS-FICHAS-EMPLEADOS.xlsx" class="boton-importar pull-right">
-                                            <i class="fa  fa-cloud-download green"></i>
-                                        </a>
-                                        <div class="fileUpload boton-importar pull-right">
-                                            <span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
-                                            <input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelFicha" />
-                                        </div>
-                                    </div>
-                                </li>                                                                                               
-                            </ul>
-                        </li>
-                        <li class="dropdown-footer"></li>
-                    </ul>
-                </div>
-			<script type="text/ng-template" id="PopoverReportesRapido.html">													                               
+									<div class="fileUpload boton-importar pull-right">
+										<span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+										<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelVentasFacturacion" />
+									</div>
+								</div>
+							</li>
+							<li>
+								<div class="clearfix">
+									<span class="pull-left" style="color:rgb(85, 128, 163) !important">
+										Pagos Ventas Credito
+									</span>
+									<a href="/recursos/EJEMPLO-DATOS-FICHAS-EMPLEADOS.xlsx" class="boton-importar pull-right">
+										<i class="fa  fa-cloud-download green"></i>
+									</a>
+									<div class="fileUpload boton-importar pull-right">
+										<span class="fileUpload-button ace-icon fa fa-cloud-upload blue"></span>
+										<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelFicha" />
+									</div>
+								</div>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown-footer"></li>
+				</ul>
+			</div>
+			<script type="text/ng-template" id="PopoverReportesRapido.html">
 				<div class="form-control">                            
 					<a href="javascript:void(0)" class="blue" ng-click="abrirReporteProductos()">Productos</a>
 				</div>	
@@ -250,12 +251,153 @@
 
 
 		</div>
+		<div class="bg-info" ng-if="ventas.length>0">
+			<label>
+				Mostrar <select ng-model="itemsPerPageCompra" class="form-control input-sm" ng-change="SelectItemPorPagina(itemsPerPageCompra);filtrarCompras(sucursalesUsuario,filtro.fechaInicioTexto?filtro.fechaInicioTexto:null,filtro.fechaFinTexto?filtro.fechaFinTexto:null,filtro.razon_social,filtro.nit,filtro.monto,filtro.tipo_pago,filtro.sucursal,filtro.usuario,filtro.tipo)">
+					<option value="{{ventas.length}}">Todos</option>
+					<option ng-selected="true" value="10">10</option>
+					<option value="25">25</option>
+					<option value="50">50</option>
+					<option value="100">100</option>
+				</select> Elementos</label>
+		</div>
+		<table ng-if="ventas.length>0" class="table table-striped" at-table at-paginated at-list="ventas" at-config="config">
+			<thead></thead>
+			<tbody>
+				<tr>
+					<td at-title="Nro" height="10">{{($index+1)}}</td>
+					<td at-title="Transaccion" height="10">
+						<p ng-if="item.movimiento">{{item.movimiento.clase.nombre}}</p>
+						<p ng-if="item.movimientoServicio">{{item.movimientoServicio.nombre}}</p>
+					</td>
+					<td at-title="Sucursal" width="150">
+						<p ng-if="item.movimiento">{{item.almacen.sucursal.nombre}}</p>
+						<p ng-if=item.movimientoServicio>{{item.sucursal.nombre}}</p>
+					</td>
+					<td at-title="Razón Social" width="150">{{item.cliente.razon_social}}</td>
+					<td at-title="NIt Cliente" width="150">{{item.cliente.nit}}</td>
+					<td at-implicit at-sortable at-attribute="factura" width="150"></td>
+					<td at-sortable at-title="Fecha" width="150">{{item.fecha.split("T")[0].split('-').reverse().join('/')}}</td>
+					<td at-title="Hora fecha" width="150">{{item.fecha |
+						date:"HH:mm"}}&nbsp{{item.fecha.split("T")[0].split('-').reverse().join('/')}}</td>
+					<td at-title="Monto" width="150">{{item.total | number:2}}</td>
+					<td at-title="Tipo de Pago" width="150">{{item.tipoPago.nombre}}</td>
 
+					<td at-title="Pago" width="300">
+						<div ng-if="item.tipoPago.nombre==diccionario.TIPO_PAGO_CREDITO" class="hidden-sm hidden-xs action-buttons">
+							Plazo: {{item.dias_credito}} días&nbsp A cuenta: Bs {{item.a_cuenta | number:2}}&nbsp Saldo: Bs
+							{{item.saldo | number:2}}&nbsp
+
+							<a class="blue" href="javascript:void(0)" ng-if="item.saldo>0" ng-click="abrirPopupPago(item)">
+								<i class="ace-icon fa fa-exclamation-circle bigger-130"></i>
+							</a>
+						</div>
+						<div ng-if="item.tipoPago.nombre==diccionario.TIPO_PAGO_CREDITO" class="hidden-md hidden-lg">
+							<div ng-if="item.tipoPago.nombre==diccionario.TIPO_PAGO_CREDITO" class="hidden-sm hidden-xs action-buttons">
+								Plazo: {{item.dias_credito}} días&nbsp A cuenta: Bs {{item.a_cuenta | number:2}}&nbsp Saldo: Bs {{item.saldo |
+								number:2}}&nbsp
+
+								<a class="blue" href="javascript:void(0)" ng-if="item.saldo>0" ng-click="abrirPopupPago(venta)">
+									<i class="ace-icon fa fa-exclamation-circle bigger-130"></i>
+								</a>
+							</div>
+							<div ng-if="item.tipoPago.nombre==diccionario.TIPO_PAGO_CREDITO" class="hidden-md hidden-lg">
+								<div class="inline pos-rel">
+									<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+										<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+									</button>
+									Plazo: {{item.dias_credito}} días&nbsp A cuenta: Bs {{item.a_cuenta}}&nbsp Saldo: Bs {{item.saldo}}&nbsp
+									<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+										<li>
+											<a href="javascript:void(0)" ng-if="item.saldo>0" ng-click="abrirPopupPago(venta)" class="tooltip-info"
+											 data-rel="tooltip" title="View">
+												<span class="blue">
+													<i class="ace-icon fa fa-exclamation-circle bigger-120"></i>
+												</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</td>
+					<td at-title="Usuario" width="150">{{item.usuario.nombre_usuario}}</td>
+					<td at-title="Estado" width="150">
+						<p ng-if="item.activa">
+							<span class="label label-sm label-success">Activo</span>
+						</p>
+						<p ng-if="!item.activa">
+							<span class="label label-sm label-warning">Anulado</span>
+						</p>
+					</td>
+					<td at-title="Acciones" width="150">
+						<div class="hidden-sm hidden-xs action-buttons">
+							<a class="green" href="javascript:void(0)" ng-click="imprimirVenta(item)">
+								<i class="ace-icon fa fa-print bigger-130"></i>
+							</a>
+
+							<a class="blue" href="javascript:void(0)" ng-click="verVenta(item)">
+								<i class="ace-icon fa fa-search-plus bigger-130"></i>
+							</a>
+							<a ng-if="item.activa && (item.movimiento.clase.nombre_corto==diccionario.EGRE_FACTURACION || item.movimiento.clase.nombre_corto==diccionario.EGRE_PROFORMA || item.movimientoServicio.nombre_corto==diccionario.EGRE_SERVICIO)"
+							 class="red" href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacionVenta(item)">
+								<i class="ace-icon fa fa-trash-o bigger-130"></i>
+							</a>
+							<a class="red" href="javascript:void(0)" ng-if="usuario.empresa.usar_vencimientos && item.movimiento!=undefined"
+							 ng-click="imprimirVentaConVencimiento(item)">
+								<i class="ace-icon fa fa-print bigger-130"></i>
+							</a>
+							<a e-disabled="!aplicacion.puede_modificar" ng-if="(item.movimiento.clase.nombre_corto==diccionario.EGRE_FACTURACION || item.movimiento.clase.nombre_corto==diccionario.EGRE_PROFORMA) && usuario.empresa.usar_edicion_venta"
+							 class="blue" uib-tooltip="Permitir Edición" tooltip-placement="left" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(item,'venta')">
+								<i class="ace-icon fa fa-pencil bigger-130"></i>
+							</a>
+						</div>
+
+						<div class="hidden-md hidden-lg">
+							<div class="inline pos-rel">
+								<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+									<i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+								</button>
+
+								<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+									<li>
+										<a href="javascript:void(0)" ng-click="imprimirVenta(item)" class="tooltip-success" data-rel="tooltip" title="Edit">
+											<span class="green">
+												<i class="ace-icon fa fa-print bigger-120"></i>
+											</span>
+										</a>
+									</li>
+									<li>
+										<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verVenta(item)" class="tooltip-info"
+										 data-rel="tooltip" title="View">
+											<span class="blue">
+												<i class="ace-icon fa fa-search-plus bigger-120"></i>
+											</span>
+										</a>
+									</li>
+									<li>
+										<a ng-if="item.movimiento.clase.nombre_corto==diccionario.EGRE_FACTURACION || item.movimiento.clase.nombre_corto==diccionario.EGRE_PROFORMA"
+										 href="javascript:void(0)" e-disabled="!aplicacion.puede_eliminar" ng-click="mostrarConfirmacionEliminacionVenta(item)"
+										 class="tooltip-error" data-rel="tooltip" title="Delete">
+											<span class="red">
+												<i class="ace-icon fa fa-trash-o bigger-120"></i>
+											</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+				</tr>
+			</tbody>
+		</table>
+		<div class="pull-right">
+			<at-pagination ng-if="ventas.length>0" at-list="ventas" at-config="config"></at-pagination>
+		</div>
 
 		<!-- div.table-responsive -->
 
 		<!-- div.dataTables_borderWrap -->
-		<div style="overflow-x:auto;">
+		<!-- <div style="overflow-x:auto;">
 			<table id="tabla-ventas" class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
@@ -330,10 +472,7 @@
 								<a class="green" href="javascript:void(0)" ng-click="imprimirVenta(venta)">
 									<i class="ace-icon fa fa-print bigger-130"></i>
 								</a>
-								<!--<a class="orange"  href="javascript:void(0)" ng-click="editar(venta)" data-rel="tooltip" tooltip-placement="top"
-									uib-tooltip="Modificar">
-									<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
-								</a>-->
+							
 								<a class="blue" href="javascript:void(0)" ng-click="verVenta(venta)">
 									<i class="ace-icon fa fa-search-plus bigger-130"></i>
 								</a>
@@ -394,8 +533,8 @@
 						<td colspan="5">{{sumarMonto()|number:2 }}</td>
 					</tr>
 				</tbody>
-			</table>
-		</div>
+			</table> 
+		</div>-->
 	</div>
 </div>
 
@@ -404,7 +543,8 @@
 		<div class="col-sm-4">
 			<label class="col-md-3 pull-right">
 				<br>
-				<input ng-model="usuario.usar_lector_de_barra" ng-change="UsarLectorDeBarra()" checked="checked" type="checkbox" class="ace ace-switch ace-switch-5">
+				<input ng-model="usuario.usar_lector_de_barra" ng-change="UsarLectorDeBarra()" checked="checked" type="checkbox"
+				 class="ace ace-switch ace-switch-5">
 				<span class="lbl" data-lbl="Si&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
 			</label>
 			<div class="widget-box">
@@ -435,8 +575,9 @@
 								<tr>
 									<td ng-if="usuario.empresa.usar_venta_servicio">
 										<label>MOVIMIENTO</label>
-										<select data-validate="validate(required)" ng-disabled="venta.editable" required id="movimientoServicio" name="movimiento" ng-model="venta.movimiento"
-										 data-placeholder="Click para escoger" ng-change="obtenerTipoEgreso(venta.movimiento)" ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso track by movimiento.id">
+										<select data-validate="validate(required)" ng-disabled="venta.editable" required id="movimientoServicio" name="movimiento"
+										 ng-model="venta.movimiento" data-placeholder="Click para escoger" ng-change="obtenerTipoEgreso(venta.movimiento)"
+										 ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso track by movimiento.id">
 											<!--<option ng-disabled="movimiento.nombre_corto==diccionario.EGRE_AJUSTE" ng-repeat="movimiento in movimientosEgreso" value="{{movimiento.id}}-{{movimiento.nombre_corto}}">{{movimiento.nombre}}</option>-->
 										</select>
 										<span class="red">(*)</span>
@@ -451,8 +592,9 @@
 									</td>
 									<td ng-if="!usuario.empresa.usar_venta_servicio">
 										<label>MOVIMIENTO</label>
-										<select data-validate="validate(required)" ng-disabled="venta.editable" required id="movimientoFacturacion" name="movimiento" ng-model="venta.movimiento"
-										 data-placeholder="Click para escoger" ng-change="obtenerTipoEgreso(venta.movimiento)" ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso|filtroMovVenta track by movimiento.id">
+										<select data-validate="validate(required)" ng-disabled="venta.editable" required id="movimientoFacturacion"
+										 name="movimiento" ng-model="venta.movimiento" data-placeholder="Click para escoger" ng-change="obtenerTipoEgreso(venta.movimiento)"
+										 ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso|filtroMovVenta track by movimiento.id">
 											<!--<option ng-disabled="movimiento.nombre_corto==diccionario.EGRE_AJUSTE" ng-repeat="movimiento in movimientosEgreso" value="{{movimiento.id}}-{{movimiento.nombre_corto}}">{{movimiento.nombre}}</option>-->
 										</select>
 										<span class="red">(*)</span>
@@ -467,8 +609,8 @@
 									</td>
 									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA || tipoEgreso==diccionario.EGRE_SERVICIO">
 										<label>PAGADO (Bs): </label>
-										<input id="pagado" name="pagado" ng-disabled="venta.editable" data-validate="validate(required)" required type="number" step="0.01"
-										 min="{{pagoMinimo}}" ng-model="venta.pagado" ng-change="calcularCambio()" />
+										<input id="pagado" name="pagado" ng-disabled="venta.editable" data-validate="validate(required)" required
+										 type="number" step="0.01" min="{{pagoMinimo}}" ng-model="venta.pagado" ng-change="calcularCambio()" />
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.pagado.$dirty && formularioVenta.pagado.$invalid">
 											El pago debe ser superior a {{pagoMinimo}}.
@@ -487,8 +629,8 @@
 									</td>
 									<td ng-if="tipoEgreso==diccionario.EGRE_TRASPASO">
 										<label>SUCURSAL DESTINO</label>
-										<select ng-disabled="venta.editable" data-validate="validate(required)" id="sucursalDestino" name="sucursalDestino" required
-										 ng-options="sucursalDiferente as sucursalDiferente.nombre for sucursalDiferente in sucursalesDiferente track by sucursalDiferente.id"
+										<select ng-disabled="venta.editable" data-validate="validate(required)" id="sucursalDestino" name="sucursalDestino"
+										 required ng-options="sucursalDiferente as sucursalDiferente.nombre for sucursalDiferente in sucursalesDiferente track by sucursalDiferente.id"
 										 ng-model="venta.sucursalDestino" ng-change="obtenerAlmacenesDiferente(venta.sucursalDestino.id)">
 										</select>
 										<span class="red">(*)</span>
@@ -497,8 +639,9 @@
 								<tr ng-if="tipoEgreso==diccionario.EGRE_TRASPASO">
 									<td>
 										<label>ALMACEN ORIGEN</label>
-										<select ng-disabled="venta.editable" data-validate="validate(required)" required id="almacen" name="almacen" ng-model="venta.almacen"
-										 ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id" data-placeholder="Click para escoger"></select>
+										<select ng-disabled="venta.editable" data-validate="validate(required)" required id="almacen" name="almacen"
+										 ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
+										 data-placeholder="Click para escoger"></select>
 										<span class="red">(*)</span>
 									</td>
 									<td>
@@ -512,8 +655,8 @@
 								<tr ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
 									<td>
 										<p>SUCURSAL</p>
-										<select ng-disabled="venta.editable" ng-disabled="venta.detallesVenta.length>0" data-validate="validate(required)" required
-										 id="sucursalVenta" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+										<select ng-disabled="venta.editable" ng-disabled="venta.detallesVenta.length>0" data-validate="validate(required)"
+										 required id="sucursalVenta" name="sucursal" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 										 ng-model="venta.sucursal" ng-change="obtenerAlmacenesActividades(venta.sucursal.id)">
 											<option value="" disabled selected>Selec. Sucursal</option>
 										</select>
@@ -524,8 +667,8 @@
 									</td>
 									<td ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO && tipoEgreso!=diccionario.EGRE_SERVICIO">
 										<p>ALMACEN</p>
-										<select ng-disabled="venta.editable || venta.detallesVenta.length>0" data-validate="validate(required)" required id="almacenServicio"
-										 name="almacenServicio" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
+										<select ng-disabled="venta.editable || venta.detallesVenta.length>0" data-validate="validate(required)"
+										 required id="almacenServicio" name="almacenServicio" ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
 										 data-placeholder="Click para escoger">
 											<option value="" disabled selected>Selec. Almacen</option>
 										</select>
@@ -540,13 +683,14 @@
 										<label>ACTIVIDAD</label>
 									</td>
 									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION  || tipoEgreso==diccionario.EGRE_SERVICIO">
-										<select style="width:150px;" ng-disabled="venta.editable" data-validate="validate(required)" required id="actividad-venta" name="actividad"
-										 ng-model="venta.actividad" ng-options="actividad as actividad.nombre for actividad in actividades track by actividad.id"
+										<select style="width:150px;" ng-disabled="venta.editable" data-validate="validate(required)" required id="actividad-venta"
+										 name="actividad" ng-model="venta.actividad" ng-options="actividad as actividad.nombre for actividad in actividades track by actividad.id"
 										 data-placeholder="Click para escoger">
 											<option value="" disabled selected>Selec. Actividad</option>
 										</select>
 										<span class="red">(*)</span>
-										<span ng-if="dosificacionesExpiradas" style="color: red">Las Actividades con dosificaciones expiradas no se muestran</span>
+										<span ng-if="dosificacionesExpiradas" style="color: red">Las Actividades con dosificaciones expiradas no se
+											muestran</span>
 										<div class="invalid-message help-block" ng-messages="formularioVenta.actividad.$error" ng-if=" (formularioVenta.$submitted && formularioVenta.actividad.$invalid)">
 											<div ng-messages-include="/templates/GRAL/messages.html"></div>
 										</div>
@@ -556,8 +700,9 @@
 									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA || tipoEgreso==diccionario.EGRE_SERVICIO">
 										<label>NIT CLIENTE</label>
 										<input ng-disabled="venta.editable" ng-keypress="interceptarTecla($event,'razon_social',true)" data-validate="validate(required)"
-										 id="nit" name="nit" required type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT" uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)"
-										 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0"
+										 id="nit" name="nit" required type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT"
+										 uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)" typeahead-wait-ms="2000"
+										 typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0"
 										 typeahead-on-select="establecerCliente($item, $model, $label, $event)">
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.nit.$dirty && formularioVenta.nit.$invalid">
@@ -566,10 +711,11 @@
 									</td>
 									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA ||tipoEgreso==diccionario.EGRE_SERVICIO">
 										<label>RAZÓN SOCIAL CLIENTE</label>
-										<input ng-disabled="venta.editable" ng-keypress="interceptarTecla($event,'id_producto',true)" autocomplete="off" data-validate="validate(required)"
-										 id="razon_social" name="razon_social" required type="text" ng-model="venta.cliente.razon_social" placeholder="Ingrese la Razon Social"
-										 uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)" typeahead-wait-ms="2000"
-										 typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
+										<input ng-disabled="venta.editable" ng-keypress="interceptarTecla($event,'id_producto',true)" autocomplete="off"
+										 data-validate="validate(required)" id="razon_social" name="razon_social" required type="text" ng-model="venta.cliente.razon_social"
+										 placeholder="Ingrese la Razon Social" uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)"
+										 typeahead-wait-ms="2000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+										 typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)">
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.razon_social.$dirty && formularioVenta.razon_social.$invalid">
 											Dato requerido.
@@ -579,8 +725,9 @@
 								<tr>
 									<td>
 										<p>FECHA</p>
-										<input ng-disabled="venta.editable" name="fecha" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-										 id="fecha" ng-model="venta.fechaTexto" placeholder="Ingrese la fecha" autocomplete="off" />
+										<input ng-disabled="venta.editable" name="fecha" required ng-update-hidden class="form-control date-picker"
+										 type="text" data-date-format="dd/mm/yyyy" id="fecha" ng-model="venta.fechaTexto" placeholder="Ingrese la fecha"
+										 autocomplete="off" />
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.fecha.$dirty && formularioVenta.fecha.$invalid">
 											Dato requerido.
@@ -588,8 +735,8 @@
 									</td>
 									<td ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA ||tipoEgreso==diccionario.EGRE_SERVICIO">
 										<p>TIPO DE PAGO</p>
-										<select data-validate="validate(required)" required id="tipo-pago-venta" name="pago" ng-model="venta.tipoPago" data-placeholder="Elija un tipo de pago"
-										 ng-change="cambiarTipoPago(venta)" ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id">
+										<select data-validate="validate(required)" required id="tipo-pago-venta" name="pago" ng-model="venta.tipoPago"
+										 data-placeholder="Elija un tipo de pago" ng-change="cambiarTipoPago(venta)" ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id">
 										</select>
 										<span class="red">(*)</span>
 									</td>
@@ -611,8 +758,8 @@
 								<tr ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA ||tipoEgreso==diccionario.EGRE_SERVICIO">
 									<td ng-if="!esContado">
 										<label>A CUENTA (Bs)</label>
-										<input min="0" name="acuenta" required type="number" step="0.001" ng-model="venta.a_cuenta" value="0.0" ng-change="calcularSaldo()"
-										/>
+										<input min="0" name="acuenta" required type="number" step="0.001" ng-model="venta.a_cuenta" value="0.0"
+										 ng-change="calcularSaldo()" />
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.acuenta.$dirty && formularioVenta.acuenta.$invalid">
 											Debe especificar un valor numérico mayor o igual a 0.
@@ -639,7 +786,8 @@
 										</div>
 										<div class="row">
 											<div class="col-sm-10">
-												<select class="col-sm-10" ng-options="vendedor as vendedor.persona.nombre_completo for vendedor in vendedores" ng-model="venta.vendedor"></select>
+												<select class="col-sm-10" ng-options="vendedor as vendedor.persona.nombre_completo for vendedor in vendedores"
+												 ng-model="venta.vendedor"></select>
 											</div>
 											<div class="col-sm-1" ng-if="venta.vendedor">
 												<a class="green" href="javascript:void(0)" ng-click="modificarVendedor(venta.vendedor)">
@@ -691,7 +839,8 @@
 
 											<label class="col-md-3 pull-left" uib-tooltip="Usar lector de barra">
 
-												<input ng-model="usuario.usar_lector_de_barra" ng-change="UsarLectorDeBarra()" checked="checked" type="checkbox" class="ace ace-switch ace-switch-5">
+												<input ng-model="usuario.usar_lector_de_barra" ng-change="UsarLectorDeBarra()" checked="checked" type="checkbox"
+												 class="ace ace-switch ace-switch-5">
 												<span class="lbl" data-lbl="Si&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
 											</label>
 										</div>
@@ -729,17 +878,17 @@
 							<tbody>
 								<tr>
 									<td ng-if="!venta.id">
-										<input ng-if="usuario.usar_lector_de_barra" ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto" required
-										 ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..."
-										 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProductoLectorBarra($viewValue)"
-										 typeahead-wait-ms="100" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
-										 typeahead-on-select="establecerProducto($item, $model, $label, $event)">
-
-										<input ng-if="!usuario.usar_lector_de_barra" autocomplete="off" ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto"
+										<input ng-if="usuario.usar_lector_de_barra" ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto"
 										 required ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..."
-										 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
-										 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-select-on-exact="true"
+										 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProductoLectorBarra($viewValue)"
+										 typeahead-wait-ms="100" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
 										 typeahead-min-length="3" typeahead-on-select="establecerProducto($item, $model, $label, $event)">
+
+										<input ng-if="!usuario.usar_lector_de_barra" autocomplete="off" ng-keypress="interceptarTecla($event,'cantidad',true)"
+										 id="id_producto" required ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre"
+										 placeholder="Ingrese el nombre del producto..." uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
+										 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+										 typeahead-select-on-exact="true" typeahead-min-length="3" typeahead-on-select="establecerProducto($item, $model, $label, $event)">
 
 										<div class="space-6"></div>
 										<button ng-disabled="!venta.almacen" id="mostrar_inv" type="button" ng-click="abrirPopupInventario()" class="btn btn-info btn-sm">
@@ -748,17 +897,17 @@
 										<span class="red" ng-if="!detalleVenta.producto.activar_inventario">Inventario Desactivado</span>
 									</td>
 									<td ng-if="venta.id">
-										<input ng-if="usuario.usar_lector_de_barra" ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto" required
-										 ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..."
-										 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProductoLectorBarra($viewValue)"
-										 typeahead-wait-ms="100" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
-										 typeahead-on-select="establecerProductoEdicionVenta($item, $model, $label, $event)">
-
-										<input ng-if="!usuario.usar_lector_de_barra" autocomplete="off" ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto"
+										<input ng-if="usuario.usar_lector_de_barra" ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto"
 										 required ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre" placeholder="Ingrese el nombre del producto..."
-										 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
-										 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-select-on-exact="true"
+										 uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProductoLectorBarra($viewValue)"
+										 typeahead-wait-ms="100" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
 										 typeahead-min-length="3" typeahead-on-select="establecerProductoEdicionVenta($item, $model, $label, $event)">
+
+										<input ng-if="!usuario.usar_lector_de_barra" autocomplete="off" ng-keypress="interceptarTecla($event,'cantidad',true)"
+										 id="id_producto" required ng-disabled="!venta.almacen" type="text" ng-model="detalleVenta.producto.nombre"
+										 placeholder="Ingrese el nombre del producto..." uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
+										 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+										 typeahead-select-on-exact="true" typeahead-min-length="3" typeahead-on-select="establecerProductoEdicionVenta($item, $model, $label, $event)">
 
 										<div class="space-6"></div>
 										<button ng-disabled="!venta.almacen" id="mostrar_inv" type="button" ng-click="abrirPopupInventario()" class="btn btn-info btn-sm">
@@ -799,16 +948,17 @@
 										</div>
 										<div clas="row">
 											<div class="col-sm-12">
-												<a class="green"  href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarPrecio()">
+												<a class="green" href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarPrecio()">
 													<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
 												</a>
 
 
-												<a href="javascript:void(0)" ng-if="venta.cliente.id && venta.cliente.tipoPrecioVenta&& usuario.empresa.usar_tipo_precio" class="green" popover-placement="right"
-												 uib-popover-template="dynamicPopoverPrecios.templateUrl" popover-trigger="outsideClick: outsideClick" popover-title="Precios">
+												<a href="javascript:void(0)" ng-if="venta.cliente.id && venta.cliente.tipoPrecioVenta&& usuario.empresa.usar_tipo_precio"
+												 class="green" popover-placement="right" uib-popover-template="dynamicPopoverPrecios.templateUrl"
+												 popover-trigger="outsideClick: outsideClick" popover-title="Precios">
 													<i class="ace-icon fa fa-exclamation-circle bigger-130"></i>
 												</a>
-												<script type="text/ng-template"id="preciosTemplate.html">                                           
+												<script type="text/ng-template" id="preciosTemplate.html">
 														<div  class="form-group">                                              
 														  <p ng-repeat="precio in detalleVenta.producto.tiposPrecio|filter:{eliminado:false}"><b>{{precio.tipoPrecio.nombre}}:{{precio.precio_unitario}}</b> </p>
 														</div>                                           
@@ -819,8 +969,8 @@
 										<span class="blue">
 											Último precio
 										</span>
-										<span class="label label-danger label-white middle tooltip-info" ng-if="precio_inventario" data-rel="tooltip" tooltip-placement="top"
-										 uib-tooltip="Último precio de compra">{{precio_inventario}}</span>
+										<span class="label label-danger label-white middle tooltip-info" ng-if="precio_inventario" data-rel="tooltip"
+										 tooltip-placement="top" uib-tooltip="Último precio de compra">{{precio_inventario}}</span>
 									</td>
 									<td ng-if="editar_precio">
 										<form name="edit" id="edit" ng-submit="establecerPrecio()">
@@ -829,7 +979,7 @@
 													<input ng-if="!venta.cliente.tipoPrecioVenta" required name="precio_unitario" step="0.001" min="{{detalleVenta.producto.rango_negativo?detalleVenta.producto.rango_negativo:0}}"
 													 max="{{detalleVenta.producto.rango_positivo?detalleVenta.producto.rango_positivo:10000000}}" class="col-xs-12"
 													 ng-change="calcularImporte()" ng-model="detalleVenta.precio_unitario" type="number" />
-													 <input ng-if="venta.cliente.tipoPrecioVenta" required name="precio_unitario" step="0.001" min="{{tipoPrecioProducto.rango_negativo?tipoPrecioProducto.rango_negativo:0}}"
+													<input ng-if="venta.cliente.tipoPrecioVenta" required name="precio_unitario" step="0.001" min="{{tipoPrecioProducto.rango_negativo?tipoPrecioProducto.rango_negativo:0}}"
 													 max="{{tipoPrecioProducto.rango_positivo?tipoPrecioProducto.rango_positivo:10000000}}" class="col-xs-12"
 													 ng-change="calcularImporte()" ng-model="detalleVenta.precio_unitario" type="number" />
 												</div>
@@ -844,9 +994,9 @@
 										</form>
 									</td>
 									<td>
-										<input onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)" id="cantidad" name="cantidad"
-										 step="0.001" min="0.1" max="{{detalleVenta.inventario_disponible}}" required class="col-xs-12" ng-change="calcularImporte()"
-										 ng-model="detalleVenta.cantidad" type="number" />
+										<input onfocus="this.select();" ng-keypress="interceptarTecla($event,'agregar_detalle_venta',false)" id="cantidad"
+										 name="cantidad" step="0.001" min="0.1" max="{{detalleVenta.inventario_disponible}}" required class="col-xs-12"
+										 ng-change="calcularImporte()" ng-model="detalleVenta.cantidad" type="number" />
 										<div ng-show="formularioBusquedaProducto.cantidad.$dirty && formularioBusquedaProducto.cantidad.$invalid">
 											<span class="invalid-message">La cantidad debe estar entre 0.1 y {{detalleVenta.inventario_disponible}}.</span>
 										</div>
@@ -869,16 +1019,15 @@
 									<th>
 										<label>DESCUENTOS (-)</label>
 										<label>
-											<input ng-disabled="detalleVenta.producto.descuento_fijo" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleVenta.tipo_descuento"
-											 ng-change="recalcular()" />
+											<input ng-disabled="detalleVenta.producto.descuento_fijo" class="ace ace-switch ace-switch-4" type="checkbox"
+											 ng-model="detalleVenta.tipo_descuento" ng-change="recalcular()" />
 											<span class="lbl check-compra"></span>
 										</label>
 									</th>
 									<th>
 										<label>RECARGOS (+)</label>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleVenta.tipo_recargo" ng-change="recalcular()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleVenta.tipo_recargo" ng-change="recalcular()" />
 											<span class="lbl check-compra"></span>
 										</label>
 									</th>
@@ -898,16 +1047,16 @@
 										 ng-value="detalleVenta.producto.descuento" step="0.001" class="col-xs-12" type="number" value="0" />
 									</td>
 									<td>
-										<input required ng-change="calcularImporte()" ng-model="detalleVenta.recargo" step="0.001" class="col-xs-12" type="number"
+										<input required ng-change="calcularImporte()" ng-model="detalleVenta.recargo" step="0.001" class="col-xs-12"
+										 type="number" value="0" />
+									</td>
+									<td>
+										<input required ng-change="calcularImporte()" ng-model="detalleVenta.ice" step="0.001" class="col-xs-12" type="number"
 										 value="0" />
 									</td>
 									<td>
-										<input required ng-change="calcularImporte()" ng-model="detalleVenta.ice" step="0.001" class="col-xs-12" type="number" value="0"
-										/>
-									</td>
-									<td>
-										<input required ng-change="calcularImporte()" ng-model="detalleVenta.excento" step="0.001" class="col-xs-12" type="number"
-										 value="0" />
+										<input required ng-change="calcularImporte()" ng-model="detalleVenta.excento" step="0.001" class="col-xs-12"
+										 type="number" value="0" />
 									</td>
 									<td>
 										{{detalleVenta.total}}
@@ -955,23 +1104,25 @@
 										<!-- <th>
 											<label>CANT. (u)</label>
 										</th> -->
-										<th>
-											<label>IMP. (Bs)</label>
-										</th>
-										<th>
-											<label>ACC.</label>
-										</th>
+									<th>
+										<label>IMP. (Bs)</label>
+									</th>
+									<th>
+										<label>ACC.</label>
+									</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
 									<td>
 										<div class="input-group">
-											<span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-hide="!venta.sucursal.id" ng-click="abrirmodalServicioVenta()"></span>
-											<input id="id_servicio" autocomplete="off" ng-keypress="interceptarTecla($event,'fecha_vencimiento',true)" required ng-disabled="!venta.sucursal.id"
-											 type="text" ng-model="detalleVenta.servicio.nombre" placeholder="Ingrese el nombre del servicio..." uib-typeahead="servicio as (servicio.nombre+'-'+servicio.detalle) for servicio in serviciosVentas|filter:{habilitado:true}"
-											 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
-											 typeahead-on-select="establecerServicio($item, $model, $label, $event)">
+											<span class="input-group-addon glyphicon glyphicon-pencil point-edit green" ng-hide="!venta.sucursal.id"
+											 ng-click="abrirmodalServicioVenta()"></span>
+											<input id="id_servicio" autocomplete="off" ng-keypress="interceptarTecla($event,'fecha_vencimiento',true)"
+											 required ng-disabled="!venta.sucursal.id" type="text" ng-model="detalleVenta.servicio.nombre" placeholder="Ingrese el nombre del servicio..."
+											 uib-typeahead="servicio as (servicio.nombre+'-'+servicio.detalle) for servicio in serviciosVentas|filter:{habilitado:true}"
+											 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+											 typeahead-min-length="3" typeahead-on-select="establecerServicio($item, $model, $label, $event)">
 											<div class="space-6"></div>
 											<!-- <button ng-disabled="!venta.almacen" id="mostrar_inv" type="button" ng-click="abrirPopupInventario()" class="btn btn-info btn-sm">
 												<i class="ace-icon fa fa-search-plus bigger-110"></i>
@@ -1070,16 +1221,15 @@
 									<th>
 										<label>DESCUENTOS (-)</label>
 										<label>
-											<input ng-disabled="detalleVenta.producto.descuento_fijo" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleVenta.tipo_descuento"
-											 ng-change="recalcular()" />
+											<input ng-disabled="detalleVenta.producto.descuento_fijo" class="ace ace-switch ace-switch-4" type="checkbox"
+											 ng-model="detalleVenta.tipo_descuento" ng-change="recalcular()" />
 											<span class="lbl check-compra"></span>
 										</label>
 									</th>
 									<th>
 										<label>RECARGOS (+)</label>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleVenta.tipo_recargo" ng-change="recalcular()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="detalleVenta.tipo_recargo" ng-change="recalcular()" />
 											<span class="lbl check-compra"></span>
 										</label>
 									</th>
@@ -1095,20 +1245,20 @@
 								</tr>
 								<tr class="des-datos" style="display:none;">
 									<td>
-										<input required ng-change="calcularImporteServicio()" ng-model="detalleVenta.descuento" step="0.001" class="col-xs-12" type="number"
-										 value="0" />
+										<input required ng-change="calcularImporteServicio()" ng-model="detalleVenta.descuento" step="0.001" class="col-xs-12"
+										 type="number" value="0" />
 									</td>
 									<td>
-										<input required ng-change="calcularImporteServicio()" ng-model="detalleVenta.recargo" step="0.001" class="col-xs-12" type="number"
-										 value="0" />
+										<input required ng-change="calcularImporteServicio()" ng-model="detalleVenta.recargo" step="0.001" class="col-xs-12"
+										 type="number" value="0" />
 									</td>
 									<td>
-										<input required ng-change="calcularImporteServicio()" ng-model="detalleVenta.ice" step="0.001" class="col-xs-12" type="number"
-										 value="0" />
+										<input required ng-change="calcularImporteServicio()" ng-model="detalleVenta.ice" step="0.001" class="col-xs-12"
+										 type="number" value="0" />
 									</td>
 									<td>
-										<input required ng-change="calcularImporteServicio()" ng-model="detalleVenta.excento" step="0.001" class="col-xs-12" type="number"
-										 value="0" />
+										<input required ng-change="calcularImporteServicio()" ng-model="detalleVenta.excento" step="0.001" class="col-xs-12"
+										 type="number" value="0" />
 									</td>
 									<td>
 										{{detalleVenta.total}}
@@ -1135,104 +1285,104 @@
 								<ul id="campos-detalle-venta" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret">
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_producto" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_producto"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>NOMBRE</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_codigo_producto" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_codigo_producto"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>CÓD. ITEM</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_unidad_producto" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_unidad_producto"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>UNID. MED.</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_precio_unitario" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_precio_unitario"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>P.U. (Bs/u)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_cantidad" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_cantidad"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>CANT. (u)</label>
 									</li>
 									<li ng-if="usuario.empresa.usar_vencimientos">
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_fecha_vencimiento" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_fecha_vencimiento"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>VENC.</label>
 									</li>
 									<li ng-if="usuario.empresa.usar_vencimientos">
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_lote" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_lote"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>LOTE</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_importe" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_importe"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>IMP. (Bs)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>DESC. (-)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_recargo" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_recargo"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>REC. (+)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_ice" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_ice"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>ICE (-)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_excento" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_excento"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>EXC. (-)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_total" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_total"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>SUJETO A DF</label>
@@ -1380,12 +1530,13 @@
 										{{venta.total_descuento_general}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_recargo">
-
+										{{venta.total_recargo_general}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_ice">
-
+										{{venta.total_ice}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_excento">
+										{{venta.total_excento}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_total">
 										{{venta.total}}
@@ -1413,8 +1564,8 @@
 								<ul id="campos-detalle-venta" class="dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret">
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_producto" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_producto"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>NOMBRE</label>
@@ -1470,48 +1621,48 @@
 										</li> -->
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_importe" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_importe"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>IMP. (Bs)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_descuento"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>DESC. (-)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_recargo" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_recargo"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>REC. (+)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_ice" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_ice"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>ICE (-)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_excento" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_excento"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>EXC. (-)</label>
 									</li>
 									<li>
 										<label>
-											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_total" ng-change="guardarConfiguracionVentaVista()"
-											/>
+											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_total"
+											 ng-change="guardarConfiguracionVentaVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>SUJETO A DF</label>
@@ -1946,10 +2097,11 @@
 	<form name="formularioCierre" novalidate ng-submit="cerrarCaja(cierre)">
 		<div class="col sm 12" align="center">
 			<p>
-				<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Ingrese los datos para el cierre
+				<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Ingrese los datos para el
+				cierre
 				de caja?</p>
 			<label>Saldo inicial en caja</label>
-			
+
 		</div>
 		<div class="col sm 12" align="center">
 			<input required ng-model="cierre.saldo_inicial" min="0" max="venta.saldo" type="number" step="0.001">
@@ -1991,20 +2143,21 @@
 
 										<div class="col-xs-2" ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
 											<label>FECHA</label>
-											<input data-validate="validate(required)" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-											 id="fechaP" ng-model="venta.fechaTexto" placeholder="Ingrese la fecha" />
+											<input data-validate="validate(required)" required ng-update-hidden class="form-control date-picker" type="text"
+											 data-date-format="dd/mm/yyyy" id="fechaP" ng-model="venta.fechaTexto" placeholder="Ingrese la fecha" />
 										</div>
 										<div class="col-xs-2">
 											<label>MOVIMIENTO</label>
-											<select data-validate="validate(required)" required id="movimiento" name="movimiento" ng-model="venta.movimiento" data-placeholder="Click para escoger"
-											 ng-change="obtenerTipoEgreso(venta.movimiento)" ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso track by movimiento.id">
+											<select data-validate="validate(required)" required id="movimiento" name="movimiento" ng-model="venta.movimiento"
+											 data-placeholder="Click para escoger" ng-change="obtenerTipoEgreso(venta.movimiento)" ng-options="movimiento as movimiento.nombre for movimiento in movimientosEgreso track by movimiento.id">
 												<!--<option ng-disabled="movimiento.nombre_corto==diccionario.EGRE_AJUSTE" ng-repeat="movimiento in movimientosEgreso" value="{{movimiento.id}}-{{movimiento.nombre_corto}}">{{movimiento.nombre}}</option>-->
 											</select>
 										</div>
 										<div class="col-xs-2" ng-if="tipoEgreso==diccionario.EGRE_FACTURACION">
 											<label>ACTIVIDAD</label>
-											<select style='width:160px' data-validate="validate(required)" required id="actividad" name="actividad" ng-model="venta.actividad"
-											 ng-options="actividad as actividad.nombre for actividad in actividades track by actividad.id" data-placeholder="Click para escoger"></select>
+											<select style='width:160px' data-validate="validate(required)" required id="actividad" name="actividad"
+											 ng-model="venta.actividad" ng-options="actividad as actividad.nombre for actividad in actividades track by actividad.id"
+											 data-placeholder="Click para escoger"></select>
 										</div>
 										<div class="col-xs-2">
 											<label>SUCURSAL</label>
@@ -2015,13 +2168,14 @@
 
 										<div class="col-xs-1">
 											<label>ALMACEN</label>
-											<select ng-change="cargarProductos()" data-validate="validate(required)" required id="almacen" name="almacen" ng-model="venta.almacen"
-											 ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id" data-placeholder="Click para escoger"></select>
+											<select ng-change="cargarProductos()" data-validate="validate(required)" required id="almacen" name="almacen"
+											 ng-model="venta.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
+											 data-placeholder="Click para escoger"></select>
 										</div>
 										<div class="col-xs-2" ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
 											<label>TIPO DE PAGO</label>
-											<select data-validate="validate(required)" required id="pago" name="pago" ng-model="venta.tipoPago" data-placeholder="Elija un tipo de pago"
-											 ng-change="cambiarTipoPago(venta)" ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id">
+											<select data-validate="validate(required)" required id="pago" name="pago" ng-model="venta.tipoPago"
+											 data-placeholder="Elija un tipo de pago" ng-change="cambiarTipoPago(venta)" ng-options="tipoPago as tipoPago.nombre for tipoPago in tiposPago track by tipoPago.id">
 											</select>
 										</div>
 										<div class="col-xs-1">
@@ -2046,8 +2200,8 @@
 										</div>
 										<div class="col-xs-2" ng-if="!esContado">
 											<label>A CUENTA (Bs)</label>
-											<input data-validate="validate(required)" required type="number" step="0.001" ng-model="venta.a_cuenta" value="0.0" ng-change="calcularSaldo()"
-											/>
+											<input data-validate="validate(required)" required type="number" step="0.001" ng-model="venta.a_cuenta"
+											 value="0.0" ng-change="calcularSaldo()" />
 										</div>
 										<div class="col-xs-2" ng-if="!esContado">
 											<label>SALDO</label>
@@ -2057,16 +2211,17 @@
 									<div class="row nit-row">
 										<div class="col-xs-2 col-sm-2 col-lg-2" ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
 											<label class="control-label label-responsive">NIT CLIENTE</label>
-											<input ng-keypress="buscarNit($event,venta.cliente.nit)" ng-keyup="buscarNit($event,venta.cliente.nit)" data-validate="validate(required)"
-											 id="nitP" required type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT" class="form-control">
+											<input ng-keypress="buscarNit($event,venta.cliente.nit)" ng-keyup="buscarNit($event,venta.cliente.nit)"
+											 data-validate="validate(required)" id="nitP" required type="number" min="0" ng-model="venta.cliente.nit"
+											 placeholder="Ingrese el NIT" class="form-control">
 											<!--uib-typeahead="cliente as cliente.nit for cliente in buscarCliente($viewValue)" typeahead-wait-ms="5000" 
 											typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" 
 											typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)"-->
 										</div>
 										<div class="col-xs-2 col-sm-2 col-lg-2" ng-if="tipoEgreso==diccionario.EGRE_FACTURACION || tipoEgreso==diccionario.EGRE_PROFORMA">
 											<label class="control-label label-responsive">RAZÓN SOCIAL CLIENTE</label>
-											<input ng-keyup="capturarInteraccion()" data-validate="validate(required)" id="razon_socialP" required type="text" ng-model="venta.cliente.razon_social"
-											 placeholder="Ingrese la Razon Social" class="form-control">
+											<input ng-keyup="capturarInteraccion()" data-validate="validate(required)" id="razon_socialP" required type="text"
+											 ng-model="venta.cliente.razon_social" placeholder="Ingrese la Razon Social" class="form-control">
 											<!--uib-typeahead="cliente as cliente.razon_social for cliente in buscarCliente($viewValue)" typeahead-wait-ms="500" 
 											typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" 
 											typeahead-min-length="0" typeahead-on-select="establecerCliente($item, $model, $label, $event)"-->
@@ -2075,8 +2230,9 @@
 											<div class="row economico">
 												<div class="col-xs-5 col-sm-5 col-lg-5">
 													<label class="label-responsive">PAGADO(Bs): </label>
-													<input ng-keyup="capturarInteraccion()" id="pagadoP" name="pagado" data-validate="validate(required)" required type="number"
-													 step="0.01" min="{{pagoMinimo}}" ng-model="venta.pagado" ng-change="calcularCambio()" class="form-control" />
+													<input ng-keyup="capturarInteraccion()" id="pagadoP" name="pagado" data-validate="validate(required)"
+													 required type="number" step="0.01" min="{{pagoMinimo}}" ng-model="venta.pagado" ng-change="calcularCambio()"
+													 class="form-control" />
 													<span class="red">(*)</span>
 													<span class="invalid-message" ng-show="formularioVenta.pagado.$dirty && formularioVenta.pagado.$invalid">
 														El pago debe ser superior a {{pagoMinimo}}.
@@ -2160,7 +2316,8 @@
 										</div>
 										<div class="col-xs-6 col-sm-6 col-lg-6">
 											<div class="inline pos-rel pull-right">
-												<a data-toggle="dropdown" href="javascript:void(0)" class="btn btn-danger btn-sm dropdown-toggle" aria-expanded="false">
+												<a data-toggle="dropdown" href="javascript:void(0)" class="btn btn-danger btn-sm dropdown-toggle"
+												 aria-expanded="false">
 													<i class="glyphicon  glyphicon-list-alt"></i>
 													<span class="caret"></span>
 												</a>
@@ -2173,7 +2330,8 @@
 
 														<div class="checkbox">
 															<label class="block" ng-show="grupo.nombre.toUpperCase().search(filterText.toUpperCase()) !== -1">
-																<input name="form-field-checkbox" type="checkbox" class="ace input-lg" ng-model="grupo.selected" ng-click="saveCheckList()">
+																<input name="form-field-checkbox" type="checkbox" class="ace input-lg" ng-model="grupo.selected"
+																 ng-click="saveCheckList()">
 																<span class="lbl bigger-120"> {{grupo.nombre}}</span>
 															</label>
 														</div>
@@ -2185,7 +2343,8 @@
 											</div>
 										</div>
 									</div>
-									<div style="overflow: scroll;overflow-x: hidden;width: 405px;height: 480px;" ng-if="venta.detallesVenta.length>0" class="row">
+									<div style="overflow: scroll;overflow-x: hidden;width: 405px;height: 480px;" ng-if="venta.detallesVenta.length>0"
+									 class="row">
 										<div class="col-xs-12 table-responsive">
 											<table class="table table-striped table-bordered table-hover">
 												<thead>
@@ -2276,7 +2435,8 @@
 										<div id="productos" class="col-xs-13">
 											<div class="swiper-container">
 												<div class="swiper-wrapper">
-													<div ng-click="agregarDetalleVentaPanel(producto)" class="btn btn-success swiper-slide productos-button" ng-repeat="producto in productosProcesados | orderRankin | orderBy: '-rankin'">
+													<div ng-click="agregarDetalleVentaPanel(producto)" class="btn btn-success swiper-slide productos-button"
+													 ng-repeat="producto in productosProcesados | orderRankin | orderBy: '-rankin'">
 														<img ng-src="{{producto.imagen}}" width="100%" style="height: 98px;max-height:98px">
 
 
@@ -2323,8 +2483,9 @@
 					<label class="col-sm-5 control-label no-padding-right" for="form-field-1"> NIT/C.I. </label>
 
 					<div class="col-sm-7">
-						<input ng-keypress="buscarNit($event,venta.cliente.nit)" ng-keyup="buscarNit($event,venta.cliente.nit)" data-validate="validate(required)"
-						 id="nitP1" required type="number" min="0" ng-model="venta.cliente.nit" placeholder="Ingrese el NIT" class="form-control">
+						<input ng-keypress="buscarNit($event,venta.cliente.nit)" ng-keyup="buscarNit($event,venta.cliente.nit)"
+						 data-validate="validate(required)" id="nitP1" required type="number" min="0" ng-model="venta.cliente.nit"
+						 placeholder="Ingrese el NIT" class="form-control">
 					</div>
 				</div>
 
@@ -2354,8 +2515,8 @@
 
 					<div class="col-sm-7">
 
-						<input ng-keyup="capturarPago($event, formularioVentaPanel.$valid, venta); capturarInteraccion()" id="pagadoP1" name="pagado"
-						 data-validate="validate(required)" required type="number" step="0.01" min="{{pagoMinimo}}" value="{{venta.total}}"
+						<input ng-keyup="capturarPago($event, formularioVentaPanel.$valid, venta); capturarInteraccion()" id="pagadoP1"
+						 name="pagado" data-validate="validate(required)" required type="number" step="0.01" min="{{pagoMinimo}}" value="{{venta.total}}"
 						 ng-model="venta.pagado" ng-change="calcularCambio()" class="form-control" />
 					</div>
 				</div>
@@ -2399,7 +2560,8 @@
 
 <div id="dialog-eliminar-venta" title="¿Eliminación de Venta?">
 	<p>
-		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de anular la venta seleccionada?</p>
+		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de anular la venta
+		seleccionada?</p>
 	<button type="button" class="btn btn-danger" ng-click="eliminarVenta(venta)">Si</button>
 	<button type="button" class="btn btn-success" ng-click="cerrarConfirmacionEliminacionVenta()">No</button>
 </div>
@@ -2432,7 +2594,8 @@
 				</div>
 			</div>
 			<div class="col-xs-2">
-				<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="cerrarPopup(idModalInventario)" class="btn btn-danger">
+				<button ng-disabled="formularioBusquedaInventario.$invalid" type="button" ng-click="cerrarPopup(idModalInventario)"
+				 class="btn btn-danger">
 					<i class="ace-icon fa fa-close align-top bigger-125"></i>
 				</button>
 			</div>
@@ -2566,7 +2729,8 @@
 	</div>
 	<div class="row">
 		<div class="col-xs-6">
-			<div class="dataTables_info" id="tabla-productos_info" role="status" aria-live="polite">Mostrando página {{paginaActual}}
+			<div class="dataTables_info" id="tabla-productos_info" role="status" aria-live="polite">Mostrando página
+				{{paginaActual}}
 				de {{paginas.length}}</div>
 		</div>
 		<div class="col-xs-6">
@@ -2575,16 +2739,15 @@
 					<li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous">
 						<a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInv)">Primero</a>
 					</li>
-					<li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous">
+					<li class="paginate_button previous" ng-class="{disabled:paginaActual==1}" aria-controls="tabla-productos"
+					 tabindex="0" id="tabla-productos_previous">
 						<a href="javascript:void(0)" e-disabled="paginaActual==1" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual-1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInv)">
-							<<</a>
+							<<</a> </li> <li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-productos"
+							 tabindex="0" ng-repeat="pagina in paginas" ng-if="abs(paginaActual-pagina)<4">
+								<a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,pagina,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInv)">{{pagina}}</a>
 					</li>
-					<li class="paginate_button" ng-class="{active:paginaActual==pagina}" aria-controls="tabla-productos" tabindex="0" ng-repeat="pagina in paginas"
-					 ng-if="abs(paginaActual-pagina)<4">
-						<a href="javascript:void(0)" ng-click="buscarInventarios(almacenBusqueda.id,pagina,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInv)">{{pagina}}</a>
-					</li>
-					<li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-productos" tabindex="0"
-					 id="tabla-productos_next">
+					<li class="paginate_button" ng-class="{disabled:paginaActual==paginas.length}" aria-controls="tabla-productos"
+					 tabindex="0" id="tabla-productos_next">
 						<a href="javascript:void(0)" e-disabled="paginaActual==paginas.length" ng-click="buscarInventarios(almacenBusqueda.id,paginaActual+1,itemsPorPagina,textoBusqueda,columna,direccion,cantidadInv)">>></a>
 					</li>
 					<li class="paginate_button previous" aria-controls="tabla-productos" tabindex="0" id="tabla-productos_previous">
@@ -2862,8 +3025,8 @@
 
 				<div class="form-group col-sm-4">
 					<label>Descuento
-						<input name="switch-field-1" ng-model-options="{updateOn: 'blur'}" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="servicio.descuento_fijo"
-						/>
+						<input name="switch-field-1" ng-model-options="{updateOn: 'blur'}" class="ace ace-switch ace-switch-4" type="checkbox"
+						 ng-model="servicio.descuento_fijo" />
 						<span class="lbl check-descuento-opcion"></span>
 					</label>
 
@@ -3087,17 +3250,19 @@
 				<div class="row">
 					<div class="col-md-6">
 						<p>SUCURSAL</p>
-						<select required class="form-control" name="sucServImp" ng-change="obtenerActividades(venta.sucursal.id)" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-						 ng-model="venta.sucursal">
+						<select required class="form-control" name="sucServImp" ng-change="obtenerActividades(venta.sucursal.id)"
+						 ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id" ng-model="venta.sucursal">
 							<option value="" disabled selected>Selec. Sucursal</option>
 						</select>
-						<p class="red" ng-show="formimpvent.sucServImp.$touched && formimpvent.sucServImp.$invalid">Este campo es requerido.</p>
+						<p class="red" ng-show="formimpvent.sucServImp.$touched && formimpvent.sucServImp.$invalid">Este campo es
+							requerido.</p>
 					</div>
 					<div class="col-md-6">
 						<p>FECHA</p>
 						<input required ng-update-hidden name="fechaSerImp" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
 						 ng-model="venta.fecha" placeholder="Ingrese la fecha" autocomplete="off" />
-						<p class="red" ng-show="formimpvent.fechaSerImp.$touched && formimpvent.fechaSerImp.$invalid">Este campo es requerido.</p>
+						<p class="red" ng-show="formimpvent.fechaSerImp.$touched && formimpvent.fechaSerImp.$invalid">Este campo es
+							requerido.</p>
 					</div>
 				</div>
 				<div class="space-6"></div>
@@ -3109,7 +3274,8 @@
 							<option value="" disabled selected>Selec. Actividad</option>
 						</select>
 						<p class="red" ng-show="formimpvent.activ.$touched && formimpvent.activ.$invalid">Este campo es requerido.</p>
-						<p ng-if="dosificacionesExpiradas" style="color: orangered">Las Actividades con dosificaciones expiradas no se muestran</p>
+						<p ng-if="dosificacionesExpiradas" style="color: orangered">Las Actividades con dosificaciones expiradas no se
+							muestran</p>
 					</div>
 					<div class="col-md-6">
 						<div class="space-6"></div>
@@ -3348,15 +3514,17 @@
 <!--========== Mensaje de cobra de pago =============-->
 <div id="Modal-Mensaje-Pago" class="modal wizard-posicion">
 	<div class="modal-header bg-primary">
-		<h4 class='smaller text-white text-uppercase'>			
+		<h4 class='smaller text-white text-uppercase'>
 			<center>Mensaje</center>
 		</h4>
 	</div>
 	<div class="modal-body">
 		<div class="modal-content">
-			<h5><center>El cobro excede el monto a cobrar, desea continuar 
-			(se registrará como cobro anticipado)</center></h5>
-		</div>		
+			<h5>
+				<center>El cobro excede el monto a cobrar, desea continuar
+					(se registrará como cobro anticipado)</center>
+			</h5>
+		</div>
 	</div>
 	<div class="modal-footer wizard-actions">
 		<button class="btn btn-success btn-sm" ng-click="mensaje(true)">Continuar</button>

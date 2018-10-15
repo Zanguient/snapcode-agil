@@ -1,9 +1,9 @@
 angular.module('agil.controladores')
 	.controller('ControladorCotizacion', ['$scope', 'blockUI', '$localStorage', '$location', '$templateCache', '$route', '$timeout', 'ListaCotizacion', 'Cotizaciones', 'Cotizacion', 'filtroCotizaciones', 'Diccionario',
 		'ListaInventariosProducto', 'ClasesTipo', '$window', 'ListaProductosEmpresa', 'InventarioPaginador', 'ConfiguracionCotizacionVista', 'ConfiguracionCotizacionVistaDatos', 'FiltroCotizacionPaginador', 'Paginator',
-		'DatosImpresionCotizacion', 'ultimaCotizacion', 'ListaSucursalesUsuario', 'ClientesNit', 'CotizacionRechazo', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, ListaCotizacion, Cotizaciones, Cotizacion, filtroCotizaciones, Diccionario,
+		'DatosImpresionCotizacion', 'ultimaCotizacion', 'ListaSucursalesUsuario', 'ClientesNit', 'CotizacionRechazo', 'ListaProductosEmpresaUsuario', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, ListaCotizacion, Cotizaciones, Cotizacion, filtroCotizaciones, Diccionario,
 		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator,
-		DatosImpresionCotizacion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit, CotizacionRechazo) {
+		DatosImpresionCotizacion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit, CotizacionRechazo, ListaProductosEmpresaUsuario) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		
@@ -135,7 +135,8 @@ angular.module('agil.controladores')
 
 		$scope.buscarProducto = function (query) {
 			if (query != "" && query != undefined) {
-				var promesa = ListaProductosEmpresa($scope.usuario.id_empresa, query);
+				//var promesa = ListaProductosEmpresa($scope.usuario.id_empresa, query);
+				var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id, $scope.cotizacion.almacen.id);
 				setTimeout($scope.enfocar('id_productoTB'), 0)
 				return promesa;
 			}

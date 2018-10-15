@@ -102,7 +102,7 @@
     ScopeConfigWrapper.prototype.getItemsPerPage = function() {
       return this.scope.$eval(this.configurationVariableNames.itemsPerPage) || 10;
     };
-
+    
     ScopeConfigWrapper.prototype.getCurrentPage = function() {
       return this.scope.$eval(this.configurationVariableNames.currentPage) || 0;
     };
@@ -327,8 +327,9 @@
       };
       getFillerArray = function(list, currentPage, numberOfPages, itemsPerPage) {
         var fillerLength, itemCountOnLastPage, x, _i, _j, _ref, _ref1, _ref2, _results, _results1;
-        itemsPerPage = parseInt(itemsPerPage);
+       
         if (list.length <= 0) {
+          itemsPerPage = parseInt(itemsPerPage);
           _results = [];
           for (x = _i = 0, _ref = itemsPerPage - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; x = 0 <= _ref ? ++_i : --_i) {
             _results.push(x);
@@ -337,6 +338,7 @@
         } else if (currentPage === numberOfPages - 1) {
           itemCountOnLastPage = list.length % itemsPerPage;
           if (itemCountOnLastPage !== 0) {
+            itemsPerPage = itemCountOnLastPage+1;
             fillerLength = itemsPerPage - itemCountOnLastPage - 1;
             _results1 = [];
             for (x = _j = _ref1 = list.length, _ref2 = list.length + fillerLength; _ref1 <= _ref2 ? _j <= _ref2 : _j >= _ref2; x = _ref1 <= _ref2 ? ++_j : --_j) {

@@ -176,50 +176,127 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				});
 			})
 		});
-	router.route('/productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote')
+	router.route('/productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote/:saldo')
 		.get(function (req, res) {
 			///pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion
-			var fechaInicial = req.params.fecha_inicio == 0 ? new Date(2016, 1, 0) : new Date(req.params.fecha_inicio);
-			var fechaFinal = req.params.fecha_fin == 0 ? new Date() : new Date(req.params.fecha_fin);
 			var condicionMovimiento = { id_almacen: req.params.id_almacen }
+
+			var desde = false
+			var hasta = false
+			var fecha_desde;
+			var fecha_hasta;
+			// if (req.params.mes != "0" && req.params.anio != "0") {
+			// 	var fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0)
+			// 	var fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), -1, 0, 0, 0)
+			// 	fecha_hasta.setHours(23)
+			// 	fecha_hasta.setMinutes(59)
+			// 	fecha_hasta.setSeconds(59)
+			// 	condicionMovimiento.fecha = { $between: [fecha_desde, fecha_hasta] }
+			// } else {
+				if (req.params.fecha_inicio != "0") {
+					fecha_desde = new Date(req.params.fecha_inicio.split('/').reverse()); fecha_desde.setHours(0, 0, 0, 0, 0);
+					desde = true
+				}
+				if (req.params.fecha_fin != "0") {
+					fecha_hasta = new Date(req.params.fecha_fin.split('/').reverse());
+					fecha_hasta.setHours(23)
+					fecha_hasta.setMinutes(59)
+					fecha_hasta.setSeconds(59)
+					hasta = true
+				}
+			// }
+			if (desde && hasta) {
+				condicionMovimiento.fecha = { $between: [fecha_desde, fecha_hasta] }
+			} else if (desde && !hasta) {
+				condicionMovimiento.fecha = {
+					$gte: [fecha_desde]
+				}
+			} else if (!desde && hasta) {
+				condicionMovimiento.fecha = {
+					$lte: [fecha_hasta]
+				}
+			} 
+			// else if (!desde && !hasta && (req.params.anio != "0")) {
+			// 	if (req.params.mes != "0") {
+			// 		fecha_desde = new Date(parseInt(req.params.anio), parseInt(req.params.mes) - 1, 1, 0, 0, 0, 0)
+			// 		fecha_hasta = new Date(parseInt(req.params.anio), parseInt(req.params.mes), 1, 0, 0, 0, 0)
+			// 	} else {
+			// 		fecha_desde = new Date(parseInt(req.params.anio), 0, 1, 0, 0, 0, 0)
+			// 		fecha_hasta = new Date(parseInt(req.params.anio), 11, 31, 23, 59, 59, 0)
+			// 	}
+			// 	condicionMovimiento.fecha = { $between: [fecha_desde, fecha_hasta] }
+			// }
+			var fechaInicial = req.params.fecha_inicio == 0 ? new Date(2016, 1, 0) : new Date(2016, 1, 0)//new Date(req.params.fecha_inicio.split('/').reverse().join('-') + "T00:00:00.000Z");
+			var fechaFinal = req.params.fecha_inicio == 0 ? new Date() : new Date(req.params.fecha_inicio.split('/').reverse().join('-') + "T23:59:59.000Z");
+			var condicionSaldoAnterior = { id_almacen: req.params.id_almacen }
 			if (req.params.fecha_inicio != 0) {
-				condicionMovimiento.fecha = { $between: [fechaInicial, fechaFinal] }
+				condicionSaldoAnterior.fecha = { $between: [fechaInicial, fechaFinal] }
 			}
 			var condicionInventario = {};
 			if (req.params.lote != "0") {
 				condicionInventario = { id_producto: req.params.id_producto, lote: req.params.lote }
 			}
+			if (req.params.saldo != "0") {
+				DetalleMovimiento.findAll({
+					where: { id_producto: req.params.id_producto },
+					include: [{ model: Inventario, as: 'inventario' },
+					{
+						model: Movimiento, as: 'movimiento',
+						where: condicionSaldoAnterior,
+						include: [{
+							model: Compra, as: 'compra', required: false,
+							include: [{ model: Proveedor, as: 'proveedor' }]
+						},
+						{
+							model: Venta, as: 'venta', required: false,
+							include: [{ model: Cliente, as: 'cliente' }]
+						},
+						{
+							model: Almacen, as: 'almacen', required: false,
+							include: [{ model: Sucursal, as: 'sucursal' }]
+						},
+						{ model: Tipo, as: 'tipo' },
+						{ model: Clase, as: 'clase' }]
+					}
+					],
+					order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
 
-			//	var busquedaQuery = (req.params.texto_busqueda === "0") ? "" : " AND p.nombre like '%" + req.params.texto_busqueda + "%'";
-			if (req.params.items_pagina != 0) {
-				var limite = {
-					where: { id_producto: req.params.id_producto },
-					offset: (req.params.items_pagina * (req.params.pagina - 1)),
-					limit: req.params.items_pagina,
-					include: [{ model: Inventario, as: 'inventario' },
-					{
-						model: Movimiento, as: 'movimiento',
-						where: condicionMovimiento,
-						include: [{
-							model: Compra, as: 'compra', required: false,
-							include: [{ model: Proveedor, as: 'proveedor' }]
-						},
+				}).then(function (productosSaldoAnterior) {
+					DetalleMovimiento.findAll({
+						where: { id_producto: req.params.id_producto },
+						include: [{ model: Inventario, as: 'inventario' },
 						{
-							model: Venta, as: 'venta', required: false,
-							include: [{ model: Cliente, as: 'cliente' }]
-						},
-						{
-							model: Almacen, as: 'almacen', required: false,
-							include: [{ model: Sucursal, as: 'sucursal' }]
-						},
-						{ model: Tipo, as: 'tipo' },
-						{ model: Clase, as: 'clase' }]
-					}
-					],
-					order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
-				}
+							model: Movimiento, as: 'movimiento',
+							where: condicionMovimiento,
+							include: [{
+								model: Compra, as: 'compra', required: false,
+								include: [{ model: Proveedor, as: 'proveedor' }]
+							},
+							{
+								model: Venta, as: 'venta', required: false,
+								include: [{ model: Cliente, as: 'cliente' }]
+							},
+							{
+								model: Almacen, as: 'almacen', required: false,
+								include: [{ model: Sucursal, as: 'sucursal' }]
+							},
+							{ model: Tipo, as: 'tipo' },
+							{ model: Clase, as: 'clase' }]
+						}
+						],
+						order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
+
+					}).then(function (productos) {
+						res.json({ saldoAnterior: productosSaldoAnterior, kardex: productos });
+						/*DetalleMovimiento.findAll(limite).then(function (productos) {
+							res.json({ kardex: productos, paginas: Math.ceil(datosCount.count / req.params.items_pagina) })
+		
+							//res.json(productos);
+						});*/
+					});
+				});
 			} else {
-				var limite = {
+				DetalleMovimiento.findAll({
 					where: { id_producto: req.params.id_producto },
 					include: [{ model: Inventario, as: 'inventario' },
 					{
@@ -242,41 +319,106 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					}
 					],
 					order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
-				}
+
+				}).then(function (productos) {
+					res.json({ saldoAnterior: 0, kardex: productos });
+					/*DetalleMovimiento.findAll(limite).then(function (productos) {
+						res.json({ kardex: productos, paginas: Math.ceil(datosCount.count / req.params.items_pagina) })
+	
+						//res.json(productos);
+					});*/
+				});
+
 			}
 
-			DetalleMovimiento.findAll({
-				where: { id_producto: req.params.id_producto },
-				include: [{ model: Inventario, as: 'inventario' },
-				{
-					model: Movimiento, as: 'movimiento',
-					where: condicionMovimiento,
-					include: [{
-						model: Compra, as: 'compra', required: false,
-						include: [{ model: Proveedor, as: 'proveedor' }]
-					},
-					{
-						model: Venta, as: 'venta', required: false,
-						include: [{ model: Cliente, as: 'cliente' }]
-					},
-					{
-						model: Almacen, as: 'almacen', required: false,
-						include: [{ model: Sucursal, as: 'sucursal' }]
-					},
-					{ model: Tipo, as: 'tipo' },
-					{ model: Clase, as: 'clase' }]
-				}
-				],
-				order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
 
-			}).then(function (productos) {
-				res.json(productos);
-				/*DetalleMovimiento.findAll(limite).then(function (productos) {
-					res.json({ kardex: productos, paginas: Math.ceil(datosCount.count / req.params.items_pagina) })
+			//	var busquedaQuery = (req.params.texto_busqueda === "0") ? "" : " AND p.nombre like '%" + req.params.texto_busqueda + "%'";
+			// if (req.params.items_pagina != 0) {
+			// 	var limite = {
+			// 		where: { id_producto: req.params.id_producto },
+			// 		offset: (req.params.items_pagina * (req.params.pagina - 1)),
+			// 		limit: req.params.items_pagina,
+			// 		include: [{ model: Inventario, as: 'inventario' },
+			// 		{
+			// 			model: Movimiento, as: 'movimiento',
+			// 			where: condicionMovimiento,
+			// 			include: [{
+			// 				model: Compra, as: 'compra', required: false,
+			// 				include: [{ model: Proveedor, as: 'proveedor' }]
+			// 			},
+			// 			{
+			// 				model: Venta, as: 'venta', required: false,
+			// 				include: [{ model: Cliente, as: 'cliente' }]
+			// 			},
+			// 			{
+			// 				model: Almacen, as: 'almacen', required: false,
+			// 				include: [{ model: Sucursal, as: 'sucursal' }]
+			// 			},
+			// 			{ model: Tipo, as: 'tipo' },
+			// 			{ model: Clase, as: 'clase' }]
+			// 		}
+			// 		],
+			// 		order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
+			// 	}
+			// } else {
+			// 	var limite = {
+			// 		where: { id_producto: req.params.id_producto },
+			// 		include: [{ model: Inventario, as: 'inventario' },
+			// 		{
+			// 			model: Movimiento, as: 'movimiento',
+			// 			where: condicionMovimiento,
+			// 			include: [{
+			// 				model: Compra, as: 'compra', required: false,
+			// 				include: [{ model: Proveedor, as: 'proveedor' }]
+			// 			},
+			// 			{
+			// 				model: Venta, as: 'venta', required: false,
+			// 				include: [{ model: Cliente, as: 'cliente' }]
+			// 			},
+			// 			{
+			// 				model: Almacen, as: 'almacen', required: false,
+			// 				include: [{ model: Sucursal, as: 'sucursal' }]
+			// 			},
+			// 			{ model: Tipo, as: 'tipo' },
+			// 			{ model: Clase, as: 'clase' }]
+			// 		}
+			// 		],
+			// 		order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
+			// 	}
+			// }
 
-					//res.json(productos);
-				});*/
-			});
+			// DetalleMovimiento.findAll({
+			// 	where: { id_producto: req.params.id_producto },
+			// 	include: [{ model: Inventario, as: 'inventario' },
+			// 	{
+			// 		model: Movimiento, as: 'movimiento',
+			// 		where: condicionMovimiento,
+			// 		include: [{
+			// 			model: Compra, as: 'compra', required: false,
+			// 			include: [{ model: Proveedor, as: 'proveedor' }]
+			// 		},
+			// 		{
+			// 			model: Venta, as: 'venta', required: false,
+			// 			include: [{ model: Cliente, as: 'cliente' }]
+			// 		},
+			// 		{
+			// 			model: Almacen, as: 'almacen', required: false,
+			// 			include: [{ model: Sucursal, as: 'sucursal' }]
+			// 		},
+			// 		{ model: Tipo, as: 'tipo' },
+			// 		{ model: Clase, as: 'clase' }]
+			// 	}
+			// 	],
+			// 	order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
+
+			// }).then(function (productos) {
+			// 	res.json(productos);
+			// 	/*DetalleMovimiento.findAll(limite).then(function (productos) {
+			// 		res.json({ kardex: productos, paginas: Math.ceil(datosCount.count / req.params.items_pagina) })
+
+			// 		//res.json(productos);
+			// 	});*/
+			// });
 		});
 
 	router.route('/productos/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/busqueda/:texto_busqueda/columna/:columna/direccion/:direccion/grupo/:id_grupo/user/:id_user')
@@ -334,7 +476,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						WHERE "+ condicionProducto + " and producto.grupo in (" + gruposProductos + ")\
 						ORDER BY producto."+ req.params.columna + " " + req.params.direccion + limit, { type: sequelize.QueryTypes.SELECT })
 								.then(function (productos) {
-									if (productos.length> 0) {
+									if (productos.length > 0) {
 										var idsProductos = productos.map(function (producto) {
 											return producto.id
 										})
@@ -350,25 +492,25 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													if (tiposprecios.length > 0) {
 														var tiposPrecio = tiposprecios.map(function (data_precio) {
 															// mensajetooltip += (data_precio.tipoPrecio.nombre + ':' + data_precio.precio_unitario + '&#013') // for linebreaks &#013;&#010;
-															var dat = {nombre: data_precio.tipoPrecio.nombre, precio_unitario: data_precio.precio_unitario}
+															var dat = { nombre: data_precio.tipoPrecio.nombre, precio_unitario: data_precio.precio_unitario }
 															return dat
 														})
 														productos[index].tipoPrecio = tiposPrecio
-													}else{
+													} else {
 														productos[index].tipoPrecio = []
 													}
 												}
 												res.json({ productos: productos, paginas: paginas, precios: precios });
-											}else{
+											} else {
 												res.json({ productos: productos, paginas: paginas, precios: precios });
 											}
 										}).catch(function (err) {
 											res.json({ productos: [], hasErr: true, mensaje: err.stack });
 										});
-									}else{
-										res.json({ productos: productos, paginas: paginas});
+									} else {
+										res.json({ productos: productos, paginas: paginas });
 									}
-									
+
 								}).catch(function (err) {
 									res.json({ productos: [], hasErr: true, mensaje: err.stack });
 								});

@@ -897,40 +897,40 @@
 											<label>SUCURSAL</label>&nbsp
 										</td>
 										<td>
-											<select required id="sucursalKardex" name="sucursalKardex" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-											 ng-model="imp.sucursal" ng-change="obtenerAlmacenes(imp.sucursal.id)" required="">
+											<select required id="sucursalKardex" name="sucursalKardex" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+											 ng-model="filtroKardexProducto.sucursal" ng-change="obtenerAlmacenes(filtroKardexProducto.sucursal)" required="">
 											</select>&nbsp
 										</td>
 										<td>
 											<label>ALMACEN</label>&nbsp
 										</td>
 										<td>
-											<select required id="almacen" name="almacen" ng-model="imp.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
-											 data-placeholder="Click para escoger" ng-change="establecerAlmacen(almacenes.id_almacen)" required=""></select>&nbsp
+											<select required id="almacen" name="almacen" ng-model="filtroKardexProducto.almacen" ng-options="almacen.id as almacen.nombre for almacen in almacenes track by almacen.id"
+											 data-placeholder="Click para escoger" required=""></select>&nbsp
 
 										</td>
 										<td>
 											<label>DESDE</label>&nbsp
 										</td>
 										<td>
-											<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicioKadex"
-											 ng-model="filtro.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
+											<input ng-update-hidden autocomplete="off" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicioKadex"
+											 ng-model="filtroKardexProducto.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
 										</td>
 										<td>
 											<label>HASTA</label>&nbsp
 										</td>
 										<td>
-											<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafinKadex" ng-model="filtro.fechaFinTexto"
+											<input ng-update-hidden autocomplete="off" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafinKadex" ng-model="filtroKardexProducto.fechaFinTexto"
 											 placeholder="Ingrese la fecha final" />
 										</td>
 										<td>
 											<label>LOTE</label>&nbsp
 										</td>
 										<td>
-											<input type="text" placeholder="Ingrese el Lote" ng-model="filtro.lote" ng-change="verificarLote(filtro,imp.almacen)">
+											<input type="text" placeholder="Ingrese el Lote" ng-model="filtroKardexProducto.lote">
 										</td>
 										<td>
-											<button type="button" class="btn btn-primary btn-sm pull-left" data-dismiss="modal" ng-click="buscarKardexProducto(producto.id,imp.almacen,filtro)"
+											<button type="button" class="btn btn-primary btn-sm pull-left" data-dismiss="modal" ng-click="buscarKardexProducto(producto.id,filtroKardexProducto.almacen)"
 											 ng-disabled="formularioProductosKardex.$invalid">
 												<i class="ace-icon fa fa-search"></i>
 												Buscar

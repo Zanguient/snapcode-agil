@@ -38,16 +38,16 @@ angular.module('agil.servicios')
 
 	
 	.factory('ProductosKardex',  ['$resource',function ($resource) {
-		return $resource(restServer + "productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote",null,
+		return $resource(restServer + "productos/kardex/:id_producto/almacen/:id_almacen/fecha-inicial/:fecha_inicio/fecha-final/:fecha_fin/lote/:lote/:saldo",null,
 		{
 			'update': { method: 'PUT' }
 		});
 	}])
 
 	.factory('ProductoKardex', ['ProductosKardex', '$q', function (ProductosKardex, $q) {
-		var res = function (idProducto, idAlmacen, fechaInicio, fechaFin, lote) {
+		var res = function (idProducto, filtro, saldo) {
 			var delay = $q.defer();
-			ProductosKardex.query({ id_producto: idProducto, id_almacen: idAlmacen, fecha_inicio: fechaInicio, fecha_fin: fechaFin, lote: lote }, function (entidades) {
+			ProductosKardex.get({ id_producto: idProducto, id_almacen: filtro.almacen, fecha_inicio: filtro.fechaInicioTexto, fecha_fin: filtro.fechaFinTexto, lote: filtro.lote, saldo: saldo ? 1 : 0 }, function (entidades) {
 				delay.resolve(entidades);
 			}, function (error) {
 					delay.reject(error);

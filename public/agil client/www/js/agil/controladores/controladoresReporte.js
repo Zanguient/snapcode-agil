@@ -1074,8 +1074,8 @@ angular.module('agil.controladores')
 				$scope.dibujarCabeceraPDFLibroVentas(doc, datos, reporte, 1);
 				doc.font('Helvetica', 8);
 				var y = 170, itemsPorPagina = 12, items = 0, pagina = 1;
-				var sumaImporte = 0, sumaImporteIce = 0, sumaImporteExp = 0, sumaImporteGrab = 0, sumaTotal = 0, sumaDescuentos = 0, sumaImporteBase = 0, sumaCredito = 0;
-				var sumaSubImporte = 0, sumaSubImporteIce = 0, sumaSubImporteExp = 0, sumaSubImporteGrab = 0, sumaSubTotal = 0, sumaSubDescuentos = 0, sumaSubImporteBase = 0, sumaSubCredito = 0;
+				var sumaImporte = 0.0, sumaImporteIce = 0.0, sumaImporteExp = 0.0, sumaImporteGrab = 0.0, sumaTotal = 0.0, sumaDescuentos = 0.0, sumaImporteBase = 0.0, sumaCredito = 0.0;
+				var sumaSubImporte = 0.0, sumaSubImporteIce = 0.0, sumaSubImporteExp = 0.0, sumaSubImporteGrab = 0.0, sumaSubTotal = 0.0, sumaSubDescuentos = 0.0, sumaSubImporteBase = 0.0, sumaSubCredito = 0.0;
 				for (var i = 0; i < ventas.length && items <= itemsPorPagina; i++) {
 					doc.font('Helvetica', 7);
 					doc.rect(40, y - 10, 720, 30).stroke();
@@ -1094,8 +1094,8 @@ angular.module('agil.controladores')
 					doc.text(0, 465, y);
 					doc.text(0, 507, y);
 					doc.text(ventas[i].activa ? ventas[i].importe : 0, 540, y);
-					doc.text(ventas[i].activa ? ventas[i].total_descuento : 0, 580, y);
-					doc.text(ventas[i].activa ? ventas[i].total : 0, 615, y);
+					doc.text(ventas[i].activa ? (Math.round(ventas[i].total_descuento * 100) / 100): 0, 580, y);
+					doc.text(ventas[i].activa ? (Math.round(ventas[i].total * 100) / 100) : 0, 615, y);
 					doc.text(ventas[i].activa ? (Math.round((ventas[i].total * 0.13) * 100) / 100) : 0, 650, y);
 					doc.text(ventas[i].activa ? ventas[i].codigo_control : 0, 685, y);
 					y = y + 30;
@@ -1104,7 +1104,7 @@ angular.module('agil.controladores')
 					sumaSubImporteExp = 0;
 					sumaSubImporteGrab = 0;
 					sumaSubTotal = ventas[i].activa ? sumaSubTotal + ventas[i].importe : sumaSubTotal;
-					sumaSubDescuentos = ventas[i].activa ? sumaSubDescuentos + ventas[i].total_descuento : sumaSubDescuentos;
+					sumaSubDescuentos = ventas[i].activa ? sumaSubDescuentos + (Math.round((ventas[i].total_descuento) * 100) / 100) : sumaSubDescuentos;
 					sumaSubImporteBase = ventas[i].activa ? sumaSubImporteBase + ventas[i].total : sumaSubImporteBase;
 					sumaSubCredito = ventas[i].activa ? sumaSubCredito + (Math.round((ventas[i].total * 0.13) * 100) / 100) : sumaSubCredito;
 					sumaImporte = ventas[i].activa ? sumaImporte + ventas[i].importe : sumaImporte;

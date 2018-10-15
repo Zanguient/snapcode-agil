@@ -72,14 +72,17 @@ angular.module('agil.controladores')
 				$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 				blockUI.stop();
 			});
-
+			$scope.config = {
+				itemsPerPage:10,
+				fillLastPage: true
+			}
 			$scope.inicio = function () {
 				$scope.ordenProductos = true;
 				$scope.esContado = true;
 				//$scope.obtenerClientes();
 				$scope.obtenerTiposDePago();
 				$scope.obtenerConfiguracionVentaVista();
-
+				
 				$scope.sucursales = []//$scope.obtenerSucursales();
 				$scope.obtenerSucursales();
 				$scope.sucursalesUsuario = "";
@@ -103,7 +106,13 @@ angular.module('agil.controladores')
 					templateUrl: 'preciosTemplate.html',
 				};
 			}
-
+			
+			$scope.SelectItemPorPagina = function (itemsPerPageCompra) {
+				$scope.config = {
+					itemsPerPage: itemsPerPageCompra,
+					fillLastPage: true
+				}
+			}
 			$scope.obtenerConfiguracionVentaVista = function () {
 				blockUI.start();
 				var promise = ConfiguracionVentaVistaDatos($scope.usuario.id_empresa);
@@ -628,6 +637,9 @@ angular.module('agil.controladores')
 				$scope.detalleVenta.total = Math.round(($scope.detalleVenta.importe - $scope.detalleVenta.descuento + $scope.detalleVenta.recargo - $scope.detalleVenta.ice - $scope.detalleVenta.excento) * 1000) / 1000;
 			}
 			$scope.agregarDetalleVenta = function (detalleVenta) {
+				var ultimoInventario = detalleVenta.producto.inventarios[detalleVenta.producto.inventarios.length - 1];
+				var ultimoIngreso= ultimoInventario.detallesMovimiento[ultimoInventario.detallesMovimiento.length - 1];
+				var movimientoFecha = ultimoIngreso.movimiento.fecha;
 				if (detalleVenta.producto.id) {
 					if (detalleVenta.producto.activar_inventario) {
 						if ($scope.usuario.empresa.usar_peps) {
@@ -640,7 +652,14 @@ angular.module('agil.controladores')
 										$scope.venta.total_descuento_general += detalleVenta.descuento
 									}
 								}
-								var paraRectificacionDescuentoBolivianos = []
+								if (detalleVenta.recargo > 0) {
+									if (detalleVenta.tipo_recargo) {
+										$scope.venta.total_recargo += (((detalleVenta.precio_unitario * detalleVenta.recargo) / 100) * detalleVenta.cantidad)
+									} else {
+										$scope.venta.total_recargo += detalleVenta.recargo
+									}
+								}
+								var paraRectificacionDescuento = []
 								while (i < detalleVenta.costos.length && cantidadTotal > 0) {
 									detalleVenta.inventarioProducto = detalleVenta.costos[i];
 									var cantidadDisponible = $scope.obtenerInventarioTotalPorFechaVencimiento(detalleVenta);
@@ -665,22 +684,47 @@ angular.module('agil.controladores')
 										nuevoDetalleVenta.inventario = detalleVenta.costos[i];
 										// $scope.calcularImporte();
 										// $scope.venta.detallesVenta.push(nuevoDetalleVenta);
-										if (detalleVenta.tipo_descuento) {
-											$scope.calcularImporte();
-											$scope.venta.detallesVenta.push(nuevoDetalleVenta);
-										} else {
-											paraRectificacionDescuentoBolivianos.push(nuevoDetalleVenta)
-										}
+										paraRectificacionDescuento.push(nuevoDetalleVenta);
+										// if (detalleVenta.tipo_descuento && detalleVenta.tipo_recargo) {
+										// 	$scope.calcularImporte();
+										// 	$scope.venta.detallesVenta.push(nuevoDetalleVenta);
+										// } else {
+										// 	paraRectificacionDescuento.push(nuevoDetalleVenta);
+										// }
 									}
 									i++;
 								}
+								var totalDescuento = detalleVenta.descuento ? detalleVenta.descuento > 0 ? (detalleVenta.descuento / detalleVenta.cantidad) : 0 : 0
+								var totalRecargo = detalleVenta.recargo ? detalleVenta.recargo > 0 ? (detalleVenta.recargo / detalleVenta.cantidad) : 0 : 0
+								var total_ice = detalleVenta.ice ? detalleVenta.ice > 0 ? (detalleVenta.ice / detalleVenta.cantidad) : 0 : 0
+								var total_exento = detalleVenta.excento ? detalleVenta.excento > 0 ? (detalleVenta.excento / detalleVenta.cantidad) : 0 : 0
 								if (!detalleVenta.tipo_descuento) {
-									var totalDescuento = ((detalleVenta.descuento / paraRectificacionDescuentoBolivianos.length) * 1000) / 1000
-									for (var index = 0; index < paraRectificacionDescuentoBolivianos.length; index++) {
-										paraRectificacionDescuentoBolivianos[index].descuento = totalDescuento
-										var detalleCorregido = $scope.calcularImporte(paraRectificacionDescuentoBolivianos[index])
-										$scope.venta.detallesVenta.push(detalleCorregido);
+									$scope.venta.total_descuento_general = detalleVenta.descuento;
+									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
+										paraRectificacionDescuento[index].descuento = Math.round((totalDescuento * paraRectificacionDescuento[index].cantidad) * 100) / 100
 									}
+								}
+								if (!detalleVenta.tipo_recargo) {
+									$scope.venta.total_recargo_general = detalleVenta.recargo;
+									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
+										paraRectificacionDescuento[index].recargo = Math.round((totalRecargo * paraRectificacionDescuento[index].cantidad) * 100) / 100
+									}
+								}
+								if (total_ice > 0) {
+									$scope.venta.total_ice = detalleVenta.ice;
+									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
+										paraRectificacionDescuento[index].ice = Math.round((total_ice * paraRectificacionDescuento[index].cantidad) * 100) / 100
+									}
+								}
+								if (total_exento > 0) {
+									$scope.venta.total_exento = detalleVenta.excento;
+									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
+										paraRectificacionDescuento[index].excento = Math.round((total_exento * paraRectificacionDescuento[index].cantidad) * 100) / 100
+									}
+								}
+								for (var index = 0; index < paraRectificacionDescuento.length; index++) {
+									var detalleCorregido = $scope.calcularImporte(paraRectificacionDescuento[index]);
+									$scope.venta.detallesVenta.push(detalleCorregido);
 								}
 							} else {
 								if (detalleVenta.costos.length > 0) {
@@ -832,7 +876,7 @@ angular.module('agil.controladores')
 
 			$scope.calcularImporte = function (detalle) {
 				if (detalle !== null && detalle !== undefined) {
-					detalle.importe = Math.round((detalle.cantidad * detalle.precio_unitario) * 1000) / 1000;
+					detalle.importe = Math.round((detalle.cantidad * detalle.precio_unitario) * 100) / 100;
 					var descuento, recargo;
 					if (detalle.tipo_descuento) {
 						descuento = detalle.importe * (detalle.descuento / 100);
@@ -864,23 +908,29 @@ angular.module('agil.controladores')
 
 			$scope.sumarTotalImporte = function () {
 				var sumaImporte = 0;
+				$scope.venta.total_descuento_general = 0
 				for (var i = 0; i < $scope.venta.detallesVenta.length; i++) {
 					if (!$scope.venta.detallesVenta[i].eliminado) {
 						sumaImporte = sumaImporte + $scope.venta.detallesVenta[i].importe;
+						$scope.venta.total_descuento_general += $scope.venta.detallesVenta[i].descuento
 					}
 				}
 				$scope.venta.importe = Math.round((sumaImporte) * 1000) / 1000;
+				$scope.venta.total_descuento_general = Math.round(($scope.venta.total_descuento_general) * 1000) / 1000;
 			}
 
 			$scope.sumarTotal = function () {
+				$scope.venta.total_descuento_general = 0
 				var sumaTotal = 0;
 				for (var i = 0; i < $scope.venta.detallesVenta.length; i++) {
 					if (!$scope.venta.detallesVenta[i].eliminado) {
 						sumaTotal = sumaTotal + $scope.venta.detallesVenta[i].total;
+						$scope.venta.total_descuento_general += $scope.venta.detallesVenta[i].descuento
 					}
 				}
 				$scope.venta.total = Math.round((sumaTotal) * 1000) / 1000;
 				$scope.venta.pagado = $scope.venta.total;
+				$scope.venta.total_descuento_general = Math.round(($scope.venta.total_descuento_general) * 1000) / 1000;
 			}
 
 			$scope.calcularSaldo = function () {

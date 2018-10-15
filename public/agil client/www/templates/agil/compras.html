@@ -193,7 +193,7 @@
 			<thead></thead>
 			<tbody>
 				<tr>
-					<td at-title="index" height="10">{{($index+1)}}</td>
+					<td at-title="Nro" height="10">{{($index+1)}}</td>
 					<td at-title="Sucursal" width="150">
 						<p ng-if="item.almacen" >{{item.almacen.sucursal.nombre}}</p>
 						<p ng-if="!item.almacen">{{item.sucursal.nombre}}</p>
@@ -292,7 +292,7 @@
 			</tbody>
 		</table>
 		<div class="pull-right">
-		<at-pagination ng-if="compras.length>0" at-list="list" at-config="config"></at-pagination>
+		<at-pagination ng-if="compras.length>0" at-list="compras" at-config="config"></at-pagination>
 	</div>
 		<!-- <div class="table-header">
 			Lista de Compras

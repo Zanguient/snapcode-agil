@@ -1597,6 +1597,9 @@ angular.module('agil.controladores')
                 $scope.cerrarPopup($scope.idModalAnticipoRegular);
             }
             $scope.abrirDialogPrestamosPersonal = function () {
+                shortcut.add("ESC", function() {
+                    $scope.cerrarDialogPrestamosPersonal()
+                })
                 $scope.obtenerPrestamos()
                 $scope.abrirPopup($scope.idModalPrestamosPersonal);
             }
@@ -1671,7 +1674,10 @@ angular.module('agil.controladores')
                 $scope.paginator.getSearch("", $scope.filtro, null);
             }
             $scope.cerrarDialogPrestamosPersonal = function () {
+                shortcut.remove("ESC", function() {
+                })
                 $scope.cerrarPopup($scope.idModalPrestamosPersonal);
+                $scope.obtenerRecursosHumanos()
             }
             $scope.abrirDialogNuevoAnticipoRegularTodos = function () {
                 $scope.listaAnticipos2 = []
@@ -1945,8 +1951,6 @@ angular.module('agil.controladores')
             $scope.abrirDialogReporteRolTurnos = function () {
                 shortcut.add("ESC", function() {
                     $scope.cerrarDialogReporteRolTurnos()
-                    $scope.obtenerRecursosHumanos()
-                   
                 })
                 /*     $scope.filtroRol = { inicio: 0, fin: 0, grupo: 0 } */
                 $scope.paginator = Paginator();
@@ -1967,6 +1971,8 @@ angular.module('agil.controladores')
             $scope.cerrarDialogReporteRolTurnos = function () {
                 shortcut.remove("ESC", function() {
                 })
+                $scope.obtenerRecursosHumanos()
+                $scope.cerrarPopup($scope.idModalReporteRolTurnos);
             }
             $scope.abrirDialogReporteTurnosDetallado = function () {
                 $scope.obtenerlistaRolTurnoCal()

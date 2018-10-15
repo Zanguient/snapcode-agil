@@ -338,7 +338,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			var compras = []
 			Compra.findAll({
 				where: condicionCompra,
-				include: [{ model: PagoCompra, as: 'pagosCompra'},/* {model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal }, */ {
+				include: [{ model: PagoCompra, as: 'pagosCompra' },/* {model:Clase,as:'tipoMovimiento'},{ model: Sucursal, as: 'sucursal',where: condicionSucursal }, */ {
 					model: Movimiento, as: 'movimiento',
 					include: [{ model: Clase, as: 'clase', }]
 				}, {
@@ -346,7 +346,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					include: [{ model: Producto, as: 'producto' },
 					{ model: Clase, as: 'centroCosto',/*,where:{nombre_corto:'ALM'}*/ }]
 				},
-				
+
 				{ model: Clase, as: 'tipoPago', },
 				{ model: Usuario, as: 'usuario', where: condicionUsuario },
 				{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
@@ -360,11 +360,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			}).then(function (entity) {
 				Compra.findAll({
 					where: condicionCompra,
-					include: [{ model: PagoCompra, as: 'pagosCompra'},{
+					include: [{ model: PagoCompra, as: 'pagosCompra' }, {
 						model: Movimiento, as: 'movimiento',
 						include: [{ model: Clase, as: 'clase', }]
 					},
-					
+
 					{ model: Clase, as: 'tipoPago', },
 					{ model: Usuario, as: 'usuario', where: condicionUsuario },
 					{ model: Proveedor, as: 'proveedor', where: condicionProveedor },
@@ -5255,7 +5255,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			observacion: venta.observacion,
 			total_descuento: venta.total_descuento_general
 		}, { transaction: t }).then(function (ventaCreada) {
-			venta.ventaCreada=ventaCreada
+			venta.ventaCreada = ventaCreada
 			return Dosificacion.update({
 				correlativo: (venta.factura + 1)
 			}, {
@@ -5326,36 +5326,81 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					var datosDetalle = [], cantidadTotal = detalleVenta.cantidad, i = 0, detalleVentaOriginal = JSON.parse(JSON.stringify(detalleVenta));
 					while (i < detalleVenta.costos.length && cantidadTotal > 0) {
 						detalleVenta.inventarioProducto = detalleVenta.costos[i];
-						var cantidadDisponible = obtenerInventarioTotalPorFechaVencimiento(detalleVenta, datosDetalle);
-						if (cantidadDisponible > 0) {
-							var nuevoDetalleVenta = JSON.parse(JSON.stringify(detalleVentaOriginal));
-							var cantidadParcial;
-							/* if (i > 0) {
-								nuevoDetalleVenta.descuento = 0;
-								nuevoDetalleVenta.recargo = 0;
-								nuevoDetalleVenta.ice = 0;
-								nuevoDetalleVenta.excento = 0;
-							} */
-							//detalleVenta = nuevoDetalleVenta;
-							if (cantidadTotal > cantidadDisponible) {
-								cantidadParcial = cantidadDisponible;
-								cantidadTotal = cantidadTotal - cantidadDisponible
+						if (detalleVenta.descuento > 0) {
+							if (detalleVenta.tipo_descuento) {
+								venta.total_descuento_general += (((detalleVenta.precio_unitario * detalleVenta.descuento) / 100) * detalleVenta.cantidad)
 							} else {
-								cantidadParcial = cantidadTotal;
-								cantidadTotal = 0;
+								venta.total_descuento_general += detalleVenta.descuento
 							}
-							nuevoDetalleVenta.cantidad = cantidadParcial;
-							if (sucursal.empresa.usar_vencimientos) {
-								nuevoDetalleVenta.fecha_vencimiento = detalleVenta.costos[i].fecha_vencimiento;
-								nuevoDetalleVenta.lote = detalleVenta.costos[i].lote;
+						}
+						if (detalleVenta.recargo > 0) {
+							if (detalleVenta.tipo_recargo) {
+								venta.total_recargo += (((detalleVenta.precio_unitario * detalleVenta.recargo) / 100) * detalleVenta.cantidad)
+							} else {
+								venta.total_recargo += detalleVenta.recargo
 							}
-							nuevoDetalleVenta.costos = [];
-							nuevoDetalleVenta.costos.push(detalleVenta.costos[i]);
-							nuevoDetalleVenta.inventario = detalleVenta.costos[i];
-							nuevoDetalleVenta = calcularImporte(nuevoDetalleVenta, detalleVenta.ice, detalleVenta.excento);
-							venta.detalles.push(nuevoDetalleVenta);
+						}
+						var paraRectificacionDescuento = []
+						while (i < detalleVenta.costos.length && cantidadTotal > 0) {
+							detalleVenta.inventarioProducto = detalleVenta.costos[i];
+							var cantidadDisponible = obtenerInventarioTotalPorFechaVencimiento(detalleVenta, datosDetalle);
+							if (cantidadDisponible > 0) {
+								var nuevoDetalleVenta = JSON.parse(JSON.stringify(detalleVentaOriginal));
+								var cantidadParcial;
+
+								if (cantidadTotal > cantidadDisponible) {
+									cantidadParcial = cantidadDisponible;
+									cantidadTotal = cantidadTotal - cantidadDisponible
+								} else {
+									cantidadParcial = cantidadTotal;
+									cantidadTotal = 0;
+								}
+								nuevoDetalleVenta.cantidad = cantidadParcial;
+								if (sucursal.empresa.usar_vencimientos) {
+									nuevoDetalleVenta.fecha_vencimiento = detalleVenta.costos[i].fecha_vencimiento;
+									nuevoDetalleVenta.lote = detalleVenta.costos[i].lote;
+								}
+								nuevoDetalleVenta.costos = [];
+								nuevoDetalleVenta.costos.push(detalleVenta.costos[i]);
+								nuevoDetalleVenta.inventario = detalleVenta.costos[i];
+								paraRectificacionDescuento.push(nuevoDetalleVenta);
+								//nuevoDetalleVenta = calcularImporte(nuevoDetalleVenta, detalleVenta.ice, detalleVenta.excento);
+								//venta.detalles.push(nuevoDetalleVenta);
+							}
 						}
 						i++;
+					}
+					var totalDescuento = detalleVenta.descuento ? detalleVenta.descuento > 0 ? (detalleVenta.descuento / detalleVenta.cantidad) : 0 : 0
+					var totalRecargo = detalleVenta.recargo ? detalleVenta.recargo > 0 ? (detalleVenta.recargo / detalleVenta.cantidad) : 0 : 0
+					var total_ice = detalleVenta.ice ? detalleVenta.ice > 0 ? (detalleVenta.ice / detalleVenta.cantidad) : 0 : 0
+					var total_exento = detalleVenta.excento ? detalleVenta.excento > 0 ? (detalleVenta.excento / detalleVenta.cantidad) : 0 : 0
+					if (!detalleVenta.tipo_descuento) {
+						venta.total_descuento_general = detalleVenta.descuento;
+						for (var index = 0; index < paraRectificacionDescuento.length; index++) {
+							paraRectificacionDescuento[index].descuento = Math.round((totalDescuento * paraRectificacionDescuento[index].cantidad) * 100) / 100
+						}
+					}
+					if (!detalleVenta.tipo_recargo) {
+						venta.total_recargo_general = detalleVenta.recargo;
+						for (var index = 0; index < paraRectificacionDescuento.length; index++) {
+							paraRectificacionDescuento[index].recargo = Math.round((totalRecargo * paraRectificacionDescuento[index].cantidad) * 100) / 100
+						}
+					}
+					if (total_ice > 0) {
+						venta.total_ice = detalleVenta.ice;
+						for (var index = 0; index < paraRectificacionDescuento.length; index++) {
+							paraRectificacionDescuento[index].ice = Math.round((total_ice * paraRectificacionDescuento[index].cantidad) * 100) / 100
+						}
+					}
+					if (total_exento > 0) {
+						venta.total_exento = detalleVenta.excento;
+						for (var index = 0; index < paraRectificacionDescuento.length; index++) {
+							paraRectificacionDescuento[index].excento = Math.round((total_exento * paraRectificacionDescuento[index].cantidad) * 100) / 100
+						}
+					}
+					for (var index = 0; index < paraRectificacionDescuento.length; index++) {
+						var detalleCorregido = calcularImporte(paraRectificacionDescuento[index], paraRectificacionDescuento[index].ice, paraRectificacionDescuento[index].excento);
+						venta.detalles.push(detalleCorregido);
 					}
 				} else {
 					if (detalleVenta.costos.length > 0) {
@@ -5427,31 +5472,28 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		return detalleVenta
 	}
 	function crearDetalleVentaImportacion(movimientoCreado, ventaCreada, detalleVenta, precio_unitario, importe, total, index, array, req, venta, t, sucursal) {
-		return DetalleVenta.create({
-			id_venta: venta.ventaCreada.id,
-			id_producto: detalleVenta.producto.id,
-			precio_unitario: detalleVenta.precio_unitario,
-			cantidad: detalleVenta.cantidad,
-			importe: importe,
-			descuento: detalleVenta.descuento,
-			recargo: detalleVenta.recargo,
-			ice: detalleVenta.ice,
-			excento: detalleVenta.excento,
-			tipo_descuento: detalleVenta.tipo_descuento.toUpperCase() == "%" ? true : false,
-			tipo_recargo: detalleVenta.tipo_recargo.toUpperCase() == "%" ? true : false,
-			total: total,
-			fecha_vencimiento: detalleVenta.fecha_vencimiento,
-			lote: detalleVenta.lote,
-			id_inventario: (detalleVenta.costos.length > 0) ? detalleVenta.costos[0].id : null
-		}, { transaction: t }).then(function (detalleVentaCreada) {
-			console.log("la sucursalllllll ============================================== ", sucursal);
-			if (sucursal.empresa.dataValues.usar_peps) {
-				if (detalleVenta.producto.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_BASE) {
-					return calcularCostosEgresosImportacion(detalleVenta, detalleVenta.producto, detalleVenta.cantidad, detalleVenta.costos,
-						movimientoCreado, index, array, req, venta, t, ventaCreada);
-				} else if (detalleVenta.producto.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_INTERMEDIO) {
-					var promises = [];
-					for (var i = 0; i < detalleVenta.producto.productosBase.length; i++) {
+
+		console.log("la sucursalllllll ============================================== ", sucursal);
+		if (sucursal.empresa.dataValues.usar_peps) {
+			if (detalleVenta.producto.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_BASE) {
+				return calcularCostosEgresosImportacion(detalleVenta, detalleVenta.producto, detalleVenta.cantidad, detalleVenta.costos,
+					movimientoCreado, index, array, req, venta, t, ventaCreada);
+			} else if (detalleVenta.producto.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_INTERMEDIO) {
+				var promises = [];
+				for (var i = 0; i < detalleVenta.producto.productosBase.length; i++) {
+					if ((i + 1) == detalleVenta.producto.productosBase.length) {
+						promises.push(calcularCostosEgresosImportacion(detalleVenta, detalleVenta.producto.productosBase[i].productoBase, detalleVenta.producto.productosBase[i].formulacion * detalleVenta.cantidad, detalleVenta.producto.productosBase[i].productoBase.inventarios,
+							movimientoCreado, index, array, req, venta, t, ventaCreada));
+					} else {
+						promises.push(calcularCostosEgresosImportacion(detalleVenta, detalleVenta.producto.productosBase[i].productoBase, detalleVenta.producto.productosBase[i].formulacion * detalleVenta.cantidad, detalleVenta.producto.productosBase[i].productoBase.inventarios,
+							movimientoCreado, index - 1, array, req, venta, t, ventaCreada));
+					}
+				}
+				return Promise.all(promises);
+			} else {
+				var promises = [];
+				for (var i = 0; i < detalleVenta.producto.productosBase.length; i++) {
+					if (detalleVenta.producto.productosBase[i].productoBase.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_BASE) {
 						if ((i + 1) == detalleVenta.producto.productosBase.length) {
 							promises.push(calcularCostosEgresosImportacion(detalleVenta, detalleVenta.producto.productosBase[i].productoBase, detalleVenta.producto.productosBase[i].formulacion * detalleVenta.cantidad, detalleVenta.producto.productosBase[i].productoBase.inventarios,
 								movimientoCreado, index, array, req, venta, t, ventaCreada));
@@ -5459,39 +5501,26 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							promises.push(calcularCostosEgresosImportacion(detalleVenta, detalleVenta.producto.productosBase[i].productoBase, detalleVenta.producto.productosBase[i].formulacion * detalleVenta.cantidad, detalleVenta.producto.productosBase[i].productoBase.inventarios,
 								movimientoCreado, index - 1, array, req, venta, t, ventaCreada));
 						}
-					}
-					return Promise.all(promises);
-				} else {
-					var promises = [];
-					for (var i = 0; i < detalleVenta.producto.productosBase.length; i++) {
-						if (detalleVenta.producto.productosBase[i].productoBase.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_BASE) {
-							if ((i + 1) == detalleVenta.producto.productosBase.length) {
-								promises.push(calcularCostosEgresosImportacion(detalleVenta, detalleVenta.producto.productosBase[i].productoBase, detalleVenta.producto.productosBase[i].formulacion * detalleVenta.cantidad, detalleVenta.producto.productosBase[i].productoBase.inventarios,
-									movimientoCreado, index, array, req, venta, t, ventaCreada));
+					} else if (detalleVenta.producto.productosBase[i].productoBase.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_INTERMEDIO) {
+						var innerpromises = [];
+						for (var j = 0; j < detalleVenta.producto.productosBase[i].productoBase.productosBase.length; j++) {
+							if ((j + 1) == detalleVenta.producto.productosBase[i].productoBase.productosBase.length) {
+								innerpromises.push(calcularCostosEgresosImportacion(detalleVenta, detalleVenta.producto.productosBase[i].productoBase.productosBase[j].productoBase,
+									detalleVenta.producto.productosBase[i].formulacion * detalleVenta.producto.productosBase[i].productoBase.productosBase[j].formulacion * detalleVenta.cantidad,
+									detalleVenta.producto.productosBase[i].productoBase.productosBase[j].productoBase.inventarios, movimientoCreado, index, array, req, venta, t, ventaCreada));
 							} else {
-								promises.push(calcularCostosEgresosImportacion(detalleVenta, detalleVenta.producto.productosBase[i].productoBase, detalleVenta.producto.productosBase[i].formulacion * detalleVenta.cantidad, detalleVenta.producto.productosBase[i].productoBase.inventarios,
-									movimientoCreado, index - 1, array, req, venta, t, ventaCreada));
+								innerpromises.push(calcularCostosEgresosImportacion(detalleVenta, detalleVenta.producto.productosBase[i].productoBase.productosBase[j].productoBase,
+									detalleVenta.producto.productosBase[i].formulacion * detalleVenta.producto.productosBase[i].productoBase.productosBase[j].formulacion * detalleVenta.cantidad,
+									detalleVenta.producto.productosBase[i].productoBase.productosBase[j].productoBase.inventarios, movimientoCreado, index - 1, array, req, venta, t, ventaCreada));
 							}
-						} else if (detalleVenta.producto.productosBase[i].productoBase.tipoProducto.nombre_corto == Diccionario.TIPO_PRODUCTO_INTERMEDIO) {
-							var innerpromises = [];
-							for (var j = 0; j < detalleVenta.producto.productosBase[i].productoBase.productosBase.length; j++) {
-								if ((j + 1) == detalleVenta.producto.productosBase[i].productoBase.productosBase.length) {
-									innerpromises.push(calcularCostosEgresosImportacion(detalleVenta, detalleVenta.producto.productosBase[i].productoBase.productosBase[j].productoBase,
-										detalleVenta.producto.productosBase[i].formulacion * detalleVenta.producto.productosBase[i].productoBase.productosBase[j].formulacion * detalleVenta.cantidad,
-										detalleVenta.producto.productosBase[i].productoBase.productosBase[j].productoBase.inventarios, movimientoCreado, index, array, req, venta, t, ventaCreada));
-								} else {
-									innerpromises.push(calcularCostosEgresosImportacion(detalleVenta, detalleVenta.producto.productosBase[i].productoBase.productosBase[j].productoBase,
-										detalleVenta.producto.productosBase[i].formulacion * detalleVenta.producto.productosBase[i].productoBase.productosBase[j].formulacion * detalleVenta.cantidad,
-										detalleVenta.producto.productosBase[i].productoBase.productosBase[j].productoBase.inventarios, movimientoCreado, index - 1, array, req, venta, t, ventaCreada));
-								}
-							}
-							promises.push(Promise.all(innerpromises));
 						}
+						promises.push(Promise.all(innerpromises));
 					}
-					return Promise.all(promises);
 				}
+				return Promise.all(promises);
 			}
-		})
+		}
+
 	}
 	function calcularCostosEgresosImportacion(detalleVenta, producto, cantidad, inventarios, movimientoCreado, index, array, req, venta, t, detalleVentaCreada) {
 		var cantidadTotal = cantidad;
@@ -5523,9 +5552,25 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							cantidadTotal = 0;
 						}
 						if (cantidadParcial > 0) {
-
-							return crearMovimientoEgresoYActualizarInventarioImportacion(movimientoCreado, detalleVenta, producto, cantidad, inventarios, cantidadParcial, inventarios[i], index, array, i, req, venta, t, detalleVentaCreada);
-
+							return DetalleVenta.create({
+								id_venta: venta.ventaCreada.id,
+								id_producto: detalleVenta.producto.id,
+								precio_unitario: detalleVenta.precio_unitario,
+								cantidad: detalleVenta.cantidad,
+								importe: importe,
+								descuento: detalleVenta.descuento,
+								recargo: detalleVenta.recargo,
+								ice: detalleVenta.ice,
+								excento: detalleVenta.excento,
+								tipo_descuento: detalleVenta.tipo_descuento.toUpperCase() == "%" ? true : false,
+								tipo_recargo: detalleVenta.tipo_recargo.toUpperCase() == "%" ? true : false,
+								total: total,
+								fecha_vencimiento: detalleVenta.fecha_vencimiento,
+								lote: detalleVenta.lote,
+								id_inventario: (detalleVenta.costos.length > 0) ? detalleVenta.costos[0].id : null
+							}, { transaction: t }).then(function (detalleVentaCreada) {
+								return crearMovimientoEgresoYActualizarInventarioImportacion(movimientoCreado, detalleVenta, producto, cantidad, inventarios, cantidadParcial, inventarios[i], index, array, i, req, venta, t, detalleVentaCreada);
+							})
 						}
 					} else {
 
