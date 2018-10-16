@@ -35,7 +35,7 @@ angular.module('agil.controladores')
 		// }
 
 		$scope.obtenerSucursales = function () {
-			var sucursales = [];
+			$scope.sucursales = [];
 			// for (var i = 0; i < $scope.usuario.sucursalesUsuario.length; i++) {
 			// 	sucursales.push($scope.usuario.sucursalesUsuario[i].sucursal);
 			// }
@@ -205,11 +205,16 @@ angular.module('agil.controladores')
 		}
 
 		$scope.crearNuevaCotizacion = function () {
+			// $scope.obtenerSucursales()
 			$scope.cotizacion = new Cotizacion({
 				id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, cliente: {},
-				detallesCotizacion: []
-
+				detallesCotizacion: [],
+				sucursal: ($scope.sucursales ? $scope.sucursales.length == 1 ? $scope.sucursales[0] : null : null)
 			});
+			if ($scope.cotizacion.sucursal) {
+				$scope.obtenerAlmacenes($scope.cotizacion.sucursal.id)
+				$scope.cotizacion.almacen = $scope.almacenes ? $scope.almacenes.length == 1 ? $scope.almacenes[0] : null : null
+			}
 			var fechaActual = new Date();
 			$scope.cotizacion.fechaTexto = fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear();
 			$scope.detalleCotizacion = { producto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false, eliminado: false }
@@ -220,6 +225,7 @@ angular.module('agil.controladores')
 			if (valido) {
 				var tiempoActual = new Date();
 				cotizacion.fecha = new Date($scope.convertirFecha(cotizacion.fechaTexto));
+				cotizacion.sucursal = cotizacion.sucursal.id
 				blockUI.start();
 				if (cotizacion.id) {
 					Cotizacion.update({ id_cotizacion: cotizacion.id }, cotizacion, function (res) {
@@ -264,7 +270,7 @@ angular.module('agil.controladores')
 		}
 
 		$scope.obtenerAlmacenes = function (idSucursal) {
-			console.log("seleccion sucursallllllll ", idSucursal);
+			// console.log("seleccion sucursallllllll ", idSucursal);
 			$scope.almacenes = [];
 			var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
 			$scope.almacenes = sucursal.almacenes;

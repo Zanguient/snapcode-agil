@@ -269,8 +269,10 @@
 									<td>
 										<label>SUCURSAL</label>
 
-										<select required id="sucursal-cotizacion" ng-keypress="interceptarTecla($event,'fechaSM',true)" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-								 ng-model="cotizacion.sucursal"  ng-change="obtenerAlmacenes(cotizacion.sucursal)"></select>
+										<select required id="sucursal-cotizacion" ng-keypress="interceptarTecla($event,'fechaSM',true)" ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+								 ng-model="cotizacion.sucursal"  ng-change="obtenerAlmacenes(cotizacion.sucursal)">
+								 <!-- <option disabled value="">Seleccione Sucursal...</option> -->
+								</select>
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.sucursal.$dirty && formularioVenta.sucursal.$invalid">
 											Debe seleccionar una Sucursal.
@@ -280,7 +282,7 @@
 										<label>ALMACEN</label>
 										<select  required ng-disabled="venta.editable || venta.detallesVenta.length>0"   id="almacen" name="almacen" ng-model="cotizacion.almacen" ng-options="almacen as almacen.nombre for almacen in almacenes track by almacen.id"
 										 data-placeholder="Click para escoger">
-											<option value="" disabled selected>Selec. Almacen</option>
+											<option value="" disabled>Selecione Almacen...</option>
 										</select>
 										<span class="red">(*)</span>
 										<span class="invalid-message" ng-show="formularioVenta.almacen.$dirty && formularioVenta.almacen.$invalid">
