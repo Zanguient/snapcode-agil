@@ -1078,6 +1078,47 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 			});
 		});
 
+		router.route('/productos-panel/empresa/:id_empresa/user/:id_usuario')
+		.get(function (req, res) {
+			UsuarioGrupos.findAll({
+				where: { id_usuario: req.params.id_usuario }
+			}).then(function (grupos) {
+				var gruposUsuario = grupos.map(function (grupo) {
+					return grupo.id_grupo
+				})
+				Producto.findAll({
+					where: { id_empresa: req.params.id_empresa, publicar_panel: true, id_grupo: { $in: gruposUsuario } },
+					include: [
+						{ model: ProductoTipoPrecio, as: 'tiposPrecio', include: [{ model: Clase, as: 'tipoPrecio' }] },
+						{ model: Inventario, as: 'inventarios', required: false, include:[{model: Almacen, as: 'almacen'}] },
+						{ model: Clase, as: 'tipoProducto' },
+						{
+							model: ProductoBase, as: 'productosBase', required: false,
+							include: [{
+								model: Producto, as: 'productoBase', required: false,
+								include: [{ model: Inventario, as: 'inventarios', required: false, include:[{model: Almacen, as: 'almacen'}] },
+								{ model: Clase, as: 'tipoProducto' },
+								{
+									model: ProductoBase, as: 'productosBase', required: false,
+									include: [{
+										model: Producto, as: 'productoBase', required: false,
+										include: [{ model: Inventario, as: 'inventarios', required: false, include:[{model: Almacen, as: 'almacen'}] },
+										{ model: Clase, as: 'tipoProducto' }]
+									}]
+								}]
+							}]
+						}],
+					order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
+				}).then(function (productos) {
+					res.json(productos);
+				}).catch(function (err) {
+					res.json([{ hasError: true, mensaje: err.stack + '---LN 523 rutas productos' }]);
+				});
+			}).catch(function (err) {
+				res.json([{ hasError: true, mensaje: err.stack + '---LN 517 rutas productos' }]);
+			});
+		});
+
 	router.route('/comision-productos-vendedor/empresa/:id_empresa/usuario/:id_usuario')
 		.get(function (req, res) {
 			var gruposProductos = []

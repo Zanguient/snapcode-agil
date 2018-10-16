@@ -392,7 +392,7 @@ angular.module('agil.controladores')
 						// 	}
 						// 	$scope.generarKardexProducto(detMovs);
 							blockUI.stop();
-						// });
+						// });					
 					}).catch(function (err) {
                         var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                         $scope.mostrarMensaje(msg)
@@ -413,6 +413,7 @@ angular.module('agil.controladores')
 
 			$scope.generarKardexProducto = function (detMovs) {
 				var dato = $scope.producto;
+				var producto = [];
 				dato.detallesMovimiento = detMovs;
 				$scope.Math = Math;
 				for (var i = 0; i < dato.detallesMovimiento.length; i++) {
@@ -517,7 +518,8 @@ angular.module('agil.controladores')
 						console.log(dato.detallesMovimiento[i])
 					}
 				}
-				$scope.kardexproduto = dato;
+				
+				$scope.kardexproduto = dato;	
 			}
 			// $scope.verificarLote = function (filtro, alma) {
 			// 	if (filtro.lote == "") {
