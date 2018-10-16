@@ -7,13 +7,13 @@ angular.module('agil.controladores')
 		'ConfiguracionImpresionEmpresaDato', 'VerificarUsuarioEmpresa', 'GuardarVentasImportados', 'ImprimirSalida', 'ModificarVenta', 'ListaVendedorVenta', 'VendedorVenta', 'VendedorVentaActualizacion',
 		'GuardarUsuarLectorDeBarra', 'VerificarLimiteCredito', 'ListaSucursalesUsuario', 'ListaGruposProductoUsuario', 'ListaServiciosVentas', 'GuardarListaServiciosVentas',
 		'EliminarVentaServicio', 'ventasDetalleEmpresa', 'EliminarDetalleVentaEdicion', 'filtroCotizacionesPendientes', 'CotizacionRechazo', 'ListaInventariosProductoVentaEdicion', 'PagosVentaCreditos',
-		'GuardarImportacionVentasFacturacion', function ($scope, $filter, $localStorage, $location, $templateCache, $route, blockUI, $timeout, $window, InventarioPaginador,
+		'GuardarImportacionVentasFacturacion','GuardarImportacionPagosVenta', function ($scope, $filter, $localStorage, $location, $templateCache, $route, blockUI, $timeout, $window, InventarioPaginador,
 			Venta, Ventas, VentasProductos, detalle, detalleEmpresa, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
 			PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto, Paginator,
 			socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa, ReporteVentasMensualesDatos,
 			ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, GuardarVentasImportados, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion,
 			GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario, ListaServiciosVentas, GuardarListaServiciosVentas,
-			EliminarVentaServicio, ventasDetalleEmpresa, EliminarDetalleVentaEdicion, filtroCotizacionesPendientes, CotizacionRechazo, ListaInventariosProductoVentaEdicion, PagosVentaCreditos, GuardarImportacionVentasFacturacion) {
+			EliminarVentaServicio, ventasDetalleEmpresa, EliminarDetalleVentaEdicion, filtroCotizacionesPendientes, CotizacionRechazo, ListaInventariosProductoVentaEdicion, PagosVentaCreditos, GuardarImportacionVentasFacturacion,GuardarImportacionPagosVenta) {
 			blockUI.start();
 			$scope.usuario = JSON.parse($localStorage.usuario);
 			// var pormimg = ObtenerImagen($scope.usuarioSesion.empresa.imagen)
@@ -4331,7 +4331,7 @@ angular.module('agil.controladores')
 									detalleVenta.producto.codigo = worksheet['M' + row2] != undefined && worksheet['M' + row2] != "" ? worksheet['M' + row2].v.toString() : null;
 									detalleVenta.producto.nombre = worksheet['N' + row2] != undefined && worksheet['N' + row2] != "" ? worksheet['N' + row2].v.toString() : null;
 
-									detalleVenta.fecha_vencimiento = worksheet['O' + row2] != undefined && worksheet['O' + row2] != "" ? worksheet['O' + row2].v.toString() : null;
+									detalleVenta.fecha_vencimiento = worksheet['O' + row2] != undefined && worksheet['O' + row2] != "" ?  new Date($scope.fecha_excel_angular(worksheet['O' + row2].v.toString())) : null;
 									detalleVenta.lote = worksheet['P' + row2] != undefined && worksheet['P' + row2] != "" ? worksheet['P' + row2].v.toString() : null;
 									detalleVenta.precio_unitario = worksheet['Q' + row2] != undefined && worksheet['Q' + row2] != "" ? parseFloat(worksheet['Q' + row2].v.toString()) : null;
 									detalleVenta.cantidad = worksheet['R' + row2] != undefined && worksheet['R' + row2] != "" ? parseFloat(worksheet['R' + row2].v.toString()) : null;
@@ -4411,6 +4411,57 @@ angular.module('agil.controladores')
 				})
 			}
 
+			$scope.subirExcelPagosVentas = function (event) {
+				var files = event.target.files;
+				var i, f;
+				for (i = 0, f = files[i]; i != files.length; ++i) {
+					//console.log('iniciando lectura de excel(s)')
+					var reader = new FileReader();
+					var name = f.name;
+					reader.onload = function (e) {
+						var data = e.target.result;
+						var workbook = XLSX.read(data, { type: 'binary' });
+						var first_sheet_name = workbook.SheetNames[0];
+						var row = 2, i = 0, row2 = 2;
+						var worksheet = workbook.Sheets[first_sheet_name];
+						var pagos = []
+						do {
+							row2 = 2
+							var pago = {}
+							pago.factura = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
+							pago.fecha = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
+							pago.monto = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? parseFloat(worksheet['C' + row].v.toString()) : null;
+							pago.autorizacion= worksheet['D' + row] != undefined && worksheet['D' + row] != "" ?worksheet['D' + row].v.toString() : null;
+							pago.total = 0
+							do {
+								var NumeroCompraA = worksheet['A' + row2] != undefined && worksheet['A' + row2] != "" ? worksheet['A' + row2].v.toString() : null;
+								var monto = worksheet['C' + row2] != undefined && worksheet['C' + row2] != "" ? parseFloat(worksheet['C' + row2].v.toString()) : null;
+								if (NumeroCompraA == pago.factura) {
+									pago.total += monto
+								}
+								row2++
+							} while (NumeroCompraA == pago.factura);
+							pagos.push(pago)
+							row++
+
+						} while (worksheet['A' + row] != undefined);
+						$scope.guardarImportacionPagosVenta(pagos);
+						
+					};
+
+					reader.readAsBinaryString(f);
+
+				}
+			}
+			$scope.guardarImportacionPagosVenta = function (pagos) {
+				blockUI.start();
+				var promesa = GuardarImportacionPagosVenta(pagos, $scope.usuario.id_empresa)
+				promesa.then(function (dato) {
+					blockUI.stop()
+					$scope.mostrarMensaje(dato.mensaje)
+					$scope.recargarItemsTabla()
+				})
+			}
 			$scope.$on('$routeChangeStart', function (next, current) {
 				$scope.eliminarPopup($scope.idModalWizardCompraEdicion);
 				$scope.eliminarPopup($scope.idModalWizardVentaVista);

@@ -753,9 +753,27 @@ angular.module('agil.servicios')
 			});
 	}])
 	.factory('GuardarImportacionPagosCompras', ['ImportacionPagosCompras', '$q', function (ImportacionPagosCompras, $q) {
-		var res = function (pagos,idEmnpresa) {
+		var res = function (pagos,idEmpresa) {
 			var delay = $q.defer();
 			ImportacionPagosCompras.save({id_empresa:idEmpresa},{pagos:pagos}, function (entidad) {
+				delay.resolve(entidad);
+			}, function (error) {
+					delay.reject(error);
+				});
+			return delay.promise;
+		};
+		return res;
+	}])
+	.factory('ImportacionPagosVentas',  ['$resource',function ($resource) {
+		return $resource(restServer + "importar-pagos-ventas/empresa/:id_empresa", { id_empresa: '@id_empresa' },
+			{
+				'update': { method: 'PUT' }
+			});
+	}])
+	.factory('GuardarImportacionPagosVenta', ['ImportacionPagosVentas', '$q', function (ImportacionPagosVentas, $q) {
+		var res = function (pagos,idEmpresa) {
+			var delay = $q.defer();
+			ImportacionPagosVentas.save({id_empresa:idEmpresa},{pagos:pagos}, function (entidad) {
 				delay.resolve(entidad);
 			}, function (error) {
 					delay.reject(error);

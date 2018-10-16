@@ -295,15 +295,15 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 							//res.json(productos);
 						});*/
 					}).catch(function (err) {
-						res.json({ mensaje: err.stack, hasErr: true })
+						res.json({ mensaje: err.stack, hasErr: true, kardex: [] })
 					})
 				}).catch(function (err) {
-                    res.json({ mensaje: err.stack, hasErr: true })
+                    res.json({ mensaje: err.stack, hasErr: true, kardex: [] })
                 })
 			} else {
 				DetalleMovimiento.findAll({
 					where: { id_producto: req.params.id_producto },
-					include: [{ model: Inventario, as: 'inventario', where: condicionInventario },
+					include: [{ model: Inventario, as: 'inventario', where: condicionInventario},
 					{
 						model: Movimiento, as: 'movimiento',
 						where: condicionMovimiento,
@@ -333,7 +333,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						//res.json(productos);
 					});*/
 				}).catch(function (err) {
-                    res.json({ mensaje: err.stack, hasErr: true })
+                    res.json({ mensaje: err.stack, hasErr: true, kardex: [] })
                 })
 			}
 

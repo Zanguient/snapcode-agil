@@ -3,10 +3,10 @@ angular.module('agil.controladores')
 	.controller('ControladorCompras', ['$scope', '$localStorage', '$location', '$templateCache', '$route', 'blockUI', 'DatosCompra', '$timeout',
 		'Compra', 'Compras', 'Proveedores', 'ProveedoresNit', 'ListaProductosEmpresaUsuario', 'ClasesTipo', 'CompraDatos',
 		'ConfiguracionCompraVistaDatos', 'ConfiguracionCompraVista', 'ConfiguracionesCuentasEmpresa', 'ClasesTipoEmpresa', 'Tipos', 'SaveCompra', 'ListaCompraPedidosEmpresa', 'EliminarPedidoEmpresa', 'EliminarDetallePedidoEmpresa',
-		'CompraDatosCredito', 'Paginator', 'GuardarImportacionComprasIngresoDiario','GuardarImportacionPagosCompras', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, DatosCompra, $timeout,
+		'CompraDatosCredito', 'Paginator', 'GuardarImportacionComprasIngresoDiario', 'GuardarImportacionPagosCompras', function ($scope, $localStorage, $location, $templateCache, $route, blockUI, DatosCompra, $timeout,
 			Compra, Compras, Proveedores, ProveedoresNit, ListaProductosEmpresaUsuario, ClasesTipo, CompraDatos,
 			ConfiguracionCompraVistaDatos, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ClasesTipoEmpresa, Tipos, SaveCompra, ListaCompraPedidosEmpresa, EliminarPedidoEmpresa,
-			EliminarDetallePedidoEmpresa, CompraDatosCredito, Paginator, GuardarImportacionComprasIngresoDiario,GuardarImportacionPagosCompras) {
+			EliminarDetallePedidoEmpresa, CompraDatosCredito, Paginator, GuardarImportacionComprasIngresoDiario, GuardarImportacionPagosCompras) {
 			blockUI.start();
 
 			$scope.usuario = JSON.parse($localStorage.usuario);
@@ -1834,7 +1834,7 @@ angular.module('agil.controladores')
 					$scope.recargarItemsTabla()
 				})
 			}
-			$scope.subirExcelPagosCompras = function () {
+			$scope.subirExcelPagosCompras = function (event) {
 				var files = event.target.files;
 				var i, f;
 				for (i = 0, f = files[i]; i != files.length; ++i) {
@@ -1849,12 +1849,27 @@ angular.module('agil.controladores')
 						var worksheet = workbook.Sheets[first_sheet_name];
 						var pagos = []
 						do {
-							var pago = []
+							row2 = 2
+							var pago = {}
 							pago.factura = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
 							pago.fecha = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
-							pago.monto = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? worksheet['C' + row].v.toString() : null;
+							pago.monto = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? parseFloat(worksheet['C' + row].v.toString()) : null;
+							pago.sucursal = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ?worksheet['D' + row].v.toString() : null;
+							var sucursalEncontrada = $scope.sucursales.find(function(sucursal){
+								return  sucursal.nombre.toUpperCase()==pago.sucursal.toUpperCase()
+							})
+							pago.sucursal=sucursalEncontrada
+							pago.total = 0
+							do {
+								var NumeroCompraA = worksheet['A' + row2] != undefined && worksheet['A' + row2] != "" ? worksheet['A' + row2].v.toString() : null;
+								var monto = worksheet['C' + row2] != undefined && worksheet['C' + row2] != "" ? parseFloat(worksheet['C' + row2].v.toString()) : null;
+								if (NumeroCompraA == pago.factura) {
+									pago.total += monto
+								}
+								row2++
+							} while (NumeroCompraA == pago.factura);
 							pagos.push(pago)
-
+							row++
 						} while (worksheet['A' + row] != undefined);
 						$scope.guardarImportacionPagosCompras(pagos);
 					};
@@ -1864,7 +1879,7 @@ angular.module('agil.controladores')
 			}
 			$scope.guardarImportacionPagosCompras = function (pagos) {
 				blockUI.start();
-				var promesa = GuardarImportacionPagosCompras(pagos,$scope.usuario.id_empresa)
+				var promesa = GuardarImportacionPagosCompras(pagos, $scope.usuario.id_empresa)
 				promesa.then(function (dato) {
 					blockUI.stop()
 					$scope.mostrarMensaje(dato.mensaje)

@@ -374,7 +374,16 @@ angular.module('agil.controladores')
 						// if (detalleMovimientoSaldoAnterior != 0) {
 						// 	detMovs.unshift(detalleMovimientoSaldoAnterior);
 						// }
-						$scope.generarKardexProducto(detMovsSaldo.kardex);
+						if (detMovsSaldo.hasErr) {
+							$scope.mostrarMensaje(detMovsSaldo.mensaje)
+							return 
+						}
+						if (detMovsSaldo.kardex.length >0) {
+							$scope.generarKardexProducto(detMovsSaldo.kardex);
+						}else{
+							$scope.mostrarMensaje('No se encontraron movimientos.')
+						}
+						
 						// promesa = ProductoKardex($scope.idProducto, $scope.filtroKardexProducto);
 						// promesa.then(function (detMovs) {
 						// 	if (detalleMovimientoSaldoAnterior != 0) {

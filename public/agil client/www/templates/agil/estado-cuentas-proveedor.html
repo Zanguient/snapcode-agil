@@ -177,7 +177,7 @@
 													<tr ng-repeat="pagosCompra in compra.pagosCompra">
 														<td>{{pagosCompra.createdAt | date:"dd/MM/yyyy" }}</td>
 														<td>{{pagosCompra.numero_documento}}</td>
-														<td>Pago a cuenta Saldo anterior {{pagosCompra.saldo_anterior}} <p ng-if="pagosCompra.anticipos">(Compensación)</p></td>
+														<td>Pago a cuenta Saldo anterior {{pagosCompra.saldo_anterior}} <p ng-if="pagosCompra.anticipos.length>0">(Compensación)</p></td>
 														<td>{{pagosCompra.monto_pagado}}</td>
 														<td>{{pagosCompra.total}}</td>
 														<td>

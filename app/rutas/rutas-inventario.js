@@ -4989,7 +4989,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							nombre: detalleCompra.producto.nombre,
 							codigo: detalleCompra.producto.codigo,
 							id_empresa: compra.id_empresa
-						},  
+						},
 						transaction: t
 					}).then(function (productoCreado) {
 						return Clase.find(
@@ -5662,84 +5662,223 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 	router.route('/importar-pagos-compra/empresa/:id_empresa')
 		.post(function (req, res) {
-			sequelize.transaction(function (t) {
-				req.body.pagos.forEach(function (pago, index, array) {
-					Compra.find({
-						where: { id: req.params.id },
-						include: [{
-							model: Almacen, as: 'almacen',
-							include: [{ model: Sucursal, as: 'sucursal' }]
-						}]
-					}).then(function (compraEncontrada) {
-						Compra.update({
-							a_cuenta: compraEncontrada.a_cuenta + pagoV,
-							saldo: compraEncontrada.total - (compraEncontrada.a_cuenta + pagoV)
-						}, {
-								where: {
-									id: compraEncontrada.id
+			Clase.find({
+				where: { nombre_corto: 'ID' }
+			}).then(function (conceptoMovimiento) {
+				var promises = []
+				var a_cuenta = 0
+				var saldo = 0
+				sequelize.transaction(function (t) {
+					req.body.pagos.forEach(function (pago, index, array) {
+						promises.push(Compra.find({
+							where: { factura: pago.factura },
+							include: [{ model: Movimiento, as: 'movimiento', where: { id_clase: conceptoMovimiento.id } }, {
+								model: Almacen, as: 'almacen',
+								include: [{ model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa, id: pago.sucursal.id } }]
+							}],
+							transaction: t
+						}).then(function (compraEncontrada) {
+							var pagoV = pago.monto
+
+							if (index == 0) {
+								a_cuenta = compraEncontrada.a_cuenta
+								saldo = compraEncontrada.saldo
+							} else {
+								var i = index - 1
+								if (pago.factura == req.body.pagos[i].factura) {
+									a_cuenta = a_cuenta + req.body.pagos[i].monto
+									saldo = saldo - req.body.pagos[i].monto
+								} else {
+									a_cuenta = compraEncontrada.a_cuenta
+									saldo = compraEncontrada.saldo
 								}
-							}).then(function (affectedRows) {
-								PagoCompra.create({
-									id_compra: compraEncontrada.id,
-									a_cuenta_anterior: compraEncontrada.a_cuenta,
-									saldo_anterior: compraEncontrada.saldo,
-									monto_pagado: pagoV,
-									id_usuario: req.body.id_usuario_cajero,
-									numero_documento: compraEncontrada.almacen.sucursal.nota_recibo_correlativo
-								}).then(function (detalleVentaCreada) {
-									Sucursal.update({
-										nota_recibo_correlativo: compraEncontrada.almacen.sucursal.nota_recibo_correlativo + 1
+							}
+							return Compra.update({
+								a_cuenta: a_cuenta + pagoV,
+								saldo: compraEncontrada.total - (a_cuenta + pagoV)
+							}, {
+									where: {
+										id: compraEncontrada.id
+									},
+									transaction: t
+								}).then(function (affectedRows) {
+									if (index == 0) {
+										a_cuenta = compraEncontrada.a_cuenta
+										saldo = compraEncontrada.saldo
+									} else {
+										var i = index - 1
+										if (pago.factura == req.body.pagos[i].factura) {
+											a_cuenta = a_cuenta + req.body.pagos[i].monto
+											saldo = saldo - req.body.pagos[i].monto
+										} else {
+											a_cuenta = compraEncontrada.a_cuenta
+											saldo = compraEncontrada.saldo
+										}
+									}
+									return PagoCompra.create({
+										id_compra: compraEncontrada.id,
+										a_cuenta_anterior: a_cuenta,
+										saldo_anterior: saldo,
+										monto_pagado: pagoV,
+										id_usuario: pago.id_usuario_cajero,
+										numero_documento: compraEncontrada.almacen.sucursal.nota_recibo_correlativo + (index)
 									}, {
-											where: {
-												id: compraEncontrada.almacen.sucursal.id
-											}
-										}).then(function (affectedRows) {
-											if (anticipo != 0) {
-												Sucursal.find({
-													where: { id: compraEncontrada.almacen.sucursal.id }
-												}).then(function (sucursalEncontrada) {
-													ProveedorAnticipo.create({
-														id_proveedor: parseInt(compraEncontrada.id_proveedor),
-														monto_anticipo: anticipo,
-														fecha: req.body.fecha,
-														monto_salida: 0,
-														saldo: anticipo,
-														id_sucursal: compraEncontrada.almacen.sucursal.id,
-														numero_correlativo_anticipo: sucursalEncontrada.anticipo_proveedor_correlativo,
-														eliminado: false
-													}).then(function (ProvedorAnticipoCreado) {
-														var correlativo = sucursalEncontrada.anticipo_proveedor_correlativo + 1
-														Sucursal.update({
-															anticipo_proveedor_correlativo: correlativo
-														}, {
-																where: { id: compraEncontrada.almacen.sucursal.id }
-															}).then(function (Actualizado) {
-																ProveedorAnticipo.find({
-																	where: { id: ProvedorAnticipoCreado.id },
-																	include: [{ model: Sucursal, as: 'sucursal' }, { model: Proveedor, as: 'proveedor' }]
-																}).then(function (encontrado) {
-																	var pago = NumeroLiteral.Convertir(parseFloat(pagoV).toFixed(2).toString());
-																	res.json({ anticipo: encontrado, mensaje: "¡Saldo de cuenta actualizado satisfactoriamente!", pago: pago, compra: compraEncontrada });
-																})
-	
-															})
-	
-													})
-												})
-											} else {
-												var pago = NumeroLiteral.Convertir(parseFloat(pagoV).toFixed(2).toString());
-												res.json({ anticipo: {}, mensaje: "¡Saldo de cuenta actualizado satisfactoriamente!", pago: pago, compra: compraEncontrada });
-											}
-	
+											transaction: t
+										}).then(function (detalleVentaCreada) {
+											return Sucursal.update({
+												nota_recibo_correlativo: compraEncontrada.almacen.sucursal.nota_recibo_correlativo + (index + 1)
+											}, {
+													where: {
+														id: compraEncontrada.almacen.sucursal.id
+													},
+													transaction: t
+												}).then(function (affectedRows) {
+													return new Promise(function (fulfill, reject) {
+														fulfill();
+													});
+													return new Promise(function (fulfill, reject) {
+														fulfill();
+													});
+													//logica de anticipos va aqui
+												}).catch(function (err) {
+													return new Promise(function (fulfill, reject) {
+														reject(err);
+													});
+												});
+										}).catch(function (err) {
+											return new Promise(function (fulfill, reject) {
+												reject(err);
+											});
 										});
+								}).catch(function (err) {
+									return new Promise(function (fulfill, reject) {
+										reject(err);
+									});
 								});
+						}).catch(function (err) {
+							return new Promise(function (fulfill, reject) {
+								reject(err);
 							});
-					});
+						}));
+					})
+					return Promise.all(promises)
+				}).then(function name(result) {
+					res.json({ mensaje: "Importación satisfactoriamente!" })
+				}).catch(function (err) {
+					res.json({ hasError: true, mensaje: err.stack ? err.stack : err });
 				})
-			}).then(function name(result) {
-				res.json({ mensaje: "Importación satisfactoriamente!" })
-			}).catch(function (err) {
-				res.json({ hasError: true, mensaje: err.stack ? err.stack : err });
+			})
+		})
+		router.route('/importar-pagos-ventas/empresa/:id_empresa')
+		.post(function (req, res) {
+			Clase.find({
+				where: { nombre_corto:Diccionario.EGRE_FACTURACION }
+			}).then(function (conceptoMovimiento) {
+				var promises = []
+				var a_cuenta = 0
+				var saldo = 0
+				sequelize.transaction(function (t) {
+					req.body.pagos.forEach(function (pago, index, array) {
+						promises.push(Venta.find({
+							where: { factura: pago.factura,autorizacion:pago.autorizacion },
+							include: [{
+								model: Almacen, as: 'almacen',
+								include: [{ model: Sucursal, as: 'sucursal',where:{id_empresa:req.params.id_empresa} },
+								]
+							}, {
+								model: Movimiento, as: 'movimiento' ,where: { id_clase: conceptoMovimiento.id },
+								include: [{ model: Clase, as: 'clase' }]
+							}],
+							transaction: t
+						}).then(function (ventaEncontrada) {
+							var pagoV = pago.monto
+							if (index == 0) {
+								a_cuenta = ventaEncontrada.a_cuenta
+								saldo = ventaEncontrada.saldo
+							} else {
+								var i = index - 1
+								if (pago.factura == req.body.pagos[i].factura) {
+									a_cuenta = a_cuenta + req.body.pagos[i].monto
+									saldo = saldo - req.body.pagos[i].monto
+								} else {
+									a_cuenta = ventaEncontrada.a_cuenta
+									saldo = ventaEncontrada.saldo
+								}
+							}
+							return Venta.update({
+								a_cuenta: a_cuenta + pagoV,
+								saldo: ventaEncontrada.total - (a_cuenta + pagoV)
+							}, {
+									where: {
+										id: ventaEncontrada.id
+									},
+									transaction: t
+								}).then(function (affectedRows) {
+									if (index == 0) {
+										a_cuenta = ventaEncontrada.a_cuenta
+										saldo = ventaEncontrada.saldo
+									} else {
+										var i = index - 1
+										if (pago.factura == req.body.pagos[i].factura) {
+											a_cuenta = a_cuenta + req.body.pagos[i].monto
+											saldo = saldo - req.body.pagos[i].monto
+										} else {
+											a_cuenta = ventaEncontrada.a_cuenta
+											saldo = ventaEncontrada.saldo
+										}
+									}
+									return PagoVenta.create({
+										id_venta: ventaEncontrada.id,
+										a_cuenta_anterior: a_cuenta,
+										saldo_anterior: saldo,
+										monto_pagado: pagoV,
+										id_usuario: pago.id_usuario_cajero,
+										numero_documento: ventaEncontrada.almacen.sucursal.nota_recibo_correlativo + (index)
+									}, {
+											transaction: t
+										}).then(function (detalleVentaCreada) {
+											return Sucursal.update({
+												nota_recibo_correlativo: ventaEncontrada.almacen.sucursal.nota_recibo_correlativo + (index + 1)
+											}, {
+													where: {
+														id: ventaEncontrada.almacen.sucursal.id
+													},
+													transaction: t
+												}).then(function (affectedRows) {
+													return new Promise(function (fulfill, reject) {
+														fulfill();
+													});
+													return new Promise(function (fulfill, reject) {
+														fulfill();
+													});
+													//logica de anticipos va aqui
+												}).catch(function (err) {
+													return new Promise(function (fulfill, reject) {
+														reject(err);
+													});
+												});
+										}).catch(function (err) {
+											return new Promise(function (fulfill, reject) {
+												reject(err);
+											});
+										});
+								}).catch(function (err) {
+									return new Promise(function (fulfill, reject) {
+										reject(err);
+									});
+								});
+						}).catch(function (err) {
+							return new Promise(function (fulfill, reject) {
+								reject(err);
+							});
+						}));
+					})
+					return Promise.all(promises)
+				}).then(function name(result) {
+					res.json({ mensaje: "Importación satisfactoriamente!" })
+				}).catch(function (err) {
+					res.json({ hasError: true, mensaje: err.stack ? err.stack : err });
+				})
 			})
 		})
 }
