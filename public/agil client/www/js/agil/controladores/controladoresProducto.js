@@ -277,12 +277,13 @@ angular.module('agil.controladores')
 				$scope.producto = producto;
 				$scope.kardexproduto = null;
 
-				$scope.filtroKardexProducto.sucursal = $scope.sucursales.length == 1 ? $scope.sucursales[0] : null;
-				if ($scope.filtroKardexProducto.sucursal) {
-					$scope.obtenerAlmacenes($scope.filtroKardexProducto.sucursal.id);
-					$scope.filtroKardexProducto.almacen = $scope.almacenes.length == 1 ? $scope.almacenes[0] : null;
-				}
-				$("#modal-wizard-producto-kardex").dialog({ closeOnEscape: false });
+				// $scope.filtroKardexProducto.sucursal = $scope.sucursales.length == 1 ? $scope.sucursales[0] : null;
+				$scope.obtenerAlmacenes($scope.sucursales[0].id)
+				// if ($scope.filtroKardexProducto.sucursal) {
+				// 	$scope.obtenerAlmacenes($scope.filtroKardexProducto.sucursal.id);
+				// 	$scope.filtroKardexProducto.almacen = $scope.almacenes.length == 1 ? $scope.almacenes[0] : null;
+				// }
+				// $("#modal-wizard-producto-kardex").dialog({ closeOnEscape: false });
 				$scope.abrirPopup($scope.idModalWizardProductoKardex);
 
 			}

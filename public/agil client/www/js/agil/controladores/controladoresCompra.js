@@ -1396,9 +1396,9 @@ angular.module('agil.controladores')
 
 								doc.text(compra.detallesCompra[i].costo_unitario.toFixed(2), 280, y);
 								doc.text(compra.detallesCompra[i].importe.toFixed(2), 315, y);
-								doc.text(compra.detallesCompra[i].tipo_descuento ? "%" : "Bs", 365, y - 10);
+								doc.text(compra.descuento_general?compra.tipo_descuento? "%" : "Bs":compra.detallesVenta[i].tipo_descuento ? "%" : "Bs", 365, y - 10);
 								doc.text(compra.detallesCompra[i].descuento.toFixed(2), 365, y);
-								doc.text(compra.detallesCompra[i].tipo_recargo ? "%" : "Bs", 395, y - 10);
+								doc.text(compra.descuento_general?compra.tipo_recargo? "%" : "Bs":compra.detallesVenta[i].tipo_recargo ? "%" : "Bs", 395, y - 10);
 								doc.text(compra.detallesCompra[i].recargo.toFixed(2), 395, y);
 								doc.text(compra.detallesCompra[i].ice.toFixed(2), 425, y);
 								doc.text(compra.detallesCompra[i].excento.toFixed(2), 455, y);
@@ -1426,9 +1426,10 @@ angular.module('agil.controladores')
 
 								doc.text(compra.detallesCompra[i].costo_unitario.toFixed(2), 300, y);
 								doc.text(compra.detallesCompra[i].importe.toFixed(2), 335, y);
-								doc.text(compra.detallesCompra[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
+								
+								doc.text(compra.descuento_general?compra.tipo_descuento? "%" : "Bs":compra.detallesVenta[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
 								doc.text(compra.detallesCompra[i].descuento.toFixed(2), 385, y);
-								doc.text(compra.detallesCompra[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
+								doc.text(compra.descuento_general?compra.tipo_recargo? "%" : "Bs":compra.detallesVenta[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
 								doc.text(compra.detallesCompra[i].recargo.toFixed(2), 420, y);
 								doc.text(compra.detallesCompra[i].ice.toFixed(2), 455, y);
 								doc.text(compra.detallesCompra[i].excento.toFixed(2), 490, y);

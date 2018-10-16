@@ -6,7 +6,7 @@ angular.module('agil.controladores')
         'ListaAnticiposEmpleado', 'CrearNuevosAnticiposEmpleados', 'ActualizarAnticipoEmpleado', 'NuevaAusenciaEmpleado', 'HistorialEmpleadoAusencias', 'HistorialEmpresaEmpleadosAusencias', 'NuevaVacacionEmpleado', 'HistorialEmpleadoVacaciones', 'HistorialEmpresaVacaciones', 'NuevoFeriado',
         'ListaFeriados', 'GuardarClasesAusencias', 'Tipos', 'ListaBancos', 'ConfiguracionesVacacion', 'HistorialGestionesVacacion', 'GuardarTr3', 'ListaTr3Empresa', 'GuardarHistorialVacacion', 'CrearBeneficioSocial', 'ListaBeneficiosEmpleado', 'GuardarBitacoraFicha', 'VerBitacoraFicha', 'ObtenerFiniquitoEmpleado',
         'ClasesTipoEmpresa', 'GuardarConfiguracionRopaCargo', 'ListaConfiguracionRopaCargo', 'DatosReporteConfiguracionRopa', 'FichasEmpleadoEmpresa', 'ListaCargosEmpleado', 'ListaRopaTrabajoProductos', 'GuardarDotacionRopa', 'ListaDotacionRopa', 'EliminarDotacionRopa', 'ListaDotacionRopaEmpresa', 'ActualizarDotacionRopa',
-        'FamiliaresEmpleadoEmpresa', 'ListaRolTurnosEmpresa', 'ClasesEmpresa', 'ListaChoferesViaje', 'GuardarViajeRrhh', 'ListaViajeRrhh', 'ListaRolTurnosCalendario', 'ViajeRrhhLista', 'BeneficioEmpresa', 'GuardarConductoresEmpresa', 'ListaHijosEmpleadosEmpresa', 'GuardarImportacionFichaEmpleados', 'GuardarImportacionRolTurnoEmpleados', 'PrerequisitosSave', 
+        'FamiliaresEmpleadoEmpresa', 'ListaRolTurnosEmpresa', 'ClasesEmpresa', 'ListaChoferesViaje', 'GuardarViajeRrhh', 'ListaViajeRrhh', 'ListaRolTurnosCalendario', 'ViajeRrhhLista', 'BeneficioEmpresa', 'GuardarConductoresEmpresa', 'ListaHijosEmpleadosEmpresa', 'GuardarImportacionFichaEmpleados', 'GuardarImportacionRolTurnoEmpleados', 'PrerequisitosSave',
         'GuardarEmpleadoEmpresaI', function ($scope, $sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
             FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
             ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
@@ -14,7 +14,7 @@ angular.module('agil.controladores')
             ListaAnticiposEmpleado, CrearNuevosAnticiposEmpleados, ActualizarAnticipoEmpleado, NuevaAusenciaEmpleado, HistorialEmpleadoAusencias, HistorialEmpresaEmpleadosAusencias, NuevaVacacionEmpleado, HistorialEmpleadoVacaciones, HistorialEmpresaVacaciones, NuevoFeriado,
             ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
             ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa, ActualizarDotacionRopa,
-            FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ClasesEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa, GuardarImportacionFichaEmpleados, GuardarImportacionRolTurnoEmpleados, PrerequisitosSave, 
+            FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ClasesEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa, GuardarImportacionFichaEmpleados, GuardarImportacionRolTurnoEmpleados, PrerequisitosSave,
             GuardarEmpleadoEmpresaI) {
             $scope.usuario = JSON.parse($localStorage.usuario);
             $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
@@ -1597,7 +1597,7 @@ angular.module('agil.controladores')
                 $scope.cerrarPopup($scope.idModalAnticipoRegular);
             }
             $scope.abrirDialogPrestamosPersonal = function () {
-                shortcut.add("ESC", function() {
+                shortcut.add("ESC", function () {
                     $scope.cerrarDialogPrestamosPersonal()
                 })
                 $scope.obtenerPrestamos()
@@ -1674,7 +1674,7 @@ angular.module('agil.controladores')
                 $scope.paginator.getSearch("", $scope.filtro, null);
             }
             $scope.cerrarDialogPrestamosPersonal = function () {
-                shortcut.remove("ESC", function() {
+                shortcut.remove("ESC", function () {
                 })
                 $scope.cerrarPopup($scope.idModalPrestamosPersonal);
                 $scope.obtenerRecursosHumanos()
@@ -1726,22 +1726,22 @@ angular.module('agil.controladores')
             $scope.cerrarDialogReporteHijos = function () {
                 $scope.cerrarPopup($scope.idModalReporteHijos);
             }
-            $scope.abrirReportePDFHijos = function(desde, hasta, todos){
-                
+            $scope.abrirReportePDFHijos = function (desde, hasta, todos) {
+
                 if (desde == null || hasta == null) {
                     $scope.mostrarMensaje("Ingrese los rangos!");
                 }
-                
+
                 blockUI.start();
-				var promesa = ListaHijosEmpleadosEmpresa($scope.usuario.id_empresa);
-				promesa.then(function (datos) {
+                var promesa = ListaHijosEmpleadosEmpresa($scope.usuario.id_empresa);
+                promesa.then(function (datos) {
                     var fechaActual = new Date()
                     var hijosReporte = []
                     if (todos != true) {
                         todos = false;
                     }
-                  
-                    var detalle = {"desde":desde,"hasta":hasta,"todos":todos};
+
+                    var detalle = { "desde": desde, "hasta": hasta, "todos": todos };
                     datos.forEach(function (hijo, index, array) {
                         console.log("falta funcionalidad")
                         fechaNacimiento = new Date(hijo.persona.fecha_nacimiento)
@@ -1753,27 +1753,27 @@ angular.module('agil.controladores')
                                     if (hijo.edad >= desde && hijo.edad <= hasta) {
                                         hijosReporte.push(hijo)
                                         if (index === (array.length - 1)) {
-                                            $scope.generarReprotePDFHijos(hijosReporte,detalle)
+                                            $scope.generarReprotePDFHijos(hijosReporte, detalle)
                                         }
                                     } else {
                                         if (index === (array.length - 1)) {
-                                            $scope.generarReprotePDFHijos(hijosReporte,detalle)
+                                            $scope.generarReprotePDFHijos(hijosReporte, detalle)
                                         }
                                     }
                                 } else if (hijo.empleado.eliminado == false) {
                                     if (hijo.edad >= desde && hijo.edad <= hasta) {
                                         hijosReporte.push(hijo)
                                         if (index === (array.length - 1)) {
-                                            $scope.generarReprotePDFHijos(hijosReporte,detalle)
+                                            $scope.generarReprotePDFHijos(hijosReporte, detalle)
                                         }
                                     } else {
                                         if (index === (array.length - 1)) {
-                                            $scope.generarReprotePDFHijos(hijosReporte,detalle)
+                                            $scope.generarReprotePDFHijos(hijosReporte, detalle)
                                         }
                                     }
                                 } else {
                                     if (index === (array.length - 1)) {
-                                        $scope.generarReprotePDFHijos(hijosReporte,detalle)
+                                        $scope.generarReprotePDFHijos(hijosReporte, detalle)
                                     }
                                 }
 
@@ -1781,122 +1781,122 @@ angular.module('agil.controladores')
                         }
                     })
                     blockUI.stop();
-				});
+                });
             }
 
-            $scope.generarReprotePDFHijos = function(reporteHijos,detalle){
+            $scope.generarReprotePDFHijos = function (reporteHijos, detalle) {
 
                 convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-                
-                var detallesHijos = reporteHijos;
-                var doc = new PDFDocument({ compress: false, margin: 10 });
-                var stream = doc.pipe(blobStream());
-        
-                doc.font('Helvetica', 8);
-                var y = 185, itemsPorPagina = 15, items = 0, pagina = 1;
-               $scope.dibujarCabeceraPDFReporteHijos(doc, detallesHijos, detalle, pagina,imagenEmpresa);
-        
-                for (var i = 0; i < detallesHijos.length && items <= itemsPorPagina; i++) {
-                    
-                    doc.font('Helvetica',8);
-                    doc.rect(40, y-5, 60, 20).stroke();
-                    doc.text(detallesHijos[i].empleado.codigo,45,y);
-                    doc.rect(100, y-5, 150, 20).stroke();
-                    var nombreTrabajador = $scope.capitalizar(detallesHijos[i].empleado.persona.nombre_completo.toLowerCase());
-                    doc.text(nombreTrabajador,105,y,{width:200});
-        
-                    doc.rect(250, y-5, 150, 20).stroke();
-                    var apellido_materno = detallesHijos[i].persona.apellido_materno;
-                    var apellido_paterno = detallesHijos[i].persona.apellido_paterno;
-                    var nombre = detallesHijos[i].persona.nombres;
-                    var nombre_completo = apellido_paterno+" "+apellido_materno+" "+nombre;
-                    var nombreHijo = $scope.capitalizar(nombre_completo.toLowerCase());
-                    doc.text(nombreHijo,255,y,{width:200});
-        
-                    doc.rect(400, y-5, 60, 20).stroke();
-                    var fecha = new Date(detallesHijos[i].persona.fecha_nacimiento);
-                    var año = fecha.getFullYear();
-                    var mes = fecha.getMonth() + 1;
-                    var dia = fecha.getDate();
-                    var fecha_completa = dia+"/"+mes+"/"+año;
-                    doc.text(fecha_completa,410,y);
-        
-                    doc.rect(460, y-5, 40, 20).stroke();
-                    doc.text(detallesHijos[i].persona.genero.nombre.toLowerCase(),462,y);
-        
-                    doc.rect(500, y-5, 27, 20).stroke();
-                    doc.text(detallesHijos[i].edad,510,y);
-        
-                    doc.rect(527, y-5, 48, 20).stroke();
-                    doc.text(detallesHijos[i].relacion.nombre.toLowerCase(),535,y);
-        
-                    y = y + 20;
-                    items++;
-        
-                    if (items == itemsPorPagina || i + 1 == detallesHijos.length) {
-                        if (i + 1 == detallesHijos.length) {
-        
-                        } else {
-                            doc.addPage({ margin: 0, bufferPages: true });
-                            y = 185;
-                            items = 0;
-                            pagina = pagina + 1;
-                            $scope.dibujarCabeceraPDFReporteHijos(doc, detallesHijos, detalle, pagina,imagenEmpresa);
-                            doc.font('Helvetica', 8);
+
+                    var detallesHijos = reporteHijos;
+                    var doc = new PDFDocument({ compress: false, margin: 10 });
+                    var stream = doc.pipe(blobStream());
+
+                    doc.font('Helvetica', 8);
+                    var y = 185, itemsPorPagina = 15, items = 0, pagina = 1;
+                    $scope.dibujarCabeceraPDFReporteHijos(doc, detallesHijos, detalle, pagina, imagenEmpresa);
+
+                    for (var i = 0; i < detallesHijos.length && items <= itemsPorPagina; i++) {
+
+                        doc.font('Helvetica', 8);
+                        doc.rect(40, y - 5, 60, 20).stroke();
+                        doc.text(detallesHijos[i].empleado.codigo, 45, y);
+                        doc.rect(100, y - 5, 150, 20).stroke();
+                        var nombreTrabajador = $scope.capitalizar(detallesHijos[i].empleado.persona.nombre_completo.toLowerCase());
+                        doc.text(nombreTrabajador, 105, y, { width: 200 });
+
+                        doc.rect(250, y - 5, 150, 20).stroke();
+                        var apellido_materno = detallesHijos[i].persona.apellido_materno;
+                        var apellido_paterno = detallesHijos[i].persona.apellido_paterno;
+                        var nombre = detallesHijos[i].persona.nombres;
+                        var nombre_completo = apellido_paterno + " " + apellido_materno + " " + nombre;
+                        var nombreHijo = $scope.capitalizar(nombre_completo.toLowerCase());
+                        doc.text(nombreHijo, 255, y, { width: 200 });
+
+                        doc.rect(400, y - 5, 60, 20).stroke();
+                        var fecha = new Date(detallesHijos[i].persona.fecha_nacimiento);
+                        var año = fecha.getFullYear();
+                        var mes = fecha.getMonth() + 1;
+                        var dia = fecha.getDate();
+                        var fecha_completa = dia + "/" + mes + "/" + año;
+                        doc.text(fecha_completa, 410, y);
+
+                        doc.rect(460, y - 5, 40, 20).stroke();
+                        doc.text(detallesHijos[i].persona.genero.nombre.toLowerCase(), 462, y);
+
+                        doc.rect(500, y - 5, 27, 20).stroke();
+                        doc.text(detallesHijos[i].edad, 510, y);
+
+                        doc.rect(527, y - 5, 48, 20).stroke();
+                        doc.text(detallesHijos[i].relacion.nombre.toLowerCase(), 535, y);
+
+                        y = y + 20;
+                        items++;
+
+                        if (items == itemsPorPagina || i + 1 == detallesHijos.length) {
+                            if (i + 1 == detallesHijos.length) {
+
+                            } else {
+                                doc.addPage({ margin: 0, bufferPages: true });
+                                y = 185;
+                                items = 0;
+                                pagina = pagina + 1;
+                                $scope.dibujarCabeceraPDFReporteHijos(doc, detallesHijos, detalle, pagina, imagenEmpresa);
+                                doc.font('Helvetica', 8);
+                            }
                         }
                     }
-                }
-                /*var fechaActual = new Date();
-                var min = fechaActual.getMinutes();
-                if (min < 10) {
-                    min = "0" + min;
-                }
-                doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, y);
-                doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, y);*/
-                doc.end();
-                stream.on('finish', function () {
-                    var fileURL = stream.toBlobURL('application/pdf');
-                    window.open(fileURL, '_blank', 'location=no');
+                    /*var fechaActual = new Date();
+                    var min = fechaActual.getMinutes();
+                    if (min < 10) {
+                        min = "0" + min;
+                    }
+                    doc.text("USUARIO: " + $scope.usuario.nombre_usuario, 45, y);
+                    doc.text("IMPRESION : " + fechaActual.getDate() + "/" + (fechaActual.getMonth() + 1) + "/" + fechaActual.getFullYear() + " Hr. " + fechaActual.getHours() + ":" + min, 175, y);*/
+                    doc.end();
+                    stream.on('finish', function () {
+                        var fileURL = stream.toBlobURL('application/pdf');
+                        window.open(fileURL, '_blank', 'location=no');
+                    });
                 });
-                });
-            }  
-        
-            $scope.dibujarCabeceraPDFReporteHijos = function (doc, datos, detalle, pagina,imagenEmpresa) {
+            }
+
+            $scope.dibujarCabeceraPDFReporteHijos = function (doc, datos, detalle, pagina, imagenEmpresa) {
                 doc.font('Helvetica-Bold', 12);
-               
-                    doc.image(imagenEmpresa, 60, 50, { fit: [75, 75] }); 
-                
+
+                doc.image(imagenEmpresa, 60, 50, { fit: [75, 75] });
+
                 doc.text("REPORTE DE HIJOS", 0, 100, { align: "center" });
-                var tipo ;
+                var tipo;
                 if (detalle.todos == true) {
                     tipo = "ACTIVO";
-                }else{
+                } else {
                     tipo = "TODOS";
                 }
                 doc.font('Helvetica-Bold', 8);
-                doc.text("TIPO "+tipo,0,115,{align:"center"});
-                doc.text("EDAD  " + detalle.desde+" A "+detalle.hasta+" AÑOS", 0, 130, { align: "center" });
-               
+                doc.text("TIPO " + tipo, 0, 115, { align: "center" });
+                doc.text("EDAD  " + detalle.desde + " A " + detalle.hasta + " AÑOS", 0, 130, { align: "center" });
+
                 doc.rect(40, 150, 210, 15).stroke();
-                doc.text("EMPLEADOS",120,155);
+                doc.text("EMPLEADOS", 120, 155);
                 doc.rect(250, 150, 325, 15).stroke();
-                doc.text("HIJOS",400,155);
-        
+                doc.text("HIJOS", 400, 155);
+
                 doc.rect(40, 165, 60, 15).stroke();
-                doc.text("CODIGO",50,170);
+                doc.text("CODIGO", 50, 170);
                 doc.rect(100, 165, 150, 15).stroke();
-                doc.text("NOMBRE",150,170);
-        
+                doc.text("NOMBRE", 150, 170);
+
                 doc.rect(250, 165, 150, 15).stroke();
-                doc.text("NOMBRE",300,170);
+                doc.text("NOMBRE", 300, 170);
                 doc.rect(400, 165, 60, 15).stroke();
-                doc.text("FECHA_NAC",405,170);
+                doc.text("FECHA_NAC", 405, 170);
                 doc.rect(460, 165, 40, 15).stroke();
-                doc.text("SEXO",470,170);
+                doc.text("SEXO", 470, 170);
                 doc.rect(500, 165, 27, 15).stroke();
-                doc.text("EDAD",502,170);
+                doc.text("EDAD", 502, 170);
                 doc.rect(527, 165, 48, 15).stroke();
-                doc.text("RELACION",531,170);
+                doc.text("RELACION", 531, 170);
             }
 
 
@@ -1932,7 +1932,7 @@ angular.module('agil.controladores')
                 $scope.obtenerHistorialEmpresaVacacion($scope.filtroVacacion)
                 $scope.abrirPopup($scope.idModalReporteVacaciones);
             }
-            
+
             $scope.cerrarDialogReporteVacaciones = function () {
                 $scope.cerrarPopup($scope.idModalReporteVacaciones);
             }
@@ -1949,7 +1949,7 @@ angular.module('agil.controladores')
             }
 
             $scope.abrirDialogReporteRolTurnos = function () {
-                shortcut.add("ESC", function() {
+                shortcut.add("ESC", function () {
                     $scope.cerrarDialogReporteRolTurnos()
                 })
                 /*     $scope.filtroRol = { inicio: 0, fin: 0, grupo: 0 } */
@@ -1969,7 +1969,7 @@ angular.module('agil.controladores')
                 $scope.abrirPopup($scope.idModalReporteRolTurnos);
             }
             $scope.cerrarDialogReporteRolTurnos = function () {
-                shortcut.remove("ESC", function() {
+                shortcut.remove("ESC", function () {
                 })
                 $scope.obtenerRecursosHumanos()
                 $scope.cerrarPopup($scope.idModalReporteRolTurnos);
@@ -2651,7 +2651,7 @@ angular.module('agil.controladores')
                     $scope.recargarItemsTabla();
                     blockUI.stop();
                 }
-                
+
             }
             $scope.subirExcelRTurnoEmpleados = function (event) {
                 blockUI.start();
@@ -5494,7 +5494,10 @@ angular.module('agil.controladores')
                 var promesa = ListaRolTurnos($scope.usuario.id_empresa, idficha)
                 promesa.then(function (datos) {
                     $scope.empleadosRolTurnoE = datos.rolesTurno
-                    $scope.fechaInicioCalendario = $scope.fechaATexto(new Date(datos.fechaInicio))
+                    var f =new Date(datos.fechaInicio)
+                    f.setDate(1)
+                    $scope.fechaInicioCalendario = $scope.fechaATexto(new Date(f))
+                  
                     blockUI.stop()
                 })
             }
@@ -5522,8 +5525,12 @@ angular.module('agil.controladores')
                 promesa.then(function (datos) {
                     $scope.paginator.setPages(datos.paginas);
                     $scope.empleadosRolTurno = datos.rolesTurno
-                    $scope.fechaInicioCalendario = $scope.fechaATexto(new Date(datos.fechaInicio))
-
+                    var f =new Date(datos.fechaInicio)
+                    f.setDate(1)
+                    var f =new Date(datos.fechaInicio)
+                    f.setDate(1)
+                    $scope.fechaInicioCalendario = $scope.fechaATexto(new Date(f))
+                   
                     var fecha = new Date()
                     var ultimoDia = new Date(fecha.getFullYear(), 12, 0).getDate();
                     var fecha2 = "", grupo = "", nombre = "", fecha3 = "", campo = "";
@@ -9244,7 +9251,7 @@ angular.module('agil.controladores')
             $scope.CalendarioRolTurnos = function (anio, filtro) {
                 $scope.mesesRolTurno = []
                 var diasAnio = []
-               if (filtro) {
+                if (filtro) {
                     if (filtro.inicio) {
                         var inicio = new Date($scope.convertirFecha(filtro.inicio)).getMonth()
                         var fin = new Date($scope.convertirFecha(filtro.fin)).getMonth()
@@ -9256,7 +9263,7 @@ angular.module('agil.controladores')
                             inicio = new Date($scope.convertirFecha(filtro.inicio2)).getMonth()
                             diaInicio = new Date($scope.convertirFecha(filtro.inicio2)).getDate()
                             var anioInicio = new Date($scope.convertirFecha(filtro.inicio2)).getFullYear()
-                          
+
                         }
                         if (filtro.fin2) {
                             var fin = new Date($scope.convertirFecha(filtro.fin2)).getMonth()
@@ -9274,8 +9281,12 @@ angular.module('agil.controladores')
                         cmes.anio = elementanio
                         if (filtro) {
                             if (filtro.inicio) {
-                                if (cmes.id > inicio - 1 && cmes.id <= fin) {
-                                    cmes.visible = true
+                                if (cmes.anio >= anioInicio && cmes.anio <= aniofin) {
+                                    if (cmes.id > inicio - 1 && cmes.id <= fin) {
+                                        cmes.visible = true
+                                    } else {
+                                        cmes.visible = false
+                                    }
                                 } else {
                                     cmes.visible = false
                                 }

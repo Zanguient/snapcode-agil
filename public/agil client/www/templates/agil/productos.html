@@ -898,7 +898,8 @@
 										</td>
 										<td>
 											<select required id="sucursalKardex" name="sucursalKardex" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-											 ng-model="filtroKardexProducto.sucursal" ng-change="obtenerAlmacenes(filtroKardexProducto.sucursal)" required="">
+											 ng-model="filtroKardexProducto.sucursal" ng-change="obtenerAlmacenes(filtroKardexProducto.sucursal)" required>
+											 <option disabled value="">Seleccione sucursal</option>
 											</select>&nbsp
 										</td>
 										<td>
@@ -906,8 +907,9 @@
 										</td>
 										<td>
 											<select required id="almacen" name="almacen" ng-model="filtroKardexProducto.almacen" ng-options="almacen.id as almacen.nombre for almacen in almacenes track by almacen.id"
-											 data-placeholder="Click para escoger" required=""></select>&nbsp
-
+											 data-placeholder="Click para escoger" required>
+											 <option disabled value="">Seleccione Almacen</option>
+											</select>&nbsp
 										</td>
 										<td>
 											<label>DESDE</label>&nbsp
