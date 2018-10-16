@@ -1473,22 +1473,22 @@
 										{{detalleVenta.lote}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_importe">
-										{{detalleVenta.importe}}
+										{{detalleVenta.importe | number: 2}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_descuento">
-										{{detalleVenta.descuento}}
+										{{detalleVenta.total_descuento | number: 2}}<!--&nbsp;{{detalleVenta.tipo_descuento ? '('+detalleVenta.descuento+'%)':''}}-->
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_recargo">
-										{{detalleVenta.recargo}}
+										{{detalleVenta.total_recargo | number: 2}}<!--&nbsp;{{detalleVenta.tipo_recargo ? '('+detalleVenta.recargo+'%)':''}}-->
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_ice">
-										{{detalleVenta.ice}}
+										{{detalleVenta.ice | number: 2}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_excento">
-										{{detalleVenta.excento}}
+										{{detalleVenta.excento | number: 2 }}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_total">
-										{{detalleVenta.total}}
+										{{detalleVenta.total | number: 2}}
 									</td>
 									<td>
 										<a ng-if="!detalleVenta.id" class="red" href="javascript:void(0)" ng-click="eliminarDetalleVenta(detalleVenta)">
@@ -1525,22 +1525,22 @@
 
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_importe">
-										{{venta.importe}}
+										{{venta.importe | number: 2}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_descuento">
-										{{venta.total_descuento_general}}
+										{{venta.total_descuento_general | number: 2}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_recargo">
-										{{venta.total_recargo_general}}
+										{{venta.total_recargo_general | number: 2}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_ice">
-										{{venta.total_ice}}
+										{{venta.total_ice | number: 2 }}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_excento">
-										{{venta.total_excento}}
+										{{venta.total_exento| number: 2}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_total">
-										{{venta.total}}
+										{{venta.total| number: 2}}
 									</td>
 									<td>
 									</td>

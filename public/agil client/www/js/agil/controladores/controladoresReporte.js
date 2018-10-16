@@ -1086,48 +1086,54 @@ angular.module('agil.controladores')
 					doc.text(ventas[i].autorizacion, 143, y);
 					doc.text((ventas[i].activa ? "V" : "A"), 215, y);
 					doc.text(ventas[i].activa ? ventas[i].cliente.nit : '0', 235, y);
-					doc.font('Helvetica', 6);
+					if (ventas[i].cliente.razon_social.length > 19) {
+						doc.font('Helvetica', 6);						
+					}
 					doc.text(ventas[i].activa ? ventas[i].cliente.razon_social : 'ANULADO', 283, y - 6, { width: 100 });
 					doc.font('Helvetica', 8)
-					doc.text(ventas[i].activa ? ventas[i].importe : 0, 385, y);
-					doc.text(0, 430, y);
-					doc.text(0, 465, y);
-					doc.text(0, 507, y);
-					doc.text(ventas[i].activa ? ventas[i].importe : 0, 540, y);
-					doc.text(ventas[i].activa ? (Math.round(ventas[i].total_descuento * 100) / 100): 0, 580, y);
-					doc.text(ventas[i].activa ? (Math.round(ventas[i].total * 100) / 100) : 0, 615, y);
-					doc.text(ventas[i].activa ? (Math.round((ventas[i].total * 0.13) * 100) / 100) : 0, 650, y);
+					doc.text(ventas[i].activa ? (ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0)).toFixed(2) : '0.00', 385, y);
+					doc.text(ventas[i].activa ? ventas[i].total_ice ? ventas[i].total_ice.toFixed(2) : '0.00' : '0.00', 430, y);
+					doc.text(ventas[i].activa ? ventas[i].total_exento ? ventas[i].total_exento.toFixed(2) : '0.00' : '0.00', 465, y);
+					doc.text('0.00', 507, y);
+					var venta_importe_ICE_IE_HD_T = (ventas[i].total_ice ? ventas[i].total_ice : 0) + (ventas[i].total_exento ? ventas[i].total_exento : 0) 
+					var venta_subtotal = ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) - venta_importe_ICE_IE_HD_T
+					var venta_importe_base_debito_fiscal = ventas[i].activa ? (Math.round((venta_subtotal - ventas[i].total_descuento) * 100) / 100) : 0
+					doc.text(ventas[i].activa ? venta_subtotal.toFixed(2) : '0.00', 540, y);
+					doc.text(ventas[i].activa ? (Math.round(ventas[i].total_descuento * 100) / 100).toFixed(2): '0.00', 580, y);
+					doc.text(venta_importe_base_debito_fiscal.toFixed(2), 615, y);
+					doc.text(ventas[i].activa ? (Math.round((venta_importe_base_debito_fiscal * 0.13) * 100) / 100).toFixed(2) : '0.00', 650, y);
 					doc.text(ventas[i].activa ? ventas[i].codigo_control : 0, 685, y);
 					y = y + 30;
-					sumaSubImporte = (ventas[i].activa ? sumaSubImporte + ventas[i].importe : sumaSubImporte);
-					sumaSubImporteIce = 0;
-					sumaSubImporteExp = 0;
-					sumaSubImporteGrab = 0;
-					sumaSubTotal = ventas[i].activa ? sumaSubTotal + ventas[i].importe : sumaSubTotal;
+					sumaSubImporte = (ventas[i].activa ? sumaSubImporte + ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaSubImporte);
+					sumaSubImporteIce = (ventas[i].activa ? sumaSubImporteIce + ventas[i].total_ice : sumaSubImporteIce);
+					sumaSubImporteExp = (ventas[i].activa ? sumaSubImporteExp + ventas[i].total_exento : sumaSubImporteExp);
+					sumaSubImporteGrab = 0///(ventas[i].activa ? sumaSubImporteGrab + ventas[i].total_recargo : sumaSubImporteGrab);
+					sumaSubTotal = ventas[i].activa ? sumaSubTotal + ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaSubTotal;
 					sumaSubDescuentos = ventas[i].activa ? sumaSubDescuentos + (Math.round((ventas[i].total_descuento) * 100) / 100) : sumaSubDescuentos;
-					sumaSubImporteBase = ventas[i].activa ? sumaSubImporteBase + ventas[i].total : sumaSubImporteBase;
-					sumaSubCredito = ventas[i].activa ? sumaSubCredito + (Math.round((ventas[i].total * 0.13) * 100) / 100) : sumaSubCredito;
-					sumaImporte = ventas[i].activa ? sumaImporte + ventas[i].importe : sumaImporte;
-					sumaImporteIce = 0;
-					sumaImporteExp = 0;
-					sumaImporteGrab = 0;
-					sumaTotal = ventas[i].activa ? sumaTotal + ventas[i].importe : sumaTotal;
+					sumaSubImporteBase = ventas[i].activa ? sumaSubImporteBase + venta_importe_base_debito_fiscal : sumaSubImporteBase;
+					sumaSubCredito = ventas[i].activa ? sumaSubCredito + (Math.round((venta_importe_base_debito_fiscal * 0.13) * 100) / 100) : sumaSubCredito;
+					sumaImporte = ventas[i].activa ? sumaImporte + ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaImporte;
+					
+					sumaTotal = ventas[i].activa ? sumaTotal + ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaTotal;
 					sumaDescuentos = ventas[i].activa ? sumaDescuentos + ventas[i].total_descuento : sumaDescuentos;
-					sumaImporteBase = ventas[i].activa ? sumaImporteBase + ventas[i].total : sumaImporteBase;
-					sumaCredito = ventas[i].activa ? sumaCredito + (Math.round((ventas[i].total * 0.13) * 100) / 100) : sumaCredito;
+					sumaImporteBase = ventas[i].activa ? sumaImporteBase + venta_importe_base_debito_fiscal : sumaImporteBase;
+					sumaCredito = ventas[i].activa ? sumaCredito + (Math.round((venta_importe_base_debito_fiscal * 0.13) * 100) / 100) : sumaCredito;
 					items++;
 
 					if (items == itemsPorPagina || i + 1 == ventas.length) {
+						sumaImporteIce += sumaSubImporteIce;
+						sumaImporteExp += sumaSubImporteExp;
+						sumaImporteGrab += sumaSubImporteGrab;
 						doc.font('Helvetica-Bold', 7);
 						doc.text("SUBTOTALES", 283, y);
-						doc.text(Math.round((sumaSubImporte) * 100) / 100, 385, y);
-						doc.text(Math.round((sumaSubImporteIce) * 100) / 100, 430, y);
-						doc.text(Math.round((sumaSubImporteExp) * 100) / 100, 465, y);
-						doc.text(Math.round((sumaSubImporteGrab) * 100) / 100, 507, y);
-						doc.text(Math.round((sumaSubTotal) * 100) / 100, 540, y);
-						doc.text(Math.round((sumaSubDescuentos) * 100) / 100, 580, y);
-						doc.text(Math.round((sumaSubImporteBase) * 100) / 100, 615, y);
-						doc.text(Math.round((sumaSubCredito) * 100) / 100, 650, y);
+						doc.text((Math.round((sumaSubImporte) * 100) / 100).toFixed(2), 385, y);
+						doc.text((Math.round((sumaSubImporteIce) * 100) / 100).toFixed(2), 430, y);
+						doc.text((Math.round((sumaSubImporteExp) * 100) / 100).toFixed(2), 465, y);
+						doc.text((Math.round((sumaSubImporteGrab) * 100) / 100).toFixed(2), 507, y);
+						doc.text((Math.round((sumaSubTotal) * 100) / 100).toFixed(2), 540, y);
+						doc.text((Math.round((sumaSubDescuentos) * 100) / 100).toFixed(2), 580, y);
+						doc.text((Math.round((sumaSubImporteBase) * 100) / 100).toFixed(2), 615, y);
+						doc.text((Math.round((sumaSubCredito) * 100) / 100).toFixed(2), 650, y);
 						doc.rect(40, y - 10, 720, 30).stroke();
 						doc.font('Helvetica', 8);
 						sumaSubImporte = 0; sumaSubImporteNo = 0; sumaSubTotal = 0; sumaSubDescuentos = 0; sumaSubImporteBase = 0; sumaSubCredito = 0;
@@ -1135,14 +1141,14 @@ angular.module('agil.controladores')
 						if (i + 1 == ventas.length) {
 							doc.font('Helvetica-Bold', 7);
 							doc.text("TOTALES", 283, y + 30);
-							doc.text(Math.round((sumaImporte) * 100) / 100, 385, y + 30);
-							doc.text(Math.round((sumaImporteIce) * 100) / 100, 430, y + 30);
-							doc.text(Math.round((sumaImporteExp) * 100) / 100, 465, y + 30);
-							doc.text(Math.round((sumaImporteGrab) * 100) / 100, 507, y + 30);
-							doc.text(Math.round((sumaTotal) * 100) / 100, 540, y + 30);
-							doc.text(Math.round((sumaDescuentos) * 100) / 100, 580, y + 30);
-							doc.text(Math.round((sumaImporteBase) * 100) / 100, 615, y + 30);
-							doc.text(Math.round((sumaCredito) * 100) / 100, 650, y + 30);
+							doc.text((Math.round((sumaImporte) * 100) / 100).toFixed(2), 385, y + 30);
+							doc.text((Math.round((sumaImporteIce) * 100) / 100).toFixed(2), 430, y + 30);
+							doc.text((Math.round((sumaImporteExp) * 100) / 100).toFixed(2), 465, y + 30);
+							doc.text((Math.round((sumaImporteGrab) * 100) / 100).toFixed(2), 507, y + 30);
+							doc.text((Math.round((sumaTotal) * 100) / 100).toFixed(2), 540, y + 30);
+							doc.text((Math.round((sumaDescuentos) * 100) / 100).toFixed(2), 580, y + 30);
+							doc.text((Math.round((sumaImporteBase) * 100) / 100).toFixed(2), 615, y + 30);
+							doc.text((Math.round((sumaCredito) * 100) / 100).toFixed(2), 650, y + 30);
 							doc.rect(40, y - 10 + 30, 720, 30).stroke();
 							doc.font('Helvetica', 8);
 						} else {

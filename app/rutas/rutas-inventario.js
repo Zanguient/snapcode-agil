@@ -2515,7 +2515,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			despachado: venta.despachado,
 			id_vendedor: (venta.vendedor ? venta.vendedor.id : null),
 			observacion: venta.observacion,
-			total_descuento: venta.total_descuento_general
+			total_descuento: venta.total_descuento_general,
+			total_ice: venta.total_ice,
+			total_recargo : venta.total_recargo_general,
+			total_exento : venta.total_exento
 		}, { transaction: t }).then(function (ventaCreada) {
 			var promisesVenta = [];
 			if (esFactura) {
@@ -5253,7 +5256,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			despachado: venta.despachado,
 			id_vendedor: (venta.vendedor ? venta.vendedor.id : null),
 			observacion: venta.observacion,
-			total_descuento: venta.total_descuento_general
+			total_descuento: venta.total_descuento_general,
+			total_ice: venta.total_ice,
+			total_recargo : venta.total_recargo_general,
+			total_exento : venta.total_exento
 		}, { transaction: t }).then(function (ventaCreada) {
 			venta.ventaCreada = ventaCreada
 			return Dosificacion.update({

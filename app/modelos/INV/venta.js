@@ -120,7 +120,23 @@ module.exports = function (sequelize, Sequelize) {
 		},
 		total_descuento: {
 			type: Sequelize.DECIMAL(20,4),
-			field: 'descuento_general'
+			field: 'descuento_general',
+			defaultValue: 0
+		},
+		total_recargo: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'total_recargo',
+			defaultValue: 0
+		},
+		total_ice: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'total_ice',
+			defaultValue: 0
+		},
+		total_exento: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'total_exento',
+			defaultValue: 0
 		}
 	}, {
 			freezeTableName: true
