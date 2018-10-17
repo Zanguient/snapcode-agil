@@ -63,7 +63,9 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 						{ model: Clase, as: 'movimientoServicio', condicionMovimiento },
 						{
 							model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa }
-						}]
+						}],
+						order: [[{raw:'fecha + factura DESC'}]]
+
 					}).then(function (ventas2) {
 
 						var  entity = ventas.concat(ventas2);

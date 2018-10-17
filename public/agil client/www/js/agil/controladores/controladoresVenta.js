@@ -649,14 +649,14 @@ angular.module('agil.controladores')
 								var cantidadTotal = detalleVenta.cantidad, i = 0, detalleVentaOriginal = JSON.parse(JSON.stringify(detalleVenta));
 								if (detalleVenta.descuento > 0) {
 									if (detalleVenta.tipo_descuento) {
-										$scope.venta.total_descuento_general += (((detalleVenta.precio_unitario * detalleVenta.descuento) / 100) * detalleVenta.cantidad)
+										$scope.venta.total_descuento_general +=(detalleVenta.precio_unitario * detalleVenta.descuento)* detalleVenta.cantidad
 									} else {
 										$scope.venta.total_descuento_general += detalleVenta.descuento
 									}
 								}
 								if (detalleVenta.recargo > 0) {
 									if (detalleVenta.tipo_recargo) {
-										$scope.venta.total_recargo_general += (((detalleVenta.precio_unitario * detalleVenta.recargo) / 100) * detalleVenta.cantidad)
+										$scope.venta.total_recargo_general += (detalleVenta.precio_unitario * detalleVenta.recargo) * detalleVenta.cantidad
 									} else {
 										$scope.venta.total_recargo_general += detalleVenta.recargo
 									}
@@ -703,20 +703,20 @@ angular.module('agil.controladores')
 								if (!detalleVenta.tipo_descuento) {
 									$scope.venta.total_descuento_general = detalleVenta.descuento;
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
-										paraRectificacionDescuento[index].descuento = Math.round((totalDescuento * paraRectificacionDescuento[index].cantidad) * 100) / 100
+										paraRectificacionDescuento[index].descuento = totalDescuento * paraRectificacionDescuento[index].cantidad
 									}
 								}
 								if (!detalleVenta.tipo_recargo) {
 									$scope.venta.total_recargo_general = detalleVenta.recargo;
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
-										paraRectificacionDescuento[index].recargo = Math.round((totalRecargo * paraRectificacionDescuento[index].cantidad) * 100) / 100
+										paraRectificacionDescuento[index].recargo = totalRecargo * paraRectificacionDescuento[index].cantidad
 									}
 								}
 								
 								if (total_ice > 0) {
 									$scope.venta.total_ice = detalleVenta.ice;
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
-										paraRectificacionDescuento[index].ice = Math.round((total_ice * paraRectificacionDescuento[index].cantidad) * 100) / 100
+										paraRectificacionDescuento[index].ice = total_ice * paraRectificacionDescuento[index].cantidad
 									}
 								}else{
 									$scope.venta.total_ice = 0
@@ -724,7 +724,7 @@ angular.module('agil.controladores')
 								if (total_exento > 0) {
 									$scope.venta.total_exento = detalleVenta.excento;
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
-										paraRectificacionDescuento[index].excento = Math.round((total_exento * paraRectificacionDescuento[index].cantidad) * 100) / 100
+										paraRectificacionDescuento[index].excento = total_exento * paraRectificacionDescuento[index].cantidad
 									}
 								}else{
 									$scope.venta.total_exento = 0
@@ -782,20 +782,20 @@ angular.module('agil.controladores')
 								if (!detalleVenta.tipo_descuento) {
 									$scope.venta.total_descuento_general = detalleVenta.descuento;
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
-										paraRectificacionDescuento[index].descuento = Math.round((totalDescuento * paraRectificacionDescuento[index].cantidad) * 100) / 100
+										paraRectificacionDescuento[index].descuento = totalDescuento * paraRectificacionDescuento[index].cantidad
 									}
 								}
 								if (!detalleVenta.tipo_recargo) {
 									$scope.venta.total_recargo_general = detalleVenta.recargo;
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
-										paraRectificacionDescuento[index].recargo = Math.round((totalRecargo * paraRectificacionDescuento[index].cantidad) * 100) / 100
+										paraRectificacionDescuento[index].recargo = totalRecargo * paraRectificacionDescuento[index].cantidad
 									}
 								}
 								
 								if (total_ice > 0) {
 									$scope.venta.total_ice = detalleVenta.ice;
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
-										paraRectificacionDescuento[index].ice = Math.round((total_ice * paraRectificacionDescuento[index].cantidad) * 100) / 100
+										paraRectificacionDescuento[index].ice = total_ice * paraRectificacionDescuento[index].cantidad
 									}
 								}else{
 									$scope.venta.total_ice = 0
@@ -803,7 +803,7 @@ angular.module('agil.controladores')
 								if (total_exento > 0) {
 									$scope.venta.total_exento = detalleVenta.excento;
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
-										paraRectificacionDescuento[index].excento = Math.round((total_exento * paraRectificacionDescuento[index].cantidad) * 100) / 100
+										paraRectificacionDescuento[index].excento = total_exento * paraRectificacionDescuento[index].cantidad
 									}
 								}else{
 									$scope.venta.total_exento = 0
@@ -929,7 +929,7 @@ angular.module('agil.controladores')
 
 			$scope.calcularImporte = function (detalle) {
 				if (detalle !== null && detalle !== undefined) {
-					detalle.importe = Math.round((detalle.cantidad * detalle.precio_unitario) * 100) / 100;
+					detalle.importe =detalle.cantidad * detalle.precio_unitario;
 					var descuento, recargo;
 					if (detalle.tipo_descuento) {
 						descuento = detalle.importe * (detalle.descuento / 100);
@@ -943,10 +943,10 @@ angular.module('agil.controladores')
 					}
 					detalle.total_descuento = descuento
 					detalle.total_recargo = recargo
-					detalle.total = Math.round((detalle.importe - descuento + recargo - detalle.ice - detalle.excento) * 1000) / 1000;
+					detalle.total = detalle.importe - descuento + recargo - detalle.ice - detalle.excento;
 					return detalle
 				}
-				$scope.detalleVenta.importe = Math.round(($scope.detalleVenta.cantidad * $scope.detalleVenta.precio_unitario) * 1000) / 1000;
+				$scope.detalleVenta.importe = $scope.detalleVenta.cantidad * $scope.detalleVenta.precio_unitario;
 				var descuento, recargo;
 				if ($scope.detalleVenta.tipo_descuento) {
 					descuento = $scope.detalleVenta.importe * ($scope.detalleVenta.descuento / 100);
@@ -960,7 +960,7 @@ angular.module('agil.controladores')
 				}
 				$scope.detalleVenta.total_descuento = descuento
 				$scope.detalleVenta.total_recargo = recargo
-				$scope.detalleVenta.total = Math.round(($scope.detalleVenta.importe - descuento + recargo - $scope.detalleVenta.ice - $scope.detalleVenta.excento) * 1000) / 1000;
+				$scope.detalleVenta.total = $scope.detalleVenta.importe - descuento + recargo - $scope.detalleVenta.ice - $scope.detalleVenta.excento;
 			}
 
 			$scope.sumarTotalImporte = function () {
@@ -974,9 +974,9 @@ angular.module('agil.controladores')
 						$scope.venta.total_recargo_general += $scope.venta.detallesVenta[i].total_recargo ? $scope.venta.detallesVenta[i].total_recargo : 0
 					}
 				}
-				$scope.venta.importe = Math.round((sumaImporte) * 1000) / 1000;
-				$scope.venta.total_descuento_general = Math.round(($scope.venta.total_descuento_general) * 1000) / 1000;
-				$scope.venta.total_recargo_general =  Math.round(($scope.venta.total_recargo_general) * 1000) / 1000;
+				$scope.venta.importe = sumaImporte;
+				$scope.venta.total_descuento_general = $scope.venta.total_descuento_general;
+				$scope.venta.total_recargo_general =  $scope.venta.total_recargo_general;
 			}
 
 			$scope.sumarTotal = function () {
@@ -989,9 +989,9 @@ angular.module('agil.controladores')
 						$scope.venta.total_recargo_general += $scope.venta.detallesVenta[i].recargo ? $scope.venta.detallesVenta[i].total_recargo : 0
 					}
 				}
-				$scope.venta.total = Math.round((sumaTotal) * 1000) / 1000;
+				$scope.venta.total = sumaTotal;
 				$scope.venta.pagado = $scope.venta.total;
-				$scope.venta.total_descuento_general = Math.round(($scope.venta.total_descuento_general) * 1000) / 1000;
+				$scope.venta.total_descuento_general = $scope.venta.total_descuento_general;
 			}
 
 			$scope.calcularSaldo = function () {

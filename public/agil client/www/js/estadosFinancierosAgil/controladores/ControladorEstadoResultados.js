@@ -658,7 +658,7 @@ angular.module('agil.controladores')
 
 								for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
 									cuenta2 = cuentasApropiacion[p]
-
+									cuenta2.saldo=(cuenta2.debe>cuenta2.haber)?cuenta2.saldo:-(cuenta.saldo)
 									var cod = String(cuenta2.codigo).substr(0, 5)
 									if (cuenta3.codigo == cod) {
 										doc.text(cuenta2.nombre, 60, y)
@@ -1748,6 +1748,7 @@ angular.module('agil.controladores')
 								items++; */
 								for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
 									var cuenta2 = cuentasApropiacion[p]
+									cuenta2.saldo=(cuenta2.debe>cuenta2.haber)?cuenta2.saldo:-(cuenta.saldo)
 									if (cuenta2.primerAno.tipoCuenta.nombre_corto === "4") {
 										var cod = String(cuenta2.primerAno.codigo).substr(0, 5)
 										if (cuenta4.primerAno.codigo == cod) {
@@ -2145,6 +2146,7 @@ angular.module('agil.controladores')
 												})) {
 													for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
 														cuenta2 = cuentasApropiacion[p]
+														cuenta2.saldo=(cuenta2.debe>cuenta2.haber)?cuenta2.saldo:-(cuenta.saldo)
 														if (cuenta2.tipoCuenta.nombre_corto === "4") {
 															var cod = String(cuenta2.codigo).substr(0, 5)
 															if (cuenta3.codigo == cod) {
@@ -2249,6 +2251,7 @@ angular.module('agil.controladores')
 									})) {
 										for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
 											cuenta2 = cuentasApropiacion[p]
+											cuenta2.saldo=(cuenta2.debe>cuenta2.haber)?cuenta2.saldo:-(cuenta.saldo)
 											if (cuenta2.tipoCuenta.nombre_corto === "4") {
 												var cod = String(cuenta2.codigo).substr(0, 5)
 												if (cuenta3.codigo == cod) {
@@ -2580,6 +2583,7 @@ angular.module('agil.controladores')
 
 									for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
 										cuenta2 = cuentasApropiacion[p]
+										cuenta2.saldo=(cuenta2.debe>cuenta2.haber)?cuenta2.saldo:-(cuenta.saldo)
 										if (cuenta2.primerAno.tipoCuenta.nombre_corto === "4") {
 											var cod = String(cuenta2.primerAno.codigo).substr(0, 5)
 											if (cuenta3.primerAno.codigo == cod) {
@@ -3053,7 +3057,7 @@ angular.module('agil.controladores')
 								for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
 
 									cuenta2 = cuentasApropiacion[p]
-
+									cuenta2.saldo=(cuenta2.debe>cuenta2.haber)?cuenta2.saldo:-(cuenta.saldo)
 									var cod = String(cuenta2.codigo).substr(0, 5)
 									if (cuenta3.codigo == cod) {
 										texto.push("\t\t")

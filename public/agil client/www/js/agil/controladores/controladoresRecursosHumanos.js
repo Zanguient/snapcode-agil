@@ -5494,10 +5494,10 @@ angular.module('agil.controladores')
                 var promesa = ListaRolTurnos($scope.usuario.id_empresa, idficha)
                 promesa.then(function (datos) {
                     $scope.empleadosRolTurnoE = datos.rolesTurno
-                    var f =new Date(datos.fechaInicio)
+                    var f = new Date(datos.fechaInicio)
                     f.setDate(1)
                     $scope.fechaInicioCalendario = $scope.fechaATexto(new Date(f))
-                  
+
                     blockUI.stop()
                 })
             }
@@ -5525,12 +5525,12 @@ angular.module('agil.controladores')
                 promesa.then(function (datos) {
                     $scope.paginator.setPages(datos.paginas);
                     $scope.empleadosRolTurno = datos.rolesTurno
-                    var f =new Date(datos.fechaInicio)
+                    var f = new Date(datos.fechaInicio)
                     f.setDate(1)
-                    var f =new Date(datos.fechaInicio)
+                    var f = new Date(datos.fechaInicio)
                     f.setDate(1)
                     $scope.fechaInicioCalendario = $scope.fechaATexto(new Date(f))
-                   
+
                     var fecha = new Date()
                     var ultimoDia = new Date(fecha.getFullYear(), 12, 0).getDate();
                     var fecha2 = "", grupo = "", nombre = "", fecha3 = "", campo = "";
@@ -9043,12 +9043,12 @@ angular.module('agil.controladores')
                 }
 
                 $scope.diasAnio = $scope.CalendarioRolTurnos(anio, filtro)
-                $scope.diasAnioPieTrabajos = $scope.CalendarioRolTurnos(anio, filtro)
-                $scope.diasAnioPieAusencias = $scope.CalendarioRolTurnos(anio, filtro)
-                $scope.diasAnioPieVacaciones = $scope.CalendarioRolTurnos(anio, filtro)
+                $scope.diasAnioPieTrabajos = Object.assign([],$scope.diasAnio)
+                $scope.diasAnioPieAusencias = Object.assign([],$scope.diasAnio)
+                $scope.diasAnioPieVacaciones = Object.assign([],$scope.diasAnio)
                 $scope.empleadosRolTurno.forEach(function (rol, index, array) {
 
-                    rol.diasAnio = $scope.CalendarioRolTurnos(anio, filtro)
+                    rol.diasAnio = Object.assign([],$scope.diasAnio)
 
                     if (index == array.length - 1) {
                         $scope.empleadosRolTurno.forEach(function (rol, index, array) {
@@ -9082,6 +9082,7 @@ angular.module('agil.controladores')
                                                 i = rol.diasAnio.length
                                                 element.texto = "T"
                                             } else {
+                                                
                                                 element.texto = "T"
                                             }
                                             a++
@@ -9280,8 +9281,8 @@ angular.module('agil.controladores')
                         cmes.dias = []
                         cmes.anio = elementanio
                         if (filtro) {
-                            if (filtro.inicio) {
-                                if (cmes.anio >= anioInicio && cmes.anio <= aniofin) {
+                            if (filtro.inicio) {    
+                                if (elementanio >= anioInicio &&elementanio <= aniofin) {
                                     if (cmes.id > inicio - 1 && cmes.id <= fin) {
                                         cmes.visible = true
                                     } else {
@@ -9303,27 +9304,33 @@ angular.module('agil.controladores')
                                 var fecha = $scope.fechaPorDia(elementanio, i);
                                 var mes = fecha.getMonth();
                                 var dia = fecha.getDate()
+                                var anio = fecha.getFullYear()
                                 var dia_semana = fecha.getDay();
-                                var diaactual = { id: i, dia: dia, visible: true, texto: "", fecha: $scope.fechaATexto(fecha), mes: $scope.mesesRolTurno[mes] }
-
-                                if (mes == inicio) {
-                                    if (dia >= diaInicio) {
-                                        diasAnio.push(diaactual)
+                                var mesRolT= $scope.mesesRolTurno.find(function(rol){
+                                    return (rol.anio==anio && rol.id==mes)
+                                })
+                                var diaactual = { id: i, dia: dia, visible: true, texto: "", fecha: $scope.fechaATexto(fecha), mes: mesRolT }
+                                if (anio >= anioInicio && anio <= aniofin) {
+                                    if (mes == inicio) {
+                                        if (dia >= diaInicio) {
+                                            diasAnio.push(diaactual)
+                                        } else {
+                                            diaactual.visible = false
+                                            diasAnio.push(diaactual)
+                                        }
+                                    } else if (mes == fin) {
+                                        if (dia <= diafin) {
+                                            diasAnio.push(diaactual)
+                                        } else {
+                                            diaactual.visible = false
+                                            diasAnio.push(diaactual)
+                                        }
                                     } else {
-                                        diaactual.visible = false
-                                        diasAnio.push(diaactual)
-                                    }
-                                } else if (mes == fin) {
-                                    if (dia <= diafin) {
-                                        diasAnio.push(diaactual)
-                                    } else {
-                                        diaactual.visible = false
                                         diasAnio.push(diaactual)
                                     }
                                 } else {
-                                    diasAnio.push(diaactual)
+                                    diaactual.visible = false
                                 }
-
                                 for (var j = 0; j < $scope.mesesRolTurno.length; j++) {
                                     var element = $scope.mesesRolTurno[j];
                                     if (element.anio == elementanio) {
