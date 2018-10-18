@@ -965,21 +965,21 @@ angular.module('agil.controladores')
 				var linea = "";
 				for (var i = 0; i < ventas.length; i++) {
 					ventas[i].fecha = new Date(ventas[i].fecha);
-					linea = linea + ventas[i].fecha.getDate() + "/" + (ventas[i].fecha.getMonth() + 1) + "/" + ventas[i].fecha.getFullYear() + "\|";
+					linea = linea + (ventas[i].fecha.getDate() + "/" + (ventas[i].fecha.getMonth() + 1) + "/" + ventas[i].fecha.getFullYear()) + "\|";
 					linea = linea + ventas[i].factura + "|";
 					linea = linea + (ventas[i].autorizacion) + "|";
 					linea = linea + (ventas[i].activa ? "V" : "A") + "|";
 					linea = linea + (ventas[i].activa ? ventas[i].cliente ? ventas[i].cliente.nit ? ventas[i].cliente.nit : '0' : '0' : '0') + "|";
 					linea = linea + (ventas[i].activa ? ventas[i].cliente ? ventas[i].cliente.razon_social : 'Sin nombre' : 'ANULADO') + "|";
 					linea = linea + (ventas[i].activa ? (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : 0) + "|";
-					linea = linea + ventas[i].activa ? ventas[i].total_ice ? ventas[i].total_ice : 0 : 0 + "|";
-					linea = linea + ventas[i].activa ? ventas[i].total_exento ? ventas[i].total_exento : 0 : 0 + "|";
+					linea = linea + (ventas[i].activa ? ventas[i].total_ice ? ventas[i].total_ice : 0 : 0) + "|";
+					linea = linea + (ventas[i].activa ? ventas[i].total_exento ? ventas[i].total_exento : 0 : 0) + "|";
 					linea = linea + 0 + "|";
 					var venta_importe_ICE_IE_HD_T = (ventas[i].total_ice ? ventas[i].total_ice : 0) + (ventas[i].total_exento ? ventas[i].total_exento : 0) 
 					var venta_subtotal = (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) - venta_importe_ICE_IE_HD_T
 					var venta_importe_base_debito_fiscal = ventas[i].activa ? venta_subtotal - ventas[i].total_descuento : 0
 					linea = linea + (ventas[i].activa ? venta_subtotal : 0) + "|";
-					linea = linea + ventas[i].activa ? ventas[i].total_descuento ? ventas[i].total_descuento : 0 : 0 + "|";
+					linea = linea + (ventas[i].activa ? ventas[i].total_descuento ? ventas[i].total_descuento : 0 : 0) + "|";
 					linea = linea + (ventas[i].activa ? venta_importe_base_debito_fiscal : 0) + "|";
 					linea = linea + (ventas[i].activa ? (venta_importe_base_debito_fiscal * 0.13) : 0) + "|";
 					linea = linea + (ventas[i].activa ? ventas[i].codigo_control : 0);
@@ -1020,9 +1020,9 @@ angular.module('agil.controladores')
 					columns.push(ventas[i].activa ? venta_importe_base_debito_fiscal : 0);
 					columns.push((ventas[i].activa ? venta_importe_base_debito_fiscal * 0.13 : 0) );
 					columns.push(ventas[i].activa ? (ventas[i].codigo_control) ? ventas[i].codigo_control : "" : '0');
-					sumaImporte = (ventas[i].activa ? sumaSubImporte + (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaSubImporte);
-					sumaImporteIce = (ventas[i].activa ? sumaSubImporteIce + ventas[i].total_ice : sumaSubImporteIce);;
-					sumaImporteExp = (ventas[i].activa ? sumaSubImporteExp + ventas[i].total_exento : sumaSubImporteExp);
+					sumaImporte = (ventas[i].activa ? sumaImporte + (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaImporte);
+					sumaImporteIce = (ventas[i].activa ? sumaImporteIce + ventas[i].total_ice : sumaImporteIce);;
+					sumaImporteExp = (ventas[i].activa ? sumaImporteExp + ventas[i].total_exento : sumaImporteExp);
 					sumaImporteGrab = 0;
 					sumaTotal = ventas[i].activa ? sumaTotal + (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaTotal;
 					sumaDescuentos = ventas[i].activa ? sumaDescuentos + ventas[i].total_descuento : sumaDescuentos;
