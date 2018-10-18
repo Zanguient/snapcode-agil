@@ -1435,8 +1435,11 @@ angular.module('agil.servicios')
 				}
 				doc.font('Helvetica', 7);
 
-				doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
-
+				if (papel[0] == 598 && papel[1] == 600) {
+					doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1]-305);
+				}else{
+					doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
+				}
 			} else {
 				if (vacia) {
 					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }

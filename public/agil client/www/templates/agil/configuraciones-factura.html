@@ -446,6 +446,15 @@
 									<td>
 										<select class="form-control" required ng-options="tipoConfiguracion as tipoConfiguracion.nombre for tipoConfiguracion in tiposConfiguraciones track by tipoConfiguracion.id"
 										 ng-model="configuracion_general.tipoConfiguracion"><option value="0">SELECCIONAR TIPO CONFIG.</option></select>
+										  
+										 <a ng-if="configuracion_general.tipoConfiguracion.nombre == 'SERIE'" ng class="green" href="javascript:void(0)" data-rel="tooltip"
+										 tooltip-placement="top" uib-tooltip="SERIE: En las notas no sale fecha de vencimiento y el título de lote cambia a “SERIE”">
+											<i class="fa fa-exclamation-circle green"></i>
+										</a>
+										<a ng-if="configuracion_general.tipoConfiguracion.nombre == 'LOTE'" ng class="green" href="javascript:void(0)" data-rel="tooltip"
+										 tooltip-placement="top" uib-tooltip="LOTE: En las notas no sale fecha de vencimiento y lote">
+											<i class="fa fa-exclamation-circle green"></i>
+										</a>
 									</td>
 								</tr>
 								<tr>
@@ -930,7 +939,17 @@
 									</td>
 									<td>
 										<select class="form-control" required ng-options="tipoConfiguracion as tipoConfiguracion.nombre for tipoConfiguracion in tiposConfiguraciones track by tipoConfiguracion.id"
-										 ng-model="configuracion_general.tipoConfiguracion"><option value="0">SELECCIONAR TIPO CONFIG.</option></select>
+										 ng-model="sucursal.configuracionFactura.tipoConfiguracion"><option value="0">SELECCIONAR TIPO CONFIG.</option></select>
+
+										 <a ng-if="sucursal.configuracionFactura.tipoConfiguracion.nombre == 'SERIE'" ng class="green" href="javascript:void(0)" data-rel="tooltip"
+										 tooltip-placement="top" uib-tooltip="SERIE: En las notas no sale fecha de vencimiento y el título de lote cambia a “SERIE”">
+											<i class="fa fa-exclamation-circle green"></i>
+										</a>
+										<a ng-if="sucursal.configuracionFactura.tipoConfiguracion.nombre == 'LOTE'" ng class="green" href="javascript:void(0)" data-rel="tooltip"
+										 tooltip-placement="top" uib-tooltip="LOTE: En las notas no sale fecha de vencimiento y lote">
+											<i class="fa fa-exclamation-circle green"></i>
+										</a>
+
 									</td>
 								</tr>
 								<tr>
