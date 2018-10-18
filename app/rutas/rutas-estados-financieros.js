@@ -145,7 +145,7 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                 include: [{
                     model: ContabilidadCuenta, as: 'hijos', attributes: ['id', 'nombre', 'codigo'], include: [{
                         model: ContabilidadCuenta, as: 'hijos', attributes: ['id', 'nombre', 'codigo'], include: [{
-                            model: ContabilidadCuenta, attributes: ['id', 'nombre', 'codigo', 'saldo'], as: 'hijos', where: condicionCuenta, include: [{
+                            model: ContabilidadCuenta, attributes: ['id', 'nombre', 'codigo', 'saldo','debe','haber'], as: 'hijos', where: condicionCuenta, include: [{
                                 model: AsientoContabilidad, as: 'cuenta', attributes: ['id'],
                                 include: [{ model: ComprobanteContabilidad, as: 'comprobante', attributes: ['id'], where: condicionComprobante }]
                             }]
@@ -309,7 +309,7 @@ module.exports = function (router, sequelize, Sequelize, EstadoFinancieroConfigu
                 include: [{
                     model: ContabilidadCuenta, as: 'hijos', attributes: ['id', 'nombre', 'codigo'], include: [{
                         model: ContabilidadCuenta, as: 'hijos', attributes: ['id', 'nombre', 'codigo'], include: [{
-                            model: ContabilidadCuenta, attributes: ['id', 'nombre', 'codigo', 'saldo'], as: 'hijos', where: condicionCuenta, include: [{
+                            model: ContabilidadCuenta, attributes: ['id', 'nombre', 'codigo', 'saldo','debe','haber'], as: 'hijos', where: condicionCuenta, include: [{
                                 model: AsientoContabilidad, as: 'cuenta', attributes: ['id'],
                                 include: [{ model: ComprobanteContabilidad, as: 'comprobante', attributes: ['id'], where: condicionComprobante }]
                             }]
