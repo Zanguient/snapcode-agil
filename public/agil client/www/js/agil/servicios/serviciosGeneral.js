@@ -935,7 +935,7 @@ angular.module('agil.servicios')
 						ImprimirFacturaCartaOficio(salida, papel, false, false, true, usuario);
 					}
 				} else if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
-					papel = [612, 468];
+					papel = [600, 598]; 
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
 						ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
 					} else if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
@@ -1028,7 +1028,7 @@ angular.module('agil.servicios')
 						ImprimirFacturaCartaOficio(salida, papel, false, false, true, usuario);
 					}
 				} else if (salida.configuracion.tamanoPapelFacturaServicio.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
-					papel = [612, 468];
+					papel = [612, 1008];
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
 						ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
 					} else if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
