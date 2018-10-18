@@ -10,9 +10,8 @@ function ejecutarScriptDespacho(idModalAsignacionFactura, idModalVentaKardexFact
 	crearPopup(idModalAsignacionDespacho, "auto", 'auto');
 	crearPopup(IdModalVerificarCuenta, "auto", 'auto');
 	setTimeout(function () {
-		crearPopup(idModalConceptoEdicion, "auto", 'auto');
-		
-	}, 2000);
+		crearPopup(idModalConceptoEdicion, "auto", 'auto');		
+	},5000);
 	
 }
 

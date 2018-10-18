@@ -386,21 +386,21 @@ angular.module('agil.controladores')
 					}
 				});
 			}
-			if (!$scope.usuario.usar_creditos) {
+			if (!$scope.usuario.empresa.usar_creditos) {
 				var step = $('#credito').attr('class');
 				console.log(step)
 				if (step == "ng-hide active") {
 					$('#siguiente').click();
 				}
 			}
-			if (!$scope.usuario.usar_razon_social) {
+			if (!$scope.usuario.empresa.usar_razon_social) {
 				var step = $('#razonsocial').attr('class');
 				console.log(step)
 				if (step == "ng-hide active") {
 					$('#siguiente').click();
 				}
 			}
-			if (!$scope.usuario.destinos) {
+			if (!$scope.usuario.empresa.destinos) {
 				var step = $('#destinos').attr('class');
 				console.log(step)
 				if (step == "ng-hide active") {
@@ -409,21 +409,21 @@ angular.module('agil.controladores')
 			}
 		}
 		$scope.regresarwizard = function () {
-			if (!$scope.usuario.destinos) {
+			if (!$scope.usuario.empresa.destinos) {
 				var step = $('#destinos').attr('class');
 				console.log(step)
 				if (step == "ng-hide complete") {
 					$('#anterior').click();
 				}
 			}
-			if (!$scope.usuario.usar_razon_social) {
+			if (!$scope.usuario.empresa.usar_razon_social) {
 				var step = $('#razonsocial').attr('class');
 				console.log(step)
 				if (step == "ng-hide complete") {
 					$('#anterior').click();
 				}
 			}
-			if (!$scope.usuario.usar_creditos) {
+			if (!$scope.usuario.empresa.usar_creditos) {
 				var step = $('#credito').attr('class');
 				console.log(step)
 				if (step == "ng-hide complete") {
