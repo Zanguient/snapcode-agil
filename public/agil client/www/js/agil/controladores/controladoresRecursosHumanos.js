@@ -221,7 +221,7 @@ angular.module('agil.controladores')
                 $scope.listYearsAnticipo = $scope.obtenerAnios(2017)
                 $scope.obtenerGenero();
                 $scope.obtenerRecursosHumanos();
-                /*   $scope.obtenerPrerequisito(); */
+                $scope.historialRolesTurno=false
                 $scope.recuperarDatosTipo()
                 $scope.empleadosSeleccionados = []
                 $scope.listaBancos()
