@@ -495,10 +495,10 @@
 										<th>
 											<label>UNID. MED.</label>
 										</th>
-										<th ng-if="usuario.empresa.usar_vencimientos">
+										<th ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 											<label>VENCIMIENTO</label>
 										</th>
-										<th ng-if="usuario.empresa.usar_vencimientos">
+										<th ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 											<label>LOTE</label>
 										</th>
 										<th>
@@ -535,14 +535,14 @@
 										<td>
 											{{detalleVenta.producto.unidad_medida}}
 										</td>
-										<td ng-if="usuario.empresa.usar_vencimientos">
+										<td ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 											<select style="width:95px;" id="fechaVencimiento" name="fechaVencimiento" ng-if="detalleVenta.producto.activar_inventario"
 													ng-model="detalleVenta.inventarioProducto" data-placeholder="Elija la fecha de vencimiento" 
 													ng-change="actualizarInventarioDisponibleFechaVencimiento(detalleVenta)"
 													ng-options="inventario as ('FV:'+inventario.fechaVencimientoTexto+'-'+'F:'+inventario.detallesMovimiento[0].movimiento.fechaTexto+'-'+inventario.detallesMovimiento[0].movimiento.clase.nombre) for inventario in inventariosDisponibleProducto track by inventario.id">
 											</select>
 										</td>
-										<td ng-if="usuario.empresa.usar_vencimientos">
+										<td ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 											{{detalleVenta.lote}}
 										</td>
 										<td>
@@ -711,14 +711,14 @@
 										</label>
 										<label>CANT. (u)</label>
 									</li>
-									<li ng-if="usuario.empresa.usar_vencimientos">
+									<li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<label>
 											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_fecha_vencimiento" ng-change="guardarConfiguracionVentaVista()"/>
 											<span class="lbl check-descuento"></span>
 										</label>
 										<label>VENC.</label>
 									</li>
-									<li ng-if="usuario.empresa.usar_vencimientos">
+									<li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<label>
 											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_lote" ng-change="guardarConfiguracionVentaVista()"/>
 											<span class="lbl check-descuento"></span>

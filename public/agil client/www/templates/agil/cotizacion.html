@@ -526,7 +526,7 @@
 										</label>
 										<label>CANT. (u)</label>
 									</li>
-									<li ng-if="usuario.empresa.usar_vencimientos">
+									<li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<label>
 											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_fecha_vencimiento" ng-change="guardarConfiguracionVentaVista()"
 											/>
@@ -534,7 +534,7 @@
 										</label>
 										<label>VENC.</label>
 									</li>
-									<li ng-if="usuario.empresa.usar_vencimientos">
+									<li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<label>
 											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionVentaVista.mostrar_lote" ng-change="guardarConfiguracionVentaVista()"
 											/>

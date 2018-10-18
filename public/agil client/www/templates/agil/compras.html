@@ -730,10 +730,10 @@
 										<th>
 											<label>UNID. MED.</label>
 										</th>
-										<th ng-if="usuario.empresa.usar_vencimientos">
+										<th ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 											<label>FECHA VENC.</label>
 										</th>
-										<th ng-if="usuario.empresa.usar_vencimientos">
+										<th ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 											<label>LOTE</label>
 										</th>
 										<th>
@@ -780,11 +780,11 @@
 										<td ng-if="!detalleCompra.producto.nombre.id">
 											{{detalleCompra.producto.unidad_medida}}
 										</td>
-										<td ng-if="usuario.empresa.usar_vencimientos">
+										<td ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 											<input id="fecha_vencimiento" ng-keypress="interceptarTecla($event,'lote',true)" ng-update-hidden class="form-control date-picker"
 											 type="text" data-date-format="dd/mm/yyyy" ng-model="detalleCompra.fechaVencimientoTexto" placeholder="Ingrese la fecha" />
 										</td>
-										<td ng-if="usuario.empresa.usar_vencimientos">
+										<td ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 											<input id="lote" ng-keypress="interceptarTecla($event,'costo_unitario',true)" type="text" ng-model="detalleCompra.lote"
 											 class="col-xs-12" />
 
@@ -994,7 +994,7 @@
 										</label>
 										<label>CANT. (u)</label>
 									</li>
-									<li ng-if="usuario.empresa.usar_vencimientos">
+									<li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<label>
 											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_fecha_vencimiento"
 											 ng-change="guardarConfiguracionCompraVista()" />
@@ -1002,7 +1002,7 @@
 										</label>
 										<label>VENC.</label>
 									</li>
-									<li ng-if="usuario.empresa.usar_vencimientos">
+									<li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<label>
 											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_lote"
 											 ng-change="guardarConfiguracionCompraVista()" />
@@ -1349,7 +1349,7 @@
 										</label>
 										<label>CANT. (u)</label>
 									</li>
-									<li ng-if="usuario.empresa.usar_vencimientos">
+									<li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<label>
 											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_fecha_vencimiento"
 											 ng-change="guardarConfiguracionCompraVista()" />
@@ -1357,7 +1357,7 @@
 										</label>
 										<label>VENC.</label>
 									</li>
-									<li ng-if="usuario.empresa.usar_vencimientos">
+									<li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<label>
 											<input class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracionCompraVista.mostrar_lote"
 											 ng-change="guardarConfiguracionCompraVista()" />
@@ -2195,10 +2195,10 @@
 									<th>
 										<label>UNID. MED.</label>
 									</th>
-									<th ng-if="usuario.empresa.usar_vencimientos">
+									<th ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<label>FECHA VENC.</label>
 									</th>
-									<th ng-if="usuario.empresa.usar_vencimientos">
+									<th ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<label>LOTE</label>
 									</th>
 									<th>
@@ -2250,11 +2250,11 @@
 									<td ng-if="!detalle.detalleCompra.producto.nombre.id">
 										{{detalle.detalleCompra.producto.unidad_medida}}
 									</td>
-									<td ng-if="usuario.empresa.usar_vencimientos">
+									<td ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<input ng-keypress="interceptarTecla($event,'lote',true)" ng-update-hidden class="form-control date-picker"
 										 type="text" data-date-format="dd/mm/yyyy" ng-model="detalle.detalleCompra.fechaVencimientoTexto" placeholder="Ingrese la fecha" />
 									</td>
-									<td ng-if="usuario.empresa.usar_vencimientos">
+									<td ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<input ng-keypress="interceptarTecla($event,'costo_unitario',true)" type="text" ng-model="detalle.detalleCompra.lote"
 										 class="col-xs-12" />
 									</td>

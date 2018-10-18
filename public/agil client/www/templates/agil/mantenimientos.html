@@ -212,7 +212,7 @@
                                     <label>Cod. Usuario</label>
                                 </li>
                                 <!-- ngIf: usuario.empresa.usar_vencimientos -->
-                                <li ng-if="usuario.empresa.usar_vencimientos" class="ng-scope">
+                                <li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos" class="ng-scope">
                                     <label>
                                         <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_fecha_vencimiento" ng-change="guardarConfiguracionVentaVista()">
                                         <span class="lbl check-descuento"></span>
@@ -221,7 +221,7 @@
                                 </li>
                                 <!-- end ngIf: usuario.empresa.usar_vencimientos -->
                                 <!-- ngIf: usuario.empresa.usar_vencimientos -->
-                                <li ng-if="usuario.empresa.usar_vencimientos" class="ng-scope">
+                                <li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos" class="ng-scope">
                                     <label>
                                         <input class="ace ace-switch ace-switch-4 ng-pristine ng-untouched ng-valid ng-not-empty" type="checkbox" ng-model="configuracionVentaVista.mostrar_lote" ng-change="guardarConfiguracionVentaVista()">
                                         <span class="lbl check-descuento"></span>

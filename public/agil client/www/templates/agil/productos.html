@@ -607,13 +607,13 @@
 								<input type="number" step="0.01" id="comision" ng-model="producto.comision" placeholder="Comisión" class="form-control" />
 							</div>
 						</div>
-						<div class="row form-group" ng-if="usuario.empresa.usar_vencimientos">
+						<div class="row form-group" ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 							<label class="col-sm-3 control-label no-padding-right" for="alerta">Alerta de Vencimiento</label>
 							<div class="col-sm-3">
 								<input type="number" id="alerta" ng-model="producto.alerta" placeholder="Alerta" class="form-control" />
 							</div>
 						</div>
-						<div class="row form-group" ng-if="usuario.empresa.usar_descuentos">
+						<div class="row form-group" ng-if="usuario.empresa.usar_descuentos && usuario.empresa.usar_vencimiento_productos">
 							<label class="col-sm-2 control-label no-padding-right" for="descuento">Descuento</label>
 							<div class="col-sm-2">
 								<input type="number" id="descuento" ng-model="producto.descuento" placeholder="Descuento" class="form-control" />

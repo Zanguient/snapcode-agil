@@ -223,10 +223,10 @@
 											<th>
 												<label>UNIDAD DE MEDIDA</label>
 											</th>
-											<th ng-if="usuario.empresa.usar_vencimientos">
+											<th ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 												<label>FECHA VENC.</label>
 											</th>
-											<th ng-if="usuario.empresa.usar_vencimientos">
+											<th ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 												<label>LOTE</label>
 											</th>
 											<th>
@@ -268,11 +268,11 @@
 											<td ng-if="!producto.id">
 												{{producto.unidad_medida}}
 											</td>
-											<td ng-if="usuario.empresa.usar_vencimientos">
+											<td ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 												<input ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" ng-model="producto.fechaVencimientoTexto"
 												 placeholder="Ingrese la fecha" />
 											</td>
-											<td ng-if="usuario.empresa.usar_vencimientos">
+											<td ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 												<input type="text" ng-model="producto.lote" class="col-xs-12" />
 											</td>
 											<td>
@@ -361,8 +361,8 @@
 												<th>Cantidad</th>
 												<th>Unidad</th>
 												<th>Detalle</th>
-												<th class="col-md-3" ng-if="usuario.empresa.usar_vencimientos">Lote</th>
-												<th class="col-md-4" ng-if="usuario.empresa.usar_vencimientos">Vencimiento. </th>
+												<th class="col-md-3" ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">Lote</th>
+												<th class="col-md-4" ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">Vencimiento. </th>
 												<th class="col-md-3">Costo Unitario</th>
 												<th>Total</th>
 											</tr>
@@ -382,7 +382,7 @@
 												</td>
 												<td>{{detallesMovimiento.producto.unidad_medida}}</td>
 												<td>{{detallesMovimiento.producto.nombre}}</td>
-												<td ng-if="usuario.empresa.usar_vencimientos">
+												<td ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 													<span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.inventario.lote}}</span>
 													<input class="col-sm-12" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.inventario.lote"
 													 ng-blur="doneEditing(detallesMovimiento)" autofocus />
@@ -390,7 +390,7 @@
 														<i ng-if="animate" class="ace-icon fa fa-floppy-o bigger--130"></i>
 													</a>
 												</td>
-												<td ng-if="usuario.empresa.usar_vencimientos">
+												<td ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 													<span ng-hide="editing" ng-dblclick="editItem(detallesMovimiento)">{{detallesMovimiento.inventario.fecha_vencimientoTexto}}</span>
 													<input tabindex="-1" class="col-sm-12" ng-change="editMovientoDetalle(detallesMovimiento)" ng-show="editing" ng-model="detallesMovimiento.inventario.fecha_vencimientoTexto"
 													 ng-blur="doneEditing(detallesMovimiento)" autofocus />

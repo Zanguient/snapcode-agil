@@ -283,7 +283,7 @@
 							</li>
 							<li class="dropdown-content">
 								<ul class="dropdown-menu dropdown-navbar navbar-pink">
-									<li ng-if="usuario.empresa.usar_vencimientos">
+									<li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 										<a href="javascript:void(0)" ng-click="abrirListaVencimientoProductos()">
 											<div class="clearfix">
 												<span class="pull-left">
@@ -294,7 +294,7 @@
 											</div>
 										</a>
 									</li>
-									<li ng-if="usuario.empresa.usar_vencimientos">
+									<li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_creditos">
 										<a href="javascript:void(0)" ng-click="abrirListaVencimientoCreditos()">
 											<div class="clearfix">
 												<span class="pull-left">
@@ -305,7 +305,7 @@
 											</div>
 										</a>
 									</li>
-									<li ng-if="usuario.empresa.usar_vencimientos">
+									<li ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_deudas">
 										<a href="javascript:void(0)" ng-click="abrirListaVencimientoDeudas()">
 											<div class="clearfix">
 												<span class="pull-left">
@@ -2030,7 +2030,7 @@
 										<i class="ace-icon fa fa-files-o dark bigger-300"></i>
 									</a>
 								</li>
-								<li tyle="width: 10px" ng-if="usuario.empresa" ng-if="usuario.empresa.usar_vencimientos">
+								<li tyle="width: 10px">
 									<a tabindex="-1" style="background-color: white !important" class="blue" href="javascript:void(0)" class="dropdown-toggle"
 									 data-toggle="dropdown" style="display: inline-block; border-radius: 60px; box-shadow: 0px 0px 2px #888;background-color:yellow !important; ;"
 									 href="javascript:void(0)">
