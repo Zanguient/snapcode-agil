@@ -1082,7 +1082,7 @@ angular.module('agil.servicios')
 	.factory('ImprimirFacturaCartaOficio', ['blockUI', 'VerificarDescuentos', 'Diccionario', 'DibujarCabeceraFacturaNVCartaOficio', 'DibujarCabeceraFacturaNVmedioOficio', '$timeout',
 		function (blockUI, VerificarDescuentos, Diccionario, DibujarCabeceraFacturaNVCartaOficio, DibujarCabeceraFacturaNVmedioOficio, $timeout) {
 			var res = function (venta, papel, vacia, completa, semicompleta, usuario) {
-				var doc = new PDFDocument({ compress: false, size: papel, margin: 10 });
+				var doc = new PDFDocument({ compress: false,  layout: 'portrait', size: papel, margin: 10 });
 				var stream = doc.pipe(blobStream());
 
 				if (venta.configuracion.usar_pf) {
