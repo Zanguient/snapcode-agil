@@ -1,0 +1,3 @@
+ALTER TABLE agil_empresa drop usar_vencimiento_productos;
+ALTER TABLE agil_empresa drop usar_vencimiento_creditos;
+ALTER TABLE agil_empresa drop usar_vencimiento_deudas;

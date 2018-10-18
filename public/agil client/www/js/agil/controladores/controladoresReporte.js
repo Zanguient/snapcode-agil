@@ -1099,7 +1099,7 @@ angular.module('agil.controladores')
 					var venta_subtotal = ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) - venta_importe_ICE_IE_HD_T
 					var venta_importe_base_debito_fiscal = ventas[i].activa ? venta_subtotal - ventas[i].total_descuento : 0
 					doc.text(ventas[i].activa ? venta_subtotal.toFixed(2) : '0.00', 540, y);
-					doc.text(ventas[i].activa ? ventas[i].total_descuento.toFixed(2): '0.00', 580, y);
+					doc.text(ventas[i].activa ? ventas[i].total_descuento ? ventas[i].total_descuento.toFixed(2) : '0.00' : '0.00', 580, y);
 					doc.text(venta_importe_base_debito_fiscal.toFixed(2), 615, y);
 					doc.text(ventas[i].activa ? (venta_importe_base_debito_fiscal * 0.13).toFixed(2) : '0.00', 650, y);
 					doc.text(ventas[i].activa ? ventas[i].codigo_control : 0, 685, y);
