@@ -5602,19 +5602,34 @@
                             <option value="">--seleccionar--</option>
                         </select>
                     </div>
+                    
                     <div class="form-group col-sm-2">
                         <div class="buttons-align">
                             <button type="submit" class="btn btn-primary btn-sm">
                                 <i class=" fa fa-search-plus align-top "></i>
                                 Filtrar
                             </button>
-                            <button type="button" ng-click="abrirDialogReporteTurnosDetallado(filtroRol)" class="btn btn-purple btn-sm">
-                                <i class=" fa fa-list-alt bigger-130"></i>
-                            </button>
-
                         </div>
                     </div>
                 </form>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-2">
+                    <label>Desde</label>
+                    <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-change="cambiarFecha(filtroRolCal)"
+                        ng-model="filtroRolCal.inicio2" autocomplete="off" id="filtro-rol-turno-cal-desde" placeholder="Desde">
+                </div>
+                <div class="form-group col-sm-2">
+                    <label>Hasta</label>
+                    <input type="text" ng-update-hidden data-date-format="dd/mm/yyyy" class="form-control date-picker" ng-model="filtroRolCal.fin2"
+                        autocomplete="off" id="filtro-rol-turno-cal-hasta" ng-change="cambiarFecha(filtroRolCal)" placeholder="Hasta">
+                </div>
+                <div class="form-group col-sm-2">    
+                        <p>Historial</p>    
+                        <button  type="button" ng-click="abrirDialogReporteTurnosDetallado(filtroRolCal)" class="btn btn-purple btn-sm">
+                            <i class=" fa fa-list-alt bigger-130"></i>
+                        </button>
+                </div>
             </div>
             <div class="table-fixed-header">
                 <table id="tabla-comprobante-revision" class="table table-striped table-bordered table-hover">
