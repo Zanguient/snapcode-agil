@@ -1436,7 +1436,7 @@ angular.module('agil.servicios')
 				doc.font('Helvetica', 7);
 
 				if (papel[0] == 598 && papel[1] == 600) {
-					doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1]-305);
+					doc.text("PÁGINA " + pagina + " DE " + (totalPaginas+1), 500, papel[1]-305);
 				}else{
 					doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
 				}
