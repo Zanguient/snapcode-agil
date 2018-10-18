@@ -647,6 +647,7 @@ angular.module('agil.controladores')
 								doc.font('Helvetica', 8);
 							}
 							for (var l = 0; l < cuentaGenerica.hijos.length && items <= itemsPorPagina; l++) {
+								cuentaGenerica.hijos[l].saldo=(cuentaGenerica.hijos[l].debe>cuentaGenerica.hijos[l].haber)?cuentaGenerica.hijos[l].saldo:-(cuentaGenerica.hijos[l].saldo)
 								cuentasApropiacion = cuentaGenerica.hijos[l]
 								cuentaGenerica.total += cuentasApropiacion.saldo
 								cuentaSubGrupo.total += cuentasApropiacion.saldo
@@ -774,6 +775,7 @@ angular.module('agil.controladores')
 									}
 									if (d == (cuentaSubGrupo.hijos.length - 1)) {
 										for (var l = 0; l < cuentaGenerica.hijos.length && items <= itemsPorPagina; l++) {
+											cuentaGenerica.hijos[l].saldo=(cuentaGenerica.hijos[l].debe>cuentaGenerica.hijos[l].haber)?cuentaGenerica.hijos[l].saldo:-(cuentaGenerica.hijos[l].saldo)
 											cuentasApropiacion = cuentaGenerica.hijos[l]
 											cuentaGenerica.total += cuentasApropiacion.saldo
 											cuentaSubGrupo.total += cuentasApropiacion.saldo
@@ -892,6 +894,7 @@ angular.module('agil.controladores')
 									}
 									if (d == (cuentaSubGrupo.hijos.length - 1)) {
 										for (var l = 0; l < cuentaGenerica.hijos.length && items <= itemsPorPagina; l++) {
+											cuentaGenerica.hijos[l].saldo=(cuentaGenerica.hijos[l].debe>cuentaGenerica.hijos[l].haber)?cuentaGenerica.hijos[l].saldo:-(cuentaGenerica.hijos[l].saldo)
 											cuentasApropiacion = cuentaGenerica.hijos[l]
 											cuentaGenerica.total += cuentasApropiacion.saldo
 											cuentaSubGrupo.total += cuentasApropiacion.saldo
@@ -1163,6 +1166,7 @@ angular.module('agil.controladores')
 
 									if (d == (cuentaSubGrupo.hijos.length - 1)) {
 										for (var l = 0; l < cuentaGenerica.hijos.length && items <= itemsPorPagina; l++) {
+											cuentaGenerica.hijos[l].saldo=(cuentaGenerica.hijos[l].debe>cuentaGenerica.hijos[l].haber)?cuentaGenerica.hijos[l].saldo:-(cuentaGenerica.hijos[l].saldo)
 											cuentasApropiacion = cuentaGenerica.hijos[l]
 											cuentaGenerica.total += cuentasApropiacion.saldo
 											cuentaSubGrupo.total += cuentasApropiacion.saldo
@@ -1227,6 +1231,7 @@ angular.module('agil.controladores')
 									cuentaGenericaDepre = cuentaSubGrupo.hijos[d]
 									if (d == (cuentaSubGrupo.hijos.length - 1)) {
 										for (var l = 0; l < cuentaGenerica.hijos.length && items <= itemsPorPagina; l++) {
+											cuentaGenerica.hijos[l].saldo=(cuentaGenerica.hijos[l].debe>cuentaGenerica.hijos[l].haber)?cuentaGenerica.hijos[l].saldo:-(cuentaGenerica.hijos[l].saldo)
 											cuentasApropiacion = cuentaGenerica.hijos[l]
 											cuentaGenerica.total += cuentasApropiacion.saldo
 											cuentaGrupo.total += cuentasApropiacion.saldo
@@ -1294,6 +1299,7 @@ angular.module('agil.controladores')
 								doc.font('Helvetica', 8);
 							}
 							for (var l = 0; l < cuentaGenerica.hijos.length && items <= itemsPorPagina; l++) {
+								cuentaGenerica.hijos[l].saldo=(cuentaGenerica.hijos[l].debe>cuentaGenerica.hijos[l].haber)?cuentaGenerica.hijos[l].saldo:-(cuentaGenerica.hijos[l].saldo)
 								cuentasApropiacion = cuentaGenerica.hijos[l]
 								cuentaGenerica.total += cuentasApropiacion.saldo
 								cuentaSubGrupo.total += cuentasApropiacion.saldo
@@ -1534,6 +1540,7 @@ angular.module('agil.controladores')
 							cuentaGenerica.total = 0
 							doc.text(cuentaGenerica.nombre, 40, y)
 							for (var l = 0; l < cuentaGenerica.hijos.length && items <= itemsPorPagina; l++) {
+								cuentaGenerica.hijos[l].saldo=(cuentaGenerica.hijos[l].debe>cuentaGenerica.hijos[l].haber)?cuentaGenerica.hijos[l].saldo:-(cuentaGenerica.hijos[l].saldo)
 								cuentasApropiacion = cuentaGenerica.hijos[l]
 								cuentaGenerica.total += cuentasApropiacion.saldo
 								cuentaSubGrupo.total += cuentasApropiacion.saldo
@@ -1606,6 +1613,7 @@ angular.module('agil.controladores')
 							cuentaGenerica.total = 0
 
 							for (var l = 0; l < cuentaGenerica.hijos.length && items <= itemsPorPagina; l++) {
+								cuentaGenerica.hijos[l].saldo=(cuentaGenerica.hijos[l].debe>cuentaGenerica.hijos[l].haber)?cuentaGenerica.hijos[l].saldo:-(cuentaGenerica.hijos[l].saldo)
 								cuentasApropiacion = cuentaGenerica.hijos[l]
 								cuentaGenerica.total += cuentasApropiacion.saldo
 								cuentaSubGrupo.total += cuentasApropiacion.saldo
@@ -1676,6 +1684,7 @@ angular.module('agil.controladores')
 							cuentaGenerica = cuentaSubGrupo.hijos[k]
 							cuentaGenerica.total = 0
 							for (var l = 0; l < cuentaGenerica.hijos.length && items <= itemsPorPagina; l++) {
+								cuentaGenerica.hijos[l].saldo=(cuentaGenerica.hijos[l].debe>cuentaGenerica.hijos[l].haber)?cuentaGenerica.hijos[l].saldo:-(cuentaGenerica.hijos[l].saldo)
 								cuentasApropiacion = cuentaGenerica.hijos[l]
 								cuentaGenerica.total += cuentasApropiacion.saldo
 								cuentaGrupo.total += cuentasApropiacion.saldo
@@ -1746,6 +1755,7 @@ angular.module('agil.controladores')
 							cuentaGenerica.total = 0
 
 							for (var l = 0; l < cuentaGenerica.hijos.length && items <= itemsPorPagina; l++) {
+								cuentaGenerica.hijos[l].saldo=(cuentaGenerica.hijos[l].debe>cuentaGenerica.hijos[l].haber)?cuentaGenerica.hijos[l].saldo:-(cuentaGenerica.hijos[l].saldo)
 								cuentasApropiacion = cuentaGenerica.hijos[l]
 								cuentaGrupo.total += cuentasApropiacion.saldo
 								totalActivos += cuentasApropiacion.saldo
@@ -1845,6 +1855,7 @@ angular.module('agil.controladores')
 							cuentaGenerica.total = 0
 
 							for (var l = 0; l < cuentaGenerica.hijos.length && items <= itemsPorPagina; l++) {
+								cuentaGenerica.hijos[l].saldo=(cuentaGenerica.hijos[l].debe>cuentaGenerica.hijos[l].haber)?cuentaGenerica.hijos[l].saldo:-(cuentaGenerica.hijos[l].saldo)
 								cuentasApropiacion = cuentaGenerica.hijos[l]
 								cuentaSubGrupo.total += cuentasApropiacion.saldo
 								totalActivos += cuentasApropiacion.saldo
@@ -1935,6 +1946,7 @@ angular.module('agil.controladores')
 							cuentaGenerica.total = 0
 							doc.text(cuentaGenerica.nombre, 40, y)
 							for (var l = 0; l < cuentaGenerica.hijos.length && items <= itemsPorPagina; l++) {
+								cuentaGenerica.hijos[l].saldo=(cuentaGenerica.hijos[l].debe>cuentaGenerica.hijos[l].haber)?cuentaGenerica.hijos[l].saldo:-(cuentaGenerica.hijos[l].saldo)
 								cuentasApropiacion = cuentaGenerica.hijos[l]
 								cuentaGenerica.total += cuentasApropiacion.saldo
 								cuentaSubGrupo.total += cuentasApropiacion.saldo
