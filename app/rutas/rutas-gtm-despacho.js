@@ -1241,7 +1241,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 						'fecha_factura', 'numero_correlativo', 'alerta', 'pago_ac', 'saldo_pago_ac', 'total', 'id_sucursal', 'id_almacen',
 						'kardex_detalle', 'id_movimiento', 'latitud', 'longitud', 'id_estado', 'createdAt', 'updatedAt',
 						[ sequelize.literal(
-							'COALESCE(agil_gtm_despacho_detalle.servicio_transporte, 0) / COALESCE(agil_gtm_despacho_detalle.cantidad, 0)'
+							'agil_gtm_despacho_detalle.servicio_transporte / agil_gtm_despacho_detalle.cantidad'
 						), 'servicio_transporte'
 						]
 					],
