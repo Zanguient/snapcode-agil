@@ -517,16 +517,26 @@
 											</option></select>
 									</td>
 									<td>
-
+										<select class="form-control" required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id"
+										ng-model="configuracion_general.formatoPapelNotaVenta"><option value="0">SELECCIONAR TIPO IMP.</option></select>
 									</td>
 									<td>
-
+										<select required class="form-control" ng-options="formatoFacturaColor as formatoFacturaColor.nombre for formatoFacturaColor in formatosFacturaColor track by formatoFacturaColor.id"
+										ng-model="configuracion_general.formatoColorNotaVenta">
+											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
-
+										<p>Cabezera Tabla</p>
+										<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_nota_venta" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_nota_venta}" />
+										<p>Datos Detalle Tabla</p>
+										<input color-picker  class="form-control"color-picker-model="configuracion_general.color_detalle_nota_venta" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_nota_venta}" />
 									</td>
 									<td>
-
+											<input type="text" class="form-control" placeholder="NOTA" ng-model="configuracion_general.nota_factura_nota_venta">
+									</td>
+									<td>
+										<select class="form-control" required ng-options="tipoConfiguracion as tipoConfiguracion.nombre for tipoConfiguracion in tiposConfiguraciones track by tipoConfiguracion.id"
+										ng-model="configuracion_general.tipoConfiguracionNotaVenta"><option value="0">SELECCIONAR TIPO CONFIG.</option></select>											 
 									</td>
 								</tr>
 								<tr>
@@ -1014,18 +1024,27 @@
 												TAMAÑO
 											</option></select>
 									</td>
-									<!-- <td><input type="number" class="form-control" ng-model="sucursal.nota_venta_correlativo" required></td> -->
 									<td>
-
+										<select class="form-control" required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id"
+										ng-model="sucursal.configuracionFactura.formatoPapelNotaVenta"><option value="0">SELECCIONAR TIPO IMP.</option></select>
 									</td>
 									<td>
-
+										<select required class="form-control" ng-options="formatoFacturaColor as formatoFacturaColor.nombre for formatoFacturaColor in formatosFacturaColor track by formatoFacturaColor.id"
+										ng-model="sucursal.configuracionFactura.formatoColorNotaVenta">
+											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
-
+										<p>Cabezera Tabla</p>
+										<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_cabecera_nota_venta" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_cabecera_nota_venta}" />
+										<p>Datos Detalle Tabla</p>
+										<input color-picker  class="form-control"color-picker-model="sucursal.configuracionFactura.color_detalle_nota_venta" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_detalle_nota_venta}" />
 									</td>
 									<td>
-
+											<input type="text" class="form-control" placeholder="NOTA" ng-model="sucursal.configuracionFactura.nota_factura_nota_venta">
+									</td>
+									<td>
+										<select class="form-control" required ng-options="tipoConfiguracion as tipoConfiguracion.nombre for tipoConfiguracion in tiposConfiguraciones track by tipoConfiguracion.id"
+										ng-model="sucursal.configuracionFactura.tipoConfiguracionNotaVenta"><option value="0">SELECCIONAR TIPO CONFIG.</option></select>											 
 									</td>
 								</tr>
 								<tr>

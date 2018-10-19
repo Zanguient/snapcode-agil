@@ -1970,6 +1970,7 @@ angular.module('agil.controladores')
             $scope.buscarRolesTurno=function(){
                 $scope.paginator.callBack = $scope.obtenerlistaRolTurnoEmpresa;
                 $scope.paginator.getSearch("", $scope.filtroRol, null);
+                //comentario para intentar commit
             }
             $scope.cerrarDialogReporteRolTurnos = function () {
                 shortcut.remove("ESC", function () {

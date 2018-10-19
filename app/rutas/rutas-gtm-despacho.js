@@ -1130,7 +1130,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 					saldo: parseFloat(req.body.cantidad),
 					precio_unitario: parseFloat(req.body.precio_unitario),
 					importe: parseFloat(req.body.total),
-					servicio_transporte: parseFloat(req.body.servicio_transporte)
+					servicio_transporte: parseFloat(req.body.servicio_transporte * req.body.cantidad)
 				}, {
 						where: {
 							id: req.body.id_detalle_despacho

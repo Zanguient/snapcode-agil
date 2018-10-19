@@ -129,7 +129,34 @@ module.exports = function (sequelize, Sequelize) {
 		},id_tipo_configuracion: {
 			type: Sequelize.INTEGER,
 			field: 'tipo_configuracion'
+		},
+
+
+		id_formato_papel_nota_venta: {
+			type: Sequelize.INTEGER,
+			field: 'formato_papel_nota_venta'
+		},
+		id_formato_color_nota_venta: {
+			type: Sequelize.INTEGER,
+			field: 'formato_color_nota_venta'
+		},
+		nota_factura_nota_venta: {
+			type: Sequelize.STRING,
+			field: 'nota_factura_nota_venta'
+		},
+		color_cabecera_nota_venta: {
+			type: Sequelize.STRING,
+			field: 'color_cabecera_nota_venta'
+		},
+		color_detalle_nota_venta: {
+			type: Sequelize.STRING,
+			field: 'color_detalle_nota_venta'
+		},
+		id_tipo_configuracion_nota_venta: {
+			type: Sequelize.INTEGER,
+			field: 'tipo_configuracion_nota_venta'
 		}
+		
 	}, {
 			freezeTableName: true
 		});

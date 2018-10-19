@@ -1423,7 +1423,7 @@ angular.module('agil.servicios')
 					if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
 						doc.rect(50, 200, 520, 25).stroke();
 					} else {
-						doc.rect(50, 200, 520, 25).fillAndStroke(venta.configuracion.color2, "black").fillColor('white').stroke();
+						doc.rect(50, 200, 520, 25).fillAndStroke(venta.configuracion.color2, "black").fillColor('black').stroke();
 					}
 					//doc.rect(50,225,520,papel[1]-175-225).stroke();
 					doc.text("CODIGO", 55, 210, { width: 70 });
@@ -2693,22 +2693,27 @@ angular.module('agil.servicios')
 					venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento)
 					if (existenDescuentos) {
 						doc.text(venta.detallesVenta[i].producto.codigo, 55, y, { width: 50 });
-						doc.text(venta.detallesVenta[i].cantidad, 105, y);
-						doc.text(venta.detallesVenta[i].producto.unidad_medida, 120, y, { width: 40 });
-						doc.text(venta.detallesVenta[i].producto.nombre, 160, y , { width: 80 });
+						doc.text(venta.detallesVenta[i].cantidad, 95, y);
+						doc.text(venta.detallesVenta[i].producto.unidad_medida, 118, y, { width: 40 });
+						doc.text(venta.detallesVenta[i].producto.nombre, 155, y , { width: 80 });
 						if (usuario.empresa.usar_vencimientos) {
 							if (venta.con_vencimiento) {
-								doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 245, y);
-								doc.text(venta.detallesVenta[i].lote, 285, y,{width:35});
+								if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
+									doc.text(venta.detallesVenta[i].lote, 279, y,{width:35});
+								}else{
+									doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 240, y);
+									doc.text(venta.detallesVenta[i].lote, 279, y,{width:35});
+								}
+								
 							}
 						}
-						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 310, y);
-						doc.text(venta.detallesVenta[i].importe.toFixed(2), 345, y);
+						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 315, y);
+						doc.text(venta.detallesVenta[i].importe.toFixed(2), 350, y);
 						doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : 0), 395, y);
-						doc.text(venta.detallesVenta[i].recargo.toFixed(2), 430, y);
-						doc.text(venta.detallesVenta[i].ice.toFixed(2), 465, y);
-						doc.text(venta.detallesVenta[i].excento.toFixed(2), 500, y);
-						doc.text(venta.detallesVenta[i].total.toFixed(2), 530, y);
+						doc.text(venta.detallesVenta[i].recargo.toFixed(2), 435, y);
+						doc.text(venta.detallesVenta[i].ice.toFixed(2), 470, y);
+						doc.text(venta.detallesVenta[i].excento.toFixed(2), 505, y);
+						doc.text(venta.detallesVenta[i].total.toFixed(2), 535, y);
 					} else {
 						doc.text(venta.detallesVenta[i].producto.codigo, 55, y);
 						doc.text(venta.detallesVenta[i].cantidad, 130, y);
@@ -2716,15 +2721,22 @@ angular.module('agil.servicios')
 						doc.text(venta.detallesVenta[i].producto.nombre, 200, y, { width: 150 });
 						if (usuario.empresa.usar_vencimientos) {
 							if (venta.con_vencimiento) {
-								doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 360, y);
-								doc.text(venta.detallesVenta[i].lote, 415, y,{width: 35});
+								if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
+									doc.text(venta.detallesVenta[i].lote, 415, y,{width: 35});
+								}else{
+									doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 360, y);
+									doc.text(venta.detallesVenta[i].lote, 415, y,{width: 35});
+								}							
 							}
 						}
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 460, y);
 						doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
 					}
 					if (completa || vacia) {
-						doc.rect(50, y - 15, 520, 30).stroke();
+						if (venta.configuracion.formatoPapelNotaVenta.nombre_corto == "FORM_C_MAR") {
+							doc.rect(50, y - 15, 520, 30).stroke();
+						}
+						
 					}
 					y = y + 30;
 					items++;
@@ -2798,7 +2810,14 @@ angular.module('agil.servicios')
 
 				}
 				if (completa || vacia) {
-					doc.rect(50, 150, 520, 50).stroke();
+					//doc.rect(50, 150, 520, 50).stroke();
+					//if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+						if (venta.configuracion.formatoColorNotaVenta.nombre_corto == "FORM_S_COL") {
+						   doc.rect(50, 150, 520, 50).stroke();
+						} else {
+						doc.rect(50, 150, 520, 50).fillAndStroke(venta.configuracion.color_cabecera_nota_venta, "black").fillColor('black').stroke();
+						}
+					//}
 					doc.text("FECHA : ", 60, 165);
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
@@ -2809,19 +2828,37 @@ angular.module('agil.servicios')
 				doc.text(venta.cliente.nit, 400, 165);
 				doc.font('Helvetica-Bold', 7);
 				if (completa || vacia) {
-					doc.rect(50, 200, 520, 25).stroke();
+					//doc.rect(50, 200, 520, 25).stroke();
+					if (venta.configuracion.formatoColorNotaVenta.nombre_corto == "FORM_S_COL") {
+						doc.rect(50, 200, 520, 25).stroke();
+					} else {
+						doc.rect(50, 200, 520, 25).fillAndStroke(venta.configuracion.color_detalle_nota_venta, "black").fillColor('black').stroke();
+					}
 					var existenDescuentos = VerificarDescuentos(venta.detallesVenta);
 					if (existenDescuentos) {
 						doc.text("CODIGO", 55, 210);
-						doc.text("CANT.", 100, 210);
-						doc.text("UNID.", 130, 210);
+						doc.text("CANT.", 90, 210);
+						doc.text("UNID.", 120, 210);
 						doc.text("DETALLE", 160, 210);
 						if (usuario.empresa.usar_vencimientos) {
 							if (venta.con_vencimiento) {
-								doc.text("VENC.", 245, 210)
-								doc.text("LOTE.", 280, 210)
+								if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
+									doc.text("SERIE.", 280, 210)
+								}else{
+									doc.text("VENC.", 240, 210)
+									doc.text("LOTE.", 278, 210)
+								}
 							}
 						}
+
+						/*if (venta.con_vencimiento) {
+							if (venta.configuracion.tipoConfiguracion.nombre_corto == 'SERIE') {
+								doc.text("SERIE", 400, 210);	
+							}else{
+								doc.text("VENC.", 360, 210);
+								doc.text("LOTE", 410, 210);
+							}
+						}*/
 						doc.text("P. UNIT.", 310, 210);
 						doc.text("IMPORTE", 345, 210);
 						doc.text("DESC.", 395, 210);
@@ -2836,13 +2873,20 @@ angular.module('agil.servicios')
 						doc.text("DETALLE", 200, 210);
 						if (usuario.empresa.usar_vencimientos) {
 							if (venta.con_vencimiento) {
-								doc.text("VENC.", 360, 210)
-								doc.text("LOTE.", 415, 210)
+								if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
+									doc.text("SERIE", 415, 210);
+								}else{
+									doc.text("VENC.", 360, 210)
+									doc.text("LOTE.", 415, 210)
+								}
+								//doc.text("VENC.", 360, 210)
+								//doc.text("LOTE.", 415, 210)
 							}
 						}
 						doc.text("P.UNIT.", 460, 210);
 						doc.text("TOTAL", 520, 210);
 					}
+					doc.fillColor('black');
 				}
 			}
 			return res;

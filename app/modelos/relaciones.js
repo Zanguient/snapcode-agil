@@ -481,6 +481,9 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_factura_servicio', as: 'formatoPapelFacturaServicio' });
 	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_factura_servicio', as: 'formatoColorFacturaServicio' });
 	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_tipo_configuracion', as: 'tipoConfiguracion' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_nota_venta', as: 'formatoPapelNotaVenta' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_nota_venta', as: 'formatoColorNotaVenta' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_tipo_configuracion_nota_venta', as: 'tipoConfiguracionNotaVenta' });
 
 
 	ConfiguracionGeneralFactura.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
@@ -507,7 +510,11 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_factura_servicio', as: 'formatoPapelFacturaServicio' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_factura_servicio', as: 'formatoColorFacturaServicio' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tipo_configuracion', as: 'tipoConfiguracion' });
-	
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_nota_venta', as: 'formatoPapelNotaVenta' });
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_nota_venta', as: 'formatoColorNotaVenta' });
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tipo_configuracion_nota_venta', as: 'tipoConfiguracionNotaVenta' });
+
+
 	ConfiguracionGeneralApp.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
 	ConfiguracionGeneralApp.belongsTo(Clase, { foreignKey: 'id_tipo_venta', as: 'tipoVenta' });
 	ConfiguracionGeneralApp.belongsTo(Clase, { foreignKey: 'id_cobro_habilitado', as: 'cobroHabilitado' });
