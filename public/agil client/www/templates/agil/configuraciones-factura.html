@@ -193,6 +193,14 @@
 								<label class="control-label inline">¿Configuración General?</label>
 							</div>
 							<div class="col-md-6">
+									<a ng-if="configuracion_general.usar" ng class="green" href="javascript:void(0)" data-rel="tooltip"
+									tooltip-placement="top" uib-tooltip="Si: La configuración aplica para todas las sucursales.">
+									   <i class="fa fa-exclamation-circle green"></i>
+								   </a>
+								   <a ng-if="!configuracion_general.usar" ng class="green" href="javascript:void(0)" data-rel="tooltip"
+									tooltip-placement="top" uib-tooltip="No: La configuración debe realizarse de manera individual por cada sucursal.">
+									   <i class="fa fa-exclamation-circle green"></i>
+								   </a>
 								<label>
 									<input name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="configuracion_general.usar" />
 									<span class="lbl check-descuento"></span>
@@ -205,6 +213,18 @@
 								<label class="control-label inline">Impresión</label>
 							</div>
 							<div class="col-md-6">
+									<a ng-if="configuracion_general.impresionFactura.nombre == 'TODO'" ng class="green" href="javascript:void(0)" data-rel="tooltip"
+									tooltip-placement="top" uib-tooltip="TODO: Se imprime toda la información, datos de empresa y logo.">
+									   <i class="fa fa-exclamation-circle green"></i>
+								   </a>
+								   <a ng-if="configuracion_general.impresionFactura.nombre == 'SIN MEMBRESIA'" ng class="green" href="javascript:void(0)" data-rel="tooltip"
+									tooltip-placement="top" uib-tooltip="SIN MEMBRESIA: No se imprime el logo y datos de la empresa.">
+									   <i class="fa fa-exclamation-circle green"></i>
+								   </a>
+								   <a ng-if="configuracion_general.impresionFactura.nombre == 'DATOS'" ng class="green" href="javascript:void(0)" data-rel="tooltip"
+									tooltip-placement="top" uib-tooltip="DATOS: Sólo se llenan los datos de la transacción.">
+									   <i class="fa fa-exclamation-circle green"></i>
+								   </a>
 								<select ng-options="impresionFactura as impresionFactura.nombre for impresionFactura in impresionesFactura track by impresionFactura.id"
 								 ng-model="configuracion_general.impresionFactura"></select>
 							</div>
@@ -232,6 +252,7 @@
 								<label class="control-label inline">Título</label>
 							</div>
 							<div class="col-md-6">
+								
 								<select ng-options="tituloFactura as tituloFactura.nombre for tituloFactura in titulosFactura track by tituloFactura.id"
 								 ng-model="configuracion_general.tituloFactura"></select>
 							</div>
@@ -946,7 +967,7 @@
 											<i class="fa fa-exclamation-circle green"></i>
 										</a>
 										<a ng-if="sucursal.configuracionFactura.tipoConfiguracion.nombre == 'LOTE'" ng class="green" href="javascript:void(0)" data-rel="tooltip"
-										 tooltip-placement="top" uib-tooltip="LOTE: En las notas no sale fecha de vencimiento y lote">
+										 tooltip-placement="top" uib-tooltip="LOTE: En las notas sale fecha de vencimiento y lote">
 											<i class="fa fa-exclamation-circle green"></i>
 										</a>
 
