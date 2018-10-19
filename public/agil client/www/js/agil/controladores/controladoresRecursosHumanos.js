@@ -1964,8 +1964,7 @@ angular.module('agil.controladores')
                     campo: ""
                 }
                 $scope.paginator.callBack = $scope.obtenerlistaRolTurnoEmpresa;
-                $scope.paginator.getSearch("", $scope.filtroRol, null);
-                /* $scope.obtenerlistaRolTurnoEmpresa($scope.filtroRol) */
+                $scope.paginator.getSearch("", $scope.filtroRol, null);                
                 $scope.abrirPopup($scope.idModalReporteRolTurnos);
             }
             $scope.buscarRolesTurno=function(){
