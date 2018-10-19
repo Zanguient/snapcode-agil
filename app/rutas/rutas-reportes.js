@@ -54,7 +54,6 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 						model: Almacen, as: 'almacen',
 						include: [{ model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa } }]
 					}]
-					// order: [[{raw:'fecha + factura DESC'}]]
 				}).then(function (ventas) {
 					Venta.findAll({
 						where: {
@@ -64,22 +63,14 @@ module.exports = function (router, sequelize, Sequelize, Compra, Proveedor, Alma
 						{ model: Clase, as: 'movimientoServicio', condicionMovimiento },
 						{
 							model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa }
-						}]
-						// order: [[{raw:'fecha + factura DESC'}]]
+						}],
+						order: [[{raw:'fecha + factura DESC'}]]
 
 					}).then(function (ventas2) {
 
 						var  entity = ventas.concat(ventas2);
 						entity = entity.sort(function (a, b) {
-							if(a.fecha == b.fecha)
-							{
-								return (a.factura < b.factura) ? -1 : (a.factura > b.factura) ? 1 : 0;
-							}
-							else
-							{
-								return (a.fecha < b.fecha) ? -1 : 1;
-							}
-							// return a.factura - b.factura;
+							return a.factura - b.factura;
 						});
 						// entity = entity.sort(function (a, b) {
 						// 	return a.fecha - b.fecha;

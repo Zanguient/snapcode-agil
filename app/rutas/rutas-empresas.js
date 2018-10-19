@@ -46,10 +46,7 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				usar_pago_anticipado: req.body.usar_pago_anticipado,
 				usar_ceros_plan_cuenta: req.body.usar_ceros_plan_cuenta,
 				usar_importacion_compra: req.body.usar_importacion_compra,
-				usar_importacion_venta: req.body.usar_importacion_venta,
-				usar_vencimiento_productos: req.body.usar_vencimiento_productos,
-				usar_vencimiento_creditos: req.body.usar_vencimiento_creditos,
-				usar_vencimiento_deudas: req.body.usar_vencimiento_deudas
+				usar_importacion_venta: req.body.usar_importacion_venta
 			}).then(function (empresaCreada) {
 				Sucursal.create({
 					id_empresa: empresaCreada.id,
@@ -260,10 +257,7 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				usar_pago_anticipado: req.body.usar_pago_anticipado,
 				usar_ceros_plan_cuenta: req.body.usar_ceros_plan_cuenta,
 				usar_importacion_compra: req.body.usar_importacion_compra,
-				usar_importacion_venta: req.body.usar_importacion_venta,
-				usar_vencimiento_productos: req.body.usar_vencimiento_productos,
-				usar_vencimiento_creditos: req.body.usar_vencimiento_creditos,
-				usar_vencimiento_deudas: req.body.usar_vencimiento_deudas
+				usar_importacion_venta: req.body.usar_importacion_venta
 			}, {
 					where: {
 						id: req.params.id_empresa

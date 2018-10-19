@@ -36,30 +36,73 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						{ codigo: { $like: '%' + req.params.texto + '%' } },
 						{ codigo_fabrica: { $like: '%' + req.params.texto + '%' } },
 						{ descripcion: { $like: '%' + req.params.texto + '%' } }]
-					},
-					include: [{ model: ProductoTipoPrecio, as: 'tiposPrecio',include: [{ model: Clase, as: 'tipoPrecio' }] },
-						{ model: Clase, as: 'tipoProducto' },
-						{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
-						{
-							model: ProductoBase, as: 'productosBase', required: false,
-							include: [{
-								model: Producto, as: 'productoBase', required: false,
-								include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+					}
+				}).then(function(pEncontrado){
+					if(pEncontrado.length>0){
+						Producto.findAll({
+							where: {
+								id_empresa: req.params.id_empresa,
+								id_grupo: { $in: gurposUsuario },
+								$or: [{ nombre: { $like: '%' + req.params.texto + '%' } },
+								{ codigo: { $like: '%' + req.params.texto + '%' } },
+								{ codigo_fabrica: { $like: '%' + req.params.texto + '%' } },
+								{ descripcion: { $like: '%' + req.params.texto + '%' } }]
+							},
+							include: [{ model: ProductoTipoPrecio, as: 'tiposPrecio',include: [{ model: Clase, as: 'tipoPrecio' }] },
 								{ model: Clase, as: 'tipoProducto' },
+								{ model: Inventario, as: 'inventarios', required: false, where: {id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
 								{
 									model: ProductoBase, as: 'productosBase', required: false,
 									include: [{
 										model: Producto, as: 'productoBase', required: false,
 										include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
-										{ model: Clase, as: 'tipoProducto' }]
+										{ model: Clase, as: 'tipoProducto' },
+										{
+											model: ProductoBase, as: 'productosBase', required: false,
+											include: [{
+												model: Producto, as: 'productoBase', required: false,
+												include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+												{ model: Clase, as: 'tipoProducto' }]
+											}]
+										}]
 									}]
-								}]
-							}]
-						}
-					]
-				}).then(function (productos) {
-					res.json(productos);
-				});
+								}
+							]
+						}).then(function (productos) {
+							res.json(productos);
+						});
+					}else{
+						Producto.findAll({
+							where: {
+								id_empresa: req.params.id_empresa,
+								id_grupo: { $in: gurposUsuario },								
+							},
+							include: [{ model: ProductoTipoPrecio, as: 'tiposPrecio',include: [{ model: Clase, as: 'tipoPrecio' }] },
+								{ model: Clase, as: 'tipoProducto' },
+								{ model: Inventario, as: 'inventarios', where: {lote:{ $like: '%' + req.params.texto + '%' },id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+								{
+									model: ProductoBase, as: 'productosBase', required: false,
+									include: [{
+										model: Producto, as: 'productoBase', required: false,
+										include: [{ model: Inventario, as: 'inventarios', required: false, where: {id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+										{ model: Clase, as: 'tipoProducto' },
+										{
+											model: ProductoBase, as: 'productosBase', required: false,
+											include: [{
+												model: Producto, as: 'productoBase', required: false,
+												include: [{ model: Inventario, as: 'inventarios', required: false, where: {id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+												{ model: Clase, as: 'tipoProducto' }]
+											}]
+										}]
+									}]
+								}
+							]
+						}).then(function (productos) {
+							res.json(productos);
+						});
+					}
+				})
+				
 			})
 		});
 

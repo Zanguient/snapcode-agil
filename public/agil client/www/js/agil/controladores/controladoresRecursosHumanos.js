@@ -221,7 +221,7 @@ angular.module('agil.controladores')
                 $scope.listYearsAnticipo = $scope.obtenerAnios(2017)
                 $scope.obtenerGenero();
                 $scope.obtenerRecursosHumanos();
-                $scope.historialRolesTurno=false
+                /*   $scope.obtenerPrerequisito(); */
                 $scope.recuperarDatosTipo()
                 $scope.empleadosSeleccionados = []
                 $scope.listaBancos()
@@ -1956,17 +1956,6 @@ angular.module('agil.controladores')
                 $scope.paginator = Paginator();
                 $scope.paginator.column = "id";
                 $scope.paginator.direccion = "asc";
-                var anio = new Date().getFullYear()
-                $scope.filtroRolCal = {
-                    empresa: $scope.usuario.id_empresa,
-                    inicio: "",
-                    fin: "",
-                    grupo: "",
-                    nombre: "",
-                    campo: "",
-                    inicio2:$scope.fechaATexto(new Date(anio,0,1)),
-                    fin2:$scope.fechaATexto(new Date(anio,11,31))
-                }
                 $scope.filtroRol = {
                     empresa: $scope.usuario.id_empresa,
                     inicio: "",
@@ -1985,8 +1974,8 @@ angular.module('agil.controladores')
                 $scope.obtenerRecursosHumanos()
                 $scope.cerrarPopup($scope.idModalReporteRolTurnos);
             }
-            $scope.abrirDialogReporteTurnosDetallado = function (filtro) {
-                $scope.obtenerlistaRolTurnoCal(filtro)
+            $scope.abrirDialogReporteTurnosDetallado = function () {
+                $scope.obtenerlistaRolTurnoCal()
                 $scope.abrirPopup($scope.idModalReporteTurnosDetallado);
             }
             $scope.cambiarFecha = function (filtro) {
@@ -5512,13 +5501,21 @@ angular.module('agil.controladores')
                     blockUI.stop()
                 })
             }
-            $scope.obtenerlistaRolTurnoCal = function (filtro) {
+            $scope.obtenerlistaRolTurnoCal = function () {
                 $scope.paginator = Paginator();
                 $scope.paginator.column = "id";
                 $scope.paginator.direccion = "asc";
-                $scope.paginator.itemsPerPage = 50;
+                $scope.paginator.itemsPerPage = 10;
+                $scope.filtroRolCal = {
+                    empresa: $scope.usuario.id_empresa,
+                    inicio: "",
+                    fin: "",
+                    grupo: "",
+                    nombre: "",
+                    campo: ""
+                }
                 $scope.paginator.callBack = $scope.listaRolTurnoCal;
-                $scope.paginator.getSearch("", filtro, null);
+                $scope.paginator.getSearch("", $scope.filtroRolCal, null);
 
 
             }
@@ -5530,7 +5527,8 @@ angular.module('agil.controladores')
                     $scope.empleadosRolTurno = datos.rolesTurno
                     var f = new Date(datos.fechaInicio)
                     f.setDate(1)
-                    f.setMonth(0)
+                    var f = new Date(datos.fechaInicio)
+                    f.setDate(1)
                     $scope.fechaInicioCalendario = $scope.fechaATexto(new Date(f))
 
                     var fecha = new Date()
@@ -9035,6 +9033,7 @@ angular.module('agil.controladores')
                             inicio++
                         }
                     }
+
                     /*  if (filtro.gestion) {
                          anio = parseInt(filtro.gestion.nombre)
                      } */
@@ -9048,21 +9047,15 @@ angular.module('agil.controladores')
                 $scope.diasAnioPieAusencias = $scope.CalendarioRolTurnos(anio, filtro)
                 $scope.diasAnioPieVacaciones = $scope.CalendarioRolTurnos(anio, filtro)
                 $scope.empleadosRolTurno.forEach(function (rol, index, array) {
-                    var anio = []
-                    if (filtro) {
-                        if (filtro.inicio) {
-                            var inicio = new Date($scope.convertirFecha(filtro.inicio)).getFullYear();
-                            var fin = new Date($scope.convertirFecha(filtro.fin)).getFullYear();
-                            while (inicio <= fin) {
-                                anio.push(inicio)
-                                inicio++
-                            }
-                        }
-                    } else {    
-                        anio.push(new Date().getFullYear())
-                    }
-                    rol.diasAnio = $scope.CalendarioRolTurnos(anio, filtro,rol)                  
-                            var rolturno = rol
+
+                    rol.diasAnio = $scope.CalendarioRolTurnos(anio, filtro)
+
+                   /*  if (index == array.length - 1) {
+                        $scope.empleadosRolTurno.forEach(function (rol, index, array) { */
+
+
+                            /* for (var u = 0; u < rol.empleadosFichas[rol.empleadosFichas.length - 1].rolesTurno.length; u++) { */
+                            var rolturno = rol/* .empleadosFichas[rol.empleadosFichas.length - 1].rolesTurno[u]; */
                             var fechaFin = ""
                             if (rolturno.fecha_fin) {
                                 fechaFin = $scope.fechaATexto(rolturno.fecha_fin)
@@ -9071,7 +9064,11 @@ angular.module('agil.controladores')
                             var a = 1
                             for (var i = 0; i < rol.diasAnio.length; i++) {
                                 var element = rol.diasAnio[i];
-                               
+                                /*  if (rol.empleadosFichas[rol.empleadosFichas.length - 1].rolesTurno.length > 0) {
+                                     rol.verDatos = true
+                                 } else {
+                                     rol.verDatos = false
+                                 } */
                                 if (element.fecha == $scope.fechaATexto(rolturno.fecha_inicio)) {
                                     bandera = true
                                 } else if (new Date($scope.convertirFecha(element.fecha)).getFullYear() > new Date(rolturno.fecha_inicio).getFullYear()) {
@@ -9204,7 +9201,8 @@ angular.module('agil.controladores')
 
                                 }
                             }
-                   
+                     /*    })
+                    } */
                 })
             }
             

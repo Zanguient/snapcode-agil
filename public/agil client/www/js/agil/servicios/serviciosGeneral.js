@@ -935,7 +935,7 @@ angular.module('agil.servicios')
 						ImprimirFacturaCartaOficio(salida, papel, false, false, true, usuario);
 					}
 				} else if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
-					papel = [598,600]; 
+					papel = [600, 598]; 
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
 						ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
 					} else if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
@@ -1082,7 +1082,7 @@ angular.module('agil.servicios')
 	.factory('ImprimirFacturaCartaOficio', ['blockUI', 'VerificarDescuentos', 'Diccionario', 'DibujarCabeceraFacturaNVCartaOficio', 'DibujarCabeceraFacturaNVmedioOficio', '$timeout',
 		function (blockUI, VerificarDescuentos, Diccionario, DibujarCabeceraFacturaNVCartaOficio, DibujarCabeceraFacturaNVmedioOficio, $timeout) {
 			var res = function (venta, papel, vacia, completa, semicompleta, usuario) {
-				var doc = new PDFDocument({ compress: false,  layout: 'portrait', size: papel, margin: 10 });
+				var doc = new PDFDocument({ compress: false, size: papel, margin: 10 });
 				var stream = doc.pipe(blobStream());
 
 				if (venta.configuracion.usar_pf) {
@@ -1389,14 +1389,27 @@ angular.module('agil.servicios')
 				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 90);
 				doc.font('Helvetica-Bold', 8);
 				if (completa || vacia) {
-					doc.rect(380, 40, 190, 50).stroke();
+					if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
+						if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
+						   doc.rect(380, 40, 190, 50).stroke();
+						 } else {
+						   doc.rect(380, 40, 190, 50).fillAndStroke(venta.configuracion.color1, "black").fillColor('black').stroke();
+						 }
+					  }
+					//doc.rect(380, 40, 190, 50).stroke();
 					doc.text("NIT : ", 400, 50);
 					doc.text("Nota No : ", 400, 60);
 				}
 				doc.text(usuario.empresa.nit, 500, 50);
 				doc.text(venta.factura, 500, 60);
 				if (completa || vacia) {
-					doc.rect(50, 160, 520, 40).stroke();
+					
+					//doc.rect(50, 160, 520, 40).stroke();
+					if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
+						doc.rect(50, 160, 520, 40).stroke();
+					} else {
+						doc.rect(50, 160, 520, 40).fillAndStroke(venta.configuracion.color1, "black").fillColor('black').stroke();
+					}
 					doc.text("FECHA : ", 60, 165);
 					doc.text("SEÑOR(ES) : ", 60, 175);
 					doc.text("NIT : ", 360, 165);
@@ -1406,7 +1419,12 @@ angular.module('agil.servicios')
 				doc.text(venta.cliente.nit, 400, 165);
 
 				if (completa || vacia) {
-					doc.rect(50, 200, 520, 25).stroke();
+					//doc.rect(50, 200, 520, 25).stroke();
+					if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
+						doc.rect(50, 200, 520, 25).stroke();
+					} else {
+						doc.rect(50, 200, 520, 25).fillAndStroke(venta.configuracion.color2, "black").fillColor('white').stroke();
+					}
 					//doc.rect(50,225,520,papel[1]-175-225).stroke();
 					doc.text("CODIGO", 55, 210, { width: 70 });
 					doc.text("CANT.", 125, 210);
@@ -1432,14 +1450,12 @@ angular.module('agil.servicios')
 						doc.text("DESC.", 490, 210);
 					}*/
 					doc.text("TOTAL", 530, 210);
+					doc.fillColor('black');
 				}
 				doc.font('Helvetica', 7);
 
-				if (papel[0] == 598 && papel[1] == 600) {
-					doc.text("PÁGINA " + pagina + " DE " + (totalPaginas+1), 500, papel[1]-270);
-				}else{
-					doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
-				}
+				doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
+
 			} else {
 				if (vacia) {
 					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }
@@ -2335,7 +2351,8 @@ angular.module('agil.servicios')
 		var res = function (venta, papel, doc, stream, usuario) {
 			if (venta.configuracion.usar_pf) {
 				var canvas = document.getElementById('qr-code');
-				doc.moveDown(2);
+				doc.moveDown(1);
+				if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 75, doc.y, { align: 'center', fit: [55, 55] }); }  //{ width: 80, height: 50 }				
 				doc.font('Helvetica-Bold', 8);
 				doc.text(usuario.empresa.razon_social.toUpperCase(), { align: 'center' });
 				doc.moveDown(0.4);
@@ -2447,7 +2464,7 @@ angular.module('agil.servicios')
 				var canvas = document.getElementById('qr-code');
 				// draw some text
 				doc.moveDown(1);
-				if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 75, doc.y, { align: 'center', fit: [75, 75] }); }  //{ width: 80, height: 50 }
+				if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 75, doc.y, { align: 'center', fit: [55, 55] }); }  //{ width: 80, height: 50 }
 				doc.y = 40;
 				doc.moveDown(2);
 				doc.font('Helvetica-Bold', 8);
@@ -3610,7 +3627,7 @@ angular.module('agil.servicios')
 				if (filtro.razon_social != "") {
 					cliente = despachos[0].despacho.cliente.razon_social
 				} */
-				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["cod. dest", "Destino", "Direccion", "Cod Cliente", "Cliente", "cod dest.factura", "Razón social", "NIT", "Vendedor", "Nro. pedido", "F. Pedido", "Factura SAP", "fecha fact.", "No. Despacho", "fecha desp.", "Transportista", "Total Cobro", "Saldo", "Cod. prodcuto", "Producto", "cant. pedido", "cant. Despacho", "P/U", "Total", "Costo Transportista", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje", "Precio Transporte", "Total Pedido"]]
+				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["cod. dest", "Destino", "Direccion", "Cod Cliente", "Cliente", "cod dest.factura", "Razón social", "NIT", "Vendedor", "Nro. pedido", "F. Pedido", "Factura SAP", "fecha fact.", "No. Despacho", "fecha desp.", "Transportista", "doc. Cobranza", "Fecha Pago", "Cod. prodcuto", "Producto", "cant. pedido", "cant. Despacho", "P/U", "Total", "Costo Transportista", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje", "Precio Transporte", "Total Pedido"]]
 				var totalCosto = 0;
 				for (var i = 0; i < despachos.length; i++) {
 					var detalle_despacho = despachos[i]
@@ -3639,8 +3656,8 @@ angular.module('agil.servicios')
 					var mes2 = ((fechaPedido.getMonth() + 1) >= 10) ? (fechaPedido.getMonth() + 1) : "0" + (fechaPedido.getMonth() + 1)
 					columns.push(new Date(detalle_despacho.fecha))
 					columns.push(detalle_despacho.transportista.persona.nombre_completo)
-					columns.push(detalle_despacho.pago_ac)
-					columns.push(detalle_despacho.saldo_pago_ac)
+					columns.push("")
+					columns.push("")
 					columns.push(detalle_despacho.producto.codigo)
 					columns.push(detalle_despacho.producto.nombre)
 					columns.push(detalle_despacho.cantidad)
