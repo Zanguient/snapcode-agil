@@ -1229,6 +1229,22 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				}
 				GtmDespachoDetalle.findAll({
 					where: condicionDetalleDespacho,
+					
+					// attributes: [
+					// 	[ Sequelize.literal(
+					// 		'agil_gtm_despacho_detalle.servicio_transporte/agil_gtm_despacho_detalle.cantidad'
+					// 	), 'servicio_transporte'
+					// 	]
+					// ],
+					attributes: ['id', 'id_despacho', 'id_producto', 'cantidad', 'cantidad_despacho', 'saldo', 'precio_unitario', 'importe',
+						'id_transportista', 'id_estibaje', 'id_grupo_estibaje', 'despachado', 'eliminado', 'factura', 'id_padre', 'fecha',
+						'fecha_factura', 'numero_correlativo', 'alerta', 'pago_ac', 'saldo_pago_ac', 'total', 'id_sucursal', 'id_almacen',
+						'kardex_detalle', 'id_movimiento', 'latitud', 'longitud', 'id_estado', 'createdAt', 'updatedAt',
+						[ sequelize.literal(
+							'COALESCE(agil_gtm_despacho_detalle.servicio_transporte, 0) / COALESCE(agil_gtm_despacho_detalle.cantidad, 0)'
+						), 'servicio_transporte'
+						]
+					],
 					include: [{
 						model: GtmDespacho, as: 'despacho',
 						where: condicionDespacho,
