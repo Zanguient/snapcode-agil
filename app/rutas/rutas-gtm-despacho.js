@@ -1229,6 +1229,12 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, forEach, j
 				}
 				GtmDespachoDetalle.findAll({
 					where: condicionDetalleDespacho,
+					attributes: [
+						[ sequelize.literal(
+							'COALESCE(servicio_transporte, 0) / COALESCE(cantidad, 0)'
+						), 'servicio_transporte'
+						]
+					],
 					include: [{
 						model: GtmDespacho, as: 'despacho',
 						where: condicionDespacho,
