@@ -283,9 +283,11 @@ function ejecutarScriptsComprobante(IdModalVerificarCuenta, IdModalEliminarCompr
 
 }
 
-function ejecutarScriptsCotizacion(idModalWizardCotizacionEdicion, idModalInventario, idModalDialogRechazo) {
+function ejecutarScriptsCotizacion(idModalWizardCotizacionEdicion, idModalInventario, idModalDialogRechazo, idModalDialogFirmaUsuario, idImagenFirmaUsuario) {
 	crearPopup(idModalWizardCotizacionEdicion, "100%", 1800);
 	crearPopup(idModalDialogRechazo, "40%", 'auto');
+	crearPopup(idModalDialogFirmaUsuario, "46%", 'auto');
+	aplicarVisorImagenArchivo(idImagenFirmaUsuario);
 	aplicarDatePickers();
 }
 function ejecutarScriptsPacientes(idModalDialogVacunas, idModalDialogConsulta, idModalwizardContainerConsulta,

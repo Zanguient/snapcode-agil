@@ -1968,6 +1968,10 @@ angular.module('agil.controladores')
                 /* $scope.obtenerlistaRolTurnoEmpresa($scope.filtroRol) */
                 $scope.abrirPopup($scope.idModalReporteRolTurnos);
             }
+            $scope.buscarRolesTurno=function(){
+                $scope.paginator.callBack = $scope.obtenerlistaRolTurnoEmpresa;
+                $scope.paginator.getSearch("", $scope.filtroRol, null);
+            }
             $scope.cerrarDialogReporteRolTurnos = function () {
                 shortcut.remove("ESC", function () {
                 })

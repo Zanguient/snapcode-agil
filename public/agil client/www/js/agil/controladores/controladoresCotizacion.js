@@ -15,6 +15,8 @@ angular.module('agil.controladores')
 		// $scope.idModalWizardCotizacionModificar = 'modal-wizard-cotizacion-modificar';
 		$scope.idModalInventario = "dialog-productos-venta";
 		$scope.idModalDialogRechazo = "dialog-editar-rechazo";
+		$scope.idModalDialogFirmaUsuario = "dialog-firma-usuario";
+		$scope.idImagenFirmaUsuario = 'imagen-firma';
 		// $scope.cotizacion = new Cotizacion({detallesCotizacion:[]});
 
 		$scope.inicio = function () {
@@ -98,7 +100,7 @@ angular.module('agil.controladores')
 
 		$scope.$on('$viewContentLoaded', function () {
 			resaltarPestaña($location.path().substring(1));
-			ejecutarScriptsCotizacion($scope.idModalWizardCotizacionNueva, $scope.idModalInventario, $scope.idModalDialogRechazo);
+			ejecutarScriptsCotizacion($scope.idModalWizardCotizacionNueva, $scope.idModalInventario, $scope.idModalDialogRechazo, $scope.idModalDialogFirmaUsuario, $scope.idImagenFirmaUsuario);
 			$scope.buscarAplicacion($scope.usuario.aplicacionesUsuario, $location.path().substring(1));
 		});
 
@@ -122,6 +124,7 @@ angular.module('agil.controladores')
 			$scope.eliminarPopup($scope.idModalWizardCotizacionNueva);
 			$scope.eliminarPopup($scope.idModalInventario);
 			$scope.eliminarPopup($scope.idModalDialogRechazo);
+			$scope.eliminarPopup($scope.idModalDialogFirmaUsuario);
 
 		});
 
@@ -283,6 +286,13 @@ angular.module('agil.controladores')
 			// }
 		}
 
+		$scope.abrirFirmaUsuario = function () {
+			$scope.abrirPopup($scope.idModalDialogFirmaUsuario);
+		}
+
+		$scope.cerrarDialogFirmaUsuario = function () {
+            $scope.cerrarPopup($scope.idModalDialogFirmaUsuario);
+        }
 
 		$scope.buscarCliente = function (query) {
 			if (query != "" && query != undefined) {
