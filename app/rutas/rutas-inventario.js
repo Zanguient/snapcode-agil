@@ -1788,10 +1788,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'formatoColorFactura' },
 						{ model: Clase, as: 'formatoPapelFacturaServicio' },
 						{ model: Clase, as: 'formatoColorFacturaServicio' },
-						{ model: Clase, as: 'tipoConfiguracion' },
-						{ model: Clase, as: 'formatoPapelNotaVenta'},
-						{ model: Clase, as: 'formatoColorNotaVenta'},
-						{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+						{ model: Clase, as: 'tipoConfiguracion' }]
 					}).then(function (configuracionGeneralFactura) {
 						if (configuracionGeneralFactura.usar) {
 							var promises = [];
@@ -1822,10 +1819,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								{ model: Clase, as: 'formatoColorFactura' },
 								{ model: Clase, as: 'formatoPapelFacturaServicio' },
 								{ model: Clase, as: 'formatoColorFacturaServicio' },
-								{ model: Clase, as: 'tipoConfiguracion' },
-								{ model: Clase, as: 'formatoPapelNotaVenta'},
-								{ model: Clase, as: 'formatoColorNotaVenta'},
-								{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+								{ model: Clase, as: 'tipoConfiguracion' }]
 							}).then(function (configuracionFactura) {
 								var promises = [];
 								venta.configuracion = configuracionFactura;
@@ -2061,10 +2055,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 													{ model: Clase, as: 'formatoColorFactura' },
 													{ model: Clase, as: 'formatoPapelFacturaServicio' },
 													{ model: Clase, as: 'formatoColorFacturaServicio' },
-													{ model: Clase, as: 'tipoConfiguracion' },
-													{ model: Clase, as: 'formatoPapelNotaVenta'},
-													{ model: Clase, as: 'formatoColorNotaVenta'},
-													{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+													{ model: Clase, as: 'tipoConfiguracion' }]
 												}).then(function (configuracionGeneralFactura) {
 													if (configuracionGeneralFactura.usar) {
 														var promises = [];
@@ -2175,10 +2166,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																{ model: Clase, as: 'formatoColorFactura' },
 																{ model: Clase, as: 'formatoPapelFacturaServicio' },
 																{ model: Clase, as: 'formatoColorFacturaServicio' },
-																{ model: Clase, as: 'tipoConfiguracion' },
-																{ model: Clase, as: 'formatoPapelNotaVenta'},
-																{ model: Clase, as: 'formatoColorNotaVenta'},
-																{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+																{ model: Clase, as: 'tipoConfiguracion' }]
 															}).then(function (configuracionGeneralFactura) {
 																if (configuracionGeneralFactura.usar) {
 																	var promises = [];
@@ -2210,10 +2198,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																		{ model: Clase, as: 'formatoColorFactura' },
 																		{ model: Clase, as: 'formatoPapelFacturaServicio' },
 																		{ model: Clase, as: 'formatoColorFacturaServicio' },
-																		{ model: Clase, as: 'tipoConfiguracion' },
-																		{ model: Clase, as: 'formatoPapelNotaVenta'},
-																		{ model: Clase, as: 'formatoColorNotaVenta'},
-																		{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+																		{ model: Clase, as: 'tipoConfiguracion' }]
 																	}).then(function (configuracionFactura) {
 																		var promises = [];
 																		venta.configuracion = configuracionFactura;
@@ -2282,10 +2267,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ model: Clase, as: 'formatoColorFactura' },
 				{ model: Clase, as: 'formatoPapelFacturaServicio' },
 				{ model: Clase, as: 'formatoColorFacturaServicio' },
-				{ model: Clase, as: 'tipoConfiguracion' },
-				{ model: Clase, as: 'formatoPapelNotaVenta'},
-				{ model: Clase, as: 'formatoColorNotaVenta'},
-				{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+				{ model: Clase, as: 'tipoConfiguracion' }]
 			}).then(function (configuracionGeneralFactura) {
 
 				if (configuracionGeneralFactura.usar) {
@@ -2317,9 +2299,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'formatoColorFactura' },
 						{ model: Clase, as: 'formatoPapelFacturaServicio' },
 						{ model: Clase, as: 'formatoColorFacturaServicio' },
-						{ model: Clase, as: 'tipoConfiguracion' },
-						{ model: Clase, as: 'formatoPapelNotaVenta'},
-						{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+						{ model: Clase, as: 'tipoConfiguracion' }]
 					}).then(function (configuracionFactura) {
 						var promises = [];
 						venta.configuracion = configuracionFactura;
@@ -2593,10 +2573,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ model: Clase, as: 'formatoColorFactura' },
 				{ model: Clase, as: 'formatoPapelFacturaServicio' },
 				{ model: Clase, as: 'formatoColorFacturaServicio' },
-				{ model: Clase, as: 'tipoConfiguracion' },
-				{ model: Clase, as: 'formatoPapelNotaVenta'},
-				{ model: Clase, as: 'formatoColorNotaVenta'},
-				{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+				{ model: Clase, as: 'tipoConfiguracion' }]
 			}).then(function (configuracionGeneralFactura) {
 				venta.detallesVentaNoConsolidadas.forEach(function (detalleVentaNoConsolidada, index, array) {
 					//crearDetalleVentaNoConsolidada(ventaCreada.id, detalleVentaNoConsolidada.producto.id, null, detalleVentaNoConsolidada);
@@ -2630,10 +2607,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'formatoColorFactura' },
 						{ model: Clase, as: 'formatoPapelFacturaServicio' },
 						{ model: Clase, as: 'formatoColorFacturaServicio' },
-						{ model: Clase, as: 'tipoConfiguracion' },
-						{ model: Clase, as: 'formatoPapelNotaVenta'},
-						{ model: Clase, as: 'formatoColorNotaVenta'},
-						{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+						{ model: Clase, as: 'tipoConfiguracion' }]
 					}).then(function (configuracionFactura) {
 						var promises = [];
 						venta.configuracion = configuracionFactura;
@@ -3542,10 +3516,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'formatoColorFactura' },
 						{ model: Clase, as: 'formatoPapelFacturaServicio' },
 						{ model: Clase, as: 'formatoColorFacturaServicio' },
-						{ model: Clase, as: 'tipoConfiguracion' },
-						{ model: Clase, as: 'formatoPapelNotaVenta'},
-						{ model: Clase, as: 'formatoColorNotaVenta'},
-						{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+						{ model: Clase, as: 'tipoConfiguracion' }]
 					}).then(function (configuracionGeneralFactura) {
 						if (venta.movimiento) {
 							if (venta.movimiento.clase.nombre_corto == Diccionario.EGRE_FACTURACION) {
@@ -3584,10 +3555,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 											{ model: Clase, as: 'formatoColorFactura' },
 											{ model: Clase, as: 'formatoPapelFacturaServicio' },
 											{ model: Clase, as: 'formatoColorFacturaServicio' },
-											{ model: Clase, as: 'tipoConfiguracion' },
-											{ model: Clase, as: 'formatoPapelNotaVenta'},
-											{ model: Clase, as: 'formatoColorNotaVenta'},
-											{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+											{ model: Clase, as: 'tipoConfiguracion' }]
 										}).then(function (configuracionFactura) {
 											res.json({
 												sucursalPrincipal: sucursalPrincipalEncontrada,
@@ -3666,10 +3634,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										{ model: Clase, as: 'formatoColorFactura' },
 										{ model: Clase, as: 'formatoPapelFacturaServicio' },
 										{ model: Clase, as: 'formatoColorFacturaServicio' },
-										{ model: Clase, as: 'tipoConfiguracion' },
-										{ model: Clase, as: 'formatoPapelNotaVenta'},
-										{ model: Clase, as: 'formatoColorNotaVenta'},
-										{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+										{ model: Clase, as: 'tipoConfiguracion' }]
 									}).then(function (configuracionFactura) {
 										res.json({
 											sucursalPrincipal: sucursalPrincipalEncontrada,
@@ -5925,4 +5890,5 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				})
 			})
 		})
+		/////edson maldito
 }

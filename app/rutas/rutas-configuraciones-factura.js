@@ -4,7 +4,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 		.get(function (req, res) {
 			obtenerConfiguracionesFacturaEmpresa(req, res, true);
 		});
-
+///edson maldito
 	router.route('/configuraciones-factura/:id_configuracion')
 		.put(function (req, res) {
 			ConfiguracionFactura.update({
@@ -38,13 +38,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				color_detalle_factura: req.body.configuracionFactura.color_detalle_factura,
 				color_cabecera_factura_servicio: req.body.configuracionFactura.color_cabecera_factura_servicio,
 				color_detalle_factura_servicio: req.body.configuracionFactura.color_detalle_factura_servicio,
-				id_tipo_configuracion:req.body.tipoConfiguracion.id,
-				id_formato_papel_nota_venta: req.body.configuracionFactura.formatoPapelNotaVenta.id,
-				id_formato_color_nota_venta: req.body.configuracionFactura.formatoColorNotaVenta.id,
-				color_cabecera_nota_venta: req.body.configuracionFactura.color_cabecera_nota_venta,
-				color_detalle_nota_venta: req.body.configuracionFactura.color_detalle_nota_venta,
-				nota_factura_nota_venta: req.body.configuracionFactura.nota_factura_nota_venta,
-				id_tipo_configuracion_nota_venta:req.body.configuracionFactura.tipoConfiguracionNotaVenta.id
+				id_tipo_configuracion:req.body.tipoConfiguracion.id
 
 			}, {
 					where: { id: req.params.id_configuracion }
@@ -119,13 +113,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				color_detalle_factura: req.body.color_detalle_factura,
 				color_cabecera_factura_servicio: req.body.color_cabecera_factura_servicio,
 				color_detalle_factura_servicio: req.body.color_detalle_factura_servicio,
-				id_tipo_configuracion:req.body.tipoConfiguracion.id,
-				id_formato_papel_nota_venta: req.body.formatoPapelNotaVenta.id,
-				id_formato_color_nota_venta: req.body.formatoColorNotaVenta.id,
-				color_cabecera_nota_venta: req.body.color_cabecera_nota_venta,
-				color_detalle_nota_venta: req.body.color_detalle_nota_venta,
-				nota_factura_nota_venta: req.body.nota_factura_nota_venta,
-				id_tipo_configuracion_nota_venta:req.body.tipoConfiguracionNotaVenta.id
+				id_tipo_configuracion:req.body.tipoConfiguracion.id
 				
 			}, {
 					where: { id: req.params.id_configuracion }
@@ -161,11 +149,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				{ model: Clase, as: 'tamanoPapelCajaChicaEgreso' },
 				{ model: Clase, as: 'formatoPapelFacturaServicio' },
 				{ model: Clase, as: 'formatoColorFacturaServicio' },
-				{ model: Clase, as: 'tipoConfiguracion' },
-
-				{ model: Clase, as: 'formatoPapelNotaVenta'},
-				{ model: Clase, as: 'formatoColorNotaVenta'},
-				{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+				{ model: Clase, as: 'tipoConfiguracion' }]
 
 			}]
 		});
@@ -247,9 +231,8 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 													id_tamano_papel_farmacia: tipoPapelFactura.id,
 													id_tamano_papel_ropa_trabajo: tipoPapelFactura.id,
 													id_tamano_papel_caja_chica_ingreso: tipoPapelFactura.id,
-													id_tamano_papel_caja_chica_egreso: tipoPapelFactura.id,
-													id_formato_papel_nota_venta: formatoPapelImpresion.id,
-													id_formato_color_nota_venta: formatoColorImpresion.id
+													id_tamano_papel_caja_chica_egreso: tipoPapelFactura.id
+													
 
 												}).then(function (score) {
 													if (index === (array.length - 1)) {
@@ -324,9 +307,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 													id_tamano_papel_farmacia: tipoPapelFactura.id,
 													id_tamano_papel_ropa_trabajo: tipoPapelFactura.id,
 													id_tamano_papel_caja_chica_ingreso: tipoPapelFactura.id,
-													id_tamano_papel_caja_chica_egreso: tipoPapelFactura.id,
-													id_formato_papel_nota_venta: formatoPapelImpresion.id,
-													id_formato_color_nota_venta: formatoColorImpresion.id
+													id_tamano_papel_caja_chica_egreso: tipoPapelFactura.id
 
 												}).then(function (score) {
 													if (index === (array.length - 1)) {
@@ -398,10 +379,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 			{ model: Clase, as: 'formatoColorFactura' },
 			{ model: Clase, as: 'formatoPapelFacturaServicio' },
 			{ model: Clase, as: 'formatoColorFacturaServicio' },
-			{ model: Clase, as: 'tipoConfiguracion' },
-			{ model: Clase, as: 'formatoPapelNotaVenta'},
-			{ model: Clase, as: 'formatoColorNotaVenta'},
-			{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+			{ model: Clase, as: 'tipoConfiguracion' }]
 		});
 	}
 
@@ -456,9 +434,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 											id_tamano_papel_farmacia: tipoPapelFactura.id,
 											id_tamano_papel_ropa_trabajo: tipoPapelFactura.id,
 											id_tamano_papel_caja_chica_ingreso: tipoPapelFactura.id,
-											id_tamano_papel_caja_chica_egreso: tipoPapelFactura.id,
-											id_formato_papel_nota_venta: formatoPapelImpresion.id,
-											id_formato_color_nota_venta: formatoColorImpresion.id
+											id_tamano_papel_caja_chica_egreso: tipoPapelFactura.id
 
 										}).then(function (score) {
 											obtenerConfiguracionGeneralFacturaEmpresa(req, res);
@@ -499,10 +475,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				{ model: Clase, as: 'formatoColorFactura' },
 				{ model: Clase, as: 'formatoPapelFacturaServicio' },
 				{ model: Clase, as: 'formatoColorFacturaServicio' },
-				{ model: Clase, as: 'tipoConfiguracion' },
-				{ model: Clase, as: 'formatoPapelNotaVenta'},
-				{ model: Clase, as: 'formatoColorNotaVenta'},
-				{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+				{ model: Clase, as: 'tipoConfiguracion' }]
 
 			}).then(function (configuracion) {
 				if (configuracion.usar) {
@@ -532,10 +505,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 						{ model: Clase, as: 'formatoColorFactura' },
 						{ model: Clase, as: 'formatoPapelFacturaServicio' },
 						{ model: Clase, as: 'formatoColorFacturaServicio' },
-						{ model: Clase, as: 'tipoConfiguracion' },
-						{ model: Clase, as: 'formatoPapelNotaVenta'},
-						{ model: Clase, as: 'formatoColorNotaVenta'},
-						{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+						{ model: Clase, as: 'tipoConfiguracion' }]
 					}).then(function (configuracionEspecifica) {
 						res.json(configuracionEspecifica);
 					});
