@@ -384,19 +384,38 @@
 											</span>
 										</a>
 									</li>
+									<li>
+										<a e-disabled="!aplicacion.puede_modificar" ng-if="(item.movimiento.clase.nombre_corto==diccionario.EGRE_FACTURACION || item.movimiento.clase.nombre_corto==diccionario.EGRE_PROFORMA) && usuario.empresa.usar_edicion_venta"
+										 class="blue" uib-tooltip="Permitir Edición" tooltip-placement="left" href="javascript:void(0)" ng-click="abrirModalVerificarCuenta(item,'venta')">
+											<i class="ace-icon fa fa-pencil bigger-130"></i>
+										</a>
+									</li>
 								</ul>
 							</div>
 						</div>
 					</td>
 				</tr>
 			</tbody>
+
+		</table>
+		<table class="table table-striped">
 			<tfoot>
 				<tr ng-if="ventas.length>0">
-					<td colspan="7"></td>
-					<td>
+					<th></th>
+					<th></th>
+					<th width="150"></th>
+					<th width="150"></th>
+					<th width="150"></th>
+					<th width="150"></th>
+					<th width="150"></th>
+					<th>
 						<b>TOTAL</b>
-					</td>
-					<td colspan="5">{{sumarMonto()|number:2 }}</td>
+					</th>
+					<th>{{sumarMonto()|number:2 }}</th>
+					<th width="150"></th>
+					<th width="150"></th>
+					<th width="150"></th>
+					<th width="150"></th>
 				</tr>
 			</tfoot>
 		</table>

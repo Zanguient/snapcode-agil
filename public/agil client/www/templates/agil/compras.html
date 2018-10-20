@@ -290,18 +290,29 @@
 						</div>
 					</td>
 				</tr>
-			</tbody>
-			<tfoot>
-					<tr ng-if="compras.length>0">
-							<td colspan="7"></td>
-							<td>
-								<b>TOTAL</b>
-							</td>
-							<td colspan="5">{{sumarMonto(compras)|number:2}}</td>
-	
-						</tr>
-			</tfoot>
+			</tbody>			
 		</table>
+		<table class="table table-striped">
+				<tfoot>
+					<tr ng-if="compras.length>0">
+						<th></th>
+						<th></th>
+						<th width="150"></th>
+						<th width="150"></th>
+						<th width="150"></th>
+						<th width="150"></th>
+						<th width="150"></th>
+						<th>
+							<b>TOTAL</b>
+						</th>
+						<th>{{sumarMonto(compras)|number:2 }}</th>
+						<th width="150"></th>
+						<th width="150"></th>
+						<th width="150"></th>
+						<th width="150"></th>
+					</tr>
+				</tfoot>
+			</table>
 		<div class="pull-right">
 		<at-pagination ng-if="compras.length>0" at-list="compras" at-config="config"></at-pagination>
 	</div>
