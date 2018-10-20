@@ -56,6 +56,11 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'usar_importacion_venta_servicio'
 		},
+		usar_filtro_lote:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_filtro_lote',
+			defaultValue: 0
+		}
 	}, {
 			freezeTableName: true
 		});

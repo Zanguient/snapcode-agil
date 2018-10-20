@@ -183,6 +183,11 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'usar_vencimiento_deudas',
 			defaultValue: 0
+		},
+		usar_filtro_lote:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_filtro_lote',
+			defaultValue: 0
 		}
 	}, {
 			freezeTableName: true

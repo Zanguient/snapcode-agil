@@ -845,6 +845,15 @@
 												<span class="lbl" data-lbl="Si&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
 											</label>
 										</div>
+										<label ng-if="usuario.empresa.usar_filtro_lote">Filtar por lote/serie</label>
+										<div ng-if="usuario.empresa.usar_filtro_lote">
+											<label class="pull-left" uib-tooltip="Filtrar por serie o lote">
+
+												<input ng-model="usuario.usar_filtro_lote" checked="checked" ng-change="UsarLectorDeBarra()" type="checkbox"
+												 class="ace ace-switch ace-switch-5">
+												<span class="lbl" data-lbl="Si&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
+											</label>
+										</div>
 									</th>
 									<th>
 										<label>CÓD. ITEM</label>
@@ -1476,10 +1485,12 @@
 										{{detalleVenta.importe | number: 2}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_descuento">
-										{{detalleVenta.total_descuento | number: 2}}<!--&nbsp;{{detalleVenta.tipo_descuento ? '('+detalleVenta.descuento+'%)':''}}-->
+										{{detalleVenta.total_descuento | number: 2}}
+										<!--&nbsp;{{detalleVenta.tipo_descuento ? '('+detalleVenta.descuento+'%)':''}}-->
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_recargo">
-										{{detalleVenta.total_recargo | number: 2}}<!--&nbsp;{{detalleVenta.tipo_recargo ? '('+detalleVenta.recargo+'%)':''}}-->
+										{{detalleVenta.total_recargo | number: 2}}
+										<!--&nbsp;{{detalleVenta.tipo_recargo ? '('+detalleVenta.recargo+'%)':''}}-->
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_ice">
 										{{detalleVenta.ice | number: 2}}

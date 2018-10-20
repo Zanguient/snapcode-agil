@@ -811,6 +811,7 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 		.put(function (req, res) {
 			Usuario.update({
 				usar_lector_de_barra: req.body.usar_lector_de_barra,
+				usar_filtro_lote: req.body.usar_filtro_lote,
 			}, {
 					where: {
 						id: req.body.id

@@ -349,6 +349,10 @@ angular.module('agil.controladores')
 				if (query != "" && query != undefined) {
 					var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id, $scope.venta.almacen.id);
 					promesa.then(function (datos) {
+						$scope.filtro_lote =null
+						if($scope.usuario.usar_filtro_lote){
+							$scope.filtro_lote =query
+						}
 						if (datos.length == 1) {
 							$scope.establecerProducto(datos[0])
 						}
@@ -367,16 +371,12 @@ angular.module('agil.controladores')
 				blockUI.start()
 				if (query != "" && query != undefined) {
 					var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id, $scope.venta.almacen.id);
-					/*  promesa.then(function (datos) {
-						if (datos.length > 1) {
-						} else {
-							$scope.establecerProducto(datos[0])
+					 promesa.then(function (datos) {
+						$scope.filtro_lote =null
+						if($scope.usuario.usar_filtro_lote){
+							$scope.filtro_lote =query
 						}
-						blockUI.stop()
-					}, function (err) {
-						$scope.mostrarMensaje(err.message)
-						blockUI.stop()
-					})	 */
+					})	
 					blockUI.stop()
 					return promesa;
 				}
@@ -390,6 +390,7 @@ angular.module('agil.controladores')
 				var promesa = ListaInventariosProductoVentaEdicion(producto.id, $scope.venta.almacen.id, fecha);
 				promesa.then(function (inventarios) {
 					producto.inventarios = inventarios;
+					
 					for (var i = 0; i < producto.inventarios.length; i++) {
 						producto.inventarios[i].fecha_vencimiento = (producto.inventarios[i].fecha_vencimiento ? new Date(producto.inventarios[i].fecha_vencimiento) : null);
 						producto.inventarios[i].fechaVencimientoTexto = (producto.inventarios[i].fecha_vencimiento ? producto.inventarios[i].fecha_vencimiento.getDate() + "/" + (producto.inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + producto.inventarios[i].fecha_vencimiento.getFullYear() : "");
@@ -436,8 +437,8 @@ angular.module('agil.controladores')
 				producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
 				producto.descuento = producto.descuento ? producto.descuento : 0
 				$scope.editar_precio = false;
-
-				var promesa = ListaInventariosProducto(producto.id, $scope.venta.almacen.id);
+			
+				var promesa = ListaInventariosProducto(producto.id, $scope.venta.almacen.id,$scope.filtro_lote);
 				promesa.then(function (inventarios) {
 					producto.inventarios = inventarios;
 					for (var i = 0; i < producto.inventarios.length; i++) {
@@ -469,13 +470,22 @@ angular.module('agil.controladores')
 					} else {
 						precio = producto.precio_unitario
 					}
+					if ($scope.usuario.usar_filtro_lote) {
+						$scope.detalleVenta = {
+							eliminado: false,
+							producto: producto, precio_unitario: producto.precio_unitario, inventarioProducto: $scope.inventariosDisponibleProducto[1],
+							inventario_disponible: inventarioDisponible, costos: producto.activar_inventario ? producto.inventarios : [],
+							cantidad: 1, descuento: producto.descuento, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
+						};
+					} else {
+
 					$scope.detalleVenta = {
 						eliminado: false,
 						producto: producto, precio_unitario: precio, inventarioProducto: $scope.inventariosDisponibleProducto[0],
 						inventario_disponible: inventarioDisponible, costos: producto.activar_inventario ? producto.inventarios : [],
 						cantidad: 1, descuento: producto.descuento, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
 					};
-
+				}
 					// === para colocar el costo unitario de inventario == 
 					$scope.precio_inventario;
 

@@ -49,7 +49,8 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				usar_importacion_venta: req.body.usar_importacion_venta,
 				usar_vencimiento_productos: req.body.usar_vencimiento_productos,
 				usar_vencimiento_creditos: req.body.usar_vencimiento_creditos,
-				usar_vencimiento_deudas: req.body.usar_vencimiento_deudas
+				usar_vencimiento_deudas: req.body.usar_vencimiento_deudas,
+				usar_filtro_lote: req.body.usar_filtro_lote,
 			}).then(function (empresaCreada) {
 				Sucursal.create({
 					id_empresa: empresaCreada.id,
@@ -263,7 +264,8 @@ module.exports = function (router, decodeBase64Image, fs, Empresa, Sucursal, Cla
 				usar_importacion_venta: req.body.usar_importacion_venta,
 				usar_vencimiento_productos: req.body.usar_vencimiento_productos,
 				usar_vencimiento_creditos: req.body.usar_vencimiento_creditos,
-				usar_vencimiento_deudas: req.body.usar_vencimiento_deudas
+				usar_vencimiento_deudas: req.body.usar_vencimiento_deudas,
+				usar_filtro_lote: req.body.usar_filtro_lote,
 			}, {
 					where: {
 						id: req.params.id_empresa

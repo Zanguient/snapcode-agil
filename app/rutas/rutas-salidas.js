@@ -1,5 +1,5 @@
 module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Producto, Proveedor, Cliente, Clase, Inventario, ComisionVendedorProducto,
-	Usuario, DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, VentaReprogramacionPago, UsuarioGrupos, ProductoBase,ProductoTipoPrecio) {
+	Usuario, DetalleVenta, DetalleMovimiento, Movimiento, Venta, Compra, DetalleCompra, Almacen, Sucursal, signs3, Tipo, VentaReprogramacionPago, UsuarioGrupos, ProductoBase, ProductoTipoPrecio) {
 
 	router.route('/productos/empresa/:id_empresa/texto/:texto')
 		.get(function (req, res) {
@@ -37,8 +37,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						{ codigo_fabrica: { $like: '%' + req.params.texto + '%' } },
 						{ descripcion: { $like: '%' + req.params.texto + '%' } }]
 					}
-				}).then(function(pEncontrado){
-					if(pEncontrado.length>0){
+				}).then(function (pEncontrado) {
+					if (pEncontrado.length > 0) {
 						Producto.findAll({
 							where: {
 								id_empresa: req.params.id_empresa,
@@ -48,75 +48,75 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 								{ codigo_fabrica: { $like: '%' + req.params.texto + '%' } },
 								{ descripcion: { $like: '%' + req.params.texto + '%' } }]
 							},
-							include: [{ model: ProductoTipoPrecio, as: 'tiposPrecio',include: [{ model: Clase, as: 'tipoPrecio' }] },
-								{ model: Clase, as: 'tipoProducto' },
-								{ model: Inventario, as: 'inventarios', required: false, where: {id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
-								{
-									model: ProductoBase, as: 'productosBase', required: false,
-									include: [{
-										model: Producto, as: 'productoBase', required: false,
-										include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
-										{ model: Clase, as: 'tipoProducto' },
-										{
-											model: ProductoBase, as: 'productosBase', required: false,
-											include: [{
-												model: Producto, as: 'productoBase', required: false,
-												include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
-												{ model: Clase, as: 'tipoProducto' }]
-											}]
+							include: [{ model: ProductoTipoPrecio, as: 'tiposPrecio', include: [{ model: Clase, as: 'tipoPrecio' }] },
+							{ model: Clase, as: 'tipoProducto' },
+							{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+							{
+								model: ProductoBase, as: 'productosBase', required: false,
+								include: [{
+									model: Producto, as: 'productoBase', required: false,
+									include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+									{ model: Clase, as: 'tipoProducto' },
+									{
+										model: ProductoBase, as: 'productosBase', required: false,
+										include: [{
+											model: Producto, as: 'productoBase', required: false,
+											include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+											{ model: Clase, as: 'tipoProducto' }]
 										}]
 									}]
-								}
+								}]
+							}
 							]
 						}).then(function (productos) {
 							res.json(productos);
 						});
-					}else{
+					} else {
 						Producto.findAll({
 							where: {
 								id_empresa: req.params.id_empresa,
-								id_grupo: { $in: gurposUsuario },								
+								id_grupo: { $in: gurposUsuario },
 							},
-							include: [{ model: ProductoTipoPrecio, as: 'tiposPrecio',include: [{ model: Clase, as: 'tipoPrecio' }] },
-								{ model: Clase, as: 'tipoProducto' },
-								{ model: Inventario, as: 'inventarios', where: {lote:{ $like: '%' + req.params.texto + '%' },id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
-								{
-									model: ProductoBase, as: 'productosBase', required: false,
-									include: [{
-										model: Producto, as: 'productoBase', required: false,
-										include: [{ model: Inventario, as: 'inventarios', required: false, where: {id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
-										{ model: Clase, as: 'tipoProducto' },
-										{
-											model: ProductoBase, as: 'productosBase', required: false,
-											include: [{
-												model: Producto, as: 'productoBase', required: false,
-												include: [{ model: Inventario, as: 'inventarios', required: false, where: {id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
-												{ model: Clase, as: 'tipoProducto' }]
-											}]
+							include: [{ model: ProductoTipoPrecio, as: 'tiposPrecio', include: [{ model: Clase, as: 'tipoPrecio' }] },
+							{ model: Clase, as: 'tipoProducto' },
+							{ model: Inventario, as: 'inventarios', where: { lote: { $like: '%' + req.params.texto + '%' }, id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+							{
+								model: ProductoBase, as: 'productosBase', required: false,
+								include: [{
+									model: Producto, as: 'productoBase', required: false,
+									include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+									{ model: Clase, as: 'tipoProducto' },
+									{
+										model: ProductoBase, as: 'productosBase', required: false,
+										include: [{
+											model: Producto, as: 'productoBase', required: false,
+											include: [{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
+											{ model: Clase, as: 'tipoProducto' }]
 										}]
 									}]
-								}
+								}]
+							}
 							]
 						}).then(function (productos) {
 							res.json(productos);
 						});
 					}
 				})
-				
+
 			})
 		});
 
 	router.route('/inventarios-venta-edicion/producto/:id_producto/almacen/:id_almacen/fecha/:fecha')
 		.get(function (req, res) {
-			var inicio = new Date(2014,1,1)
+			var inicio = new Date(2014, 1, 1)
 			var fin = new Date(req.params.fecha); fin.setHours(23, 59, 59, 0, 0);
 
 			Inventario.findAll({
-				where: { id_producto: req.params.id_producto, id_almacen: req.params.id_almacen, cantidad: { $gt: 0 }},
-				include: [{model:DetalleCompra,as:'detallesCompra',include:[{model:Compra,as:'compra'}]},{
+				where: { id_producto: req.params.id_producto, id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } },
+				include: [{ model: DetalleCompra, as: 'detallesCompra', include: [{ model: Compra, as: 'compra' }] }, {
 					model: DetalleMovimiento, as: "detallesMovimiento",
 					include: [{
-						model: Movimiento, as: 'movimiento',where:{fecha:{ $between: [inicio, fin]} },
+						model: Movimiento, as: 'movimiento', where: { fecha: { $between: [inicio, fin] } },
 						include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: 'MOVING' } },
 						{ model: Clase, as: 'clase' }]
 					}]
@@ -126,22 +126,39 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				res.json(inventarios);
 			});
 		});
-	router.route('/inventarios/producto/:id_producto/almacen/:id_almacen')
+	router.route('/inventarios/producto/:id_producto/almacen/:id_almacen/:lote?')
 		.get(function (req, res) {
-			Inventario.findAll({
-				where: { id_producto: req.params.id_producto, id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } },
-				include: [{
-					model: DetalleMovimiento, as: "detallesMovimiento",
+			if (req.params.lote) {
+				Inventario.findAll({
+					where: { id_producto: req.params.id_producto, id_almacen: req.params.id_almacen,lote:req.params.lote, cantidad: { $gt: 0 } },
 					include: [{
-						model: Movimiento, as: 'movimiento',
-						include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: 'MOVING' } },
-						{ model: Clase, as: 'clase' }]
-					}]
-				}],
-				order: [['fecha_vencimiento', 'ASC']]
-			}).then(function (inventarios) {
-				res.json(inventarios);
-			});
+						model: DetalleMovimiento, as: "detallesMovimiento",
+						include: [{
+							model: Movimiento, as: 'movimiento',
+							include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: 'MOVING' } },
+							{ model: Clase, as: 'clase' }]
+						}]
+					}],
+					order: [['fecha_vencimiento', 'ASC']]
+				}).then(function (inventarios) {
+					res.json(inventarios);
+				});
+			} else {
+				Inventario.findAll({
+					where: { id_producto: req.params.id_producto, id_almacen: req.params.id_almacen, cantidad: { $gt: 0 } },
+					include: [{
+						model: DetalleMovimiento, as: "detallesMovimiento",
+						include: [{
+							model: Movimiento, as: 'movimiento',
+							include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: 'MOVING' } },
+							{ model: Clase, as: 'clase' }]
+						}]
+					}],
+					order: [['fecha_vencimiento', 'ASC']]
+				}).then(function (inventarios) {
+					res.json(inventarios);
+				});
+			}
 		});
 
 	router.route('/ventas-no-despachadas/sucursal/:id_sucursal')

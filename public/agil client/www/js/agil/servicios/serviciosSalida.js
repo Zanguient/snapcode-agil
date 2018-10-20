@@ -43,15 +43,15 @@ angular.module('agil.servicios')
   }])
   
 .factory('InventariosProducto',  ['$resource',function ($resource) {
-		return $resource(restServer+"inventarios/producto/:id_producto/almacen/:id_almacen");
+		return $resource(restServer+"inventarios/producto/:id_producto/almacen/:id_almacen/:lote?");
 }])
 
 .factory('ListaInventariosProducto', ['InventariosProducto','$q',function(InventariosProducto, $q) 
   {
-	var res = function(id_producto,id_almacen) 
+	var res = function(id_producto,id_almacen,lote) 
 	{
 		var delay = $q.defer();
-		InventariosProducto.query({id_producto:id_producto,id_almacen:id_almacen},function(entidades) 
+		InventariosProducto.query({id_producto:id_producto,id_almacen:id_almacen,lote:lote},function(entidades) 
 		{        
 			delay.resolve(entidades);
 		}, function(error) 
