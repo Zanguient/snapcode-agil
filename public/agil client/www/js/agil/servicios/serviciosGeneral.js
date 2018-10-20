@@ -935,7 +935,7 @@ angular.module('agil.servicios')
 						ImprimirFacturaCartaOficio(salida, papel, false, false, true, usuario);
 					}
 				} else if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
-					papel = [600, 598]; 
+					papel = [598,600]; 
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
 						ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
 					} else if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
@@ -1082,7 +1082,7 @@ angular.module('agil.servicios')
 	.factory('ImprimirFacturaCartaOficio', ['blockUI', 'VerificarDescuentos', 'Diccionario', 'DibujarCabeceraFacturaNVCartaOficio', 'DibujarCabeceraFacturaNVmedioOficio', '$timeout',
 		function (blockUI, VerificarDescuentos, Diccionario, DibujarCabeceraFacturaNVCartaOficio, DibujarCabeceraFacturaNVmedioOficio, $timeout) {
 			var res = function (venta, papel, vacia, completa, semicompleta, usuario) {
-				var doc = new PDFDocument({ compress: false, size: papel, margin: 10 });
+				var doc = new PDFDocument({ compress: false,  layout: 'portrait', size: papel, margin: 10 });
 				var stream = doc.pipe(blobStream());
 
 				if (venta.configuracion.usar_pf) {
@@ -1454,8 +1454,11 @@ angular.module('agil.servicios')
 				}
 				doc.font('Helvetica', 7);
 
-				doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
-
+				if (papel[0] == 598 && papel[1] == 600) {
+					doc.text("PÁGINA " + pagina + " DE " + (totalPaginas+1), 500, papel[1]-270);
+				}else{
+					doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
+				}
 			} else {
 				if (vacia) {
 					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }
@@ -3671,7 +3674,7 @@ angular.module('agil.servicios')
 				if (filtro.razon_social != "") {
 					cliente = despachos[0].despacho.cliente.razon_social
 				} */
-				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["cod. dest", "Destino", "Direccion", "Cod Cliente", "Cliente", "cod dest.factura", "Razón social", "NIT", "Vendedor", "Nro. pedido", "F. Pedido", "Factura SAP", "fecha fact.", "No. Despacho", "fecha desp.", "Transportista", "doc. Cobranza", "Fecha Pago", "Cod. prodcuto", "Producto", "cant. pedido", "cant. Despacho", "P/U", "Total", "Costo Transportista", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje", "Precio Transporte", "Total Pedido"]]
+				var data = [["", "", "REPORTE DE DESPACHOS "]/*,  ["Vendedor :" +vendedor], ["Cliente :" + cliente] */, ["cod. dest", "Destino", "Direccion", "Cod Cliente", "Cliente", "cod dest.factura", "Razón social", "NIT", "Vendedor", "Nro. pedido", "F. Pedido", "Factura SAP", "fecha fact.", "No. Despacho", "fecha desp.", "Transportista", "Total Cobro", "Saldo", "Cod. prodcuto", "Producto", "cant. pedido", "cant. Despacho", "P/U", "Total", "Costo Transportista", "Grupo de Estibaje", "Tipo de Estibaje", "Costo Estibaje", "Precio Transporte", "Total Pedido"]]
 				var totalCosto = 0;
 				for (var i = 0; i < despachos.length; i++) {
 					var detalle_despacho = despachos[i]
@@ -3700,8 +3703,8 @@ angular.module('agil.servicios')
 					var mes2 = ((fechaPedido.getMonth() + 1) >= 10) ? (fechaPedido.getMonth() + 1) : "0" + (fechaPedido.getMonth() + 1)
 					columns.push(new Date(detalle_despacho.fecha))
 					columns.push(detalle_despacho.transportista.persona.nombre_completo)
-					columns.push("")
-					columns.push("")
+					columns.push(detalle_despacho.pago_ac)
+					columns.push(detalle_despacho.saldo_pago_ac)
 					columns.push(detalle_despacho.producto.codigo)
 					columns.push(detalle_despacho.producto.nombre)
 					columns.push(detalle_despacho.cantidad)

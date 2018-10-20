@@ -965,20 +965,23 @@ angular.module('agil.controladores')
 				var linea = "";
 				for (var i = 0; i < ventas.length; i++) {
 					ventas[i].fecha = new Date(ventas[i].fecha);
-					linea = linea + ventas[i].fecha.getDate() + "/" + (ventas[i].fecha.getMonth() + 1) + "/" + ventas[i].fecha.getFullYear() + "\|";
+					linea = linea + (ventas[i].fecha.getDate() + "/" + (ventas[i].fecha.getMonth() + 1) + "/" + ventas[i].fecha.getFullYear()) + "\|";
 					linea = linea + ventas[i].factura + "|";
 					linea = linea + (ventas[i].autorizacion) + "|";
 					linea = linea + (ventas[i].activa ? "V" : "A") + "|";
-					linea = linea + (ventas[i].activa ? ventas[i].cliente.nit : '0') + "|";
-					linea = linea + (ventas[i].activa ? ventas[i].cliente.razon_social :'ANULADO') + "|";
-					linea = linea + (ventas[i].activa ? ventas[i].importe : 0) + "|";
+					linea = linea + (ventas[i].activa ? ventas[i].cliente ? ventas[i].cliente.nit ? ventas[i].cliente.nit : '0' : '0' : '0') + "|";
+					linea = linea + (ventas[i].activa ? ventas[i].cliente ? ventas[i].cliente.razon_social : 'Sin nombre' : 'ANULADO') + "|";
+					linea = linea + (ventas[i].activa ? (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : 0) + "|";
+					linea = linea + (ventas[i].activa ? ventas[i].total_ice ? ventas[i].total_ice : 0 : 0) + "|";
+					linea = linea + (ventas[i].activa ? ventas[i].total_exento ? ventas[i].total_exento : 0 : 0) + "|";
 					linea = linea + 0 + "|";
-					linea = linea + 0 + "|";
-					linea = linea + 0 + "|";
-					linea = linea + (ventas[i].activa ? ventas[i].importe : 0) + "|";
-					linea = linea + 0 + "|";
-					linea = linea + (ventas[i].activa ? ventas[i].total : 0) + "|";
-					linea = linea + (ventas[i].activa ? (Math.round((ventas[i].total * 0.13) * 100) / 100) : 0) + "|";
+					var venta_importe_ICE_IE_HD_T = (ventas[i].total_ice ? ventas[i].total_ice : 0) + (ventas[i].total_exento ? ventas[i].total_exento : 0) 
+					var venta_subtotal = (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) - venta_importe_ICE_IE_HD_T
+					var venta_importe_base_debito_fiscal = ventas[i].activa ? venta_subtotal - ventas[i].total_descuento : 0
+					linea = linea + (ventas[i].activa ? venta_subtotal : 0) + "|";
+					linea = linea + (ventas[i].activa ? ventas[i].total_descuento ? ventas[i].total_descuento : 0 : 0) + "|";
+					linea = linea + (ventas[i].activa ? venta_importe_base_debito_fiscal : 0) + "|";
+					linea = linea + (ventas[i].activa ? (venta_importe_base_debito_fiscal * 0.13) : 0) + "|";
 					linea = linea + (ventas[i].activa ? ventas[i].codigo_control : 0);
 					linea = linea + "\n"
 				}
@@ -1003,25 +1006,28 @@ angular.module('agil.controladores')
 					columns.push(ventas[i].factura);
 					columns.push((ventas[i].autorizacion) ? ventas[i].autorizacion : "");
 					columns.push((ventas[i].activa ? "V" : "A"));
-					columns.push(ventas[i].activa ? ventas[i].cliente.nit : '0');
-					columns.push(ventas[i].activa ? ventas[i].cliente.razon_social: 'ANULADO');
-					columns.push(ventas[i].activa ? ventas[i].importe : 0);
+					columns.push(ventas[i].activa ? ventas[i].cliente ? ventas[i].cliente.nit ? ventas[i].cliente.nit : '0' : '0' : '0');
+					columns.push(ventas[i].activa ? ventas[i].cliente ? ventas[i].cliente.razon_social : 'Sin nombre' : 'ANULADO');
+					columns.push(ventas[i].activa ? (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : 0);
+					columns.push(ventas[i].activa ? ventas[i].total_ice ? ventas[i].total_ice : 0 : 0);
+					columns.push(ventas[i].activa ? ventas[i].total_exento ? ventas[i].total_exento : 0 : 0);
 					columns.push(0);
-					columns.push(0);
-					columns.push(0);
-					columns.push(ventas[i].activa ? ventas[i].importe : 0);
-					columns.push(0);
-					columns.push(ventas[i].activa ? ventas[i].total : 0);
-					columns.push(ventas[i].activa ? Math.round((ventas[i].total * 0.13) * 100) / 100 : 0);
+					var venta_importe_ICE_IE_HD_T = (ventas[i].total_ice ? ventas[i].total_ice : 0) + (ventas[i].total_exento ? ventas[i].total_exento : 0) 
+					var venta_subtotal = (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) - venta_importe_ICE_IE_HD_T
+					var venta_importe_base_debito_fiscal = ventas[i].activa ? venta_subtotal - ventas[i].total_descuento : 0
+					columns.push(ventas[i].activa ? venta_subtotal : 0);
+					columns.push(ventas[i].activa ? ventas[i].total_descuento ? ventas[i].total_descuento : 0 : 0);
+					columns.push(ventas[i].activa ? venta_importe_base_debito_fiscal : 0);
+					columns.push((ventas[i].activa ? venta_importe_base_debito_fiscal * 0.13 : 0) );
 					columns.push(ventas[i].activa ? (ventas[i].codigo_control) ? ventas[i].codigo_control : "" : '0');
-					sumaImporte = ventas[i].activa ? sumaImporte + ventas[i].importe : sumaImporte;
-					sumaImporteIce = 0;
-					sumaImporteExp = 0;
+					sumaImporte = (ventas[i].activa ? sumaImporte + (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaImporte);
+					sumaImporteIce = (ventas[i].activa ? sumaImporteIce + ventas[i].total_ice : sumaImporteIce);;
+					sumaImporteExp = (ventas[i].activa ? sumaImporteExp + ventas[i].total_exento : sumaImporteExp);
 					sumaImporteGrab = 0;
-					sumaTotal = ventas[i].activa ? sumaTotal + ventas[i].importe : sumaTotal;
-					sumaDescuentos = ventas[i].activa ? sumaDescuentos + 0 : sumaDescuentos;
-					sumaImporteBase = ventas[i].activa ? sumaImporteBase + ventas[i].total : sumaImporteBase;
-					sumaCredito = ventas[i].activa ? sumaCredito + (Math.round((ventas[i].total * 0.13) * 100) / 100) : sumaCredito;
+					sumaTotal = ventas[i].activa ? sumaTotal + (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaTotal;
+					sumaDescuentos = ventas[i].activa ? sumaDescuentos + ventas[i].total_descuento : sumaDescuentos;
+					sumaImporteBase = ventas[i].activa ? sumaImporteBase + venta_importe_base_debito_fiscal : sumaImporteBase;
+					sumaCredito = ventas[i].activa ? sumaCredito + venta_importe_base_debito_fiscal * 0.13 : sumaCredito;
 					data.push(columns);
 					if (i + 1 == ventas.length) {
 						columns = [];
@@ -1085,18 +1091,20 @@ angular.module('agil.controladores')
 					doc.text(ventas[i].factura, 110, y);
 					doc.text(ventas[i].autorizacion, 143, y);
 					doc.text((ventas[i].activa ? "V" : "A"), 215, y);
-					doc.text(ventas[i].activa ? ventas[i].cliente.nit : '0', 235, y);
-					if (ventas[i].cliente.razon_social.length > 19) {
-						doc.font('Helvetica', 6);						
+					doc.text(ventas[i].activa ? ventas[i].cliente ? ventas[i].cliente.nit ? ventas[i].cliente.nit : '0' : '0' : '0', 235, y);
+					if (ventas[i].cliente) {
+						if (ventas[i].cliente.razon_social && ventas[i].cliente.razon_social.length > 19) {
+							doc.font('Helvetica', 6);						
+						}
 					}
-					doc.text(ventas[i].activa ? ventas[i].cliente.razon_social : 'ANULADO', 283, y - 6, { width: 100 });
+					doc.text(ventas[i].activa ? ventas[i].cliente ? ventas[i].cliente.razon_social : 'Sin nombre' : 'ANULADO', 283, y - 6, { width: 100 });
 					doc.font('Helvetica', 8)
-					doc.text(ventas[i].activa ? (ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0)).toFixed(2) : '0.00', 385, y);
+					doc.text(ventas[i].activa ? ((ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : '0.00') + (ventas[i].total_recargo ? ventas[i].total_recargo : 0)).toFixed(2) : '0.00', 385, y);
 					doc.text(ventas[i].activa ? ventas[i].total_ice ? ventas[i].total_ice.toFixed(2) : '0.00' : '0.00', 430, y);
 					doc.text(ventas[i].activa ? ventas[i].total_exento ? ventas[i].total_exento.toFixed(2) : '0.00' : '0.00', 465, y);
 					doc.text('0.00', 507, y);
 					var venta_importe_ICE_IE_HD_T = (ventas[i].total_ice ? ventas[i].total_ice : 0) + (ventas[i].total_exento ? ventas[i].total_exento : 0) 
-					var venta_subtotal = ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) - venta_importe_ICE_IE_HD_T
+					var venta_subtotal = (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) - venta_importe_ICE_IE_HD_T
 					var venta_importe_base_debito_fiscal = ventas[i].activa ? venta_subtotal - ventas[i].total_descuento : 0
 					doc.text(ventas[i].activa ? venta_subtotal.toFixed(2) : '0.00', 540, y);
 					doc.text(ventas[i].activa ? ventas[i].total_descuento ? ventas[i].total_descuento.toFixed(2) : '0.00' : '0.00', 580, y);
@@ -1104,17 +1112,17 @@ angular.module('agil.controladores')
 					doc.text(ventas[i].activa ? (venta_importe_base_debito_fiscal * 0.13).toFixed(2) : '0.00', 650, y);
 					doc.text(ventas[i].activa ? ventas[i].codigo_control : 0, 685, y);
 					y = y + 30;
-					sumaSubImporte = (ventas[i].activa ? sumaSubImporte + ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaSubImporte);
+					sumaSubImporte = (ventas[i].activa ? sumaSubImporte + (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaSubImporte);
 					sumaSubImporteIce = (ventas[i].activa ? sumaSubImporteIce + ventas[i].total_ice : sumaSubImporteIce);
 					sumaSubImporteExp = (ventas[i].activa ? sumaSubImporteExp + ventas[i].total_exento : sumaSubImporteExp);
 					sumaSubImporteGrab = 0///(ventas[i].activa ? sumaSubImporteGrab + ventas[i].total_recargo : sumaSubImporteGrab);
-					sumaSubTotal = ventas[i].activa ? sumaSubTotal + ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaSubTotal;
+					sumaSubTotal = ventas[i].activa ? sumaSubTotal + (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaSubTotal;
 					sumaSubDescuentos = ventas[i].activa ? sumaSubDescuentos + ventas[i].total_descuento : sumaSubDescuentos;
 					sumaSubImporteBase = ventas[i].activa ? sumaSubImporteBase + venta_importe_base_debito_fiscal : sumaSubImporteBase;
 					sumaSubCredito = ventas[i].activa ? sumaSubCredito + venta_importe_base_debito_fiscal * 0.13 : sumaSubCredito;
-					sumaImporte = ventas[i].activa ? sumaImporte + ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaImporte;
+					sumaImporte = ventas[i].activa ? sumaImporte + (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaImporte;
 					
-					sumaTotal = ventas[i].activa ? sumaTotal + ventas[i].importe + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaTotal;
+					sumaTotal = ventas[i].activa ? sumaTotal + (ventas[i].importe ? ventas[i].importe : ventas[i].total ? ventas[i].total : 0) + (ventas[i].total_recargo ? ventas[i].total_recargo : 0) : sumaTotal;
 					sumaDescuentos = ventas[i].activa ? sumaDescuentos + ventas[i].total_descuento : sumaDescuentos;
 					sumaImporteBase = ventas[i].activa ? sumaImporteBase + venta_importe_base_debito_fiscal : sumaImporteBase;
 					sumaCredito = ventas[i].activa ? sumaCredito + venta_importe_base_debito_fiscal * 0.13 : sumaCredito;

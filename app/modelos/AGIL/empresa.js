@@ -168,6 +168,21 @@ module.exports = function (sequelize, Sequelize) {
 		usar_importacion_venta:{
 			type: Sequelize.BOOLEAN,
 			field: 'usar_importacion_venta'
+		},
+		usar_vencimiento_productos:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_vencimiento_productos',
+			defaultValue: 0
+		},
+		usar_vencimiento_creditos:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_vencimiento_creditos',
+			defaultValue: 0
+		},
+		usar_vencimiento_deudas:{
+			type: Sequelize.BOOLEAN,
+			field: 'usar_vencimiento_deudas',
+			defaultValue: 0
 		}
 	}, {
 			freezeTableName: true
