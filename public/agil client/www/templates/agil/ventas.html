@@ -390,6 +390,15 @@
 					</td>
 				</tr>
 			</tbody>
+			<tfoot>
+				<tr ng-if="ventas.length>0">
+					<td colspan="7"></td>
+					<td>
+						<b>TOTAL</b>
+					</td>
+					<td colspan="5">{{sumarMonto()|number:2 }}</td>
+				</tr>
+			</tfoot>
 		</table>
 		<div class="pull-right">
 			<at-pagination ng-if="ventas.length>0" at-list="ventas" at-config="config"></at-pagination>

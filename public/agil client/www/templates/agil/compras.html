@@ -291,6 +291,16 @@
 					</td>
 				</tr>
 			</tbody>
+			<tfoot>
+					<tr ng-if="compras.length>0">
+							<td colspan="7"></td>
+							<td>
+								<b>TOTAL</b>
+							</td>
+							<td colspan="5">{{sumarMonto(compras)|number:2}}</td>
+	
+						</tr>
+			</tfoot>
 		</table>
 		<div class="pull-right">
 		<at-pagination ng-if="compras.length>0" at-list="compras" at-config="config"></at-pagination>
