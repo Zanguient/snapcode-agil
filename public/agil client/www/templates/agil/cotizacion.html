@@ -3,10 +3,17 @@
 		<div class="col-xs-12">
 			<h3 class="header smaller lighter blue">COTIZACIONES</h3>
 			<!-- incluir ng-disabled="!aplicacion.puede_crear" en la sgte. linea-->
-			<div><button id="nuevo" class="btn btn-primary" ng-click="crearNuevaCotizacion()">
-							<i class="ace-icon fa fa-plus align-top bigger-125"></i>
-							Nuevo
-						</button></div><br>
+			<div>
+				<button id="nuevo" class="btn btn-primary" ng-click="crearNuevaCotizacion()">
+						<i class="ace-icon fa fa-plus align-top bigger-125"></i>
+						Nuevo
+				</button>
+				<button id="nuevo" class="btn btn-primary" ng-click="crearNuevaCotizacion()">
+						<i class="ace-icon fa fa-pencil-alt align-top bigger-125"></i>
+						Nuevo
+				</button>
+			</div>
+				<br>
 			<form name="formularioFiltroCotizaciones" novalidate ng-submit="paginator.getSearch(filtro.busqueda,filtro,null)">
 				<fieldset>
 					<legend>Filtro Cotizaciones</legend>

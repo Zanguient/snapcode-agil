@@ -550,12 +550,26 @@
 											</option></select>
 									</td>
 									<td>
+										<select class="form-control" required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id"
+										ng-model="configuracion_general.formatoPapelNotaTraspaso"><option value="0">SELECCIONAR TIPO IMP.</option></select>
 									</td>
 									<td>
+										<select required class="form-control" ng-options="formatoFacturaColor as formatoFacturaColor.nombre for formatoFacturaColor in formatosFacturaColor track by formatoFacturaColor.id"
+										ng-model="configuracion_general.formatoColorNotaTraspaso">
+											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
+										<p>Cabezera Tabla</p>
+										<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_nota_traspaso" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_nota_traspaso}" />
+										<p>Datos Detalle Tabla</p>
+										<input color-picker  class="form-control"color-picker-model="configuracion_general.color_detalle_nota_traspaso" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_nota_traspaso}" />
 									</td>
 									<td>
+											<input type="text" class="form-control" placeholder="NOTA" ng-model="configuracion_general.nota_factura_nota_traspaso">
+									</td>
+									<td>
+										<!-- <select class="form-control" required ng-options="tipoConfiguracion as tipoConfiguracion.nombre for tipoConfiguracion in tiposConfiguraciones track by tipoConfiguracion.id"
+										ng-model="configuracion_general.tipoConfiguracionNotaTraspaso"><option value="0">SELECCIONAR TIPO CONFIG.</option></select>	 -->										 
 									</td>
 								</tr>
 								<tr>
@@ -1057,14 +1071,27 @@
 												TAMAÑO
 											</option></select>
 									</td>
-									<!-- <td><input type="number" class="form-control" ng-model="sucursal.nota_traspaso_correlativo" required></td> -->
 									<td>
+										<select class="form-control" required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id"
+										ng-model="sucursal.configuracionFactura.formatoPapelNotaTraspaso"><option value="0">SELECCIONAR TIPO IMP.</option></select>
 									</td>
 									<td>
+										<select required class="form-control" ng-options="formatoFacturaColor as formatoFacturaColor.nombre for formatoFacturaColor in formatosFacturaColor track by formatoFacturaColor.id"
+										ng-model="sucursal.configuracionFactura.formatoColorNotaTraspaso">
+											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
+										<p>Cabezera Tabla</p>
+										<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_cabecera_nota_traspaso" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_cabecera_nota_traspaso}" />
+										<p>Datos Detalle Tabla</p>
+										<input color-picker  class="form-control"color-picker-model="sucursal.configuracionFactura.color_detalle_nota_traspaso" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_detalle_nota_traspaso}" />
 									</td>
 									<td>
+											<input type="text" class="form-control" placeholder="NOTA" ng-model="sucursal.configuracionFactura.nota_factura_nota_traspaso">
+									</td>
+									<td>
+										<!-- <select class="form-control" required ng-options="tipoConfiguracion as tipoConfiguracion.nombre for tipoConfiguracion in tiposConfiguraciones track by tipoConfiguracion.id"
+										ng-model="sucursal.configuracionFactura.tipoConfiguracionNotaTraspaso"><option value="0">SELECCIONAR TIPO CONFIG.</option></select>										 -->	 
 									</td>
 								</tr>
 								<tr>
@@ -1378,8 +1405,8 @@
 								</div>
 							</div>
 						</div>
-
 					</div> -->
+
 					<div class="step-pane" data-step="3">
 						<div class="center">
 							<h4 class="blue">Finalización</h4>

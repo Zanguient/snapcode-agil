@@ -158,6 +158,28 @@ module.exports = function (sequelize, Sequelize) {
 		id_tipo_configuracion_nota_venta: {
 			type: Sequelize.INTEGER,
 			field: 'tipo_configuracion_nota_venta'
+		},
+
+		
+		id_formato_papel_nota_traspaso: {
+			type: Sequelize.INTEGER,
+			field: 'formato_papel_nota_traspaso'
+		},
+		id_formato_color_nota_traspaso: {
+			type: Sequelize.INTEGER,
+			field: 'formato_color_nota_traspaso'
+		},
+		nota_factura_nota_traspaso: {
+			type: Sequelize.STRING,
+			field: 'nota_factura_nota_traspaso'
+		},
+		color_cabecera_nota_traspaso: {
+			type: Sequelize.STRING,
+			field: 'color_cabecera_nota_traspaso'
+		},
+		color_detalle_nota_traspaso: {
+			type: Sequelize.STRING,
+			field: 'color_detalle_nota_traspaso'
 		}
 		
 	}, {

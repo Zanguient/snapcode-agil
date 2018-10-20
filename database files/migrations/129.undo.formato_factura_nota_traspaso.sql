@@ -1,0 +1,12 @@
+ALTER TABLE agil_configuracion_general_factura DROP formato_color_nota_traspaso;
+ALTER TABLE agil_configuracion_general_factura DROP formato_papel_nota_traspaso;
+ALTER TABLE agil_configuracion_general_factura DROP nota_factura_nota_traspaso;
+ALTER TABLE agil_configuracion_general_factura DROP color_cabecera_nota_traspaso;
+ALTER TABLE agil_configuracion_general_factura DROP color_detalle_nota_traspaso;
+
+
+ALTER TABLE agil_configuracion_factura DROP formato_color_nota_traspaso;
+ALTER TABLE agil_configuracion_factura DROP formato_papel_nota_traspaso;
+ALTER TABLE agil_configuracion_factura DROP nota_factura_nota_traspaso;
+ALTER TABLE agil_configuracion_factura DROP color_cabecera_nota_traspaso;
+ALTER TABLE agil_configuracion_factura DROP color_detalle_nota_traspaso;

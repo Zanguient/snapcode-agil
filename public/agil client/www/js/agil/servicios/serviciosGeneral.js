@@ -3266,8 +3266,8 @@ angular.module('agil.servicios')
 					itemsPorPagina = 16;
 					ImprimirNotaTraspasoCartaOficio(traspaso, papel, itemsPorPagina, usuario);
 				} else if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
-					papel = [612, 468];
-					itemsPorPagina = 9;
+					papel = [598, 600];
+					itemsPorPagina = 5;
 					ImprimirNotaTraspasoCartaOficio(traspaso, papel, itemsPorPagina, usuario);
 				} else if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
 					var alto, totalItems = traspaso.detallesVenta.length;
@@ -3286,7 +3286,7 @@ angular.module('agil.servicios')
 	.factory('ImprimirNotaTraspasoCartaOficio', ['blockUI', 'VerificarDescuentos', 'DibujarCabeceraPDFTraspaso',
 		function (blockUI, VerificarDescuentos, DibujarCabeceraPDFTraspaso) {
 			var res = function (traspaso, papel, itemsPorPagina, usuario) {
-				var doc = new PDFDocument({ compress: false, size: papel, margin: 0 });
+				var doc = new PDFDocument({ compress: false, layout:'portrait', size: papel, margin: 0 });
 				var stream = doc.pipe(blobStream());
 				var existenDescuentos = VerificarDescuentos(traspaso.detallesVenta);
 				doc.font('Helvetica', 8);
@@ -3302,7 +3302,7 @@ angular.module('agil.servicios')
 						doc.text(traspaso.detallesVenta[i].producto.codigo, 55, yDesc, { width: 40 });
 						doc.text(traspaso.detallesVenta[i].cantidad, 110, y);
 						doc.text(traspaso.detallesVenta[i].producto.unidad_medida, 135, y);
-						doc.text(traspaso.detallesVenta[i].producto.nombre, 170, y - 6, { width: 130 });
+						doc.text(traspaso.detallesVenta[i].producto.nombre, 170, y , { width: 130 });
 						doc.text(traspaso.detallesVenta[i].producto.precio_unitario.toFixed(2), 300, y);
 						doc.text(traspaso.detallesVenta[i].importe.toFixed(2), 335, y);
 						doc.text(traspaso.detallesVenta[i].descuento.toFixed(2), 385, y);
@@ -3337,7 +3337,10 @@ angular.module('agil.servicios')
 						doc.text(traspaso.detallesVenta[i].producto.precio_unitario.toFixed(2), 490, y);
 						doc.text(traspaso.detallesVenta[i].total.toFixed(2), 530, y);
 					}
-					doc.rect(50, y - 15, 520, 30).stroke();
+					if (traspaso.configuracion.formatoPapelNotaTraspaso.nombre_corto == "FORM_C_MAR") {
+						doc.rect(50, y - 15, 520, 30).stroke();
+					}
+	
 					y = y + 30;
 					items++;
 					if (items == itemsPorPagina) {
@@ -3393,8 +3396,20 @@ angular.module('agil.servicios')
 
 	.factory('DibujarCabeceraPDFTraspaso', [function () {
 		var res = function (doc, pagina, totalPaginas, traspaso, existenDescuentos, usuario) {
-			doc.rect(50, 40, 520, 70).stroke();
-			doc.rect(50, 110, 520, 25).stroke();
+			//doc.rect(50, 40, 520, 70).stroke();
+			if (traspaso.configuracion.formatoPapelNotaTraspaso.nombre_corto == "FORM_S_COL") {
+				doc.rect(50, 40, 520, 70).stroke();
+			  } else {
+				doc.rect(50, 40, 520, 70).fillAndStroke(traspaso.configuracion.color_cabecera_nota_traspaso, "black").fillColor('black').stroke();
+			  }
+
+			//doc.rect(50, 110, 520, 25).stroke();
+			if (traspaso.configuracion.formatoPapelNotaTraspaso.nombre_corto == "FORM_S_COL") {
+				doc.rect(50, 110, 520, 25).stroke();
+			} else {
+				doc.rect(50, 110, 520, 25).fillAndStroke(traspaso.configuracion.color_detalle_nota_traspaso, "black").fillColor('black').stroke();
+			}
+			
 			doc.font('Helvetica-Bold', 7);
 			doc.text(usuario.empresa.razon_social, 55, 55);
 			doc.text("SUCURSAL: ", 55, 65);

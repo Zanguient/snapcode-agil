@@ -484,6 +484,8 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_nota_venta', as: 'formatoPapelNotaVenta' });
 	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_nota_venta', as: 'formatoColorNotaVenta' });
 	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_tipo_configuracion_nota_venta', as: 'tipoConfiguracionNotaVenta' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_nota_traspaso', as: 'formatoPapelNotaTraspaso' });
+	ConfiguracionFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_nota_traspaso', as: 'formatoColorNotaTraspaso' });
 
 
 	ConfiguracionGeneralFactura.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
@@ -512,7 +514,9 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tipo_configuracion', as: 'tipoConfiguracion' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_nota_venta', as: 'formatoPapelNotaVenta' });
 	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_nota_venta', as: 'formatoColorNotaVenta' });
-	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tipo_configuracion_nota_venta', as: 'tipoConfiguracionNotaVenta' });
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_tipo_configuracion_nota_venta', as: 'tipoConfiguracionNotaVenta'});
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_papel_nota_traspaso', as: 'formatoPapelNotaTraspaso' });
+	ConfiguracionGeneralFactura.belongsTo(Clase, { foreignKey: 'id_formato_color_nota_traspaso', as: 'formatoColorNotaTraspaso' });
 
 
 	ConfiguracionGeneralApp.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });

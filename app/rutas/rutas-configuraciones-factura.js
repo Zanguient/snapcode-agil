@@ -44,7 +44,13 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				color_cabecera_nota_venta: req.body.configuracionFactura.color_cabecera_nota_venta,
 				color_detalle_nota_venta: req.body.configuracionFactura.color_detalle_nota_venta,
 				nota_factura_nota_venta: req.body.configuracionFactura.nota_factura_nota_venta,
-				id_tipo_configuracion_nota_venta:req.body.configuracionFactura.tipoConfiguracionNotaVenta.id
+				id_tipo_configuracion_nota_venta:req.body.configuracionFactura.tipoConfiguracionNotaVenta.id,
+				id_formato_papel_nota_traspaso: req.body.configuracionFactura.formatoPapelNotaTraspaso.id,
+				id_formato_color_nota_traspaso: req.body.configuracionFactura.formatoColorNotaTraspaso.id,
+				color_cabecera_nota_traspaso: req.body.configuracionFactura.color_cabecera_nota_traspaso,
+				color_detalle_nota_traspaso: req.body.configuracionFactura.color_detalle_nota_traspaso,
+				nota_factura_nota_traspaso: req.body.configuracionFactura.nota_factura_nota_traspaso
+				
 
 			}, {
 					where: { id: req.params.id_configuracion }
@@ -125,7 +131,12 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				color_cabecera_nota_venta: req.body.color_cabecera_nota_venta,
 				color_detalle_nota_venta: req.body.color_detalle_nota_venta,
 				nota_factura_nota_venta: req.body.nota_factura_nota_venta,
-				id_tipo_configuracion_nota_venta:req.body.tipoConfiguracionNotaVenta.id
+				id_tipo_configuracion_nota_venta:req.body.tipoConfiguracionNotaVenta.id,
+				id_formato_papel_nota_traspaso: req.body.formatoPapelNotaTraspaso.id,
+				id_formato_color_nota_traspaso: req.body.formatoColorNotaTraspaso.id,
+				color_cabecera_nota_traspaso: req.body.color_cabecera_nota_traspaso,
+				color_detalle_nota_traspaso: req.body.color_detalle_nota_traspaso,
+				nota_factura_nota_traspaso: req.body.nota_factura_nota_traspaso
 				
 			}, {
 					where: { id: req.params.id_configuracion }
@@ -165,7 +176,9 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 
 				{ model: Clase, as: 'formatoPapelNotaVenta'},
 				{ model: Clase, as: 'formatoColorNotaVenta'},
-				{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+				{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
+				{ model: Clase, as: 'formatoPapelNotaTraspaso'},
+				{ model: Clase, as: 'formatoColorNotaTraspaso'}]
 
 			}]
 		});
@@ -399,9 +412,11 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 			{ model: Clase, as: 'formatoPapelFacturaServicio' },
 			{ model: Clase, as: 'formatoColorFacturaServicio' },
 			{ model: Clase, as: 'tipoConfiguracion' },
-			{ model: Clase, as: 'formatoPapelNotaVenta'},
-			{ model: Clase, as: 'formatoColorNotaVenta'},
-			{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+			{ model: Clase, as: 'formatoPapelNotaVenta' },
+			{ model: Clase, as: 'formatoColorNotaVenta' },
+			{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+			{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+			{ model: Clase, as: 'formatoColorNotaTraspaso' }]
 		});
 	}
 
@@ -502,7 +517,9 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				{ model: Clase, as: 'tipoConfiguracion' },
 				{ model: Clase, as: 'formatoPapelNotaVenta'},
 				{ model: Clase, as: 'formatoColorNotaVenta'},
-				{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+				{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
+				{ model: Clase, as: 'formatoPapelNotaTraspaso'},
+				{ model: Clase, as: 'formatoColorNotaTraspaso'}]
 
 			}).then(function (configuracion) {
 				if (configuracion.usar) {
@@ -535,7 +552,9 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 						{ model: Clase, as: 'tipoConfiguracion' },
 						{ model: Clase, as: 'formatoPapelNotaVenta'},
 						{ model: Clase, as: 'formatoColorNotaVenta'},
-						{ model: Clase, as: 'tipoConfiguracionNotaVenta'}]
+						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
+						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
+						{ model: Clase, as: 'formatoColorNotaTraspaso'}]
 					}).then(function (configuracionEspecifica) {
 						res.json(configuracionEspecifica);
 					});
