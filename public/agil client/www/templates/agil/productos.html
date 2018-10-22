@@ -21,8 +21,8 @@
 		<a href="/recursos/EJEMPLO-DATOS-FORMULACION-PRODUCTO.xlsx" class="btn btn-primary btn-danger">
 			<i class="ace-icon fa fa-cloud-download align-top bigger-125"></i>
 			Ejemplo Importacion Formulacion </a> -->
-		<button type="button" class="btn btn-yellow" ng-click="descargarCatalogo()">Descargar catálogo productos</button>
-		<button type="button" class="btn btn-yellow" ng-click="abrirModalReporteProductosKardex()">Reporte Productos Kardex</button>
+		<button type="button" ng-disabled="!aplicacion.puede_modificar" class="btn btn-yellow" ng-click="descargarCatalogo()">Descargar catálogo productos</button>
+		<button type="button"  ng-disabled="!aplicacion.puede_modificar" class="btn btn-yellow" ng-click="abrirModalReporteProductosKardex()">Reporte Productos Kardex</button>
 		<div class="clearfix">
 			<div class="pull-right tableTools-container"></div>
 		</div>
