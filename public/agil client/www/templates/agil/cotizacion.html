@@ -8,6 +8,10 @@
 						<i class="ace-icon fa fa-plus align-top bigger-125"></i>
 						Nuevo
 				</button>
+				<button id="nuevo" class="btn btn-primary" ng-click="crearNuevaCotizacion()">
+						<i class="ace-icon fa fa-pencil-alt align-top bigger-125"></i>
+						Nuevo
+				</button>
 			</div>
 				<br>
 			<form name="formularioFiltroCotizaciones" novalidate ng-submit="paginator.getSearch(filtro.busqueda,filtro,null)">
@@ -370,7 +374,7 @@
 					<div class="widget-main">
 						<!-- <form id="formularioBusquedaProducto" name="formularioBusquedaProducto" novalidate> -->
 						<!-- visible en md lg xl  -->
-						<table class="table table-striped table-bordered table-hover hidden-xs hidden-sm visible-md-block visible-lg-block">
+						<table class="table table-striped table-bordered table-hover">
 							<thead>
 								<tr>
 									<th>
@@ -606,7 +610,7 @@
 				</div>
 				<div class="widget-body" ng-if="cotizacion.detallesCotizacion.length >0">
 					<div class="widget-main">
-						<table class="table table-striped table-bordered table-hover table-responsive hidden-xs hidden-sm visible-md-block visible-lg-block">
+						<table class="table table-striped table-bordered table-hover table-responsive">
 					<thead>
 						<tr>
 							<th>

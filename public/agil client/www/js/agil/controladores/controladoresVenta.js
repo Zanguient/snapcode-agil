@@ -7,13 +7,13 @@ angular.module('agil.controladores')
 		'ConfiguracionImpresionEmpresaDato', 'VerificarUsuarioEmpresa', 'GuardarVentasImportados', 'ImprimirSalida', 'ModificarVenta', 'ListaVendedorVenta', 'VendedorVenta', 'VendedorVentaActualizacion',
 		'GuardarUsuarLectorDeBarra', 'VerificarLimiteCredito', 'ListaSucursalesUsuario', 'ListaGruposProductoUsuario', 'ListaServiciosVentas', 'GuardarListaServiciosVentas',
 		'EliminarVentaServicio', 'ventasDetalleEmpresa', 'EliminarDetalleVentaEdicion', 'filtroCotizacionesPendientes', 'CotizacionRechazo', 'ListaInventariosProductoVentaEdicion', 'PagosVentaCreditos',
-		'GuardarImportacionVentasFacturacion','GuardarImportacionPagosVenta', function ($scope, $filter, $localStorage, $location, $templateCache, $route, blockUI, $timeout, $window, InventarioPaginador,
+		'GuardarImportacionVentasFacturacion', 'GuardarImportacionPagosVenta', function ($scope, $filter, $localStorage, $location, $templateCache, $route, blockUI, $timeout, $window, InventarioPaginador,
 			Venta, Ventas, VentasProductos, detalle, detalleEmpresa, Clientes, ClientesNit, ProductosNombre, ClasesTipo, VentasContado, VentasCredito,
 			PagosVenta, DatosVenta, VentaEmpresaDatos, ProductosPanel, ListaProductosEmpresaUsuario, ListaInventariosProducto, Paginator,
 			socket, ConfiguracionVentaVistaDatos, ConfiguracionVentaVista, ListaGruposProductoEmpresa, ReporteVentasMensualesDatos,
 			ConfiguracionImpresionEmpresaDato, VerificarUsuarioEmpresa, GuardarVentasImportados, ImprimirSalida, ModificarVenta, ListaVendedorVenta, VendedorVenta, VendedorVentaActualizacion,
 			GuardarUsuarLectorDeBarra, VerificarLimiteCredito, ListaSucursalesUsuario, ListaGruposProductoUsuario, ListaServiciosVentas, GuardarListaServiciosVentas,
-			EliminarVentaServicio, ventasDetalleEmpresa, EliminarDetalleVentaEdicion, filtroCotizacionesPendientes, CotizacionRechazo, ListaInventariosProductoVentaEdicion, PagosVentaCreditos, GuardarImportacionVentasFacturacion,GuardarImportacionPagosVenta) {
+			EliminarVentaServicio, ventasDetalleEmpresa, EliminarDetalleVentaEdicion, filtroCotizacionesPendientes, CotizacionRechazo, ListaInventariosProductoVentaEdicion, PagosVentaCreditos, GuardarImportacionVentasFacturacion, GuardarImportacionPagosVenta) {
 			blockUI.start();
 			$scope.usuario = JSON.parse($localStorage.usuario);
 			// var pormimg = ObtenerImagen($scope.usuarioSesion.empresa.imagen)
@@ -73,7 +73,7 @@ angular.module('agil.controladores')
 				blockUI.stop();
 			});
 			$scope.config = {
-				itemsPerPage:10,
+				itemsPerPage: 10,
 				fillLastPage: true
 			}
 			$scope.inicio = function () {
@@ -82,7 +82,7 @@ angular.module('agil.controladores')
 				//$scope.obtenerClientes();
 				$scope.obtenerTiposDePago();
 				$scope.obtenerConfiguracionVentaVista();
-				
+
 				$scope.sucursales = []//$scope.obtenerSucursales();
 				$scope.obtenerSucursales();
 				$scope.sucursalesUsuario = "";
@@ -106,7 +106,7 @@ angular.module('agil.controladores')
 					templateUrl: 'preciosTemplate.html',
 				};
 			}
-			
+
 			$scope.SelectItemPorPagina = function (itemsPerPageCompra) {
 				$scope.config = {
 					itemsPerPage: itemsPerPageCompra,
@@ -349,9 +349,9 @@ angular.module('agil.controladores')
 				if (query != "" && query != undefined) {
 					var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id, $scope.venta.almacen.id);
 					promesa.then(function (datos) {
-						$scope.filtro_lote =null
-						if($scope.usuario.usar_filtro_lote){
-							$scope.filtro_lote =query
+						$scope.filtro_lote = null
+						if ($scope.usuario.usar_filtro_lote) {
+							$scope.filtro_lote = query
 						}
 						if (datos.length == 1) {
 							$scope.establecerProducto(datos[0])
@@ -371,12 +371,12 @@ angular.module('agil.controladores')
 				blockUI.start()
 				if (query != "" && query != undefined) {
 					var promesa = ListaProductosEmpresaUsuario($scope.usuario.id_empresa, query, $scope.usuario.id, $scope.venta.almacen.id);
-					 promesa.then(function (datos) {
-						$scope.filtro_lote =null
-						if($scope.usuario.usar_filtro_lote){
-							$scope.filtro_lote =query
+					promesa.then(function (datos) {
+						$scope.filtro_lote = null
+						if ($scope.usuario.usar_filtro_lote) {
+							$scope.filtro_lote = query
 						}
-					})	
+					})
 					blockUI.stop()
 					return promesa;
 				}
@@ -390,7 +390,7 @@ angular.module('agil.controladores')
 				var promesa = ListaInventariosProductoVentaEdicion(producto.id, $scope.venta.almacen.id, fecha);
 				promesa.then(function (inventarios) {
 					producto.inventarios = inventarios;
-					
+
 					for (var i = 0; i < producto.inventarios.length; i++) {
 						producto.inventarios[i].fecha_vencimiento = (producto.inventarios[i].fecha_vencimiento ? new Date(producto.inventarios[i].fecha_vencimiento) : null);
 						producto.inventarios[i].fechaVencimientoTexto = (producto.inventarios[i].fecha_vencimiento ? producto.inventarios[i].fecha_vencimiento.getDate() + "/" + (producto.inventarios[i].fecha_vencimiento.getMonth() + 1) + "/" + producto.inventarios[i].fecha_vencimiento.getFullYear() : "");
@@ -437,8 +437,8 @@ angular.module('agil.controladores')
 				producto.tipoProducto = producto['tipoProducto'] == null ? { id: producto['tipoProducto.id'], nombre: producto['tipoProducto.nombre'], nombre_corto: producto['tipoProducto.nombre_corto'] } : producto.tipoProducto;
 				producto.descuento = producto.descuento ? producto.descuento : 0
 				$scope.editar_precio = false;
-			
-				var promesa = ListaInventariosProducto(producto.id, $scope.venta.almacen.id,$scope.filtro_lote);
+
+				var promesa = ListaInventariosProducto(producto.id, $scope.venta.almacen.id, $scope.filtro_lote);
 				promesa.then(function (inventarios) {
 					producto.inventarios = inventarios;
 					for (var i = 0; i < producto.inventarios.length; i++) {
@@ -456,14 +456,11 @@ angular.module('agil.controladores')
 					var inventarioDisponible = $scope.obtenerInventarioTotal(producto);
 					if ($scope.venta.cliente.id && $scope.venta.cliente.tipoPrecioVenta && $scope.usuario.empresa.usar_tipo_precio) {
 						if (producto.tiposPrecio.length > 0) {
-							producto.tiposPrecio.forEach(function (tipo) {
-								if (tipo.id_tipo_precio == $scope.venta.cliente.tipoPrecioVenta.id) {
-									precio = tipo.precio_unitario
-									$scope.tipoPrecioProducto = tipo
-								} else {
-									precio = producto.precio_unitario
-								}
+
+							$scope.tipoPrecioProducto = producto.tiposPrecio.find(function (tipo) {
+								return tipo.id_tipo_precio == $scope.venta.cliente.tipoPrecioVenta.id
 							})
+							precio = $scope.tipoPrecioProducto.precio_unitario
 						} else {
 							precio = producto.precio_unitario
 						}
@@ -479,13 +476,13 @@ angular.module('agil.controladores')
 						};
 					} else {
 
-					$scope.detalleVenta = {
-						eliminado: false,
-						producto: producto, precio_unitario: precio, inventarioProducto: $scope.inventariosDisponibleProducto[0],
-						inventario_disponible: inventarioDisponible, costos: producto.activar_inventario ? producto.inventarios : [],
-						cantidad: 1, descuento: producto.descuento, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
-					};
-				}
+						$scope.detalleVenta = {
+							eliminado: false,
+							producto: producto, precio_unitario: precio, inventarioProducto: $scope.inventariosDisponibleProducto[0],
+							inventario_disponible: inventarioDisponible, costos: producto.activar_inventario ? producto.inventarios : [],
+							cantidad: 1, descuento: producto.descuento, recargo: 0, ice: 0, excento: 0, tipo_descuento: (producto.descuento > 0 ? true : false), tipo_recargo: false
+						};
+					}
 					// === para colocar el costo unitario de inventario == 
 					$scope.precio_inventario;
 
@@ -650,7 +647,7 @@ angular.module('agil.controladores')
 			$scope.agregarDetalleVenta = function (detalleVenta) {
 				// detalleVenta = Object.assign({},detalleVenta)
 				var ultimoInventario = detalleVenta.producto.inventarios[detalleVenta.producto.inventarios.length - 1];
-				var ultimoIngreso= ultimoInventario.detallesMovimiento[ultimoInventario.detallesMovimiento.length - 1];
+				var ultimoIngreso = ultimoInventario.detallesMovimiento[ultimoInventario.detallesMovimiento.length - 1];
 				var movimientoFecha = ultimoIngreso.movimiento.fecha;
 				if (detalleVenta.producto.id) {
 					if (detalleVenta.producto.activar_inventario) {
@@ -659,7 +656,7 @@ angular.module('agil.controladores')
 								var cantidadTotal = detalleVenta.cantidad, i = 0, detalleVentaOriginal = JSON.parse(JSON.stringify(detalleVenta));
 								if (detalleVenta.descuento > 0) {
 									if (detalleVenta.tipo_descuento) {
-										$scope.venta.total_descuento_general +=(detalleVenta.precio_unitario * detalleVenta.descuento)* detalleVenta.cantidad
+										$scope.venta.total_descuento_general += (detalleVenta.precio_unitario * detalleVenta.descuento) * detalleVenta.cantidad
 									} else {
 										$scope.venta.total_descuento_general += detalleVenta.descuento
 									}
@@ -722,13 +719,13 @@ angular.module('agil.controladores')
 										paraRectificacionDescuento[index].recargo = totalRecargo * paraRectificacionDescuento[index].cantidad
 									}
 								}
-								
+
 								if (total_ice > 0) {
 									$scope.venta.total_ice = detalleVenta.ice;
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
 										paraRectificacionDescuento[index].ice = total_ice * paraRectificacionDescuento[index].cantidad
 									}
-								}else{
+								} else {
 									$scope.venta.total_ice = 0
 								}
 								if (total_exento > 0) {
@@ -736,7 +733,7 @@ angular.module('agil.controladores')
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
 										paraRectificacionDescuento[index].excento = total_exento * paraRectificacionDescuento[index].cantidad
 									}
-								}else{
+								} else {
 									$scope.venta.total_exento = 0
 								}
 								for (var index = 0; index < paraRectificacionDescuento.length; index++) {
@@ -801,13 +798,13 @@ angular.module('agil.controladores')
 										paraRectificacionDescuento[index].recargo = totalRecargo * paraRectificacionDescuento[index].cantidad
 									}
 								}
-								
+
 								if (total_ice > 0) {
 									$scope.venta.total_ice = detalleVenta.ice;
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
 										paraRectificacionDescuento[index].ice = total_ice * paraRectificacionDescuento[index].cantidad
 									}
-								}else{
+								} else {
 									$scope.venta.total_ice = 0
 								}
 								if (total_exento > 0) {
@@ -815,13 +812,13 @@ angular.module('agil.controladores')
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
 										paraRectificacionDescuento[index].excento = total_exento * paraRectificacionDescuento[index].cantidad
 									}
-								}else{
+								} else {
 									$scope.venta.total_exento = 0
 								}
 								// for (var index = 0; index < paraRectificacionDescuento.length; index++) {
-									var detalleCorregido = $scope.calcularImporte(paraRectificacionDescuento[index]);
-									$scope.venta.total_recargo_general
-									$scope.venta.detallesVenta.push(detalleCorregido);
+								var detalleCorregido = $scope.calcularImporte(paraRectificacionDescuento[index]);
+								$scope.venta.total_recargo_general
+								$scope.venta.detallesVenta.push(detalleCorregido);
 								// }
 
 								$scope.calcularImporte();
@@ -939,7 +936,7 @@ angular.module('agil.controladores')
 
 			$scope.calcularImporte = function (detalle) {
 				if (detalle !== null && detalle !== undefined) {
-					detalle.importe =detalle.cantidad * detalle.precio_unitario;
+					detalle.importe = detalle.cantidad * detalle.precio_unitario;
 					var descuento, recargo;
 					if (detalle.tipo_descuento) {
 						descuento = detalle.importe * (detalle.descuento / 100);
@@ -986,7 +983,7 @@ angular.module('agil.controladores')
 				}
 				$scope.venta.importe = sumaImporte;
 				$scope.venta.total_descuento_general = $scope.venta.total_descuento_general;
-				$scope.venta.total_recargo_general =  $scope.venta.total_recargo_general;
+				$scope.venta.total_recargo_general = $scope.venta.total_recargo_general;
 			}
 
 			$scope.sumarTotal = function () {
@@ -4402,7 +4399,7 @@ angular.module('agil.controladores')
 									detalleVenta.producto.codigo = worksheet['M' + row2] != undefined && worksheet['M' + row2] != "" ? worksheet['M' + row2].v.toString() : null;
 									detalleVenta.producto.nombre = worksheet['N' + row2] != undefined && worksheet['N' + row2] != "" ? worksheet['N' + row2].v.toString() : null;
 
-									detalleVenta.fecha_vencimiento = worksheet['O' + row2] != undefined && worksheet['O' + row2] != "" ?  new Date($scope.fecha_excel_angular(worksheet['O' + row2].v.toString())) : null;
+									detalleVenta.fecha_vencimiento = worksheet['O' + row2] != undefined && worksheet['O' + row2] != "" ? new Date($scope.fecha_excel_angular(worksheet['O' + row2].v.toString())) : null;
 									detalleVenta.lote = worksheet['P' + row2] != undefined && worksheet['P' + row2] != "" ? worksheet['P' + row2].v.toString() : null;
 									detalleVenta.precio_unitario = worksheet['Q' + row2] != undefined && worksheet['Q' + row2] != "" ? parseFloat(worksheet['Q' + row2].v.toString()) : null;
 									detalleVenta.cantidad = worksheet['R' + row2] != undefined && worksheet['R' + row2] != "" ? parseFloat(worksheet['R' + row2].v.toString()) : null;
@@ -4502,7 +4499,7 @@ angular.module('agil.controladores')
 							pago.factura = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
 							pago.fecha = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
 							pago.monto = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? parseFloat(worksheet['C' + row].v.toString()) : null;
-							pago.autorizacion= worksheet['D' + row] != undefined && worksheet['D' + row] != "" ?worksheet['D' + row].v.toString() : null;
+							pago.autorizacion = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
 							pago.total = 0
 							do {
 								var NumeroCompraA = worksheet['A' + row2] != undefined && worksheet['A' + row2] != "" ? worksheet['A' + row2].v.toString() : null;
@@ -4517,7 +4514,7 @@ angular.module('agil.controladores')
 
 						} while (worksheet['A' + row] != undefined);
 						$scope.guardarImportacionPagosVenta(pagos);
-						
+
 					};
 
 					reader.readAsBinaryString(f);

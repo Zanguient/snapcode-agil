@@ -215,7 +215,7 @@ angular.module('agil.controladores')
 				sucursal: ($scope.sucursales ? $scope.sucursales.length == 1 ? $scope.sucursales[0] : null : null)
 			});
 			if ($scope.cotizacion.sucursal) {
-				$scope.obtenerAlmacenes($scope.cotizacion.sucursal.id)
+				$scope.obtenerAlmacenes($scope.cotizacion.sucursal)
 				$scope.cotizacion.almacen = $scope.almacenes ? $scope.almacenes.length == 1 ? $scope.almacenes[0] : null : null
 			}
 			var fechaActual = new Date();
@@ -275,7 +275,7 @@ angular.module('agil.controladores')
 		$scope.obtenerAlmacenes = function (idSucursal) {
 			// console.log("seleccion sucursallllllll ", idSucursal);
 			$scope.almacenes = [];
-			var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal; })[0];
+			var sucursal = $.grep($scope.sucursales, function (e) { return e.id == idSucursal.id; })[0];
 			$scope.almacenes = sucursal.almacenes;
 
 			// if (!$scope.venta.editar) {
