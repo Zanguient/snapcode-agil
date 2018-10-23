@@ -1096,3 +1096,7 @@ background-color:white !important;
 .button-close{
 	    margin-top: 10px;
 }
+
+#signature-pad {
+    border: 1px dashed #428bca;
+}

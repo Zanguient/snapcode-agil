@@ -574,6 +574,7 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 horas[0] = (parseInt(horas[0]) + 12) + ''
             }
         }
+        //dd
         var fechaCompleta = fecha[0] + '-' + (fecha[2].length == 2 ? fecha[2] : '0' + fecha[2]) + '-' + (fecha[1].length == 2 ? fecha[1] : '0' + fecha[1]) + 'T' + (horas[0].length == 2 ? horas[0] : '0' + horas[0]) + ':' + (horas[1].length == 2 ? horas[1] : '0' + horas[1]) + ':' + (horas[2].length == 2 ? horas[2] : '0' + horas[2]) + '.000Z'
         return fechaCompleta, new Date(fechaCompleta).toISOString()
     }

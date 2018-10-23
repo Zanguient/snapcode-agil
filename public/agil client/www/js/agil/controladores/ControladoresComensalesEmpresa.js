@@ -936,9 +936,9 @@ angular.module('agil.controladores')
                 var horas = datoFecha.split(' ')[datoFecha.split(' ').length - 1]
                 var fecha = datoFecha.split(' ')[0].split('/').reverse()
                 if (horas.indexOf('AM') > 0) {
-                    horas = horas.split('AA')[0].split(':')
+                    horas = horas.split('A')[0].split(':')
                 } else if (horas.indexOf('PM') > 0) {
-                    horas = horas.split('PM')[0].split(':')
+                    horas = horas.split('P')[0].split(':')
                     if ((parseInt(horas[0])) < 12) {
                         horas[0] = (parseInt(horas[0]) + 12) + ''
                     }
@@ -947,7 +947,7 @@ angular.module('agil.controladores')
                 var fechaCompleta = new Date(fecha[0], fecha[2] - 1, fecha[1], (horas[0].length == 2 ? horas[0] : '0' + horas[0]), (horas[1].length == 2 ? horas[1] : '0' + horas[1]), (horas[2].length == 2 ? horas[2] : '0' + horas[2]))
                 return fechaCompleta, fecha_texto
             }
-
+//err
             $scope.guardarComensalesExcel = function (comensales) {
                 if (comensales.length > 0) {
                     var prom = GuardarComensalesExcel($scope.usuario.id_empresa, comensales, $scope.usuario.id)

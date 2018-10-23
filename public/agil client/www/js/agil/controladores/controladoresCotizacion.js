@@ -293,6 +293,10 @@ angular.module('agil.controladores')
 		
 		$scope.abrirFirmaUsuario = function () {
 			// $scope.usuario = new Usuario({ persona: { imagen: "" }});
+			$scope.firmaNew = true;
+			if($scope.usuario.persona.firma){
+				$scope.firmaNew = false;
+			}
 			$scope.abrirPopup($scope.idModalDialogFirmaUsuario);
 		}
 
@@ -300,15 +304,10 @@ angular.module('agil.controladores')
             $scope.cerrarPopup($scope.idModalDialogFirmaUsuario);
 		}
 
-		if($scope.firmaNew){
-			$scope.ejecutarSignature();
-		}
 
 		$scope.canvas = document.getElementById('signature-pad');  
 		$scope.signaturePad = new SignaturePad($scope.canvas);
-		$scope.signaturePad .minWidth = 5;
-		$scope.signaturePad .maxWidth = 10;
-		$scope.signaturePad .penColor = "rgb(66, 133, 244)";
+		// $scope.signaturePad .penColor = "rgb(66, 133, 244)";
 		
 
 		$scope.limpiarFirma = function (){
@@ -327,18 +326,11 @@ angular.module('agil.controladores')
 				$scope.usuario.persona.firma = e.target.result;
 				$scope.$apply()
 			}
-			
+		
 			reader.readAsDataURL(files[0]);
-
-			convertUrlToBase64Image($scope.usuario.persona.firma, function (imagenFirma) {
-				$scope.usuario.persona.firma = imagenFirma;
-			});
 		}
 
-		$scope.firmaNew = true;
-		if($scope.usuario.persona.firma){
-			$scope.firmaNew = false;
-		}
+		
 
 		$scope.saveFirma = function (usuario) {
 			if($scope.firmaNew){
