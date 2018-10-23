@@ -575,12 +575,14 @@ angular.module('agil.controladores')
 			}
 			doc.font('Helvetica', 8);
 
-			if ($scope.usuario.persona.firma > 100) {
-				doc.image($scope.usuario.persona.firma, 55, papel[1] - 150, { width: 50, height: 50 });
-			} else {
-				doc.image($scope.usuario.persona.firma, 55, papel[1] - 150, { width: 90, height: 70 });
+			if ($scope.usuario.persona.firma){
+				if ($scope.usuario.persona.firma > 100) {
+					doc.image($scope.usuario.persona.firma, 55, papel[1] - 150, { width: 50, height: 50 });
+				} else {
+					doc.image($scope.usuario.persona.firma, 55, papel[1] - 150, { width: 90, height: 70 });
+				}
 			}
-
+			
 			doc.text(cotizacion.firma, 55, papel[1] - 90);
 			doc.text(cotizacion.cargo.toUpperCase(), 55, papel[1] - 80);
 

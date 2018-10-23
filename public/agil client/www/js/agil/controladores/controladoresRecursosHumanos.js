@@ -2398,7 +2398,7 @@ angular.module('agil.controladores')
                             ficha.nacionalidad = worksheet['G' + row] != undefined && worksheet['G' + row] != "" ? worksheet['G' + row].v.toString() : null;
                             ficha.departamento = worksheet['H' + row] != undefined && worksheet['H' + row] != "" ? worksheet['H' + row].v.toString() : null;
                             ficha.provincia = worksheet['I' + row] != undefined && worksheet['I' + row] != "" ? worksheet['I' + row].v.toString() : null;
-                            ficha.localidad = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? $scope.fecha_excel_angular(worksheet['J' + row].v.toString()) : null;
+                            ficha.localidad = worksheet['J' + row] != undefined && worksheet['J' + row] != "" ? worksheet['J' + row].v.toString() : null;
                             ficha.tipo_personal = worksheet['K' + row] != undefined && worksheet['K' + row] != "" ? worksheet['K' + row].v.toString() : null;
                             ficha.carga_horario = worksheet['L' + row] != undefined && worksheet['L' + row] != "" ? worksheet['L' + row].v.toString() : null;
                             ficha.area = worksheet['M' + row] != undefined && worksheet['M' + row] != "" ? worksheet['M' + row].v.toString() : null;

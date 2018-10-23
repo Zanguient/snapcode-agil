@@ -2361,7 +2361,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                         where: { habilitado: true, nombre: empleado.provincia, id_tipo: tipoEncontradoMUN.dataValues.id,nombre_corto: { $like: '%'+claseDepEncontrada.nombre_corto.split("-")[0] + '%' } }, transaction: t
                                                                                     }).then(function (claseMunEncontrada) {
                                                                                         return Clase.find({
-                                                                                            where: { habilitado: true, nombre: empleado.provincia, id_tipo: tipoEncontradoLOC.dataValues.id,nombre_corto:{ $like: '%'+claseMunEncontrada.nombre_corto.split("-")[1] + '%' } }, transaction: t
+                                                                                            where: { habilitado: true, nombre: empleado.localidad, id_tipo: tipoEncontradoLOC.dataValues.id,nombre_corto:{ $like: '%'+claseMunEncontrada.nombre_corto.split("-")[1] + '%' } }, transaction: t
                                                                                         }).then(function (claseLocEncontrada) {
                                                                                             return Clase.find({
                                                                                                 where: { habilitado: true, nombre: empleado.estado_civil, id_tipo: tipoEncontradoRRHH_EC.dataValues.id }, transaction: t
