@@ -1,14 +1,18 @@
 angular.module('agil.controladores')
 	.controller('ControladorCotizacion', ['$scope', 'blockUI', '$localStorage', '$location', '$templateCache', '$route', '$timeout', 'ListaCotizacion', 'Cotizaciones', 'Cotizacion', 'filtroCotizaciones', 'Diccionario',
 		'ListaInventariosProducto', 'ClasesTipo', '$window', 'ListaProductosEmpresa', 'InventarioPaginador', 'ConfiguracionCotizacionVista', 'ConfiguracionCotizacionVistaDatos', 'FiltroCotizacionPaginador', 'Paginator',
-		'DatosImpresionCotizacion', 'ultimaCotizacion', 'ListaSucursalesUsuario', 'ClientesNit', 'CotizacionRechazo', 'ListaProductosEmpresaUsuario', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, ListaCotizacion, Cotizaciones, Cotizacion, filtroCotizaciones, Diccionario,
+		'DatosImpresionCotizacion', 'ultimaCotizacion', 'ListaSucursalesUsuario', 'ClientesNit', 'CotizacionRechazo', 'ListaProductosEmpresaUsuario', 'UsuarioFirma', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, ListaCotizacion, Cotizaciones, Cotizacion, filtroCotizaciones, Diccionario,
 		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator,
-		DatosImpresionCotizacion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit, CotizacionRechazo, ListaProductosEmpresaUsuario) {
+		DatosImpresionCotizacion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit, CotizacionRechazo, ListaProductosEmpresaUsuario, UsuarioFirma) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
 		
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
 			$scope.usuario.empresa.imagen = imagenEmpresa;
+		});
+
+		convertUrlToBase64Image($scope.usuario.persona.firma, function (imagenFirma) {
+			$scope.usuario.persona.firma = imagenFirma;
 		});
 
 		$scope.idModalWizardCotizacionNueva = 'modal-wizard-cotizacion-nueva';
@@ -286,13 +290,68 @@ angular.module('agil.controladores')
 			// }
 		}
 
+		
 		$scope.abrirFirmaUsuario = function () {
+			// $scope.usuario = new Usuario({ persona: { imagen: "" }});
 			$scope.abrirPopup($scope.idModalDialogFirmaUsuario);
 		}
 
 		$scope.cerrarDialogFirmaUsuario = function () {
             $scope.cerrarPopup($scope.idModalDialogFirmaUsuario);
-        }
+		}
+
+		if($scope.firmaNew){
+			$scope.ejecutarSignature();
+		}
+
+		$scope.canvas = document.getElementById('signature-pad');  
+		$scope.signaturePad = new SignaturePad($scope.canvas);
+		
+
+		$scope.limpiarFirma = function (){
+			$scope.firmaNew = true;		
+			$scope.signaturePad.clear();
+			
+		}
+
+		$scope.subirImagenFirma = function (event) {
+			$scope.firmaNew = false;
+			var files = event.target.files;
+
+			var reader = new FileReader();
+            
+            reader.onload = function (e) {
+				$scope.usuario.persona.firma = e.target.result;
+				$scope.$apply()
+			}
+			
+			reader.readAsDataURL(files[0]);
+
+			convertUrlToBase64Image($scope.usuario.persona.firma, function (imagenFirma) {
+				$scope.usuario.persona.firma = imagenFirma;
+			});
+		}
+
+		$scope.firmaNew = true;
+		if($scope.usuario.persona.firma){
+			$scope.firmaNew = false;
+		}
+
+		$scope.saveFirma = function (usuario) {
+			if($scope.firmaNew){
+				usuario.persona.firma = $scope.signaturePad.toDataURL("image/jpg"); 
+			}
+			$scope.firmaNew = false;
+			
+			blockUI.start();
+			if (usuario.id) {
+				UsuarioFirma.update({ id_usuario: usuario.id }, usuario, function (res) {
+					blockUI.stop();
+					$scope.cerrarDialogFirmaUsuario();
+					$scope.mostrarMensaje('Guardado Exitosamente!');
+				});
+			} 
+		}
 
 		$scope.buscarCliente = function (query) {
 			if (query != "" && query != undefined) {
@@ -520,6 +579,13 @@ angular.module('agil.controladores')
 				min = "0" + min;
 			}
 			doc.font('Helvetica', 8);
+
+			if ($scope.usuario.persona.firma > 100) {
+				doc.image($scope.usuario.persona.firma, 55, papel[1] - 150, { width: 50, height: 50 });
+			} else {
+				doc.image($scope.usuario.persona.firma, 55, papel[1] - 150, { width: 90, height: 70 });
+			}
+
 			doc.text(cotizacion.firma, 55, papel[1] - 90);
 			doc.text(cotizacion.cargo.toUpperCase(), 55, papel[1] - 80);
 

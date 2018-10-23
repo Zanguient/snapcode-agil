@@ -68,7 +68,7 @@
 									<span class="pull-left" style="color:rgb(85, 128, 163) !important">
 										Formulacion productos
 									</span>
-									<a href="/recursos/EJEMPLO-DATOS-FORMULACION-PRODUCTO.xlsx"  class="boton-importar pull-right">
+									<a href="/recursos/EJEMPLO-DATOS-FORMULACION-PRODUCTO.xlsx" class="boton-importar pull-right">
 										<i class="fa  fa-cloud-download green bigger-125"></i>
 									</a>
 									<div class="fileUpload boton-importar pull-right">
@@ -90,7 +90,7 @@
 										<input ng-disabled="!aplicacion.puede_crear" class="upload" type="file" custom-on-file-change="subirExcelProductosPrecio" />
 									</div>
 								</div>
-							</li>							
+							</li>
 						</ul>
 					</li>
 					<li class="dropdown-footer"></li>
@@ -98,31 +98,32 @@
 			</div>
 		</div>
 
-		
+
 		<!-- div.table-responsive -->
 
 		<!-- div.dataTables_borderWrap -->
 		<div>
 			<div id="tabla-productos_wrapper" class="dataTables_wrapper form-inline no-footer">
 				<div class="row">
-					
+
 					<div class="col-md-6" ng-include src="'/templates/gral/paginator-header-1.html'">
 					</div>
 					<div class="col-md-6">
-							<span>Grupos: &nbsp;</span>
-							<select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)" required id="selectGruposProductos"
-							 name="selectGruposProductos" ng-model="grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
-							 data-placeholder="Click para escoger">
-								<option value="" selected>Todos</option>
-							</select>
-					
+						<span>Grupos: &nbsp;</span>
+						<select class="form-control" style="width:150px;" ng-change="buscarProductos(grupo)" required id="selectGruposProductos"
+						 name="selectGruposProductos" ng-model="grupo" ng-options="grupo as grupo.nombre for grupo in gruposProducto track by grupo.id"
+						 data-placeholder="Click para escoger">
+							<option value="" selected>Todos</option>
+						</select>
+
 						<span>Tipo de Producto: &nbsp;</span>
-						<select class="form-control" ng-change="paginator.getSearch(tipoProducto.nombre,paginator.filter,$event)"   name="tipo_producto" id="tipo_producto" ng-model="tipoProducto"  ng-options="tipoProducto as tipoProducto.nombre for tipoProducto in tipoProductos track by tipoProducto.id" >
-								<option value="" selected>Todos</option>
+						<select class="form-control" ng-change="paginator.getSearch(tipoProducto.nombre,paginator.filter,$event)" name="tipo_producto"
+						 id="tipo_producto" ng-model="tipoProducto" ng-options="tipoProducto as tipoProducto.nombre for tipoProducto in tipoProductos track by tipoProducto.id">
+							<option value="" selected>Todos</option>
 						</select>
 					</div>
 				</div>
-				
+
 				<div style="overflow-x:auto;">
 					<table id="tabla-productos" class="table table-striped table-bordered table-hover table-responsive">
 						<thead>
@@ -203,15 +204,15 @@
 								</td>
 								<td ng-if="usuario.empresa.usar_panel || fieldViewer.getConfiguration().publicado_pabel.show">
 									<label>
-										<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
-										 ng-model="producto.publicar_panel" />
+										<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4"
+										 type="checkbox" ng-model="producto.publicar_panel" />
 										<span class="lbl check-descuento"></span>
 									</label>
 								</td>
 								<td ng-if="fieldViewer.getConfiguration().inventario_activado.show">
 									<label>
-										<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox"
-										 ng-model="producto.activar_inventario" />
+										<input ng-change="actualizarProducto(producto)" name="switch-field-1" class="ace ace-switch ace-switch-4"
+										 type="checkbox" ng-model="producto.activar_inventario" />
 										<span class="lbl check-descuento"></span>
 									</label>
 								</td>
@@ -225,7 +226,7 @@
 									<img ng-src="{{producto.imagen}}" width="50">
 								</td>
 								<td ng-if="fieldViewer.getConfiguration().unidad_medida.show">{{producto.unidad_medida}}</td>
-								<script type="text/ng-template" id="PopoverListaPreciosProductos.html">													
+								<script type="text/ng-template" id="PopoverListaPreciosProductos.html">
 									<div >                            
 											   <p ng-repeat="precio in producto.tipoPrecio track by $index">
 												   {{precio.nombre}} : {{precio.precio_unitario}}
@@ -234,14 +235,15 @@
 								   </script>
 								<td ng-if="fieldViewer.getConfiguration().precio_unitario.show">
 									<div>
-										<a class="green" href="javascript:void(0)" popover-trigger="mouseenter" uib-popover-template="PopoverListaPreciosProductos.templateUrl" popover-placement="left" popover-title="Precios alternativos">
-												{{producto.precio_unitario | number:2}} &nbsp; <i class="fa fa-exclamation-circle green"></i>
+										<a class="green" href="javascript:void(0)" popover-trigger="mouseenter" uib-popover-template="PopoverListaPreciosProductos.templateUrl"
+										 popover-placement="left" popover-title="Precios alternativos">
+											{{producto.precio_unitario | number:2}} &nbsp; <i class="fa fa-exclamation-circle green"></i>
 										</a>
 									</div>
 									<!-- <div ng-if="producto.tipoPrecio.length == 0" data-rel="tooltip" tooltip-placement="top" uib-tooltip="Sin información de precios.">
 											{{producto.precio_unitario | number:2}}
 									</div> -->
-									
+
 								</td>
 
 								<td ng-if="fieldViewer.getConfiguration().inventario_minimo.show">
@@ -291,8 +293,8 @@
 
 											<ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
 												<li>
-													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verProducto(producto)" class="tooltip-info" data-rel="tooltip"
-													 title="View">
+													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_ver" ng-click="verProducto(producto)" class="tooltip-info"
+													 data-rel="tooltip" title="View">
 														<span class="blue">
 															<i class="ace-icon fa fa-search-plus bigger-120"></i>
 														</span>
@@ -300,8 +302,8 @@
 												</li>
 
 												<li>
-													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarProducto(producto)" class="tooltip-success"
-													 data-rel="tooltip" title="Edit">
+													<a href="javascript:void(0)" e-disabled="!aplicacion.puede_modificar" ng-click="modificarProducto(producto)"
+													 class="tooltip-success" data-rel="tooltip" title="Edit">
 														<span class="green">
 															<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
 														</span>
@@ -317,7 +319,8 @@
 													</a>
 												</li> -->
 												<li>
-													<a href="javascript:void(0)" ng-click="kardexProducto(producto)" class="tooltip-info" data-rel="tooltip" title="View">
+													<a href="javascript:void(0)" ng-click="kardexProducto(producto)" class="tooltip-info" data-rel="tooltip"
+													 title="View">
 														<span class="orange">
 															<i class="ace-icon fa fa-file-text bigger-120"></i>
 														</span>
@@ -331,7 +334,7 @@
 						</tbody>
 					</table>
 				</div>
-				
+
 				<div class="row" ng-include src="'/templates/gral/paginator.html'">
 				</div>
 			</div>
@@ -391,8 +394,8 @@
 							<label class="col-sm-3 control-label no-padding-right" for="unidad_medida">Unidad de Medida</label>
 
 							<div class="col-sm-9">
-								<input required type="text" id="unidad_medida" ng-model="producto.unidad_medida" placeholder="unidad de medida" class="form-control"
-								/>
+								<input required type="text" id="unidad_medida" ng-model="producto.unidad_medida" placeholder="unidad de medida"
+								 class="form-control" />
 							</div>
 						</div>
 
@@ -407,8 +410,8 @@
 							<label class="col-sm-3 control-label no-padding-right" for="precio_unitario">Precio Estándar</label>
 
 							<div class="col-sm-5">
-								<input required type="number" step="0.001" ng-model="producto.precio_unitario" placeholder="Precio de Venta" class="form-control"
-								/>
+								<input required type="number" step="0.001" ng-model="producto.precio_unitario" placeholder="Precio de Venta"
+								 class="form-control" />
 							</div>
 							<div class="col-sm-2">
 								<input type="number" step="0.01" ng-model="producto.rango_positivo" placeholder="Rango +" class="form-control" />
@@ -422,35 +425,38 @@
 						</div>
 						<div class="row form-group" ng-if="usuario.empresa.usar_tipo_precio">
 							<div class="col-sm-3">
-									<p>Tipo Precio</p>
-								<div class="input-group">									
+								<p>Tipo Precio</p>
+								<div class="input-group">
 									<span class="input-group-addon glyphicon glyphicon-pencil point-edit green" aria-hidden="true" ng-click="abrirDialogConceptoEdicion(tiposPrecios,'tiposPagosC')"></span>
 									<select name="tipoprecio" id="tipoprecio" class="form-control" ng-options="tipoPrecio as tipoPrecio.nombre for tipoPrecio in tiposPrecios.clases | filter:{habilitado:true} track by tipoPrecio.id"
 									 ng-model="tipoDePrecio.tipoPrecio"></select>
-									 <p class="red" ng-show="formularioProducto.tipoprecio.$invalid">Este campo es requerido.</p>
+									<p class="red" ng-show="formularioProducto.tipoprecio.$invalid">Este campo es requerido.</p>
 								</div>
 							</div>
 
 							<div class="col-sm-3">
 								<p>Precio Unitario</p>
-								<input name="PrecioProductoTipo" id="PrecioProductoTipo" type="number" step="0.001" ng-model="tipoDePrecio.precio_unitario" placeholder="Precio de Venta" class="form-control"
-								/>
+								<input name="PrecioProductoTipo" id="PrecioProductoTipo" type="number" step="0.001" ng-model="tipoDePrecio.precio_unitario"
+								 placeholder="Precio de Venta" class="form-control" />
 								<p class="red" ng-show="formularioProducto.PrecioProductoTipo.$invalid">Este campo es requerido.</p>
 							</div>
 							<div class="col-sm-2">
-									<p>Rango+</p>
-								<input type="number"name="rangoPositivoTipo" id="rangoPositivoTipo"  step="0.01" ng-model="tipoDePrecio.rango_positivo" placeholder="Rango +" class="form-control" />
-								
+								<p>Rango+</p>
+								<input type="number" name="rangoPositivoTipo" id="rangoPositivoTipo" step="0.01" ng-model="tipoDePrecio.rango_positivo"
+								 placeholder="Rango +" class="form-control" />
+
 							</div>
 							<div class="col-sm-2">
 								<p>Rango-</p>
-								<input type="number" step="0.01" name="rangoNegativoTipo" id="rangoNegativoTipo"  ng-model="tipoDePrecio.rango_negativo" placeholder="Rango -" class="form-control" />
-								
+								<input type="number" step="0.01" name="rangoNegativoTipo" id="rangoNegativoTipo" ng-model="tipoDePrecio.rango_negativo"
+								 placeholder="Rango -" class="form-control" />
+
 							</div>
 							<div class="col-sm-2">
-									<p>Accion</p>
-								<button class="btn btn-success btn-sm" type="button" ng-click="agregarTipoPrecio(tipoDePrecio,formularioProducto)"><i class="fa fa-plus"></i></button>
-								
+								<p>Accion</p>
+								<button class="btn btn-success btn-sm" type="button" ng-click="agregarTipoPrecio(tipoDePrecio,formularioProducto)"><i
+									 class="fa fa-plus"></i></button>
+
 							</div>
 						</div>
 						<div ng-if="usuario.empresa.usar_tipo_precio">
@@ -499,8 +505,8 @@
 												<i class="ace-icon fa fa-pencil-square-o bigger-130"></i>
 											</a>
 											<a class="red" href="javascript:void(0)" ng-click="eliminarTipoPrecioProducto(tipoPrecio,$index)">
-													<i class="ace-icon fa fa-trash-o bigger-130"></i>
-												</a>
+												<i class="ace-icon fa fa-trash-o bigger-130"></i>
+											</a>
 										</td>
 									</tr>
 								</tbody>
@@ -529,8 +535,7 @@
 							<label class="control-label col-xs-6 no-padding-right" for="panel">¿Publicar Panel?</label>
 							<div class="col-xs-6">
 								<label>
-									<input id="panel" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.publicar_panel"
-									/>
+									<input id="panel" name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.publicar_panel" />
 									<span class="lbl check-descuento"></span>
 								</label>
 							</div>
@@ -548,8 +553,8 @@
 							<label class="col-sm-3 control-label no-padding-right" for="inventario_minimo">Inventario Mínimo</label>
 
 							<div class="col-sm-9">
-								<input type="number" id="inventario_minimo" ng-model="producto.inventario_minimo" placeholder="Inventario Mínimo" class="form-control"
-								/>
+								<input type="number" id="inventario_minimo" ng-model="producto.inventario_minimo" placeholder="Inventario Mínimo"
+								 class="form-control" />
 							</div>
 						</div>
 						<div class="row form-group">
@@ -570,15 +575,15 @@
 							<label class="col-sm-3 control-label no-padding-right" for="caresp1">Carac. Esp. 1</label>
 
 							<div class="col-sm-9">
-								<input type="text" id="caracteristica_especial1" ng-model="producto.caracteristica_especial1" placeholder="Caracteristica Especial 1" class="form-control"
-								/>
+								<input type="text" id="caracteristica_especial1" ng-model="producto.caracteristica_especial1" placeholder="Caracteristica Especial 1"
+								 class="form-control" />
 							</div>
 						</div>
 						<div class="row form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="caresp2">Carac. Esp. 2</label>
 							<div class="col-sm-9">
-								<input type="text" id="caresp2" ng-model="producto.caracteristica_especial2" placeholder="Caracteristica Especial 2" class="form-control"
-								/>
+								<input type="text" id="caresp2" ng-model="producto.caracteristica_especial2" placeholder="Caracteristica Especial 2"
+								 class="form-control" />
 							</div>
 						</div>
 						<div class="row form-group">
@@ -694,8 +699,8 @@
 									</td>
 									<td>
 										<!-- <input id="producto-Fecha_ingreso" class="date-picker" type="text" ng-update-hidden data-date-format="dd/MM/yyyy" name="fecha" ng-model="segumiento.fecha"> -->
-										<input id="producto-Fecha_ingreso" required ng-update-hidden class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
-										 ng-model="producto.fecha_ingreso" placeholder="Ingrese la fecha">
+										<input id="producto-Fecha_ingreso" required ng-update-hidden class="form-control date-picker" type="text"
+										 data-date-format="dd/mm/yyyy" ng-model="producto.fecha_ingreso" placeholder="Ingrese la fecha">
 									</td>
 								</tbody>
 							</table>
@@ -723,21 +728,21 @@
 								<tbody>
 									<tr>
 										<td>
-											<input ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto" name="id_producto" type="text" ng-model="productoBaseSeleccion.producto"
-											 placeholder="Ingrese el nombre del producto..." uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
-											 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" typeahead-min-length="3"
-											 typeahead-on-select="establecerProductoBase($item, $model, $label, $event)">
+											<input ng-keypress="interceptarTecla($event,'cantidad',true)" id="id_producto" name="id_producto" type="text"
+											 ng-model="productoBaseSeleccion.producto" placeholder="Ingrese el nombre del producto..." uib-typeahead="producto as (producto.codigo+'-'+producto.nombre+'-'+producto.grupo+'-'+producto.subgrupo) for producto in buscarProducto($viewValue)"
+											 typeahead-wait-ms="1000" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false"
+											 typeahead-min-length="3" typeahead-on-select="establecerProductoBase($item, $model, $label, $event)">
 										</td>
 										<td>
 											{{productoBase.unidad_medida}}
 										</td>
 										<td>
-											<input type="number" ng-model="productoBase.formulacion" class="ng-pristine ng-untouched ng-valid ng-empty" step="0.001"
-											 min="0">
+											<input type="number" ng-model="productoBase.formulacion" class="ng-pristine ng-untouched ng-valid ng-empty"
+											 step="0.001" min="0">
 										</td>
 										<td>
-											<button ng-disabled="formularioProducto.id_producto.$invalid" id="agregar_detalle_producto" type="button" ng-click="agregarDetalleProductosBase(productoBase,productoBaseSeleccion.producto)"
-											 class="btn btn-success btn-sm">
+											<button ng-disabled="formularioProducto.id_producto.$invalid" id="agregar_detalle_producto" type="button"
+											 ng-click="agregarDetalleProductosBase(productoBase,productoBaseSeleccion.producto)" class="btn btn-success btn-sm">
 												<i class="ace-icon fa fa-plus bigger-110"></i>
 											</button>
 										</td>
@@ -877,7 +882,7 @@
 </div>
 
 <div id="modal-wizard-producto-kardex">
-	<div class="modal-dialog kardex-box">
+
 		<div class="modal-content">
 			<div id="modal-wizard-container-producto-kardex">
 				<div class="modal-header" align="center">
@@ -890,133 +895,136 @@
 				<div class="modal-body step-content">
 					<form name="formularioProductosKardex" novalidate>
 						<fieldset>
-							<table>
-								<tbody>
-									<tr ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
-										<td>
-											<label>SUCURSAL</label>&nbsp
-										</td>
-										<td>
-											<select required id="sucursalKardex" name="sucursalKardex" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
-											 ng-model="filtroKardexProducto.sucursal" ng-change="obtenerAlmacenes(filtroKardexProducto.sucursal)" required>
-											 <option disabled value="">Seleccione sucursal</option>
-											</select>&nbsp
-										</td>
-										<td>
-											<label>ALMACEN</label>&nbsp
-										</td>
-										<td>
-											<select required id="almacen" name="almacen" ng-model="filtroKardexProducto.almacen" ng-options="almacen.id as almacen.nombre for almacen in almacenes track by almacen.id"
-											 data-placeholder="Click para escoger" required>
-											 <option disabled value="">Seleccione Almacen</option>
-											</select>&nbsp
-										</td>
-										<td>
-											<label>DESDE</label>&nbsp
-										</td>
-										<td>
-											<input ng-update-hidden autocomplete="off" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechainicioKadex"
-											 ng-model="filtroKardexProducto.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
-										</td>
-										<td>
-											<label>HASTA</label>&nbsp
-										</td>
-										<td>
-											<input ng-update-hidden autocomplete="off" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy" id="fechafinKadex" ng-model="filtroKardexProducto.fechaFinTexto"
-											 placeholder="Ingrese la fecha final" />
-										</td>
-										<td>
-											<label>LOTE</label>&nbsp
-										</td>
-										<td>
-											<input type="text" placeholder="Ingrese el Lote" ng-model="filtroKardexProducto.lote">
-										</td>
-										<td>
-											<button type="button" class="btn btn-primary btn-sm pull-left" data-dismiss="modal" ng-click="buscarKardexProducto(producto.id,filtroKardexProducto.almacen)"
-											 ng-disabled="formularioProductosKardex.$invalid">
-												<i class="ace-icon fa fa-search"></i>
-												Buscar
-											</button>&nbsp
+							<div>
+								<table>
+									<tbody>
+										<tr ng-if="tipoEgreso!=diccionario.EGRE_TRASPASO">
+											<td>
+												<label>SUCURSAL</label>&nbsp
+											</td>
+											<td>
+												<select required id="sucursalKardex" name="sucursalKardex" ng-options="sucursal.id as sucursal.nombre for sucursal in sucursales track by sucursal.id"
+												 ng-model="filtroKardexProducto.sucursal" ng-change="obtenerAlmacenes(filtroKardexProducto.sucursal)"
+												 required>
+													<option disabled value="">Seleccione sucursal</option>
+												</select>&nbsp
+											</td>
+											<td>
+												<label>ALMACEN</label>&nbsp
+											</td>
+											<td>
+												<select required id="almacen" name="almacen" ng-model="filtroKardexProducto.almacen" ng-options="almacen.id as almacen.nombre for almacen in almacenes track by almacen.id"
+												 data-placeholder="Click para escoger" required>
+													<option disabled value="">Seleccione Almacen</option>
+												</select>&nbsp
+											</td>
+											<td>
+												<label>DESDE</label>&nbsp
+											</td>
+											<td>
+												<input ng-update-hidden autocomplete="off" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
+												 id="fechainicioKadex" ng-model="filtroKardexProducto.fechaInicioTexto" placeholder="Ingrese la fecha inicial" />
+											</td>
+											<td>
+												<label>HASTA</label>&nbsp
+											</td>
+											<td>
+												<input ng-update-hidden autocomplete="off" class="form-control date-picker" type="text" data-date-format="dd/mm/yyyy"
+												 id="fechafinKadex" ng-model="filtroKardexProducto.fechaFinTexto" placeholder="Ingrese la fecha final" />
+											</td>
+											<td>
+												<label>LOTE</label>&nbsp
+											</td>
+											<td>
+												<input type="text" placeholder="Ingrese el Lote" ng-model="filtroKardexProducto.lote">
+											</td>
+											<td>
+												<button type="button" class="btn btn-primary btn-sm pull-left" data-dismiss="modal" ng-click="buscarKardexProducto(producto.id,filtroKardexProducto.almacen)"
+												 ng-disabled="formularioProductosKardex.$invalid">
+													<i class="ace-icon fa fa-search"></i>
+													Buscar
+												</button>&nbsp
 
-										</td>
-									</tr>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="table-fixed-header">
+								<table id="tabla-kardex" class="table table-striped table-bordered table-hover">
+									<thead fix-head class="table-head-color">
+										<tr>
+											<th>Fecha</th>
+											<th>Detalle</th>
+											<th>c/u</th>
+											<th>Fisico</th>
+											<th>Valuado</th>
+											<th ng-if="usuario.empresa.usar_vencimientos==true">Lote</th>
+											<th ng-if="usuario.empresa.usar_vencimientos==true">Fecha Vencimiento</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="detalleMovimiento in kardexproduto.detallesMovimiento">
+											<td>{{detalleMovimiento.movimiento.fecha | date: 'dd/MM/yy HH:mm'}}</td>
+											<td>
+												<p ng-if="detalleMovimiento.movimiento.id_tipo != '7'">{{detalleMovimiento.tipo}}
+													{{detalleMovimiento.movimiento.compra.proveedor.razon_social}}</p>
+												<p ng-if="detalleMovimiento.movimiento.id_tipo != '6'">{{detalleMovimiento.tipo}}
+													{{detalleMovimiento.movimiento.venta.cliente.razon_social}}</p>
+											</td>
+											<td>{{detalleMovimiento.costo_unitario}}</td>
+											<td>
+												<table class="table table-striped table-bordered table-hover">
+													<thead>
+														<tr>
+															<th>Ingreso</th>
+															<th>Salida</th>
+															<th>Saldo</th>
+														</tr>
+													</thead>
+													<tbody>
+											<td>
+												<p ng-if="detalleMovimiento.movimiento.id_tipo != '7'">{{detalleMovimiento.cantidad}}</p>
+											</td>
+											<td>
+												<p ng-if="detalleMovimiento.movimiento.id_tipo != '6'">{{detalleMovimiento.cantidad}}
+												</p>
+											</td>
+											<td>{{detalleMovimiento.saldoFisico}}</td>
+									</tbody>
+								</table>
+								</td>
+								<td>
+									<table name="valuado" class="table table-striped table-bordered table-hover">
+										<thead>
+											<tr>
+												<th>Ingreso</th>
+												<th>Salida</th>
+												<th>Saldo</th>
+											</tr>
+										</thead>
+										<tbody>
+								<td>
+									<p ng-if="detalleMovimiento.movimiento.id_tipo != '7'">{{Math.round(detalleMovimiento.cantidad*detalleMovimiento.costo_unitario*100)/100}}</p>
+								</td>
+								<td>
+									<p ng-if="detalleMovimiento.movimiento.id_tipo != '6'">{{Math.round(detalleMovimiento.cantidad*detalleMovimiento.costo_unitario*100)/100}}
+									</p>
+								</td>
+								<td>{{detalleMovimiento.saldoV}}</td>
 								</tbody>
-							</table>
-							<br>
-
-							<table id="tabla-kardex" class="table table-striped table-bordered table-hover">
-								<thead>
-									<tr>
-										<th>Fecha</th>
-										<th>Detalle</th>
-										<th>c/u</th>
-										<th>Fisico</th>
-										<th>Valuado</th>
-										<th ng-if="usuario.empresa.usar_vencimientos==true">Lote</th>
-										<th ng-if="usuario.empresa.usar_vencimientos==true">Fecha Vencimiento</th>
-									</tr>
-								</thead>
-
-								<tbody>
-									<tr ng-repeat="detalleMovimiento in kardexproduto.detallesMovimiento">
-										<td>{{detalleMovimiento.movimiento.fecha | date: 'dd/MM/yy HH:mm'}}</td>
-										<td>
-											<p ng-if="detalleMovimiento.movimiento.id_tipo != '7'">{{detalleMovimiento.tipo}} {{detalleMovimiento.movimiento.compra.proveedor.razon_social}}</p>
-											<p ng-if="detalleMovimiento.movimiento.id_tipo != '6'">{{detalleMovimiento.tipo}} {{detalleMovimiento.movimiento.venta.cliente.razon_social}}</p>
-										</td>
-										<td>{{detalleMovimiento.costo_unitario}}</td>
-										<td>
-											<table class="table table-striped table-bordered table-hover">
-												<thead>
-													<tr>
-														<th>Ingreso</th>
-														<th>Salida</th>
-														<th>Saldo</th>
-													</tr>
-												</thead>
-												<tbody>
-													<td>
-														<p ng-if="detalleMovimiento.movimiento.id_tipo != '7'">{{detalleMovimiento.cantidad}}</p>
-													</td>
-													<td>
-														<p ng-if="detalleMovimiento.movimiento.id_tipo != '6'">{{detalleMovimiento.cantidad}}
-														</p>
-													</td>
-													<td>{{detalleMovimiento.saldoFisico}}</td>
-												</tbody>
-											</table>
-										</td>
-										<td>
-											<table name="valuado" class="table table-striped table-bordered table-hover">
-												<thead>
-													<tr>
-														<th>Ingreso</th>
-														<th>Salida</th>
-														<th>Saldo</th>
-													</tr>
-												</thead>
-												<tbody>
-													<td>
-														<p ng-if="detalleMovimiento.movimiento.id_tipo != '7'">{{Math.round(detalleMovimiento.cantidad*detalleMovimiento.costo_unitario*100)/100}}</p>
-													</td>
-													<td>
-														<p ng-if="detalleMovimiento.movimiento.id_tipo != '6'">{{Math.round(detalleMovimiento.cantidad*detalleMovimiento.costo_unitario*100)/100}}
-														</p>
-													</td>
-													<td>{{detalleMovimiento.saldoV}}</td>
-												</tbody>
-											</table>
-										</td>
-										<td ng-if="usuario.empresa.usar_vencimientos==true">
-											{{detalleMovimiento.lote}}
-										</td>
-										<td ng-if="usuario.empresa.usar_vencimientos==true">
-											{{detalleMovimiento.inventario.fecha_vencimiento | date:"dd/MM/yyyy"}}
-										</td>
-									</tr>
+								</table>
+								</td>
+								<td ng-if="usuario.empresa.usar_vencimientos==true">
+									{{detalleMovimiento.lote}}
+								</td>
+								<td ng-if="usuario.empresa.usar_vencimientos==true">
+									{{detalleMovimiento.inventario.fecha_vencimiento | date:"dd/MM/yyyy"}}
+								</td>
+								</tr>
 								</tbody>
-							</table>
-						
+								</table>
+							</div>
 						</fieldset>
 					</form>
 				</div>
@@ -1050,7 +1058,7 @@
 
 			</form>
 		</div>
-	</div>
+	
 </div>
 
 <div id="modal-wizard-producto-vista" class="modal wizard-posicion">
@@ -1105,16 +1113,16 @@
 							<label class="col-sm-3 control-label no-padding-right" for="precio_unitario">Precio Unitario</label>
 
 							<div class="col-sm-9">
-								<input disabled required type="number" step="0.01" ng-model="producto.precio_unitario" placeholder="Precio Unitario" class="form-control"
-								/>
+								<input disabled required type="number" step="0.01" ng-model="producto.precio_unitario" placeholder="Precio Unitario"
+								 class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="descripcion">Descripción</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="descripcionDisabled" ng-model="producto.descripcion" placeholder="Descripción" class="form-control"
-								/>
+								<input disabled type="text" id="descripcionDisabled" ng-model="producto.descripcion" placeholder="Descripción"
+								 class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
@@ -1138,7 +1146,8 @@
 							<label class="col-sm-3 control-label no-padding-right" for="grupo">Grupo</label>
 
 							<div class="col-sm-9">
-								<select required disabled name="grupo_producto" id="grupo_productoDisabled" ng-model="producto.grupo" ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:1} track by grupoProducto.id">
+								<select required disabled name="grupo_producto" id="grupo_productoDisabled" ng-model="producto.grupo"
+								 ng-options="grupoProducto as grupoProducto.nombre for grupoProducto in gruposProducto | filter:{habilitado:1} track by grupoProducto.id">
 								</select>
 							</div>
 						</div>
@@ -1146,7 +1155,8 @@
 							<label class="col-sm-3 control-label no-padding-right" for="subgrupo">Sub-Grupo</label>
 
 							<div class="col-sm-9">
-								<select required disabled name="subgrupo_producto" id="subgrupo_productoDisabled" ng-model="producto.subgrupo" ng-options="subgrupoProducto as subgrupoProducto.nombre for subgrupoProducto in subgruposProducto | filter:{habilitado:1} track by subgrupoProducto.id">
+								<select required disabled name="subgrupo_producto" id="subgrupo_productoDisabled" ng-model="producto.subgrupo"
+								 ng-options="subgrupoProducto as subgrupoProducto.nombre for subgrupoProducto in subgruposProducto | filter:{habilitado:1} track by subgrupoProducto.id">
 								</select>
 							</div>
 						</div>
@@ -1154,30 +1164,30 @@
 							<label class="col-sm-3 control-label no-padding-right" for="caresp1">Carac. Esp. 1</label>
 
 							<div class="col-sm-9">
-								<input disabled type="text" id="caracteristica_especial1_Disabled" ng-model="producto.caracteristica_especial1" placeholder="Caracteristica Especial 1"
-								 class="form-control" />
+								<input disabled type="text" id="caracteristica_especial1_Disabled" ng-model="producto.caracteristica_especial1"
+								 placeholder="Caracteristica Especial 1" class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="caresp2">Carac. Esp. 2</label>
 							<div class="col-sm-9">
-								<input disabled type="text" id="caracteristica_especial2_Disabled" ng-model="producto.caracteristica_especial2" placeholder="Caracteristica Especial 2"
-								 class="form-control" />
+								<input disabled type="text" id="caracteristica_especial2_Disabled" ng-model="producto.caracteristica_especial2"
+								 placeholder="Caracteristica Especial 2" class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="codfab">Codigo fabrica</label>
 							<div class="col-sm-9">
-								<input disabled type="text" id="codfabDisabled" ng-model="producto.codigo_fabrica" placeholder="Codigo fabrica" class="form-control"
-								/>
+								<input disabled type="text" id="codfabDisabled" ng-model="producto.codigo_fabrica" placeholder="Codigo fabrica"
+								 class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="comision">Comisión</label>
 
 							<div class="col-sm-9">
-								<input disabled type="number" step="0.01" id="comisionDisabled" ng-model="producto.comision" placeholder="Comisión" class="form-control"
-								/>
+								<input disabled type="number" step="0.01" id="comisionDisabled" ng-model="producto.comision" placeholder="Comisión"
+								 class="form-control" />
 							</div>
 						</div>
 						<div class="form-group">
@@ -1185,8 +1195,7 @@
 
 							<div class="col-sm-9">
 								<label>
-									<input disabled name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.publicar_panel"
-									/>
+									<input disabled name="switch-field-1" class="ace ace-switch ace-switch-4" type="checkbox" ng-model="producto.publicar_panel" />
 									<span class="lbl check-descuento"></span>
 								</label>
 							</div>
@@ -1218,7 +1227,8 @@
 
 <div id="dialog-eliminar-producto" title="¿Eliminación de Producto?">
 	<p>
-		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el producto
+		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>¿Esta seguro de eliminar el
+		producto
 		seleccionado?
 	</p>
 	<button type="button" class="btn btn-danger" ng-click="eliminarProducto(producto)">Si</button>

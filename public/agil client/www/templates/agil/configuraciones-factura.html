@@ -456,10 +456,17 @@
 											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
-										<p>Cabezera Tabla</p>
-										<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_factura" color-picker-fixed-position="true"color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_factura}" />
-										<p>Datos Detalle Tabla</p>
-										<input color-picker class="form-control" color-picker-model="configuracion_general.color_detalle_factura" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_factura}" />
+										<center>
+											<a ng-click="mostrarColoresFacturacion(coloresFacturacion)" class="blue">
+												<i class="fa fa-paint-brush bigger-200"  aria-hidden="true"></i>
+											</a>
+										</center>
+										<div ng-show="coloresFacturacion">
+											<p>Cabezera Tabla</p>
+											<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_factura" color-picker-fixed-position="true"color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_factura}" />
+											<p>Datos Detalle Tabla</p>
+											<input color-picker class="form-control" color-picker-model="configuracion_general.color_detalle_factura" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_factura}" />
+										</div>									
 									</td>
 									<td>
 										<input type="text" class="form-control" placeholder="NOTA" ng-model="configuracion_general.nota_factura_bien">
@@ -472,7 +479,7 @@
 										 tooltip-placement="top" uib-tooltip="SERIE: En las notas no sale fecha de vencimiento y el título de lote cambia a “SERIE”">
 											<i class="fa fa-exclamation-circle green"></i>
 										</a>
-										<a ng-if="configuracion_general.tipoConfiguracion.nombre == 'LOTE'" ng class="green" href="javascript:void(0)" data-rel="tooltip"
+										<a ng-show="configuracion_general.tipoConfiguracion.nombre == 'LOTE'" ng class="green" href="javascript:void(0)" data-rel="tooltip"
 										 tooltip-placement="top" uib-tooltip="LOTE: En las notas sale fecha de vencimiento y lote">
 											<i class="fa fa-exclamation-circle green"></i>
 										</a>
@@ -497,10 +504,18 @@
 										 ng-model="configuracion_general.formatoColorFacturaServicio">
 											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
-									<td><p>Cabezera Tabla</p>
-											<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_factura_servicio" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_factura_servicio}" />
-											<p>Datos Detalle Tabla</p>
-											<input color-picker  class="form-control"color-picker-model="configuracion_general.color_detalle_factura_servicio" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_factura_servicio}" />
+									<td>
+										<center>
+											<a ng-click="mostrarColoresServicio(coloresServicio)" class="blue">
+												<i class="fa fa-paint-brush bigger-200"  aria-hidden="true"></i>
+											</a>
+										</center>
+										<div ng-show="coloresServicio">
+												<p>Cabezera Tabla</p>
+												<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_factura_servicio" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_factura_servicio}" />
+												<p>Datos Detalle Tabla</p>
+												<input color-picker  class="form-control"color-picker-model="configuracion_general.color_detalle_factura_servicio" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_factura_servicio}" />
+										</div>
 									</td>
 									<td>
 											<input type="text" class="form-control" placeholder="NOTA" ng-model="configuracion_general.nota_factura_servicio">
@@ -526,10 +541,17 @@
 											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
-										<p>Cabezera Tabla</p>
-										<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_nota_venta" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_nota_venta}" />
-										<p>Datos Detalle Tabla</p>
-										<input color-picker  class="form-control"color-picker-model="configuracion_general.color_detalle_nota_venta" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_nota_venta}" />
+										<center>
+											<a ng-click="mostrarColoresNotaVenta(coloresNotaVenta)" class="blue">
+												<i class="fa fa-paint-brush bigger-200"  aria-hidden="true"></i>
+											</a>
+										</center>
+										<div ng-show="coloresNotaVenta">
+												<p>Cabezera Tabla</p>
+												<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_nota_venta" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_nota_venta}" />
+												<p>Datos Detalle Tabla</p>
+												<input color-picker  class="form-control"color-picker-model="configuracion_general.color_detalle_nota_venta" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_nota_venta}" />
+										</div>											
 									</td>
 									<td>
 											<input type="text" class="form-control" placeholder="NOTA" ng-model="configuracion_general.nota_factura_nota_venta">
@@ -559,10 +581,17 @@
 											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
-										<p>Cabezera Tabla</p>
-										<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_nota_traspaso" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_nota_traspaso}" />
-										<p>Datos Detalle Tabla</p>
-										<input color-picker  class="form-control"color-picker-model="configuracion_general.color_detalle_nota_traspaso" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_nota_traspaso}" />
+										<center>
+											<a ng-click="mostrarColoresNotaTraspaso(coloresNotaTraspaso)" class="blue">
+												<i class="fa fa-paint-brush bigger-200"  aria-hidden="true"></i>
+											</a>
+										</center>
+										<div ng-show="coloresNotaTraspaso">
+											<p>Cabezera Tabla</p>
+											<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_nota_traspaso" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_nota_traspaso}" />
+											<p>Datos Detalle Tabla</p>
+											<input color-picker  class="form-control"color-picker-model="configuracion_general.color_detalle_nota_traspaso" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_nota_traspaso}" />
+										</div>										
 									</td>
 									<td>
 											<input type="text" class="form-control" placeholder="NOTA" ng-model="configuracion_general.nota_factura_nota_traspaso">
@@ -583,12 +612,34 @@
 											</option></select>
 									</td>
 									<td>
+										<select class="form-control" required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id"
+											ng-model="configuracion_general.formatoPapelNotaBaja"><option value="0">SELECCIONAR TIPO IMP.</option></select>
 									</td>
 									<td>
+										<select required class="form-control" ng-options="formatoFacturaColor as formatoFacturaColor.nombre for formatoFacturaColor in formatosFacturaColor track by formatoFacturaColor.id"
+											ng-model="configuracion_general.formatoColorNotaBaja">
+											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
+										<center>
+											<a ng-click="mostrarColoresNotaBaja(coloresNotaBaja)" class="blue">
+												<i class="fa fa-paint-brush bigger-200"  aria-hidden="true"></i>
+											</a>
+										</center>
+
+										<div ng-show="coloresNotaBaja">
+										<p>Cabezera Tabla</p>
+											<input color-picker class="form-control" color-picker-model="configuracion_general.color_cabecera_nota_baja" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_cabecera_nota_baja}" />
+											<p>Datos Detalle Tabla</p>
+											<input color-picker  class="form-control"color-picker-model="configuracion_general.color_detalle_nota_baja" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:configuracion_general.color_detalle_nota_baja}" />
+										</div>
 									</td>
 									<td>
+											<input type="text" class="form-control" placeholder="NOTA" ng-model="configuracion_general.nota_factura_nota_baja">
+									</td>
+									<td>
+										<select class="form-control" required ng-options="tipoConfiguracion as tipoConfiguracion.nombre for tipoConfiguracion in tiposConfiguraciones track by tipoConfiguracion.id"
+										ng-model="configuracion_general.tipoConfiguracionNotaBaja"><option value="0">SELECCIONAR TIPO CONFIG.</option></select>											 
 									</td>
 								</tr>
 								<tr>
@@ -974,10 +1025,17 @@
 											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
-											<p>Cabezera Tabla</p>
-											<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_cabecera_factura" color-picker-fixed-position="true"color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_cabecera_factura}" />
-											<p>Datos Detalle Tabla</p>
-											<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_detalle_factura" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_detalle_factura}" />
+										<center>
+												<a ng-click="mostrarColoresFacturacion(coloresFacturacion)" class="blue">
+													<i class="fa fa-paint-brush bigger-200"  aria-hidden="true"></i>
+												</a>
+											</center>
+											<div ng-show="coloresFacturacion">
+												<p>Cabezera Tabla</p>
+												<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_cabecera_factura" color-picker-fixed-position="true"color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_cabecera_factura}" />
+												<p>Datos Detalle Tabla</p>
+												<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_detalle_factura" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_detalle_factura}" />
+											</div>					
 									</td>
 									<td>
 										<input type="text" class="form-control" placeholder="NOTA" ng-model="sucursal.configuracionFactura.nota_factura_bien">
@@ -1019,10 +1077,17 @@
 											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
+										<center>
+											<a ng-click="mostrarColoresServicio(coloresServicio)" class="blue">
+												<i class="fa fa-paint-brush bigger-200"  aria-hidden="true"></i>
+											</a>
+										</center>
+										<div ng-show="coloresServicio">
 											<p>Cabezera Tabla</p>
 											<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_cabecera_factura_servicio" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_cabecera_factura_servicio}" />
 											<p>Datos Detalle Tabla</p>
 											<input color-picker  class="form-control"color-picker-model="sucursal.configuracionFactura.color_detalle_factura_servicio" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_detalle_factura_servicio}" />
+										</div>										
 									</td>
 									<td>
 											<input type="text" class="form-control" placeholder="NOTA" ng-model="sucursal.configuracionFactura.nota_factura_servicio">
@@ -1048,10 +1113,17 @@
 											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
-										<p>Cabezera Tabla</p>
-										<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_cabecera_nota_venta" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_cabecera_nota_venta}" />
-										<p>Datos Detalle Tabla</p>
-										<input color-picker  class="form-control"color-picker-model="sucursal.configuracionFactura.color_detalle_nota_venta" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_detalle_nota_venta}" />
+										<center>
+											<a ng-click="mostrarColoresNotaVenta(coloresNotaVenta)" class="blue">
+												<i class="fa fa-paint-brush bigger-200"  aria-hidden="true"></i>
+											</a>
+										</center>
+										<div ng-show="coloresNotaVenta">
+											<p>Cabezera Tabla</p>
+											<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_cabecera_nota_venta" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_cabecera_nota_venta}" />
+											<p>Datos Detalle Tabla</p>
+											<input color-picker  class="form-control"color-picker-model="sucursal.configuracionFactura.color_detalle_nota_venta" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_detalle_nota_venta}" />
+										</div>					
 									</td>
 									<td>
 											<input type="text" class="form-control" placeholder="NOTA" ng-model="sucursal.configuracionFactura.nota_factura_nota_venta">
@@ -1081,10 +1153,17 @@
 											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
-										<p>Cabezera Tabla</p>
-										<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_cabecera_nota_traspaso" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_cabecera_nota_traspaso}" />
-										<p>Datos Detalle Tabla</p>
-										<input color-picker  class="form-control"color-picker-model="sucursal.configuracionFactura.color_detalle_nota_traspaso" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_detalle_nota_traspaso}" />
+										<center>
+											<a ng-click="mostrarColoresNotaTraspaso(coloresNotaTraspaso)" class="blue">
+												<i class="fa fa-paint-brush bigger-200"  aria-hidden="true"></i>
+											</a>
+										</center>
+										<div ng-show="coloresNotaTraspaso">
+											<p>Cabezera Tabla</p>
+											<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_cabecera_nota_traspaso" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_cabecera_nota_traspaso}" />
+											<p>Datos Detalle Tabla</p>
+											<input color-picker  class="form-control"color-picker-model="sucursal.configuracionFactura.color_detalle_nota_traspaso" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_detalle_nota_traspaso}" />
+										</div>									
 									</td>
 									<td>
 											<input type="text" class="form-control" placeholder="NOTA" ng-model="sucursal.configuracionFactura.nota_factura_nota_traspaso">
@@ -1105,14 +1184,36 @@
 											</option></select>
 									</td>
 									<!-- <td><input type="number" class="form-control" ng-model="sucursal.nota_baja_correlativo" required></td> -->
-									<td>
+									 <td>
+										<select class="form-control" required ng-options="formatoFactura as formatoFactura.nombre for formatoFactura in formatosFactura track by formatoFactura.id"
+											ng-model="sucursal.configuracionFactura.formatoPapelNotaBaja"><option value="0">SELECCIONAR TIPO IMP.</option></select>
 									</td>
 									<td>
+										<select required class="form-control" ng-options="formatoFacturaColor as formatoFacturaColor.nombre for formatoFacturaColor in formatosFacturaColor track by formatoFacturaColor.id"
+											ng-model="sucursal.configuracionFactura.formatoColorNotaBaja">
+											<option value="0">SELECCIONAR FORMATO COLOR IMP.</option></select>
 									</td>
 									<td>
+										<center>
+											<a ng-click="mostrarColoresNotaBaja(coloresNotaBaja)" class="blue">
+												<i class="fa fa-paint-brush bigger-200"  aria-hidden="true"></i>
+											</a>
+										</center>
+
+										<div ng-show="coloresNotaBaja">
+										<p>Cabezera Tabla</p>
+											<input color-picker class="form-control" color-picker-model="sucursal.configuracionFactura.color_cabecera_nota_baja" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_cabecera_nota_baja}" />
+											<p>Datos Detalle Tabla</p>
+											<input color-picker  class="form-control"color-picker-model="sucursal.configuracionFactura.color_detalle_nota_baja" color-picker-fixed-position="true" color-picker-show-value="false" ng-style="{background:sucursal.configuracionFactura.color_detalle_nota_baja}" />
+										</div>
 									</td>
 									<td>
+											<input type="text" class="form-control" placeholder="NOTA" ng-model="sucursal.configuracionFactura.nota_factura_nota_baja">
 									</td>
+									<td>
+										<select class="form-control" required ng-options="tipoConfiguracion as tipoConfiguracion.nombre for tipoConfiguracion in tiposConfiguraciones track by tipoConfiguracion.id"
+										ng-model="sucursal.configuracionFactura.tipoConfiguracionNotaBaja"><option value="0">SELECCIONAR TIPO CONFIG.</option></select>											 
+									</td> 
 								</tr>
 								<tr ng-if="usuario.empresa.usar_pedidos">
 									<td>

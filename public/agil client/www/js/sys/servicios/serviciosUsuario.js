@@ -64,6 +64,12 @@ angular.module('agil.servicios')
 		});
 }])
 
+.factory('UsuarioFirma', ['$resource',function($resource) {
+	return $resource(restServer+"usuario-firma/:id_usuario", { id_usuario: '@id' },
+	{
+		'update': { method:'PUT' }
+	});
+}])
 
 .factory('validarUsuario', ['$resource',function($resource) {
 		return $resource(restServer+"/validar",

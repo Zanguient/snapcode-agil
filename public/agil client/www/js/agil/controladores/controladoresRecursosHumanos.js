@@ -2413,6 +2413,9 @@ angular.module('agil.controladores')
                             ficha.seguro2 = worksheet['V' + row] != undefined && worksheet['V' + row] != "" ? worksheet['V' + row].v.toString() : null;
                             ficha.monto2 = worksheet['W' + row] != undefined && worksheet['W' + row] != "" ? parseFloat(worksheet['W' + row].v.toString()) : null;
                             ficha.observacion2 = worksheet['X' + row] != undefined && worksheet['X' + row] != "" ? worksheet['X' + row].v.toString() : null;
+                            ficha.direccion_zona = worksheet['Y' + row] != undefined && worksheet['Y' + row] != "" ? worksheet['Y' + row].v.toString() : null;
+                            ficha.direccion_numero = worksheet['Z' + row] != undefined && worksheet['Z' + row] != "" ? worksheet['Z' + row].v.toString() : null;
+                            ficha.correo_electronico = worksheet['AA' + row] != undefined && worksheet['AA' + row] != "" ? worksheet['AA' + row].v.toString() : null;
                             fichas.push(ficha);
 
                             row++;

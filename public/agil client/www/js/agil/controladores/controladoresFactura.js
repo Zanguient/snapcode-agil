@@ -131,7 +131,14 @@ angular.module('agil.controladores')
 			$scope.obtenerFormatoFactura();
 			$scope.obtenerFormatoFacturaColor();
 			$scope.obtenerTipoConfigFactura();
-			
+		
+			$scope.coloresNotaTraspaso = false;
+			$scope.coloresNotaVenta = false;
+			$scope.coloresServicio = false;
+			$scope.coloresFacturacion = false;
+			$scope.coloresNotaBaja = false;
+			$scope.coloresFacturacionSucursal = false;
+
 			setTimeout(function () {
 				ejecutarScriptsTabla('tabla-configuraciones', 7);
 				ejecutarScriptsTabla('tabla-configuracion-general', 7);
@@ -189,6 +196,54 @@ angular.module('agil.controladores')
 					$scope.mostrarMensaje(res.mensaje);
 					$scope.recargarItemsTabla();
 				});
+			}
+		}
+
+		$scope.mostrarColoresFacturacionSucursal = function(value){
+			if (value == true) {
+				$scope.coloresFacturacionSucursal = false;
+			}else{
+				$scope.coloresFacturacionSucursal = true;
+			}
+		}
+
+		$scope.mostrarColoresNotaBaja = function(value){
+			if (value == true) {
+				$scope.coloresNotaBaja = false;
+			}else{
+				$scope.coloresNotaBaja = true;
+			}
+		}
+
+		$scope.mostrarColoresNotaVenta = function(value){
+			if (value == true) {
+				$scope.coloresNotaVenta = false;
+			}else{
+				$scope.coloresNotaVenta = true;
+			}
+		}
+		
+		$scope.mostrarColoresFacturacion = function(value){
+			if (value == true) {
+				$scope.coloresFacturacion = false;
+			}else{
+				$scope.coloresFacturacion = true;
+			}
+		}
+
+		$scope.mostrarColoresServicio = function(value){
+			if (value == true) {
+				$scope.coloresServicio = false;
+			}else{
+				$scope.coloresServicio = true;
+			}
+		}
+
+		$scope.mostrarColoresNotaTraspaso = function(value){
+			if (value == true) {
+				$scope.coloresNotaTraspaso = false;
+			}else{
+				$scope.coloresNotaTraspaso = true;
 			}
 		}
 

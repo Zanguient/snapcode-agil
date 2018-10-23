@@ -818,7 +818,7 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			var diaGuardado = d1.getDate()
 			var primerDia = new Date(d1.getFullYear(), d1.getMonth(), 1);
 			var ultimoDia = new Date(d1.getFullYear(), d1.getMonth() + 1, 0);
-			if (fechaCrear < fechaActual) {
+			if (fechaCrear < fechaActual && !req.body.id) {
 				ComprobanteContabilidad.findAll({
 					limit: 1,
 					where: {
@@ -1140,8 +1140,8 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 			}).then(function (ComprobanteEncontrado) {
 				var fechaComprobante = new Date(ComprobanteEncontrado[0].dataValues.fecha)
 				var diaComprobante = fechaComprobante.getDate()
-				if (diaGuardado >= diaComprobante) {
-					if (diaGuardado == diaComprobante)
+				/* if (diaGuardado >= diaComprobante) {
+					if (diaGuardado == diaComprobante) */
 						ComprobanteContabilidad.update({
 							id_tipo: req.body.tipoComprobante.id,
 							fecha: req.body.fecha,
@@ -1234,9 +1234,9 @@ module.exports = function (router, ComprobanteContabilidad, AsientoContabilidad,
 								});
 								/* }) */
 							})
-				} else {
+			/* 	} else {
 					res.json({ mensaje: "¡Ya Existe comprobanes con fechas posteriores no se puede guardar!" })
-				}
+				} */
 			})
 		})
 		.get(function (req, res) {

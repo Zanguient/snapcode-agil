@@ -691,7 +691,7 @@ function ejecutarScriptsProducto(idPopupEdicion, idPopupVista, idPopupKadex, idP
 	idModalConceptoEdicion) {
 	crearPopup(idPopupEdicion, "50%", "auto");
 	crearPopup(idPopupVista, "60%", 610);
-	crearPopup(idPopupKadex, "90%", 610);
+	crearPopup(idPopupKadex, "auto", "auto");
 	aplicarWizardFormulario(idPopupEdicion, idContenedorEdicion);
 	aplicarWizardFormulario(idPopupVista, idContenedorVista);
 	aplicarWizardFormulario(idPopupKadex, idContenedorKardex);

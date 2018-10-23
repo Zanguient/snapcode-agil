@@ -8,9 +8,9 @@
 						<i class="ace-icon fa fa-plus align-top bigger-125"></i>
 						Nuevo
 				</button>
-				<button id="nuevo" class="btn btn-primary" ng-click="crearNuevaCotizacion()">
-						<i class="ace-icon fa fa-pencil-alt align-top bigger-125"></i>
-						Nuevo
+				<button id="nuevo" class="btn btn-success" ng-click="abrirFirmaUsuario()">
+						<i class="ace-icon fa fa-pencil align-top bigger-125"></i>
+						Firma
 				</button>
 			</div>
 				<br>
@@ -762,7 +762,7 @@
 <div id="dialog-firma-usuario" class="modal wizard-posicion">
 	<div class="modal-dialog modal-rh-nuevo">
 		<div class="modal-content">
-			<form ng-submit="saveForm(usuario)">
+			<form ng-submit="saveFirma(usuario)">
 				<div id="modal-wizard-container-usuario-edicion">
 					<div class="modal-header bg-primary">
 						<h4 class="smaller text-white text-uppercase">
@@ -775,10 +775,19 @@
 						<div class="form-group">
 							<div class="row">
 								<label class="control-label col-xs-12 col-sm-3 no-padding-right">Foto</label>
+								<!-- <div class="col-xs-12 col-xs-12 col-sm-9">
+									<img ng-if="usuario.id" ng-src="{{usuario.persona.firma?usuario.persona.firma:'img/icon.png'}}" width="100">
+									<input type="file" id="imagen-firma" onchange="uploadImage(this,'firma-persona-oculto')"/>
+									<input id="firma-persona-oculto" ng-model="usuario.persona.firma" name="imagen" type="hidden" ng-update-hidden>
+								</div> -->
+							</div>
+							<div class="row">
 								<div class="col-xs-12 col-xs-12 col-sm-9">
-									<img ng-if="usuario.id" ng-src="{{usuario.persona.imagen?usuario.persona.imagen:'img/icon.png'}}" width="100">
-									<input type="file" id="imagen-firma" onchange="uploadImage(this,'imagen-persona-oculto')" />
-									<input id="imagen-persona-oculto" ng-model="usuario.persona.imagen" name="imagen" type="hidden" ng-update-hidden>
+									<img ng-hide="firmaNew" ng-src="{{usuario.persona.firma?usuario.persona.firma:'img/icon.png'}}" width="100">
+									<div ng-hide="!firmaNew">
+										<canvas id="signature-pad" class="signature-pad" ></canvas>
+									</div>
+									
 								</div>
 							</div>
 						</div>
@@ -787,8 +796,18 @@
 
 				<div class="modal-footer wizard-actions">
 					
-					<button ng-disabled="data.message=='¡Usuario ya Exsiste!'" type="submit" id="siguiente" class="btn btn-primary btn-sm">
+					<button type="submit" class="btn btn-primary btn-sm">
 						Guardar
+						<i class="ace-icon fa fa-floppy-o"></i>
+					</button>
+
+					<div class="fileUpload btn btn-primary btn-success btn-sm">
+						<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125"> Cargar Foto</span>
+						<input  class="upload" type="file" custom-on-file-change="subirImagenFirma">
+					</div>
+
+					<button type="button" class="btn btn-danger btn-sm" ng-click="limpiarFirma()">
+						limpiar
 						<i class="ace-icon fa fa-floppy-o"></i>
 					</button>
 

@@ -1793,7 +1793,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'formatoColorNotaVenta'},
 						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-						{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+						{ model: Clase, as: 'formatoColorNotaTraspaso'},
+						{ model: Clase, as: 'formatoPapelNotaBaja'},
+						{ model: Clase, as: 'formatoColorNotaBaja'},
+						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 					}).then(function (configuracionGeneralFactura) {
 						if (configuracionGeneralFactura.usar) {
 							var promises = [];
@@ -1829,7 +1832,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								{ model: Clase, as: 'formatoColorNotaVenta'},
 								{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 								{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-								{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+								{ model: Clase, as: 'formatoColorNotaTraspaso'},
+								{ model: Clase, as: 'formatoPapelNotaBaja'},
+								{ model: Clase, as: 'formatoColorNotaBaja'},
+								{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 							}).then(function (configuracionFactura) {
 								var promises = [];
 								venta.configuracion = configuracionFactura;
@@ -2070,7 +2076,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 													{ model: Clase, as: 'formatoColorNotaVenta'},
 													{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 													{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-													{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+													{ model: Clase, as: 'formatoColorNotaTraspaso'},
+													{ model: Clase, as: 'formatoPapelNotaBaja'},
+													{ model: Clase, as: 'formatoColorNotaBaja'},
+													{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 												}).then(function (configuracionGeneralFactura) {
 													if (configuracionGeneralFactura.usar) {
 														var promises = [];
@@ -2106,7 +2115,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 															{ model: Clase, as: 'formatoColorNotaVenta'},
 															{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 															{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-															{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+															{ model: Clase, as: 'formatoColorNotaTraspaso'},
+															{ model: Clase, as: 'formatoPapelNotaBaja'},
+															{ model: Clase, as: 'formatoColorNotaBaja'},
+															{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 														}).then(function (configuracionFactura) {
 															var promises = [];
 															venta.configuracion = configuracionFactura;
@@ -2188,7 +2200,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																{ model: Clase, as: 'formatoColorNotaVenta'},
 																{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 																{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-																{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+																{ model: Clase, as: 'formatoColorNotaTraspaso'},
+																{ model: Clase, as: 'formatoPapelNotaBaja'},
+																{ model: Clase, as: 'formatoColorNotaBaja'},
+																{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 															}).then(function (configuracionGeneralFactura) {
 																if (configuracionGeneralFactura.usar) {
 																	var promises = [];
@@ -2225,7 +2240,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																		{ model: Clase, as: 'formatoColorNotaVenta'},
 																		{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 																		{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-																		{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+																		{ model: Clase, as: 'formatoColorNotaTraspaso'},
+																		{ model: Clase, as: 'formatoPapelNotaBaja'},
+																		{ model: Clase, as: 'formatoColorNotaBaja'},
+																		{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 																	}).then(function (configuracionFactura) {
 																		var promises = [];
 																		venta.configuracion = configuracionFactura;
@@ -2299,7 +2317,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ model: Clase, as: 'formatoColorNotaVenta'},
 				{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 				{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-				{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+				{ model: Clase, as: 'formatoColorNotaTraspaso'},
+				{ model: Clase, as: 'formatoPapelNotaBaja'},
+				{ model: Clase, as: 'formatoColorNotaBaja'},
+				{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 			}).then(function (configuracionGeneralFactura) {
 
 				if (configuracionGeneralFactura.usar) {
@@ -2336,7 +2357,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'formatoColorNotaVenta'},
 						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-						{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+						{ model: Clase, as: 'formatoColorNotaTraspaso'},
+						{ model: Clase, as: 'formatoPapelNotaBaja'},
+						{ model: Clase, as: 'formatoColorNotaBaja'},
+						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 					}).then(function (configuracionFactura) {
 						var promises = [];
 						venta.configuracion = configuracionFactura;
@@ -2615,7 +2639,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ model: Clase, as: 'formatoColorNotaVenta'},
 				{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 				{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-				{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+				{ model: Clase, as: 'formatoColorNotaTraspaso'},
+				{ model: Clase, as: 'formatoPapelNotaBaja'},
+				{ model: Clase, as: 'formatoColorNotaBaja'},
+				{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 			}).then(function (configuracionGeneralFactura) {
 				venta.detallesVentaNoConsolidadas.forEach(function (detalleVentaNoConsolidada, index, array) {
 					//crearDetalleVentaNoConsolidada(ventaCreada.id, detalleVentaNoConsolidada.producto.id, null, detalleVentaNoConsolidada);
@@ -2654,7 +2681,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'formatoColorNotaVenta'},
 						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-						{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+						{ model: Clase, as: 'formatoColorNotaTraspaso'},
+						{ model: Clase, as: 'formatoPapelNotaBaja'},
+						{ model: Clase, as: 'formatoColorNotaBaja'},
+						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 					}).then(function (configuracionFactura) {
 						var promises = [];
 						venta.configuracion = configuracionFactura;
@@ -3568,7 +3598,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'formatoColorNotaVenta'},
 						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-						{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+						{ model: Clase, as: 'formatoColorNotaTraspaso'},
+						{ model: Clase, as: 'formatoPapelNotaBaja'},
+						{ model: Clase, as: 'formatoColorNotaBaja'},
+						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 					}).then(function (configuracionGeneralFactura) {
 						if (venta.movimiento) {
 							if (venta.movimiento.clase.nombre_corto == Diccionario.EGRE_FACTURACION) {
@@ -3612,7 +3645,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 											{ model: Clase, as: 'formatoColorNotaVenta'},
 											{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 											{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-											{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+											{ model: Clase, as: 'formatoColorNotaTraspaso'},
+											{ model: Clase, as: 'formatoPapelNotaBaja'},
+											{ model: Clase, as: 'formatoColorNotaBaja'},
+											{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 										}).then(function (configuracionFactura) {
 											res.json({
 												sucursalPrincipal: sucursalPrincipalEncontrada,
@@ -3696,7 +3732,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										{ model: Clase, as: 'formatoColorNotaVenta'},
 										{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 										{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-										{ model: Clase, as: 'formatoColorNotaTraspaso'}]
+										{ model: Clase, as: 'formatoColorNotaTraspaso'},
+										{ model: Clase, as: 'formatoPapelNotaBaja'},
+										{ model: Clase, as: 'formatoColorNotaBaja'},
+										{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
 									}).then(function (configuracionFactura) {
 										res.json({
 											sucursalPrincipal: sucursalPrincipalEncontrada,

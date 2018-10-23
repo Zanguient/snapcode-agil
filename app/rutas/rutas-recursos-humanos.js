@@ -2355,13 +2355,13 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                 where: { habilitado: true, nombre: empleado.nacionalidad, id_tipo: tipoEncontradoNAC.dataValues.id }, transaction: t
                                                                             }).then(function (claseNacEncontrada) {
                                                                                 return Clase.find({
-                                                                                    where: { habilitado: true, nombre: empleado.departamento, id_tipo: tipoEncontradoDEP.dataValues.id }, transaction: t
+                                                                                    where: { habilitado: true, nombre: empleado.departamento, id_tipo: tipoEncontradoDEP.dataValues.id,nombre_corto: { $like: '%'+claseNacEncontrada.nombre_corto + '%' } }, transaction: t
                                                                                 }).then(function (claseDepEncontrada) {
                                                                                     return Clase.find({
-                                                                                        where: { habilitado: true, nombre: empleado.provincia, id_tipo: tipoEncontradoMUN.dataValues.id }, transaction: t
+                                                                                        where: { habilitado: true, nombre: empleado.provincia, id_tipo: tipoEncontradoMUN.dataValues.id,nombre_corto: { $like: '%'+claseDepEncontrada.nombre_corto.split("-")[0] + '%' } }, transaction: t
                                                                                     }).then(function (claseMunEncontrada) {
                                                                                         return Clase.find({
-                                                                                            where: { habilitado: true, nombre: empleado.provincia, id_tipo: tipoEncontradoLOC.dataValues.id }, transaction: t
+                                                                                            where: { habilitado: true, nombre: empleado.provincia, id_tipo: tipoEncontradoLOC.dataValues.id,nombre_corto:{ $like: '%'+claseMunEncontrada.nombre_corto.split("-")[1] + '%' } }, transaction: t
                                                                                         }).then(function (claseLocEncontrada) {
                                                                                             return Clase.find({
                                                                                                 where: { habilitado: true, nombre: empleado.estado_civil, id_tipo: tipoEncontradoRRHH_EC.dataValues.id }, transaction: t
@@ -2371,16 +2371,15 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                                                                                                 var idDep = (claseDepEncontrada) ? claseDepEncontrada.id : null
                                                                                                 var idProv = (claseMunEncontrada) ? claseMunEncontrada.id : null
                                                                                                 var idLoc = (claseLocEncontrada) ? claseLocEncontrada.id : null
-                                                                                                /*  if (!pacienteFound.persona) {
-                                                                                                     console.log(pacienteFound)
-                                                                                                     console.log("pacienteFound")
-                                                                                                 } */
                                                                                                 return Persona.update({
                                                                                                     id_estado_civil: idEstC,
                                                                                                     id_pais_nacimiento: idNac,
                                                                                                     id_ciudad_nacimiento: idDep,
                                                                                                     id_provincia_nacimiento: idProv,
-                                                                                                    id_localidad_nacimiento: idLoc
+                                                                                                    id_localidad_nacimiento: idLoc,
+                                                                                                    direccion_zona:empleado.direccion_zona,
+                                                                                                    direccion_numero:empleado.direccion_numero,
+                                                                                                    correo_electronico:empleado.correo_electronico,
                                                                                                 }, {
                                                                                                         where: { id: pacienteFound.persona.id }, transaction: t
                                                                                                     }).then(function (PersonaActualizada) {

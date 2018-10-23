@@ -755,7 +755,7 @@ angular.module('agil.controladores')
 							var cantidadTotal = detalleVenta.cantidad, i = 0, detalleVentaOriginal = JSON.parse(JSON.stringify(detalleVenta));
 							detalleVenta.inventarioProducto = detalleVenta.costos[i];
 							var cantidadDisponible = $scope.obtenerInventarioTotalPorFechaVencimiento(detalleVenta);
-							// var paraRectificacionDescuento = []
+							 var paraRectificacionDescuento = []
 							if (cantidadDisponible > 0) {
 								var nuevoDetalleVenta = JSON.parse(JSON.stringify(detalleVentaOriginal));
 								var cantidadParcial;

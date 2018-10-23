@@ -3011,7 +3011,7 @@ angular.module('agil.servicios')
 					itemsPorPagina = 20;
 					ImprimirNotaBajaCartaOficio(baja, papel, itemsPorPagina, usuario);
 				} else if (baja.configuracion.tamanoPapelNotaBaja.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
-					papel = [612, 468];
+					papel = [598,600]; /*[612, 468];*/
 					itemsPorPagina = 10;
 					ImprimirNotaBajaCartaOficio(baja, papel, itemsPorPagina, usuario);
 				} else if (baja.configuracion.tamanoPapelNotaBaja.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
@@ -3054,25 +3054,38 @@ angular.module('agil.servicios')
 						doc.text(baja.detallesVenta[i].total.toFixed(2), 520, y);
 					} else {
 						doc.text(baja.detallesVenta[i].producto.codigo, 55, y, { width: 60 });
-						doc.text(baja.detallesVenta[i].cantidad, 130, y, { width: 70 });
-						doc.text(baja.detallesVenta[i].producto.unidad_medida, 153, y);
+						doc.text(baja.detallesVenta[i].cantidad, 110, y, { width: 70 });
+						doc.text(baja.detallesVenta[i].producto.unidad_medida, 140, y);
 
 						var longitudCaracteres = baja.detallesVenta[i].producto.nombre.length;
 						var yDesc = (longitudCaracteres <= 30) ? y : ((longitudCaracteres > 40 && longitudCaracteres <= 75) ? y : y - 7);
 						if (usuario.empresa.usar_vencimientos) {
 							doc.font('Helvetica', 6);
-							doc.text(baja.detallesVenta[i].producto.nombre, 205, yDesc, { width: 160 });
+							doc.text(baja.detallesVenta[i].producto.nombre, 180, yDesc, { width: 160 });
 							var fecha_vencimiento = new Date(baja.detallesVenta[i].inventario.fecha_vencimiento);
 							doc.font('Helvetica', 7);
-							doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear(), 375, y);
-							doc.text(baja.detallesVenta[i].inventario.lote, 435, y);
+							
+							if (baja.configuracion.tipoConfiguracionNotaBaja) {
+								if (baja.configuracion.tipoConfiguracionNotaBaja.nombre_corto == "LOTE") {
+									doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear(), 360, y);
+									doc.text(baja.detallesVenta[i].inventario.lote, 420, y,{width:40});	
+								}else{
+									doc.text(baja.detallesVenta[i].inventario.lote, 420, y,{width:40});
+								}
+							}
+							
 						} else {
 							doc.text(baja.detallesVenta[i].producto.nombre, 210, yDesc, { width: 250 });
 						}
 						doc.text(baja.detallesVenta[i].producto.precio_unitario.toFixed(2), 470, y);
 						doc.text(baja.detallesVenta[i].total.toFixed(2), 520, y);
 					}
-					doc.rect(50, y - 15, 520, 30).stroke();
+					if (baja.configuracion.formatoPapelNotaBaja) {
+						if (baja.configuracion.formatoPapelNotaBaja.nombre_corto == "FORM_C_MAR") {
+							doc.rect(50, y - 15, 520, 30).stroke();
+						}
+					}
+					
 					y = y + 30;
 					items++;
 
@@ -3127,6 +3140,11 @@ angular.module('agil.servicios')
 	.factory('DibujarCabeceraPDFBaja', [function () {
 		var res = function (doc, pagina, totalPaginas, baja, existenDescuentos, usuario) {
 			doc.font('Helvetica-Bold', 7);
+			if (baja.configuracion.formatoColorNotaBaja.nombre_corto == "FORM_S_COL") {
+				doc.rect(50, 40, 520, 60).stroke();
+			} else {
+				doc.rect(50, 40, 520, 60).fillAndStroke(baja.configuracion.color_cabecera_nota_baja, "black").fillColor('black').stroke();
+			}
 			doc.text(usuario.empresa.razon_social, 55, 55);
 			doc.text("SUCURSAL: ", 55, 65);
 			doc.text("DIRECCIÓN: ", 55, 75);
@@ -3147,11 +3165,17 @@ angular.module('agil.servicios')
 			doc.text("Fecha: " + baja.fecha.getDate() + "/" + (baja.fecha.getMonth() + 1) + "/" + baja.fecha.getFullYear(), 0, 85, { align: 'center' });
 			doc.font('Helvetica-Bold', 7)
 			doc.text("NRO. : " + baja.factura, 450, 75);
-			doc.rect(50, 40, 520, 60).stroke();
-			doc.rect(50, 100, 520, 25).stroke();
+			///doc.rect(50, 40, 520, 60).stroke();		
+
+			//doc.rect(50, 100, 520, 25).stroke();
+			if (baja.configuracion.formatoColorNotaBaja.nombre_corto == "FORM_S_COL") {
+				doc.rect(50, 100, 520, 25).stroke();
+			} else {
+				doc.rect(50, 100, 520, 25).fillAndStroke(baja.configuracion.color_detalle_nota_baja, "black").fillColor('black').stroke();
+			}
 			if (existenDescuentos) {
 				doc.text("CODIGO", 55, 110);
-				doc.text("CANT.", 105, 110);
+				doc.text("CANT.", 90, 110);
 				doc.text("UNID.", 135, 110);
 				doc.text("DETALLE", 170, 110);
 				doc.text("P. UNIT.", 300, 110);
@@ -3163,13 +3187,20 @@ angular.module('agil.servicios')
 				doc.text("TOTAL", 520, 110);
 			} else {
 				doc.text("CODIGO", 55, 110);
-				doc.text("CANTIDAD", 115, 110);
-				doc.text("UNIDAD", 160, 110);
+				doc.text("CANTIDAD", 95, 110);
+				doc.text("UNIDAD", 140, 110);
 
 				if (usuario.empresa.usar_vencimientos) {
-					doc.text("DETALLE", 210, 110);
-					doc.text("FECHA VENC.", 370, 110);
-					doc.text("LOTE", 430, 110);
+					doc.text("DETALLE", 180, 110);
+					if (baja.configuracion.tipoConfiguracionNotaBaja) {
+						if (baja.configuracion.tipoConfiguracionNotaBaja.nombre_corto == "LOTE") {
+							doc.text("FECHA VENC.", 360, 110);
+							doc.text("LOTE", 420, 110);	
+						}else{
+							doc.text("SERIE", 420, 110);	
+						}
+					}
+					
 				} else {
 					doc.text("DETALLE", 210, 110);
 				}

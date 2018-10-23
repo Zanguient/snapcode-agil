@@ -820,4 +820,25 @@ module.exports = function (router, ensureAuthorizedAdministrador, fs, decodeBase
 					res.json({ mensaje: "actualizado Satisfactoriamente!" });
 				});
 		});
+	
+	router.route('/usuario-firma/:id_usuario')
+		.put(function (req, res) {
+			var imagen;
+			if (req.body.persona.firma.indexOf('persona' + req.body.persona.id + '-firma') > -1) {
+				imagen = req.body.persona.firma;
+			} else {
+				var imagenPersona = decodeBase64Image(req.body.persona.firma);
+				fs.writeFileSync('./img/persona' + req.body.persona.id + '-firma.jpg', imagenPersona.data, 'base64', function (err) { });
+				imagen = './img/persona' + req.body.persona.id + '-firma.jpg';
+			}
+
+			Persona.update({
+				firma: imagen
+			}, {
+					where: { id: req.body.persona.id }
+				}).then(function (affecteedRows) {
+					res.json({ mensaje: "actualizado Satisfactoriamente!" });
+			});
+				
+		});
 }
