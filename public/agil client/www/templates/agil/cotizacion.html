@@ -801,19 +801,17 @@
 				</div>
 
 				<div class="modal-footer wizard-actions">
-					
-					<button type="submit" class="btn btn-primary btn-sm">
-						Guardar
-						<i class="ace-icon fa fa-floppy-o"></i>
-					</button>
 
+					<button type="button" class="btn btn-default btn-sm" ng-click="limpiarFirma()">
+						Nueva Firma 
+						<i class="ace-icon fa fa-openid"></i>
+					</button>
 					<div class="fileUpload btn btn-primary btn-success btn-sm">
 						<span class="fileUpload-button ace-icon fa fa-cloud-upload align-top bigger-125"> Cargar Foto</span>
 						<input  class="upload" type="file" custom-on-file-change="subirImagenFirma">
 					</div>
-
-					<button type="button" class="btn btn-danger btn-sm" ng-click="limpiarFirma()">
-						Nueva Firma
+					<button type="submit" class="btn btn-primary btn-sm">
+						Guardar
 						<i class="ace-icon fa fa-floppy-o"></i>
 					</button>
 
