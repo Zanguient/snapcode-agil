@@ -261,6 +261,7 @@
 					<option value="100">100</option>
 				</select> Elementos</label>
 		</div>
+		<div style="overflow-x:auto;">
 		<table ng-if="ventas.length>0" class="table table-striped" at-table at-paginated at-list="ventas" at-config="config">
 			<thead></thead>
 			<tbody>
@@ -398,6 +399,7 @@
 			</tbody>
 
 		</table>
+		
 		<table class="table table-striped">
 			<tfoot>
 				<tr ng-if="ventas.length>0">
@@ -419,6 +421,8 @@
 				</tr>
 			</tfoot>
 		</table>
+
+		</div>
 		<div class="pull-right">
 			<at-pagination ng-if="ventas.length>0" at-list="ventas" at-config="config"></at-pagination>
 		</div>
@@ -849,7 +853,7 @@
 					<h4 class="widget-title">BUSQUEDA PRODUCTO</h4>
 
 				</div>
-				<div class="widget-body">
+				<div class="widget-body"  style="overflow-x:auto;">
 					<div class="widget-main">
 						<!-- <form id="formularioBusquedaProducto" name="formularioBusquedaProducto" novalidate> -->
 						<table class="table table-striped table-bordered table-hover">
@@ -1111,7 +1115,7 @@
 					<h4 class="widget-title">BUSQUEDA SERVICIOS</h4>
 
 				</div>
-				<div class="widget-body">
+				<div class="widget-body" style="overflow-x:auto;">
 					<div class="widget-main">
 						<!-- <form id="formularioBusquedaProducto" name="formularioBusquedaProducto" novalidate> -->
 						<table class="table table-striped table-bordered table-hover">
@@ -1431,7 +1435,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="widget-body" ng-if="venta.detallesVenta.length>0">
+				<div class="widget-body" style="overflow-x:auto;" ng-if="venta.detallesVenta.length>0">
 					<div class="widget-main">
 						<table class="table table-striped table-bordered table-hover">
 							<thead>
