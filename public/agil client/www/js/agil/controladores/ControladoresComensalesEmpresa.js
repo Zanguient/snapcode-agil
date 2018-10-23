@@ -319,6 +319,7 @@ angular.module('agil.controladores')
                             $scope.clienteEmpresaPreciosComidas = {}
                         }
                         $scope.clienteEmpresaPreciosComidas.empresaCliente = Object.assign({}, cliente)
+                        $scope.obtenerComidas(true, $scope.clienteEmpresaPreciosComidas)
                         $scope.obtenerPrecioComidas(true)
                         break;
                     default:
@@ -428,8 +429,7 @@ angular.module('agil.controladores')
                 $scope.obtenerComidas()
             }
 
-
-            $scope.obtenerComidas = function (empresa) {
+            $scope.obtenerComidas = function (empresa, seleccionado) {
                 blockUI.start()
                 var prom;
                 if (!$scope.clienteEmpresaComidas) {
@@ -437,7 +437,11 @@ angular.module('agil.controladores')
                     $scope.clienteEmpresaComidas.verTodos = false
                 }
                 if (empresa) {
-                    prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaComidas.empresaCliente.id)
+                    if (seleccionado) {
+                        prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, seleccionado.empresaCliente.id)
+                    }else{
+                        prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaComidas.empresaCliente.id)
+                    }
                 } else if ($scope.clienteEmpresaComidas.verTodos) {
                     prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, 0)
                 } else {
@@ -447,7 +451,9 @@ angular.module('agil.controladores')
                     if (res.hasErr) {
                         $scope.mostrarMensaje(res.mensaje)
                     } else {
-                        $scope.listaComidasclienteEmpresa = res.lista
+                        if (res.lista.length > 0) {
+                        $scope.listaComidasclienteEmpresa = res.lista                            
+                        }
                     }
                     blockUI.stop()
                 }).catch(function (err) {
@@ -930,9 +936,9 @@ angular.module('agil.controladores')
                 var horas = datoFecha.split(' ')[datoFecha.split(' ').length - 1]
                 var fecha = datoFecha.split(' ')[0].split('/').reverse()
                 if (horas.indexOf('AM') > 0) {
-                    horas = horas.split('A')[0].split(':')
+                    horas = horas.split('AA')[0].split(':')
                 } else if (horas.indexOf('PM') > 0) {
-                    horas = horas.split('P')[0].split(':')
+                    horas = horas.split('PM')[0].split(':')
                     if ((parseInt(horas[0])) < 12) {
                         horas[0] = (parseInt(horas[0]) + 12) + ''
                     }

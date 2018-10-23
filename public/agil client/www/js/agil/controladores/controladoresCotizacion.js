@@ -306,6 +306,9 @@ angular.module('agil.controladores')
 
 		$scope.canvas = document.getElementById('signature-pad');  
 		$scope.signaturePad = new SignaturePad($scope.canvas);
+		$scope.signaturePad .minWidth = 5;
+		$scope.signaturePad .maxWidth = 10;
+		$scope.signaturePad .penColor = "rgb(66, 133, 244)";
 		
 
 		$scope.limpiarFirma = function (){
@@ -342,7 +345,7 @@ angular.module('agil.controladores')
 				usuario.persona.firma = $scope.signaturePad.toDataURL("image/jpg"); 
 			}
 			$scope.firmaNew = false;
-			
+
 			blockUI.start();
 			if (usuario.id) {
 				UsuarioFirma.update({ id_usuario: usuario.id }, usuario, function (res) {

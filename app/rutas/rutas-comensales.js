@@ -570,7 +570,9 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             horas = horas.split('A')[0].split(':')
         } else if (horas.indexOf('PM') > 0) {
             horas = horas.split('P')[0].split(':')
-            horas[0] = (parseInt(horas[0]) + 12) + ''
+            if ((parseInt(horas[0])) < 12) {
+                horas[0] = (parseInt(horas[0]) + 12) + ''
+            }
         }
         var fechaCompleta = fecha[0] + '-' + (fecha[2].length == 2 ? fecha[2] : '0' + fecha[2]) + '-' + (fecha[1].length == 2 ? fecha[1] : '0' + fecha[1]) + 'T' + (horas[0].length == 2 ? horas[0] : '0' + horas[0]) + ':' + (horas[1].length == 2 ? horas[1] : '0' + horas[1]) + ':' + (horas[2].length == 2 ? horas[2] : '0' + horas[2]) + '.000Z'
         return fechaCompleta, new Date(fechaCompleta).toISOString()
