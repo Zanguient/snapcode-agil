@@ -48,7 +48,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 								{ codigo_fabrica: { $like: '%' + req.params.texto + '%' } },
 								{ descripcion: { $like: '%' + req.params.texto + '%' } }]
 							},
-							include: [{ model: ProductoTipoPrecio, as: 'tiposPrecio',where:{eliminado:false}, include: [{ model: Clase, as: 'tipoPrecio' }] },
+							include: [{ model: ProductoTipoPrecio, as: 'tiposPrecio',where:{eliminado:false}, required: false, include: [{ model: Clase, as: 'tipoPrecio' }] },
 							{ model: Clase, as: 'tipoProducto' },
 							{ model: Inventario, as: 'inventarios', required: false, where: { id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
 							{
@@ -77,7 +77,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 								id_empresa: req.params.id_empresa,
 								id_grupo: { $in: gurposUsuario },
 							},
-							include: [{ model: ProductoTipoPrecio, as: 'tiposPrecio',where:{eliminado:false}, include: [{ model: Clase, as: 'tipoPrecio' }] },
+							include: [{ model: ProductoTipoPrecio, as: 'tiposPrecio',where:{eliminado:false}, required: false, include: [{ model: Clase, as: 'tipoPrecio' }] },
 							{ model: Clase, as: 'tipoProducto' },
 							{ model: Inventario, as: 'inventarios', where: { lote: { $like: '%' + req.params.texto + '%' }, id_almacen: req.params.id_almacen, cantidad: { $gte: 0 } } },
 							{
