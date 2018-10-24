@@ -4,11 +4,11 @@ angular.module('agil.controladores')
         'ClasesTipoEmpresa', 'ClasesTipo', 'GuardarSolicitudCajaChica', 'GuardarConceptoMovimientoCajaChica',
         'ObtenerConceptoMovimientoCajaChica', 'SolicitudesCajaPaginador', 'SolicitudesCajaChicaPaginador', 'ObtenerTodoPersonal', '$filter', 'Paginator', 'VerificarUsuarioEmpresa',
         'NuevoComprobante', 'ConfiguracionCompraVista', 'ConfiguracionesCuentasEmpresa', 'ConfiguracionCompraVistaDatos', 'ProveedoresNit', 'GuardarCajaChica', 'ListaProductosEmpresaUsuario', 'VerificarUsuarioEmpresaCaja', 'IngresosCajaPaginador', 'ObtenerDatosCierreCaja', 'CierreCajaCPaginador',
-        'FieldViewer', 'ObtenerImagen', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
+        'FieldViewer', 'ObtenerImagen', 'ObtenerDatosSolicitudID', function ($scope, $localStorage, $location, $templateCache, $route, blockUI,
             ClasesTipoEmpresa, ClasesTipo, GuardarSolicitudCajaChica, GuardarConceptoMovimientoCajaChica,
             ObtenerConceptoMovimientoCajaChica, SolicitudesCajaPaginador, SolicitudesCajaChicaPaginador, ObtenerTodoPersonal, $filter, Paginator, VerificarUsuarioEmpresa,
             NuevoComprobante, ConfiguracionCompraVista, ConfiguracionesCuentasEmpresa, ConfiguracionCompraVistaDatos, ProveedoresNit, GuardarCajaChica, ListaProductosEmpresaUsuario, VerificarUsuarioEmpresaCaja, IngresosCajaPaginador, ObtenerDatosCierreCaja, CierreCajaCPaginador,
-            FieldViewer, ObtenerImagen) {
+            FieldViewer, ObtenerImagen, ObtenerDatosSolicitudID) {
 
 
             $scope.usuario = JSON.parse($localStorage.usuario);
@@ -90,8 +90,12 @@ angular.module('agil.controladores')
                 $scope.cerrarPopup($scope.idModalConceptosMovimiento);
             }
             $scope.abrirModalKardexCajaChica = function (datos) {
-                $scope.solicitud = datos
-                $scope.abrirPopup($scope.idModalKardexCajaChica);
+                var promesa = ObtenerDatosSolicitudID(datos.id)
+                promesa.then(function (dato) {
+                    $scope.solicitud = dato.solicitud
+                    $scope.abrirPopup($scope.idModalKardexCajaChica);
+                })
+
             }
             $scope.cerrarModalKardexCajaChica = function () {
                 $scope.cerrarPopup($scope.idModalKardexCajaChica);
@@ -121,102 +125,107 @@ angular.module('agil.controladores')
 
             $scope.abrirModalRegistroCajaChica = function (datos, edicion, ver, hijo) {
 
-                if (datos) {
-                    $scope.solicitud = datos
-                    if (edicion) {
+                var promesa = ObtenerDatosSolicitudID(datos.id)
+                promesa.then(function (dato) {
+                    datos = dato.solicitud
+
+                    if (datos) {
+                        $scope.solicitud = datos
+                        if (edicion) {
+                            if (hijo) {
+                                $scope.cajaChica = Object.assign({}, hijo)
+                                $scope.cajaChica.compra = Object.assign({}, hijo.compra)
+                                $scope.cajaChica.solicitud = Object.assign({}, datos)
+                                $scope.cajaChica.solicitud.cajasChicas[0].saldo += $scope.cajaChica.compra.total
+                                $scope.cajaChica.verDatosCompra = true
+                                $scope.cajaChica.descuentoGasolina = false
+                                if ($scope.cajaChica.fecha.length > 10) $scope.cajaChica.fecha = $scope.fechaATexto($scope.cajaChica.fecha)
+                                $scope.cajaChica.compra.fechaTexto = $scope.fechaATexto(hijo.compra.fecha)
+                            } else {
+                                $scope.cajaChica = Object.assign({}, datos.cajasChicas[0])
+                                $scope.cajaChica.compra = Object.assign({}, datos.cajasChicas[0].compra)
+                                $scope.cajaChica.solicitud = Object.assign({}, datos)
+                                $scope.cajaChica.solicitud.cajasChicas[0].saldo += $scope.cajaChica.compra.total
+                                $scope.cajaChica.verDatosCompra = true
+                                $scope.cajaChica.descuentoGasolina = false
+                                if ($scope.cajaChica.fecha.length > 10) $scope.cajaChica.fecha = $scope.fechaATexto($scope.cajaChica.fecha)
+                                $scope.cajaChica.compra.fechaTexto = $scope.fechaATexto(datos.cajasChicas[0].compra.fecha)
+                            }
+                            if ($scope.cajaChica.compra.movimiento == undefined) {
+                                $scope.cajaChica.compra.movimiento = { clase: {} }
+                                $scope.cajaChica.compra.movimiento.clase = $scope.cajaChica.compra.tipoMovimiento
+                            }
+                            if ($scope.cajaChica.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES || $scope.cajaChica.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_SERVICIOS) {
+                                $scope.configuracionCompraVista.mostrar_it_retencion = true
+                                $scope.configuracionCompraVista.mostrar_iue = true
+                                $scope.configuracionCompraVista.mostrar_pagado = true
+                            } else {
+                                $scope.configuracionCompraVista.mostrar_it_retencion = false
+                                $scope.configuracionCompraVista.mostrar_iue = false
+                                $scope.configuracionCompraVista.mostrar_pagado = false
+                            }
+                            // $scope.cambiarTipoPago($scope.cajaChica.compra.tipoPago);
+                        } else {
+                            if (datos.cajasChicas.length > 0) {
+                                var total = 0
+                            } else {
+                                var total = 0
+                            }
+                            $scope.cajaChica = {
+                                fecha: $scope.fechaATexto(new Date()),
+                                concepto: datos.concepto,
+                                detalle: datos.detalle,
+                                compra: {
+                                    sucursal: $scope.sucursalPrincipal,
+                                    fecha: $scope.fechaATexto(new Date()),
+                                    generado_por_pedido: false,
+                                    usar_producto: true, movimiento: { clase: {} }, tipo_retencion: true,
+                                    total: total, id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, proveedor: {}, id_tipo_pago: $scope.tiposPago[0].id, tipoPago: $scope.tiposPago[0],
+                                    detallesCompra: [], descuento_general: false, tipo_descuento: false, codigo_control: 0, autorizacion: 0,
+                                    tipo_recargo: false, descuento: 0, recargo: 0, ice: 0, excento: 0
+                                }, solicitud: datos, verDatosCompra: false, descuentoGasolina: false
+                            }
+                        }
+                        if (ver) {
+                            $scope.cajaChica.ver = true
+                            $scope.cajaChica.verDatosCompra = true
+                        } else {
+                            $scope.cajaChica.ver = false
+                        }
+                    } else {
+
                         if (hijo) {
                             $scope.cajaChica = Object.assign({}, hijo)
                             $scope.cajaChica.compra = Object.assign({}, hijo.compra)
-                            $scope.cajaChica.solicitud = Object.assign({}, datos)
-                            $scope.cajaChica.solicitud.cajasChicas[0].saldo += $scope.cajaChica.compra.total
+                            $scope.cajaChica.solicitud = null
                             $scope.cajaChica.verDatosCompra = true
                             $scope.cajaChica.descuentoGasolina = false
                             if ($scope.cajaChica.fecha.length > 10) $scope.cajaChica.fecha = $scope.fechaATexto($scope.cajaChica.fecha)
                             $scope.cajaChica.compra.fechaTexto = $scope.fechaATexto(hijo.compra.fecha)
                         } else {
-                            $scope.cajaChica = Object.assign({}, datos.cajasChicas[0])
-                            $scope.cajaChica.compra = Object.assign({}, datos.cajasChicas[0].compra)
-                            $scope.cajaChica.solicitud = Object.assign({}, datos)
-                            $scope.cajaChica.solicitud.cajasChicas[0].saldo += $scope.cajaChica.compra.total
+                            $scope.cajaChica = {
+                                fecha: $scope.fechaATexto(new Date()),
+                                compra: {
+                                    fecha: $scope.fechaATexto(new Date()),
+                                    generado_por_pedido: false,
+                                    usar_producto: true, movimiento: { clase: {} }, tipo_retencion: true,
+                                    total: "", id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, proveedor: {}, id_tipo_pago: $scope.tiposPago[0].id, tipoPago: $scope.tiposPago[0],
+                                    detallesCompra: [], descuento_general: false, tipo_descuento: false, codigo_control: 0, autorizacion: 0,
+                                    tipo_recargo: false, descuento: 0, recargo: 0, ice: 0, excento: 0
+                                }, solicitud: null, verDatosCompra: false, descuentoGasolina: false
+                            }
+                        }
+                        if (ver) {
+                            $scope.cajaChica.ver = true
                             $scope.cajaChica.verDatosCompra = true
-                            $scope.cajaChica.descuentoGasolina = false
-                            if ($scope.cajaChica.fecha.length > 10) $scope.cajaChica.fecha = $scope.fechaATexto($scope.cajaChica.fecha)
-                            $scope.cajaChica.compra.fechaTexto = $scope.fechaATexto(datos.cajasChicas[0].compra.fecha)
-                        }
-                        if ($scope.cajaChica.compra.movimiento == undefined) {
-                            $scope.cajaChica.compra.movimiento = { clase: {} }
-                            $scope.cajaChica.compra.movimiento.clase = $scope.cajaChica.compra.tipoMovimiento
-                        }
-                        if ($scope.cajaChica.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES || $scope.cajaChica.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_SERVICIOS) {
-                            $scope.configuracionCompraVista.mostrar_it_retencion = true
-                            $scope.configuracionCompraVista.mostrar_iue = true
-                            $scope.configuracionCompraVista.mostrar_pagado = true
                         } else {
-                            $scope.configuracionCompraVista.mostrar_it_retencion = false
-                            $scope.configuracionCompraVista.mostrar_iue = false
-                            $scope.configuracionCompraVista.mostrar_pagado = false
-                        }
-                        // $scope.cambiarTipoPago($scope.cajaChica.compra.tipoPago);
-                    } else {
-                        if (datos.cajasChicas.length > 0) {
-                            var total = 0
-                        } else {
-                            var total = 0
-                        }
-                        $scope.cajaChica = {
-                            fecha: $scope.fechaATexto(new Date()),
-                            concepto: datos.concepto,
-                            detalle: datos.detalle,
-                            compra: {
-                                sucursal: $scope.sucursalPrincipal,
-                                fecha: $scope.fechaATexto(new Date()),
-                                generado_por_pedido: false,
-                                usar_producto: true, movimiento: { clase: {} }, tipo_retencion: true,
-                                total: total, id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, proveedor: {}, id_tipo_pago: $scope.tiposPago[0].id, tipoPago: $scope.tiposPago[0],
-                                detallesCompra: [], descuento_general: false, tipo_descuento: false, codigo_control: 0, autorizacion: 0,
-                                tipo_recargo: false, descuento: 0, recargo: 0, ice: 0, excento: 0
-                            }, solicitud: datos, verDatosCompra: false, descuentoGasolina: false
+                            $scope.cajaChica.ver = false
                         }
                     }
-                    if (ver) {
-                        $scope.cajaChica.ver = true
-                        $scope.cajaChica.verDatosCompra = true
-                    } else {
-                        $scope.cajaChica.ver = false
-                    }
-                } else {
-
-                    if (hijo) {
-                        $scope.cajaChica = Object.assign({}, hijo)
-                        $scope.cajaChica.compra = Object.assign({}, hijo.compra)
-                        $scope.cajaChica.solicitud = null
-                        $scope.cajaChica.verDatosCompra = true
-                        $scope.cajaChica.descuentoGasolina = false
-                        if ($scope.cajaChica.fecha.length > 10) $scope.cajaChica.fecha = $scope.fechaATexto($scope.cajaChica.fecha)
-                        $scope.cajaChica.compra.fechaTexto = $scope.fechaATexto(hijo.compra.fecha)
-                    } else {
-                        $scope.cajaChica = {
-                            fecha: $scope.fechaATexto(new Date()),
-                            compra: {
-                                fecha: $scope.fechaATexto(new Date()),
-                                generado_por_pedido: false,
-                                usar_producto: true, movimiento: { clase: {} }, tipo_retencion: true,
-                                total: "", id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, proveedor: {}, id_tipo_pago: $scope.tiposPago[0].id, tipoPago: $scope.tiposPago[0],
-                                detallesCompra: [], descuento_general: false, tipo_descuento: false, codigo_control: 0, autorizacion: 0,
-                                tipo_recargo: false, descuento: 0, recargo: 0, ice: 0, excento: 0
-                            }, solicitud: null, verDatosCompra: false, descuentoGasolina: false
-                        }
-                    }
-                    if (ver) {
-                        $scope.cajaChica.ver = true
-                        $scope.cajaChica.verDatosCompra = true
-                    } else {
-                        $scope.cajaChica.ver = false
-                    }
-                }
-                $scope.detalleCompra = { producto: {}, servicio: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
-                $scope.cargarCentroCosto($scope.detalleCompra)
-                $scope.abrirPopup($scope.idModalRegistroCajaChica);
+                    $scope.detalleCompra = { producto: {}, servicio: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+                    $scope.cargarCentroCosto($scope.detalleCompra)
+                    $scope.abrirPopup($scope.idModalRegistroCajaChica);
+                })
             }
             $scope.cargarCentroCosto = function (detalleCompra) {
                 $scope.centrosCosto.forEach(function (dato, index, array) {
@@ -922,27 +931,34 @@ angular.module('agil.controladores')
             }
 
             $scope.generarPdfBoletaCajaChica = function (solicitud, caja, kardex) {
-                // convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
-                var delayImagen = ObtenerImagen($scope.usuario.empresa.imagen);
-                delayImagen.then(function (imagen) {
-                    var doc = new PDFDocument({ size: 'letter', margin: 10 });
-                    var stream = doc.pipe(blobStream());
-                    // draw some text
-                    var totalCosto = 0;
-                    var y = 45;
-                    $scope.dibujarPDFBoletaCajaChica(doc, solicitud, caja, y, imagen, kardex);
-                    y += 370
-                    doc.rect(0, y - 35, 650, 0).dash(2, { space: 5 }).stroke()
-                    $scope.dibujarPDFBoletaCajaChica(doc, solicitud, caja, y, imagen, kardex);
-                    doc.end();
-                    stream.on('finish', function () {
-                        var fileURL = stream.toBlobURL('application/pdf');
-                        window.open(fileURL, '_blank', 'location=no');
-                    });
-                }).catch(function (err) {
-                    blockUI.stop()
-                    var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
-                    $scope.mostrarMensaje(msg)
+                var promesa = ObtenerDatosSolicitudID(solicitud.id)
+                promesa.then(function (dato) {
+                    solicitud = dato.solicitud
+                    if (!caja) {
+                        caja = dato.solicitud.cajasChicas[0]
+                    }
+                    // convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
+                    var delayImagen = ObtenerImagen($scope.usuario.empresa.imagen);
+                    delayImagen.then(function (imagen) {
+                        var doc = new PDFDocument({ size: 'letter', margin: 10 });
+                        var stream = doc.pipe(blobStream());
+                        // draw some text
+                        var totalCosto = 0;
+                        var y = 45;
+                        $scope.dibujarPDFBoletaCajaChica(doc, solicitud, caja, y, imagen, kardex);
+                        y += 370
+                        doc.rect(0, y - 35, 650, 0).dash(2, { space: 5 }).stroke()
+                        $scope.dibujarPDFBoletaCajaChica(doc, solicitud, caja, y, imagen, kardex);
+                        doc.end();
+                        stream.on('finish', function () {
+                            var fileURL = stream.toBlobURL('application/pdf');
+                            window.open(fileURL, '_blank', 'location=no');
+                        });
+                    }).catch(function (err) {
+                        blockUI.stop()
+                        var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
+                        $scope.mostrarMensaje(msg)
+                    })
                 })
                 // });
             }

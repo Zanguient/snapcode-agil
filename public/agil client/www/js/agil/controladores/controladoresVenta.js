@@ -712,8 +712,19 @@ angular.module('agil.controladores')
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
 										paraRectificacionDescuento[index].descuento = totalDescuento * paraRectificacionDescuento[index].cantidad
 									}
+								}else{
+									$scope.venta.total_descuento_general = detalleVenta.descuento;
+									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
+										paraRectificacionDescuento[index].descuento = totalDescuento * paraRectificacionDescuento[index].cantidad
+									}
 								}
+
 								if (!detalleVenta.tipo_recargo) {
+									$scope.venta.total_recargo_general = detalleVenta.recargo;
+									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
+										paraRectificacionDescuento[index].recargo = totalRecargo * paraRectificacionDescuento[index].cantidad
+									}
+								}else{
 									$scope.venta.total_recargo_general = detalleVenta.recargo;
 									for (var index = 0; index < paraRectificacionDescuento.length; index++) {
 										paraRectificacionDescuento[index].recargo = totalRecargo * paraRectificacionDescuento[index].cantidad
@@ -738,7 +749,7 @@ angular.module('agil.controladores')
 								}
 								for (var index = 0; index < paraRectificacionDescuento.length; index++) {
 									var detalleCorregido = $scope.calcularImporte(paraRectificacionDescuento[index]);
-									$scope.venta.total_recargo_general
+									// $scope.venta.total_recargo_general
 									$scope.venta.detallesVenta.push(detalleCorregido);
 								}
 							} else {
@@ -950,6 +961,8 @@ angular.module('agil.controladores')
 					}
 					detalle.total_descuento = descuento
 					detalle.total_recargo = recargo
+					// detalle.recargo = recargo
+					// detalle.descuento = descuento
 					detalle.total = detalle.importe - descuento + recargo - detalle.ice - detalle.excento;
 					return detalle
 				}
@@ -967,6 +980,9 @@ angular.module('agil.controladores')
 				}
 				$scope.detalleVenta.total_descuento = descuento
 				$scope.detalleVenta.total_recargo = recargo
+				// $scope.detalleVenta.descuento = descuento
+				// $scope.detalleVenta.recargo = recargo
+				
 				$scope.detalleVenta.total = $scope.detalleVenta.importe - descuento + recargo - $scope.detalleVenta.ice - $scope.detalleVenta.excento;
 			}
 

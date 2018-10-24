@@ -1,20 +1,28 @@
 angular.module('agil.controladores')
 	.controller('ControladorCotizacion', ['$scope', 'blockUI', '$localStorage', '$location', '$templateCache', '$route', '$timeout', 'ListaCotizacion', 'Cotizaciones', 'Cotizacion', 'filtroCotizaciones', 'Diccionario',
 		'ListaInventariosProducto', 'ClasesTipo', '$window', 'ListaProductosEmpresa', 'InventarioPaginador', 'ConfiguracionCotizacionVista', 'ConfiguracionCotizacionVistaDatos', 'FiltroCotizacionPaginador', 'Paginator',
-		'DatosImpresionCotizacion', 'ultimaCotizacion', 'ListaSucursalesUsuario', 'ClientesNit', 'CotizacionRechazo', 'ListaProductosEmpresaUsuario', 'UsuarioFirma', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, ListaCotizacion, Cotizaciones, Cotizacion, filtroCotizaciones, Diccionario,
+		'DatosImpresionCotizacion', 'ultimaCotizacion', 'ListaSucursalesUsuario', 'ClientesNit', 'CotizacionRechazo', 'ListaProductosEmpresaUsuario', 'UsuarioFirma', 'ObtenerUsuario', function ($scope, blockUI, $localStorage, $location, $templateCache, $route, $timeout, ListaCotizacion, Cotizaciones, Cotizacion, filtroCotizaciones, Diccionario,
 		ListaInventariosProducto, ClasesTipo, $window, ListaProductosEmpresa, InventarioPaginador, ConfiguracionCotizacionVista, ConfiguracionCotizacionVistaDatos, FiltroCotizacionPaginador, Paginator,
-		DatosImpresionCotizacion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit, CotizacionRechazo, ListaProductosEmpresaUsuario, UsuarioFirma) {
+		DatosImpresionCotizacion, ultimaCotizacion, ListaSucursalesUsuario, ClientesNit, CotizacionRechazo, ListaProductosEmpresaUsuario, UsuarioFirma, ObtenerUsuario) {
 
 		$scope.usuario = JSON.parse($localStorage.usuario);
+
+		var promise = ObtenerUsuario($scope.usuario.id);
+		promise.then(function (userOptenido) {
+			if(userOptenido.usuario.persona.firma){
+				convertUrlToBase64Image(userOptenido.usuario.persona.firma, function (imagenFirma) {
+					$scope.usuario.persona.firma = imagenFirma;
+				});
+			}
+		}).catch(function (err) {
+			var mensaje = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.data !== undefined && err.data !== null) ? err.data : 'Error: no hubo respuesta del servidor o hubo un cambio de red. -- controlador usuarios LN 78.'
+			$scope.mostrarMensaje(mensaje)
+		})
 		
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
 			$scope.usuario.empresa.imagen = imagenEmpresa;
 		});
-		if($scope.usuario.persona.firma){
-			convertUrlToBase64Image($scope.usuario.persona.firma, function (imagenFirma) {
-				$scope.usuario.persona.firma = imagenFirma;
-			});
-		}
+		
 
 		$scope.idModalWizardCotizacionNueva = 'modal-wizard-cotizacion-nueva';
 		// $scope.idModalWizardCotizacionModificar = 'modal-wizard-cotizacion-modificar';
@@ -578,9 +586,9 @@ angular.module('agil.controladores')
 
 			if ($scope.usuario.persona.firma){
 				if ($scope.usuario.persona.firma > 100) {
-					doc.image($scope.usuario.persona.firma, 55, papel[1] - 150, { width: 50, height: 50 });
+					doc.image($scope.usuario.persona.firma, 55, papel[1] - 150, { width: 100, height: 70 });
 				} else {
-					doc.image($scope.usuario.persona.firma, 55, papel[1] - 150, { width: 90, height: 70 });
+					doc.image($scope.usuario.persona.firma, 55, papel[1] - 150, { width: 100, height: 70 });
 				}
 			}
 

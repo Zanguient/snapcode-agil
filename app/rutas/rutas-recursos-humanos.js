@@ -1898,6 +1898,7 @@ module.exports = function (router, sequelize, Sequelize, Usuario, MedicoPaciente
                 })
             })
         })
+       
     router.route('/recursos-humanos/horas-extra/empleado/:id_empleado')
         .post(function (req, res) {
             RrhhEmpleadoHorasExtra.create({

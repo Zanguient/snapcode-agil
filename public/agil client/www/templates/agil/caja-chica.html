@@ -307,22 +307,22 @@
                                             ng-click="abrirModalVerificarAutorizacion(solicitud)">
                                             <i class="ace-icon fa fa-pencil-square  bigger-130"></i>
                                         </a>
-                                        <a ng-if="!solicitud.eliminado && (solicitud.estado.nombre==diccionario.CC_ESTADO_DESEMBOLSADO||solicitud.estado.nombre==diccionario.CC_ESTADO_VERIFICADO) && solicitud.cajasChicas[0].saldo!=0 && solicitud.concepto.concepto.nombre=='KARDEX' && solicitud.cajasChicas.length!=0"
+                                        <a ng-if="!solicitud.eliminado && (solicitud.estado.nombre==diccionario.CC_ESTADO_DESEMBOLSADO||solicitud.estado.nombre==diccionario.CC_ESTADO_VERIFICADO)  && solicitud.concepto.concepto.nombre=='KARDEX'"
                                             class="blue tooltip-info " uib-tooltip="Cobrar" href="javascript:void(0)" tooltip-placement="left"
                                             e-disabled="!aplicacion.puede_crear || !usuario.encargado_rendicion_caja_chica" ng-click="abrirModalRegistroCajaChica(solicitud)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
                                         </a>
-                                        <a ng-if="!solicitud.eliminado && (solicitud.estado.nombre==diccionario.CC_ESTADO_AUTORIZADO||solicitud.estado.nombre==diccionario.CC_ESTADO_VERIFICADO) && solicitud.cajasChicas[0].saldo!=0 && solicitud.concepto.concepto.nombre=='GASTO' && solicitud.cajasChicas.length==0"
+                                        <a ng-if="!solicitud.eliminado && (solicitud.estado.nombre==diccionario.CC_ESTADO_AUTORIZADO||solicitud.estado.nombre==diccionario.CC_ESTADO_VERIFICADO)  && solicitud.concepto.concepto.nombre=='GASTO'"
                                             class="blue tooltip-info " uib-tooltip="Cobrar" href="javascript:void(0)" tooltip-placement="left"
                                             e-disabled="!aplicacion.puede_crear || !usuario.encargado_caja_chica" ng-click="abrirModalRegistroCajaChica(solicitud)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
                                         </a>
-                                        <a ng-if="!solicitud.eliminado && (solicitud.estado.nombre==diccionario.CC_ESTADO_AUTORIZADO||solicitud.estado.nombre==diccionario.CC_ESTADO_VERIFICADO) && solicitud.cajasChicas[0].saldo!=0 && solicitud.concepto.concepto.nombre=='ANTICIPO' && solicitud.cajasChicas.length==0"
+                                        <a ng-if="!solicitud.eliminado && (solicitud.estado.nombre==diccionario.CC_ESTADO_AUTORIZADO||solicitud.estado.nombre==diccionario.CC_ESTADO_VERIFICADO)  && solicitud.concepto.concepto.nombre=='ANTICIPO'"
                                             class="blue tooltip-info " uib-tooltip="Cobrar" href="javascript:void(0)" tooltip-placement="left"
                                             e-disabled="!aplicacion.puede_crear || !usuario.encargado_caja_chica" ng-click="abrirModalRegistroAnticipoCajaChica(solicitud,false,false)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>
                                         </a>
-                                        <a ng-hide="usuario.encargado_rendicion_caja_chica || solicitud.cajasChicas.length>0" ng-if="!solicitud.eliminado && solicitud.estado.nombre==diccionario.CC_ESTADO_AUTORIZADO && solicitud.cajasChicas[0].saldo!=0 && solicitud.concepto.concepto.nombre=='KARDEX'"
+                                        <a ng-hide="usuario.encargado_rendicion_caja_chica || solicitud.cajasChicas.length>0" ng-if="!solicitud.eliminado && solicitud.estado.nombre==diccionario.CC_ESTADO_AUTORIZADO  && solicitud.concepto.concepto.nombre=='KARDEX'"
                                             class="red tooltip-info " uib-tooltip="Desembolso" href="javascript:void(0)" tooltip-placement="left"
                                             e-disabled="!aplicacion.puede_crear || !usuario.encargado_caja_chica" ng-click="abrirModalRegistroDesembolsoCajaChica(solicitud,false,false)">
                                             <i class="ace-icon fa fa-folder  bigger-130"></i>

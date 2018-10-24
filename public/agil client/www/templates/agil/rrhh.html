@@ -3266,11 +3266,10 @@
             <div class="modal-header bg-primary">
                 <h4 class='smaller text-white text-uppercase'>
                     <i class='icono-prerequisito'></i>
-                    <label> &nbsp;Bitacora de Cabios </label>
+                    <label> &nbsp;Bitacora de Cambios </label>
                 </h4>
             </div>
             <div class="modal-body">
-
                 <div class="table-fixed-header">
                     <table class="table table-striped table-bordered table-hover ">
                         <thead fix-head class="table-head-color">
@@ -3283,7 +3282,6 @@
                                 <th>Usuario</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             <tr ng-repeat="cambio in bitacoraCambios track by $index">
                                 <td>{{$index+1}}</td>
@@ -3292,20 +3290,16 @@
                                 <td>{{cambio.valor_actual}}</td>
                                 <td>{{cambio.fecha|date:'dd/MM/yyyy'}}</td>
                                 <td>{{cambio.usuario.persona.nombre_completo}}</td>
-
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
             </div>
             <div class="modal-footer wizard-actions">
-
                 <button class="btn btn-danger btn-sm" ng-click="cerrarDialogBitacoraFicha()">
                     <i class="ace-icon fa fa-times"></i>Cancelar
                 </button>
             </div>
-
         </form>
     </div>
     <!-- ===== fin modal deduccion  ====== -->
@@ -3318,8 +3312,6 @@
             </h4>
         </div>
         <form ng-submit="GuardarAnticipos(listaAnticipos)">
-
-
             <div class="modal-body">
                 <h3 class="text-center">{{empleado.nombre_completo}}</h3>
                 <div class="row">
@@ -3333,7 +3325,6 @@
                         <label for="agno">Año</label>
                         <select ng-options="year  as year for (idx, year)  in listYearsAnticipo track by year" ng-model="filtroAnticipo.gestion"
                             ng-change="buscarAnticiposExtraoridnario(filtroAnticipo)">
-
                         </select>
                     </div>
                     <div class="form-group col-sm-4">
@@ -3344,7 +3335,6 @@
                         </a>
                     </div>
                 </div>
-
                 <div class="clearfix"></div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">

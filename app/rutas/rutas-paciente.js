@@ -961,7 +961,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 					activo = " AND agil_medico_paciente.eliminado = true"
 				}
 			} else {
-				activo = ""
+				activo = " AND agil_medico_paciente.eliminado = false"
 			}
 			if (req.params.texto_busqueda != "0") {
 				if (condicion.length > 1) {

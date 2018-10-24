@@ -1517,11 +1517,11 @@
 										{{detalleVenta.importe | number: 2}}
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_descuento">
-										{{detalleVenta.total_descuento | number: 2}}
+										{{(detalleVenta.total_descuento !== undefined ? detalleVenta.total_descuento : detalleVenta.descuento)  | number: 2}}
 										<!--&nbsp;{{detalleVenta.tipo_descuento ? '('+detalleVenta.descuento+'%)':''}}-->
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_recargo">
-										{{detalleVenta.total_recargo | number: 2}}
+										{{(detalleVenta.total_recargo !== undefined ? detalleVenta.total_recargo : detalleVenta.recargo) | number: 2}}
 										<!--&nbsp;{{detalleVenta.tipo_recargo ? '('+detalleVenta.recargo+'%)':''}}-->
 									</td>
 									<td ng-if="configuracionVentaVista.mostrar_ice">

@@ -255,4 +255,24 @@ angular.module('agil.servicios')
     };
     return res;
 }])
+.factory('DatosSolicitudID',  ['$resource',function ($resource) {
+    return $resource(restServer + "cobros-caja-chica/solicitud/:id_solicitud", null,
+        {
+            'update': { method: 'PUT' }
+        });
+}])
+
+.factory('ObtenerDatosSolicitudID', ['DatosSolicitudID', '$q', function (DatosSolicitudID, $q) {
+    var res = function (idSolicitud)//idEmpresa, xxx
+    {
+        var delay = $q.defer();
+        DatosSolicitudID.get({id_solicitud:idSolicitud}, function (entidades) {
+            delay.resolve(entidades);
+        }, function (error) {
+            delay.reject(error);
+        });
+        return delay.promise;
+    };
+    return res;
+}])
 
