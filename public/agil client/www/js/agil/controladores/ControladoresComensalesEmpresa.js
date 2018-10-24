@@ -452,7 +452,9 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(res.mensaje)
                     } else {
                         if (res.lista.length > 0) {
-                        $scope.listaComidasclienteEmpresa = res.lista                            
+                            $scope.listaComidasclienteEmpresa = res.lista                            
+                        }else{
+                            $scope.listaComidasclienteEmpresa = []
                         }
                     }
                     blockUI.stop()
