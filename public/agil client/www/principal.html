@@ -2844,10 +2844,10 @@
 									<td>{{asiento.comprobante.gloza}}</td>
 									<td>{{asiento.debe_bs | number:2 }}</td>
 									<td>{{asiento.haber_bs | number:2 }}</td>
-									<td>{{asiento.debe_bs+asiento.haber_bs | number:2 }}</td>
+									<td>{{asiento.saldo_bs | number:2 }}</td>
 									<td ng-if="opcionBimonetario">{{asiento.debe_sus | number:2 }}</td>
 									<td ng-if="opcionBimonetario">{{asiento.haber_sus | number:2}}</td>
-									<td ng-if="opcionBimonetario">{{asiento.debe_sus+asiento.haber_sus | number:2}}</td>
+									<td ng-if="opcionBimonetario">{{asiento.saldo_sus | number:2}}</td>
 								</tr>
 							</tbody>
 				</table>

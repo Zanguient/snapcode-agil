@@ -294,12 +294,12 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                     { transaction: t }
                 )
             }
-            
         }
     }
-    function verificarDatosHistorialExcel(historial, empresa, t, i) {
+    function verificarDatosHistorialExcel(historial, empresa, t, i, comensalesNoRegistrados, empresasNoRegistradas) {
         var erro = false
         var promises = []
+        // var comensalesNoRegistrados = []
         return AliasClienteEmpresa.find({
             where: { nombre: historial.alias, id_empresa: empresa },
             transaction: t
@@ -352,6 +352,11 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                         })
                     } else {
                         erro = true
+                        if (!comensalesNoRegistrados.some(function (comensal) {
+                            return comensal === historial.nombre
+                        })) {
+                            comensalesNoRegistrados.push(historial.nombre)
+                        }
                         return new Promise(function (fullfil, reject) {
                             fullfil({ hasErr: true, mensaje: 'No se encuentra en la Base de Datos el registro comensal : ' + historial.nombre, index: i + 2, tipo: 'Comensal -> No registrado.' })
                         })
@@ -363,6 +368,12 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                 })
             } else {
                 erro = true
+                if (!empresasNoRegistradas.some(function (empresa) {
+                    return empresa === historial.alias
+                })) {
+                    empresasNoRegistradas.push(historial.alias)
+                }
+                
                 return new Promise(function (fullfil, reject) {
                     fullfil({ hasErr: true, mensaje: 'No se encuentra en la Base de Datos el registro alias empresa -> NAME: ' + historial.alias, index: i + 2, tipo: 'Empresa -> alias -> NAME' })
                 })
@@ -760,11 +771,13 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
             var Errors = []
             var promises = []
             var fechasVerificacionMarcaciones = []
+            var comensalesNoRegistrados = []
+            var empresasNoRegistradas = []
             sequelize.transaction(function (t) {
                 for (let i = 0; i < req.body.length; i++) {
                     req.body[i].id_usuario = req.params.id_usuario
                     req.body[i].id_empresa = req.params.id_empresa
-                    promises.push(verificarDatosHistorialExcel(req.body[i], req.params.id_empresa, t, i))
+                    promises.push(verificarDatosHistorialExcel(req.body[i], req.params.id_empresa, t, i, comensalesNoRegistrados, empresasNoRegistradas))
                     if (req.body[i].fecha) {
                         if (fechasVerificacionMarcaciones.indexOf(req.body[i].fecha.split('T')[0]) < 0) {
                             fechasVerificacionMarcaciones.push(req.body[i].fecha.split('T')[0])
@@ -784,14 +797,14 @@ module.exports = function (router, sequelize, Sequelize, Persona, Cliente, Alias
                     });
                     if (mensajes.length === result.length) {
                         mensajes.unshift('No se guardo')
-                        res.json({ hasErr: true, mensaje: 'No se guardo', mensajes: mensajes })
+                        res.json({ hasErr: true, mensaje: 'No se guardo', mensajes: mensajes, comensalesNoRegistrados: comensalesNoRegistrados, empresasNoRegistradas: empresasNoRegistradas})
                     } else if (mensajes.length === 0) {
                         // verificarMarcacionesFaltantes(null, fechasVerificacionMarcaciones, req.params.id_empresa)
-                        res.json({ mensaje: 'Guardado correctamente.' })
+                        res.json({ mensaje: 'Guardado correctamente.', comensalesNoRegistrados: comensalesNoRegistrados })
                     } else {
                         mensajes.unshift('Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length)
                         // verificarMarcacionesFaltantes(null, fechasVerificacionMarcaciones, req.params.id_empresa)
-                        res.json({ hasErr: true, mensaje: 'Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length, mensajes: mensajes })
+                        res.json({ hasErr: true, mensaje: 'Cantidad guardados correctamente: ' + (result.length - mensajes.length) + ', Cantidad no guardados: ' + mensajes.length, mensajes: mensajes, comensalesNoRegistrados: comensalesNoRegistrados })
                     }
                 } else {
                     res.json({ mensaje: 'No se guardo, ocurrio un error.' })

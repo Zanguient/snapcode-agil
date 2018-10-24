@@ -654,8 +654,6 @@ angular.module('agil.controladores')
 								doc.text(cuenta3.nombre, 40, y)
 								y = y + 20;
 								items++;
-
-
 								for (var p = 0; p < cuentasApropiacion.length && items <= itemsPorPagina; p++) {
 									cuenta2 = cuentasApropiacion[p]
 									cuenta2.saldo=(cuenta2.debe>cuenta2.haber)?cuenta2.saldo:-(cuenta.saldo)

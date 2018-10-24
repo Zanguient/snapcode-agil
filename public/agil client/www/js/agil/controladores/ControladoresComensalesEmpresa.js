@@ -439,7 +439,7 @@ angular.module('agil.controladores')
                 if (empresa) {
                     if (seleccionado) {
                         prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, seleccionado.empresaCliente.id)
-                    }else{
+                    } else {
                         prom = ObtenerComidas($scope.usuario.id_empresa, $scope.usuario.id, $scope.clienteEmpresaComidas.empresaCliente.id)
                     }
                 } else if ($scope.clienteEmpresaComidas.verTodos) {
@@ -452,8 +452,8 @@ angular.module('agil.controladores')
                         $scope.mostrarMensaje(res.mensaje)
                     } else {
                         if (res.lista.length > 0) {
-                            $scope.listaComidasclienteEmpresa = res.lista                            
-                        }else{
+                            $scope.listaComidasclienteEmpresa = res.lista
+                        } else {
                             $scope.listaComidasclienteEmpresa = []
                         }
                     }
@@ -949,7 +949,7 @@ angular.module('agil.controladores')
                 var fechaCompleta = new Date(fecha[0], fecha[2] - 1, fecha[1], (horas[0].length == 2 ? horas[0] : '0' + horas[0]), (horas[1].length == 2 ? horas[1] : '0' + horas[1]), (horas[2].length == 2 ? horas[2] : '0' + horas[2]))
                 return fechaCompleta, fecha_texto
             }
-//err
+            //err
             $scope.guardarComensalesExcel = function (comensales) {
                 if (comensales.length > 0) {
                     var prom = GuardarComensalesExcel($scope.usuario.id_empresa, comensales, $scope.usuario.id)
@@ -1042,8 +1042,20 @@ angular.module('agil.controladores')
                             } else {
                                 $scope.mostrarMensaje(res.mensaje)
                             }
+                            if (res.comensalesNoRegistrados) {
+                                $scope.mostrarExcelComensalesNoRegistrados(res.comensalesNoRegistrados)
+                            }
+                            if (res.empresasNoRegistradas) {
+                                $scope.mostrarExcelEmpresasNoRegistrados(res.empresasNoRegistradas)
+                            }
                         } else {
                             $scope.mostrarMensaje(res.mensajes)
+                            if (res.comensalesNoRegistrados) {
+                                $scope.mostrarExcelComensalesNoRegistrados(res.comensalesNoRegistrados)
+                            }
+                            if (res.empresasNoRegistradas) {
+                                $scope.mostrarExcelEmpresasNoRegistrados(res.empresasNoRegistradas)
+                            }
                         }
                     }).catch(function (err) {
                         var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
@@ -1053,6 +1065,96 @@ angular.module('agil.controladores')
                 } else {
                     $scope.mostrarMensaje('Sin cambios.')
                 }
+            }
+
+            $scope.mostrarExcelComensalesNoRegistrados = function (lista) {
+                if (lista) {
+                    if (lista.length === 0) {
+                        return
+                    }
+                }
+                var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
+                var stream = doc.pipe(blobStream());
+                var y = 190
+                var itemsPorPagina = 20
+                var items = 0
+                var pagina = 1
+                var cubeX = 70
+                var totalPaginas = Math.ceil(1 / itemsPorPagina);
+                if ($scope.imagenEmpresa) {
+                    doc.image($scope.imagenEmpresa, 40, 30, { fit: [100, 100] });
+                }
+                doc.font('Helvetica-Bold', 10);
+                doc.text('COMENSALES NO REGISTRADOS : ', cubeX + 150 + 29, 90 + 7, { width: 200 })
+                for (var i = 0; i < lista.length; i++) {
+                    doc.font('Helvetica', 8);
+                    doc.font('Helvetica', 8).fill('black')
+                    doc.text(lista[i], cubeX + 3, y + 7);
+                    y = y + 20;
+                    items++;
+                    if (items > itemsPorPagina || (y > 700)) {
+                        if(cubeX > 250){
+                            doc.addPage({ size: [612, 792], margin: 10 });
+                            cubeX = 70
+                        }else{
+                            cubeX += 250
+                        }
+                        y = 190;
+                        items = 0;
+                        doc.font('Helvetica-Bold', 10);
+                    }
+                }
+                y = y + 20;
+                doc.end();
+                stream.on('finish', function () {
+                    var fileURL = stream.toBlobURL('application/pdf');
+                    window.open(fileURL, '_blank', 'location=no');
+                });
+            }
+
+            $scope.mostrarExcelEmpresasNoRegistrados = function (lista) {
+                if (lista) {
+                    if (lista.length === 0) {
+                        return
+                    }
+                }
+                var doc = new PDFDocument({ size: 'letter', margin: 10, compress: false });//[612, 792] {compress: false},
+                var stream = doc.pipe(blobStream());
+                var y = 190
+                var itemsPorPagina = 20
+                var items = 0
+                var pagina = 1
+                var cubeX = 70
+                var totalPaginas = Math.ceil(1 / itemsPorPagina);
+                if ($scope.imagenEmpresa) {
+                    doc.image($scope.imagenEmpresa, 40, 30, { fit: [100, 100] });
+                }
+                doc.font('Helvetica-Bold', 10);
+                doc.text('EMPRESAS NO REGISTRADAS : ', cubeX + 150 + 29, 90 + 7, { width: 200 })
+                for (var i = 0; i < lista.length; i++) {
+                    doc.font('Helvetica', 8);
+                    doc.font('Helvetica', 8).fill('black')
+                    doc.text(lista[i], cubeX + 3, y + 7);
+                    y = y + 20;
+                    items++;
+                    if (items > itemsPorPagina || (y > 700)) {
+                        if(cubeX > 250){
+                            doc.addPage({ size: [612, 792], margin: 10 });
+                            cubeX = 70
+                        }else{
+                            cubeX += 250
+                        }
+                        y = 190;
+                        items = 0;
+                        doc.font('Helvetica-Bold', 10);
+                    }
+                }
+                y = y + 20;
+                doc.end();
+                stream.on('finish', function () {
+                    var fileURL = stream.toBlobURL('application/pdf');
+                    window.open(fileURL, '_blank', 'location=no');
+                });
             }
 
             $scope.guardarGerenciasExcel = function (gerencias) {
