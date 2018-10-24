@@ -100,6 +100,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
                 var cont = 0
                 nuevoComprobante.asientosContables.forEach(function(asiento, index, array) {
                     if (asiento.debe_bs == 0 && asiento.haber_bs == 0) {
+                        asiento.eliminado=true
                         if (index != (array.length - 1)) {
                             mensaje += asiento.cuenta.codigo + '-' + asiento.cuenta.nombre + ". "
                             CuentasSinGuardar = true
@@ -319,17 +320,19 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
             }
             $scope.ConfirmarGuardarComprobante = function(form, nuevoComprobante, form2) {
                 var tamaño = nuevoComprobante.asientosContables.length - 1
-                for (var i = tamaño; i >= 0; i--) {
+                var ComprobantesEliminar=[]
+                /* for (var i = tamaño; i >= 0; i--) {
                     var asiento = nuevoComprobante.asientosContables[i]
                     if (asiento.debe_bs == 0 && asiento.haber_bs == 0) {
+                        ComprobantesElinados.push(asiento)
                         $scope.nuevoComprobante.asientosContables.splice(i, 1)
                     }
-                    if (i == 0) {
+                    if (i == 0) { */
                         $scope.cerrarMensajeConfirmacionComprobante()
                         $scope.AgregarComprobante(form, nuevoComprobante, form2)
-                    }
+                 /*    }
 
-                }
+                } */
             }
 
             $scope.asignarEmpresaExterna = function(clienteEmpresa) {
@@ -3742,6 +3745,7 @@ angular.module('agil.controladores', ['agil.servicios', 'blockUI'])
             }
 
             $scope.guardarClientePedido = function(valido, pedidocliente) {
+                pedidocliente.telefono = pedidocliente.telefono.toString();
                 if (valido) {
                     blockUI.start();
 
