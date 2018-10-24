@@ -10,10 +10,11 @@ angular.module('agil.controladores')
 		convertUrlToBase64Image($scope.usuario.empresa.imagen, function (imagenEmpresa) {
 			$scope.usuario.empresa.imagen = imagenEmpresa;
 		});
-
-		convertUrlToBase64Image($scope.usuario.persona.firma, function (imagenFirma) {
-			$scope.usuario.persona.firma = imagenFirma;
-		});
+		if($scope.usuario.persona.firma){
+			convertUrlToBase64Image($scope.usuario.persona.firma, function (imagenFirma) {
+				$scope.usuario.persona.firma = imagenFirma;
+			});
+		}
 
 		$scope.idModalWizardCotizacionNueva = 'modal-wizard-cotizacion-nueva';
 		// $scope.idModalWizardCotizacionModificar = 'modal-wizard-cotizacion-modificar';
@@ -134,7 +135,7 @@ angular.module('agil.controladores')
 
 		$scope.ModificarCotizacion = function (cotizacion) {
 			$scope.cotizacion = cotizacion;
-			$scope.obtenerAlmacenes(cotizacion.sucursal.id);
+			$scope.obtenerAlmacenes(cotizacion.sucursal);
 			$scope.cotizacion.fecha = new Date($scope.cotizacion.fecha);
 			$scope.cotizacion.fechaTexto = $scope.cotizacion.fecha.getDate() + "/" + ($scope.cotizacion.fecha.getMonth() + 1) + "/" + $scope.cotizacion.fecha.getFullYear();
 			$scope.abrirPopup($scope.idModalWizardCotizacionNueva);
@@ -582,7 +583,7 @@ angular.module('agil.controladores')
 					doc.image($scope.usuario.persona.firma, 55, papel[1] - 150, { width: 90, height: 70 });
 				}
 			}
-			
+
 			doc.text(cotizacion.firma, 55, papel[1] - 90);
 			doc.text(cotizacion.cargo.toUpperCase(), 55, papel[1] - 80);
 
