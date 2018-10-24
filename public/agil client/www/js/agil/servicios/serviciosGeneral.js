@@ -3428,14 +3428,14 @@ angular.module('agil.servicios')
 	.factory('DibujarCabeceraPDFTraspaso', [function () {
 		var res = function (doc, pagina, totalPaginas, traspaso, existenDescuentos, usuario) {
 			//doc.rect(50, 40, 520, 70).stroke();
-			if (traspaso.configuracion.formatoPapelNotaTraspaso.nombre_corto == "FORM_S_COL") {
+			if (traspaso.configuracion.formatoColorNotaTraspaso.nombre_corto == "FORM_S_COL") {
 				doc.rect(50, 40, 520, 70).stroke();
 			  } else {
 				doc.rect(50, 40, 520, 70).fillAndStroke(traspaso.configuracion.color_cabecera_nota_traspaso, "black").fillColor('black').stroke();
 			  }
 
 			//doc.rect(50, 110, 520, 25).stroke();
-			if (traspaso.configuracion.formatoPapelNotaTraspaso.nombre_corto == "FORM_S_COL") {
+			if (traspaso.configuracion.formatoColorNotaTraspaso.nombre_corto == "FORM_S_COL") {
 				doc.rect(50, 110, 520, 25).stroke();
 			} else {
 				doc.rect(50, 110, 520, 25).fillAndStroke(traspaso.configuracion.color_detalle_nota_traspaso, "black").fillColor('black').stroke();
