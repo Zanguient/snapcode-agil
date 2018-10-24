@@ -3352,19 +3352,24 @@ angular.module('agil.servicios')
 						doc.text(traspaso.detallesVenta[i].producto.unidad_medida, 160, y);
 						longitudCaracteres = traspaso.detallesVenta[i].producto.nombre.length;
 						yDesc = (longitudCaracteres <= 25) ? y : ((longitudCaracteres > 25 && longitudCaracteres <= 40) ? y - 4 : y - 11);
-						if (usuario.empresa.usar_vencimientos) {
+						//if (usuario.empresa.usar_vencimientos) {
 							doc.font('Helvetica', 6);
-							doc.text(traspaso.detallesVenta[i].producto.nombre, 210, yDesc, { width: 175 });
+							doc.text(traspaso.detallesVenta[i].producto.nombre, 210, yDesc + 5, { width: 175 });
 							doc.font('Helvetica', 7);
+							
 							if (traspaso.detallesVenta[i].inventario) {
-								var fecha_vencimiento = new Date(traspaso.detallesVenta[i].inventario.fecha_vencimiento);
-								doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear(), 390, y);
+								if (traspaso.con_vencimiento) {
+									var fecha_vencimiento = new Date(traspaso.detallesVenta[i].inventario.fecha_vencimiento);
+									doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear(), 390, y);
 
-								doc.text(traspaso.detallesVenta[i].inventario.lote, 455, y);
+									doc.text(traspaso.detallesVenta[i].inventario.lote, 455, y);
+								}
+								
 							}
-						} else {
-							doc.text(traspaso.detallesVenta[i].producto.nombre, 210, yDesc, { width: 250 });
-						}
+							
+						//} else {
+						//	doc.text(traspaso.detallesVenta[i].producto.nombre, 210, yDesc, { width: 250 });
+						//}
 						doc.text(traspaso.detallesVenta[i].producto.precio_unitario.toFixed(2), 490, y);
 						doc.text(traspaso.detallesVenta[i].total.toFixed(2), 530, y);
 					}
@@ -3476,13 +3481,15 @@ angular.module('agil.servicios')
 				doc.text("CODIGO", 55, 120);
 				doc.text("CANT.", 128, 120);
 				doc.text("UNID.", 165, 120);
-				if (usuario.empresa.usar_vencimientos) {
+				//if (usuario.empresa.usar_vencimiento) {
 					doc.text("DETALLE", 210, 120, { width: 110 });
-					doc.text("FECHA VENC.", 380, 120);
-					doc.text("LOTE", 450, 120);
-				} else {
-					doc.text("DETALLE", 190, 120, { width: 250 });
-				}
+					if (traspaso.con_vencimiento) {
+						doc.text("FECHA VENC.", 380, 120);
+						doc.text("LOTE", 450, 120);
+					}
+				//} else {
+				//	doc.text("DETALLE", 190, 120, { width: 250 });
+				//}
 				doc.text("P.UNIT.", 490, 120);
 				doc.text("TOTAL", 530, 120);
 			}
