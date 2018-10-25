@@ -1332,7 +1332,7 @@ angular.module('agil.servicios')
 
 					doc.text("CÓDIGO DE CONTROL : " + venta.codigo_control, 55, y + 30);
 					venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
-					doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
+					doc.text("FECHA LÍMITE DE EMISIÓN: " + ("0" + venta.fecha_limite_emision.getDate()).slice(-2) + "/" + ("0" + (venta.fecha_limite_emision.getMonth() + 1)).slice(-2) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
 
 					if (completa || vacia) {
 						doc.rect(50, y - 15, 520, 30).stroke();
@@ -1763,7 +1763,7 @@ angular.module('agil.servicios')
 
 					doc.text("CÓDIGO DE CONTROL : " + venta.codigo_control, 55, y + 30);
 					venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
-					doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
+					doc.text("FECHA LÍMITE DE EMISIÓN: " + ("0" + venta.fecha_limite_emision.getDate()).slice(-2) + "/" + ("0" + (venta.fecha_limite_emision.getMonth() + 1)).slice(-2) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
 
 					if (completa || vacia) {
 						doc.rect(50, y - 15, 520, 30).stroke();
@@ -2572,7 +2572,7 @@ angular.module('agil.servicios')
 				doc.text("CÓDIGO DE CONTROL: " + venta.codigo_control, { align: 'center' });
 				doc.moveDown(0.4);
 				venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
-				doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), { align: 'center' });
+				doc.text("FECHA LÍMITE DE EMISIÓN: " + ("0" + venta.fecha_limite_emision.getDate()).slice(-2) + "/" + ("0" + (venta.fecha_limite_emision.getMonth() + 1)).slice(-2) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
 				doc.moveDown(0.4);
 				qr.canvas({
 					canvas: canvas,
