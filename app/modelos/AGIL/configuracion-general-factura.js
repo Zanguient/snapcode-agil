@@ -180,8 +180,7 @@ module.exports = function (sequelize, Sequelize) {
 		color_detalle_nota_traspaso: {
 			type: Sequelize.STRING,
 			field: 'color_detalle_nota_traspaso'
-		},
-		id_tipo_configuracion_nota_traspaso: {
+		},id_tipo_configuracion_nota_traspaso: {
 			type: Sequelize.INTEGER,
 			field: 'tipo_configuracion_nota_traspaso'
 		},
