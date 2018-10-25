@@ -1332,7 +1332,7 @@ angular.module('agil.servicios')
 
 					doc.text("CÓDIGO DE CONTROL : " + venta.codigo_control, 55, y + 30);
 					venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
-					doc.text("FECHA LÍMITE DE EMISIÓN: " + ("0" + venta.fecha_limite_emision.getDate()).slice(-2) + "/" + ("0" + (venta.fecha_limite_emision.getMonth() + 1)).slice(-2) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
+					doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
 
 					if (completa || vacia) {
 						doc.rect(50, y - 15, 520, 30).stroke();
@@ -1763,7 +1763,7 @@ angular.module('agil.servicios')
 
 					doc.text("CÓDIGO DE CONTROL : " + venta.codigo_control, 55, y + 30);
 					venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
-					doc.text("FECHA LÍMITE DE EMISIÓN: " + ("0" + venta.fecha_limite_emision.getDate()).slice(-2) + "/" + ("0" + (venta.fecha_limite_emision.getMonth() + 1)).slice(-2) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
+					doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
 
 					if (completa || vacia) {
 						doc.rect(50, y - 15, 520, 30).stroke();
@@ -2572,7 +2572,7 @@ angular.module('agil.servicios')
 				doc.text("CÓDIGO DE CONTROL: " + venta.codigo_control, { align: 'center' });
 				doc.moveDown(0.4);
 				venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
-				doc.text("FECHA LÍMITE DE EMISIÓN: " + ("0" + venta.fecha_limite_emision.getDate()).slice(-2) + "/" + ("0" + (venta.fecha_limite_emision.getMonth() + 1)).slice(-2) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
+				doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), { align: 'center' });
 				doc.moveDown(0.4);
 				qr.canvas({
 					canvas: canvas,
@@ -2710,16 +2710,16 @@ angular.module('agil.servicios')
 						doc.text(venta.detallesVenta[i].cantidad, 95, y);
 						doc.text(venta.detallesVenta[i].producto.unidad_medida, 118, y, { width: 40 });
 						ydesc = y
-						var cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 8
-						var posicionCuadro = cantidadlineas * 10
+						var cantidadlineas = venta.detallesVenta[i].producto.nombre.length
+						var posicionCuadro = 30
 						
 						if (venta.detallesVenta[i].producto.nombre.length > 20 && venta.detallesVenta[i].producto.nombre.length <= 40) {
 							ydesc = y - 5
-							cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 8
-							posicionCuadro = cantidadlineas * 10
+							cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 20
+							posicionCuadro = cantidadlineas * 5
 						} else if (venta.detallesVenta[i].producto.nombre.length > 40) {
 							ydesc = y - 10
-							cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 8
+							cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 20
 							posicionCuadro = cantidadlineas * 5
 						}
 						if (posicionCuadro < 30) {
