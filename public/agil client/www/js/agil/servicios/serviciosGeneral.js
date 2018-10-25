@@ -3359,10 +3359,15 @@ angular.module('agil.servicios')
 							
 							if (traspaso.detallesVenta[i].inventario) {
 								if (traspaso.con_vencimiento) {
-									var fecha_vencimiento = new Date(traspaso.detallesVenta[i].inventario.fecha_vencimiento);
-									doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear(), 390, y);
+									if (traspaso.configuracion.tipoConfiguracionNotaTraspaso.nombre_corto == "LOTE") {
+										var fecha_vencimiento = new Date(traspaso.detallesVenta[i].inventario.fecha_vencimiento);
+										doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear(), 390, y);
 
-									doc.text(traspaso.detallesVenta[i].inventario.lote, 455, y);
+										
+									}else{
+										doc.text(traspaso.detallesVenta[i].inventario.lote, 455, y);
+									}
+									
 								}
 								
 							}
@@ -3484,8 +3489,12 @@ angular.module('agil.servicios')
 				//if (usuario.empresa.usar_vencimiento) {
 					doc.text("DETALLE", 210, 120, { width: 110 });
 					if (traspaso.con_vencimiento) {
-						doc.text("FECHA VENC.", 380, 120);
-						doc.text("LOTE", 450, 120);
+						if (traspaso.configuracion.tipoConfiguracionNotaTraspaso.nombre_corto == "LOTE") {
+							doc.text("FECHA VENC.", 380, 120);
+							doc.text("LOTE", 450, 120);
+						}else{
+							doc.text("SERIE", 450, 120);
+						}
 					}
 				//} else {
 				//	doc.text("DETALLE", 190, 120, { width: 250 });

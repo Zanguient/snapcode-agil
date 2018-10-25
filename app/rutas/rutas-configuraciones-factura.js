@@ -50,6 +50,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				color_cabecera_nota_traspaso: req.body.configuracionFactura.color_cabecera_nota_traspaso,
 				color_detalle_nota_traspaso: req.body.configuracionFactura.color_detalle_nota_traspaso,
 				nota_factura_nota_traspaso: req.body.configuracionFactura.nota_factura_nota_traspaso,
+				id_tipo_configuracion_nota_traspaso: req.body.configuracionFactura.tipoConfiguracionNotaTraspaso.id,
 				id_formato_papel_nota_baja: req.body.configuracionFactura.formatoPapelNotaBaja.id,
 				id_formato_color_nota_baja: req.body.configuracionFactura.formatoColorNotaBaja.id,
 				color_cabecera_nota_baja: req.body.configuracionFactura.color_cabecera_nota_baja,
@@ -142,12 +143,13 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				color_cabecera_nota_traspaso: req.body.color_cabecera_nota_traspaso,
 				color_detalle_nota_traspaso: req.body.color_detalle_nota_traspaso,
 				nota_factura_nota_traspaso: req.body.nota_factura_nota_traspaso,
+				id_tipo_configuracion_nota_traspaso: req.body.tipoConfiguracionNotaTraspaso.id,
 				id_formato_papel_nota_baja: req.body.formatoPapelNotaBaja.id,
 				id_formato_color_nota_baja: req.body.formatoColorNotaBaja.id,
 				color_cabecera_nota_baja: req.body.color_cabecera_nota_baja,
 				color_detalle_nota_baja: req.body.color_detalle_nota_baja,
 				nota_factura_nota_baja: req.body.nota_factura_nota_baja,
-				id_tipo_configuracion_nota_baja: req.body.tipoConfiguracionNotaBaja.id,
+				id_tipo_configuracion_nota_baja: req.body.tipoConfiguracionNotaBaja.id
 				
 			}, {
 					where: { id: req.params.id_configuracion }
@@ -190,6 +192,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 				{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 				{ model: Clase, as: 'formatoColorNotaTraspaso'},
+				{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 				{ model: Clase, as: 'formatoPapelNotaBaja'},
 				{ model: Clase, as: 'formatoColorNotaBaja'},
 				{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -431,6 +434,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 			{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
 			{ model: Clase, as: 'formatoPapelNotaTraspaso' },
 			{ model: Clase, as: 'formatoColorNotaTraspaso' },
+			{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 			{ model: Clase, as: 'formatoPapelNotaBaja'},
 			{ model: Clase, as: 'formatoColorNotaBaja'},
 			{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -537,6 +541,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 				{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 				{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 				{ model: Clase, as: 'formatoColorNotaTraspaso'},
+				{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 				{ model: Clase, as: 'formatoPapelNotaBaja'},
 				{ model: Clase, as: 'formatoColorNotaBaja'},
 				{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -575,6 +580,7 @@ module.exports = function (router, Sucursal, ConfiguracionFactura, Clase, Config
 						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 						{ model: Clase, as: 'formatoColorNotaTraspaso'},
+						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 						{ model: Clase, as: 'formatoPapelNotaBaja'},
 						{ model: Clase, as: 'formatoColorNotaBaja'},
 						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]

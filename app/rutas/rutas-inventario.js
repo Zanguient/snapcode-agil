@@ -1794,6 +1794,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 						{ model: Clase, as: 'formatoColorNotaTraspaso'},
+						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 						{ model: Clase, as: 'formatoPapelNotaBaja'},
 						{ model: Clase, as: 'formatoColorNotaBaja'},
 						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -1833,6 +1834,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 								{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 								{ model: Clase, as: 'formatoColorNotaTraspaso'},
+								{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 								{ model: Clase, as: 'formatoPapelNotaBaja'},
 								{ model: Clase, as: 'formatoColorNotaBaja'},
 								{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -2077,6 +2079,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 													{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 													{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 													{ model: Clase, as: 'formatoColorNotaTraspaso'},
+													{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 													{ model: Clase, as: 'formatoPapelNotaBaja'},
 													{ model: Clase, as: 'formatoColorNotaBaja'},
 													{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -2116,6 +2119,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 															{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 															{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 															{ model: Clase, as: 'formatoColorNotaTraspaso'},
+															{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 															{ model: Clase, as: 'formatoPapelNotaBaja'},
 															{ model: Clase, as: 'formatoColorNotaBaja'},
 															{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -2201,6 +2205,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 																{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 																{ model: Clase, as: 'formatoColorNotaTraspaso'},
+																{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 																{ model: Clase, as: 'formatoPapelNotaBaja'},
 																{ model: Clase, as: 'formatoColorNotaBaja'},
 																{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -2241,6 +2246,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																		{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 																		{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 																		{ model: Clase, as: 'formatoColorNotaTraspaso'},
+																		{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 																		{ model: Clase, as: 'formatoPapelNotaBaja'},
 																		{ model: Clase, as: 'formatoColorNotaBaja'},
 																		{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -2318,6 +2324,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 				{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 				{ model: Clase, as: 'formatoColorNotaTraspaso'},
+				{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 				{ model: Clase, as: 'formatoPapelNotaBaja'},
 				{ model: Clase, as: 'formatoColorNotaBaja'},
 				{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -2358,6 +2365,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 						{ model: Clase, as: 'formatoColorNotaTraspaso'},
+						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 						{ model: Clase, as: 'formatoPapelNotaBaja'},
 						{ model: Clase, as: 'formatoColorNotaBaja'},
 						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -2640,6 +2648,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 				{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 				{ model: Clase, as: 'formatoColorNotaTraspaso'},
+				{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 				{ model: Clase, as: 'formatoPapelNotaBaja'},
 				{ model: Clase, as: 'formatoColorNotaBaja'},
 				{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -2682,6 +2691,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 						{ model: Clase, as: 'formatoColorNotaTraspaso'},
+						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 						{ model: Clase, as: 'formatoPapelNotaBaja'},
 						{ model: Clase, as: 'formatoColorNotaBaja'},
 						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -3599,6 +3609,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 						{ model: Clase, as: 'formatoColorNotaTraspaso'},
+						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 						{ model: Clase, as: 'formatoPapelNotaBaja'},
 						{ model: Clase, as: 'formatoColorNotaBaja'},
 						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -3646,6 +3657,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 											{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 											{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 											{ model: Clase, as: 'formatoColorNotaTraspaso'},
+											{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 											{ model: Clase, as: 'formatoPapelNotaBaja'},
 											{ model: Clase, as: 'formatoColorNotaBaja'},
 											{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
@@ -3733,6 +3745,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
 										{ model: Clase, as: 'formatoPapelNotaTraspaso'},
 										{ model: Clase, as: 'formatoColorNotaTraspaso'},
+										{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
 										{ model: Clase, as: 'formatoPapelNotaBaja'},
 										{ model: Clase, as: 'formatoColorNotaBaja'},
 										{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
