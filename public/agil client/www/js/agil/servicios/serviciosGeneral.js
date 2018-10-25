@@ -127,7 +127,7 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ObtenerImagen', ['$q',function ($q) {
+	.factory('ObtenerImagen', ['$q', function ($q) {
 		var res = function (img) {
 			var delay = $q.defer();
 			convertUrlToBase64Image(img, function (imagenEmpresa) {
@@ -658,10 +658,10 @@ angular.module('agil.servicios')
 	}])
 
 
-	.factory('ComprasComprobante', ['$resource',function ($resource) {
+	.factory('ComprasComprobante', ['$resource', function ($resource) {
 		return $resource(restServer + "comprasComprobante");
 	}])
-	.factory('CuentasAuxiliares', ['$resource',function ($resource) {
+	.factory('CuentasAuxiliares', ['$resource', function ($resource) {
 		return $resource(restServer + "cuentas-auxiliares/empresa/:id_empresa/tipo/:tipo");
 	}])
 	.factory('ListasCuentasAuxiliares', ['CuentasAuxiliares', '$q', function (CuentasAuxiliares, $q) {
@@ -676,13 +676,13 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ComprobanteTotalGeneral', ['$resource',function ($resource) {
+	.factory('ComprobanteTotalGeneral', ['$resource', function ($resource) {
 		return $resource(restServer + "comprobantes/totalGeneral/empresa/:id_empresa");
 	}])
 	.factory('ComprobanteTotalGeneralEmpresa', ['ComprobanteTotalGeneral', '$q', function (ComprobanteTotalGeneral, $q) {
 		var res = function (empresa) {
 			var delay = $q.defer();
-			ComprobanteTotalGeneral.get({ id_empresa: empresa}, function (entidades) {
+			ComprobanteTotalGeneral.get({ id_empresa: empresa }, function (entidades) {
 				delay.resolve(entidades);
 			}, function (error) {
 				delay.reject(error);
@@ -691,7 +691,7 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ComprobanteRevisarDatosPaginador', ['$resource',function ($resource) {
+	.factory('ComprobanteRevisarDatosPaginador', ['$resource', function ($resource) {
 		return $resource(restServer + "comprobantes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion/busqueda/:texto_busqueda");
 	}])
 
@@ -707,7 +707,7 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('CuentasComprobanteContabilidad', ['$resource',function ($resource) {
+	.factory('CuentasComprobanteContabilidad', ['$resource', function ($resource) {
 		return $resource(restServer + "comprobante-cuenta/empresa/:id_empresa/busqueda/:buscar", { id_empresa: '@id_empresa', buscar: '@buscar' },
 			{
 				'update': { method: 'PUT' }
@@ -726,7 +726,7 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ComprobanteEmpresaPaginador', ['$resource',function ($resource) {
+	.factory('ComprobanteEmpresaPaginador', ['$resource', function ($resource) {
 		return $resource(restServer + "comprobantes/empresa/:id_empresa/pagina/:pagina/items-pagina/:items_pagina/fecha-inicio/:inicio/fecha-fin/:fin/columna/:columna/direccion/:direccion/monto/:monto/tipo-comprobante/:tipo_comprobante/sucursal/:sucursal/usuario/:usuario/numero/:numero/busqueda/:busqueda");
 	}])
 
@@ -758,8 +758,8 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	
-	.factory('LibroMayor', ['$resource',function ($resource) {
+
+	.factory('LibroMayor', ['$resource', function ($resource) {
 		return $resource(restServer + "/comprobante-cuenta/:id_cuenta/periodo/:inicio/:fin");
 	}])
 
@@ -775,7 +775,7 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('ComprobanteFavorito', ['$resource',function ($resource) {
+	.factory('ComprobanteFavorito', ['$resource', function ($resource) {
 		return $resource(restServer + "comprobante-contabilidad/favorito/:id_comprobante", { id_comprobante: '@id_comprobante' },
 			{
 				'update': { method: 'PUT' }
@@ -795,13 +795,13 @@ angular.module('agil.servicios')
 	}])
 
 
-	.factory('AsientosComprobanteContabilidad', ['$resource',function ($resource) {
+	.factory('AsientosComprobanteContabilidad', ['$resource', function ($resource) {
 		return $resource(restServer + "comprobante-cuenta/asientos/:id_cuenta", { id_cuenta: '@id_cuenta' },
 			{
 				'update': { method: 'PUT' }
 			});
 	}])
-	.factory('FormatoImpresion', ['$resource',function ($resource) {
+	.factory('FormatoImpresion', ['$resource', function ($resource) {
 		return $resource(restServer + "tipos/:nombre_corto", { nombre_corto: '@nombre_corto' },
 			{
 				'update': { method: 'PUT' }
@@ -830,13 +830,13 @@ angular.module('agil.servicios')
 		};
 		return res;
 	}])
-	.factory('NuevoComprobanteContabilidad', ['$resource',function ($resource) {
+	.factory('NuevoComprobanteContabilidad', ['$resource', function ($resource) {
 		return $resource(restServer + "comprobante-contabolidad",
 			{
 				'update': { method: 'PUT' }
 			});
 	}])
-	.factory('ActualizarComprobanteContabilidad', ['$resource',function ($resource) {
+	.factory('ActualizarComprobanteContabilidad', ['$resource', function ($resource) {
 		return $resource(restServer + "comprobante-contabolidad/:id_comprobante", { id_comprobante: '@id_comprobante' },
 			{
 				'update': { method: 'PUT' }
@@ -871,18 +871,18 @@ angular.module('agil.servicios')
 
 	.factory('ImprimirSalida', ['Diccionario', 'ImprimirFactura', 'ImprimirProforma', 'ImprimirNotaBaja', 'ImprimirNotaTraspaso', 'ImprimirServicio',
 		function (Diccionario, ImprimirFactura, ImprimirProforma, ImprimirNotaBaja, ImprimirNotaTraspaso, ImprimirServicio) {
-			var res = function (movimiento, salida, esAccionGuardar, usuario, llevar,mostrarMensaje) {
+			var res = function (movimiento, salida, esAccionGuardar, usuario, llevar, mostrarMensaje) {
 
 				if (movimiento == Diccionario.EGRE_FACTURACION) {
 					ImprimirFactura(salida, esAccionGuardar, usuario);
 				} else if (movimiento == Diccionario.EGRE_PROFORMA) {
-					ImprimirProforma(salida, esAccionGuardar, usuario, llevar,mostrarMensaje);
+					ImprimirProforma(salida, esAccionGuardar, usuario, llevar, mostrarMensaje);
 				}
 				else if (movimiento == Diccionario.EGRE_BAJA) {
 					ImprimirNotaBaja(salida, usuario);
 				}
 				else if (movimiento == Diccionario.EGRE_TRASPASO) {
-					ImprimirNotaTraspaso(salida, usuario,mostrarMensaje);
+					ImprimirNotaTraspaso(salida, usuario, mostrarMensaje);
 				} else if (movimiento == Diccionario.EGRE_SERVICIO) {
 					ImprimirServicio(salida, esAccionGuardar, usuario);
 				}
@@ -898,9 +898,9 @@ angular.module('agil.servicios')
 				var papel, doc, stream;
 				salida.configuracion.formatoColor = salida.configuracion.formatoColorFactura
 				salida.configuracion.formatoPapel = salida.configuracion.formatoPapelFactura
-				salida.configuracion.color1=salida.configuracion.color_cabecera_factura
-				salida.configuracion.color2=salida.configuracion.color_detalle_factura
-				salida.configuracion.nota=salida.configuracion.nota_factura_bien?salida.configuracion.nota_factura_bien:""
+				salida.configuracion.color1 = salida.configuracion.color_cabecera_factura
+				salida.configuracion.color2 = salida.configuracion.color_detalle_factura
+				salida.configuracion.nota = salida.configuracion.nota_factura_bien ? salida.configuracion.nota_factura_bien : ""
 				if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 					papel = [612, 936];
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
@@ -935,7 +935,7 @@ angular.module('agil.servicios')
 						ImprimirFacturaCartaOficio(salida, papel, false, false, true, usuario);
 					}
 				} else if (salida.configuracion.tamanoPapelFactura.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
-					papel = [598,600]; 
+					papel = [598, 600];
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
 						ImprimirFacturaCartaOficio(salida, papel, true, false, false, usuario);
 					} else if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
@@ -991,9 +991,9 @@ angular.module('agil.servicios')
 				var papel, doc, stream;
 				salida.configuracion.formatoColor = salida.configuracion.formatoColorFacturaServicio
 				salida.configuracion.formatoPapel = salida.configuracion.formatoPapelFacturaServicio
-				salida.configuracion.color1=salida.configuracion.color_cabecera_factura_servicio
-				salida.configuracion.color2=salida.configuracion.color_detalle_factura_servicio
-				salida.configuracion.nota=salida.configuracion.nota_factura_servicio?salida.configuracion.nota_factura_servicio:""
+				salida.configuracion.color1 = salida.configuracion.color_cabecera_factura_servicio
+				salida.configuracion.color2 = salida.configuracion.color_detalle_factura_servicio
+				salida.configuracion.nota = salida.configuracion.nota_factura_servicio ? salida.configuracion.nota_factura_servicio : ""
 				if (salida.configuracion.tamanoPapelFacturaServicio.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 					papel = [612, 936];
 					if (salida.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
@@ -1082,7 +1082,7 @@ angular.module('agil.servicios')
 	.factory('ImprimirFacturaCartaOficio', ['blockUI', 'VerificarDescuentos', 'Diccionario', 'DibujarCabeceraFacturaNVCartaOficio', 'DibujarCabeceraFacturaNVmedioOficio', '$timeout',
 		function (blockUI, VerificarDescuentos, Diccionario, DibujarCabeceraFacturaNVCartaOficio, DibujarCabeceraFacturaNVmedioOficio, $timeout) {
 			var res = function (venta, papel, vacia, completa, semicompleta, usuario) {
-				var doc = new PDFDocument({ compress: false,  layout: 'portrait', size: papel, margin: 10 });
+				var doc = new PDFDocument({ compress: false, layout: 'portrait', size: papel, margin: 10 });
 				var stream = doc.pipe(blobStream());
 
 				if (venta.configuracion.usar_pf) {
@@ -1104,19 +1104,19 @@ angular.module('agil.servicios')
 
 							doc.text(venta.detallesVenta[i].producto.codigo, 55, y, { width: 70 });
 							doc.text(venta.detallesVenta[i].cantidad, 135, y);
-							doc.text(venta.detallesVenta[i].producto.unidad_medida, 160, y , { width: 43 });
+							doc.text(venta.detallesVenta[i].producto.unidad_medida, 160, y, { width: 43 });
 							var longitudCaracteres = venta.detallesVenta[i].producto.nombre.length;
 							var yDesc = (longitudCaracteres <= 24) ? y : ((longitudCaracteres > 24 && longitudCaracteres <= 60) ? y - 4 : y - 11);
 							doc.text(venta.detallesVenta[i].producto.nombre, 198, yDesc, { width: 130 });
 
 							if (venta.con_vencimiento) {
-								if (venta.configuracion.tipoConfiguracion.nombre_corto == 'SERIE') {								
-									doc.text(venta.detallesVenta[i].lote, 400, y,{width:60});
-								}else{
+								if (venta.configuracion.tipoConfiguracion.nombre_corto == 'SERIE') {
+									doc.text(venta.detallesVenta[i].lote, 400, y, { width: 60 });
+								} else {
 									doc.text(fechaVencimientoTexto, 360, y);
-									doc.text(venta.detallesVenta[i].lote, 410, y,{width:60});
-								}								
-								
+									doc.text(venta.detallesVenta[i].lote, 410, y, { width: 60 });
+								}
+
 							}
 
 							doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 480, y);
@@ -1144,13 +1144,13 @@ angular.module('agil.servicios')
 								doc.text(venta.detallesVenta[i].lote, 380, y);
 							}*/
 							if (venta.con_vencimiento) {
-								if (venta.configuracion.tipoConfiguracion.nombre_corto == 'SERIE') {								
+								if (venta.configuracion.tipoConfiguracion.nombre_corto == 'SERIE') {
 									doc.text(venta.detallesVenta[i].lote, 380, y);
-								}else{
+								} else {
 									doc.text(fechaVencimientoTexto, 340, y);
 									doc.text(venta.detallesVenta[i].lote, 380, y);
-								}								
-								
+								}
+
 							}
 
 							// doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 410, y);
@@ -1332,7 +1332,7 @@ angular.module('agil.servicios')
 
 					doc.text("CÓDIGO DE CONTROL : " + venta.codigo_control, 55, y + 30);
 					venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
-					doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
+					doc.text("FECHA LÍMITE DE EMISIÓN: " + ("0" + venta.fecha_limite_emision.getDate()).slice(-2) + "/" + ("0" + (venta.fecha_limite_emision.getMonth() + 1)).slice(-2) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
 
 					if (completa || vacia) {
 						doc.rect(50, y - 15, 520, 30).stroke();
@@ -1347,7 +1347,7 @@ angular.module('agil.servicios')
 					var qrImage = canvas.toDataURL('image/png');
 					doc.image(qrImage, 470, y + 20, { width: 70, height: 70 });
 					if (completa || vacia) {
-						doc.text(venta.configuracion.nota, 50, papel[1] -80);
+						doc.text(venta.configuracion.nota, 50, papel[1] - 80);
 						doc.text(venta.pieFactura !== undefined && venta.pieFactura !== null ? venta.pieFactura.nombre : "", 50, papel[1] - 60);
 						doc.text("\"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAIS. EL USO ILICITO DE ESTA SERA SANCIONADO DE ACUERDO A LEY\"", 50, papel[1] - 40);
 					}
@@ -1371,7 +1371,7 @@ angular.module('agil.servicios')
 		var res = function (doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario) {
 			if (venta.configuracion.usar_pf) {
 				if (vacia) {
-					if (usuario.empresa.imagen.length > 100) {doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }
+					if (usuario.empresa.imagen.length > 100) { doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] }); } //{ width: 50, height: 50 }
 					doc.font('Helvetica-Bold', 8);
 					doc.text(usuario.empresa.razon_social.toUpperCase(), 60, 105);
 					doc.font('Helvetica', 7);
@@ -1391,11 +1391,11 @@ angular.module('agil.servicios')
 				if (completa || vacia) {
 					if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
 						if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
-						   doc.rect(380, 40, 190, 50).stroke();
-						 } else {
-						   doc.rect(380, 40, 190, 50).fillAndStroke(venta.configuracion.color1, "black").fillColor('black').stroke();
-						 }
-					  }
+							doc.rect(380, 40, 190, 50).stroke();
+						} else {
+							doc.rect(380, 40, 190, 50).fillAndStroke(venta.configuracion.color1, "black").fillColor('black').stroke();
+						}
+					}
 					//doc.rect(380, 40, 190, 50).stroke();
 					doc.text("NIT : ", 400, 50);
 					doc.text("Nota No : ", 400, 60);
@@ -1403,7 +1403,7 @@ angular.module('agil.servicios')
 				doc.text(usuario.empresa.nit, 500, 50);
 				doc.text(venta.factura, 500, 60);
 				if (completa || vacia) {
-					
+
 					//doc.rect(50, 160, 520, 40).stroke();
 					if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
 						doc.rect(50, 160, 520, 40).stroke();
@@ -1435,12 +1435,12 @@ angular.module('agil.servicios')
 
 					if (venta.con_vencimiento) {
 						if (venta.configuracion.tipoConfiguracion.nombre_corto == 'SERIE') {
-							doc.text("SERIE", 400, 210);	
-						}else{
+							doc.text("SERIE", 400, 210);
+						} else {
 							doc.text("VENC.", 360, 210);
 							doc.text("LOTE", 410, 210);
 						}
-						
+
 					}
 					if (venta.detallesVenta[0].producto) {
 						doc.text("P.UNIT.", 480, 210);
@@ -1455,8 +1455,8 @@ angular.module('agil.servicios')
 				doc.font('Helvetica', 7);
 
 				if (papel[0] == 598 && papel[1] == 600) {
-					doc.text("PÁGINA " + pagina + " DE " + (totalPaginas+1), 500, papel[1]-270);
-				}else{
+					doc.text("PÁGINA " + pagina + " DE " + (totalPaginas + 1), 500, papel[1] - 270);
+				} else {
 					doc.text("PÁGINA " + pagina + " DE " + totalPaginas, 500, papel[1] - 60);
 				}
 			} else {
@@ -1763,7 +1763,7 @@ angular.module('agil.servicios')
 
 					doc.text("CÓDIGO DE CONTROL : " + venta.codigo_control, 55, y + 30);
 					venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
-					doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
+					doc.text("FECHA LÍMITE DE EMISIÓN: " + ("0" + venta.fecha_limite_emision.getDate()).slice(-2) + "/" + ("0" + (venta.fecha_limite_emision.getMonth() + 1)).slice(-2) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
 
 					if (completa || vacia) {
 						doc.rect(50, y - 15, 520, 30).stroke();
@@ -2030,8 +2030,8 @@ angular.module('agil.servicios')
 				}
 			} else {
 				if (vacia) {
-							
-					if(venta.sucursal.numero == 0){
+
+					if (venta.sucursal.numero == 0) {
 						// la altura en pixeles para convertir seria dividirlo entre 96;
 						var alturaImagen = 80;
 						if (usuario.empresa.imagen.length > 100) {
@@ -2045,7 +2045,7 @@ angular.module('agil.servicios')
 						var longitudCaracteres = usuario.empresa.razon_social.length;
 
 						var yDesc = (longitudCaracteres <= 35) ? yAltura + 11 : ((longitudCaracteres > 36 && longitudCaracteres <= 52) ? yAltura + 20 : yAltura + 20);
-						
+
 						doc.text(usuario.empresa.razon_social.toUpperCase(), 60, yAltura, { width: 170 });
 						doc.font('Helvetica', 7);
 						doc.text(venta.sucursal.nombre.toUpperCase(), 60, yDesc);
@@ -2057,8 +2057,8 @@ angular.module('agil.servicios')
 							(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
 						doc.text("TELF.: " + telefono, 60, yDescDir + 9);
 						doc.text("COCHABAMBA - BOLIVIA", 60, yDescDir + 18);
-					}else{
-						if(venta.sucursalPrincipal != undefined){
+					} else {
+						if (venta.sucursalPrincipal != undefined) {
 							var alturaImagen = 80;
 							if (usuario.empresa.imagen.length > 100) {
 								doc.image(usuario.empresa.imagen, 60, 25, { fit: [50, 50] });
@@ -2066,60 +2066,60 @@ angular.module('agil.servicios')
 							} //width: 50, height: 50
 							var yAltura = (alturaImagen <= 1.95) ? alturaImagen + 85 : ((alturaImagen > 2 && alturaImagen <= 80) ? 105 : 105);
 							doc.font('Helvetica-Bold', 8);
-							doc.text(venta.sucursalPrincipal[0].nombre, 60,yAltura-30);
+							doc.text(venta.sucursalPrincipal[0].nombre, 60, yAltura - 30);
 							doc.font('Helvetica', 7);
 
-							doc.text(venta.sucursalPrincipal[0].direccion, 60,yAltura-22,{width: 150});
+							doc.text(venta.sucursalPrincipal[0].direccion, 60, yAltura - 22, { width: 150 });
 							var longitudCaracteres = venta.sucursalPrincipal[0].direccion.length;
-							var yDescDir = (longitudCaracteres <= 36)? yAltura - 5 : yAltura + 4  ;
-		
+							var yDescDir = (longitudCaracteres <= 36) ? yAltura - 5 : yAltura + 4;
+
 							var telefono = (venta.sucursalPrincipal[0].telefono1 != null ? venta.sucursalPrincipal[0].telefono1 : "") +
-							(venta.sucursalPrincipal[0].telefono2 != null ? "-" + venta.sucursalPrincipal[0].telefono2 : "") +
-							(venta.sucursalPrincipal[0].telefono3 != null ? "-" + venta.sucursalPrincipal[0].telefono3 : "");
-							doc.text("TELF: "+telefono,60,yDescDir-10);
+								(venta.sucursalPrincipal[0].telefono2 != null ? "-" + venta.sucursalPrincipal[0].telefono2 : "") +
+								(venta.sucursalPrincipal[0].telefono3 != null ? "-" + venta.sucursalPrincipal[0].telefono3 : "");
+							doc.text("TELF: " + telefono, 60, yDescDir - 10);
 							yDescDir += 10;
 							doc.font('Helvetica-Bold', 8);
-							doc.text("COCHABAMBA - BOLIVIA", 60, yDescDir-13);
-                            yDescDir += 10;
-                            doc.font('Helvetica-Bold', 8);
-							doc.text("Sucursal "+venta.sucursal.numero, 60,yDescDir-10,{width: 150});
+							doc.text("COCHABAMBA - BOLIVIA", 60, yDescDir - 13);
+							yDescDir += 10;
+							doc.font('Helvetica-Bold', 8);
+							doc.text("Sucursal " + venta.sucursal.numero, 60, yDescDir - 10, { width: 150 });
 							doc.font('Helvetica', 7);
 							var sucursalDireccion = venta.sucursal.direccion.toLowerCase();
-							var direccionCapitalizada = sucursalDireccion.replace(/\b[a-z]/g,c=>c.toUpperCase());
-							doc.text(direccionCapitalizada, 60,yDescDir-2,{width: 150});
+							var direccionCapitalizada = sucursalDireccion.replace(/\b[a-z]/g, c => c.toUpperCase());
+							doc.text(direccionCapitalizada, 60, yDescDir - 2, { width: 150 });
 							var longitudSucursal = direccionCapitalizada.length;
-							if(longitudSucursal > 80){
+							if (longitudSucursal > 80) {
 								yTamDir = yDescDir + 30
-							}else if(longitudSucursal >= 45){
+							} else if (longitudSucursal >= 45) {
 								yTamDir = yDescDir + 20;
-							}else{
+							} else {
 								yTamDir = yDescDir + 13;
 							}
 							//var yTamDir = (longitudSucursal <= 36)? yDescDir + 10: yDescDir + 10;
 
-							
+
 							var telefono = (venta.sucursal.telefono1 != null ? venta.sucursal.telefono1 : "") +
-							(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
-							(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
-							doc.text("TELF: "+telefono,60,yTamDir - 8);
+								(venta.sucursal.telefono2 != null ? "-" + venta.sucursal.telefono2 : "") +
+								(venta.sucursal.telefono3 != null ? "-" + venta.sucursal.telefono3 : "");
+							doc.text("TELF: " + telefono, 60, yTamDir - 8);
 							doc.font('Helvetica-Bold', 8);
 							yTamDir += 10;
-							doc.text(venta.sucursal.nombre+" - BOLIVIA", 60, yTamDir - 11);
+							doc.text(venta.sucursal.nombre + " - BOLIVIA", 60, yTamDir - 11);
 
-						}else{
+						} else {
 							var alturaImagen = 80;
 							if (usuario.empresa.imagen.length > 100) {
 								doc.image(usuario.empresa.imagen, 60, 40, { fit: [65, 65] });
 								alturaImagen = usuario.altura_imagen;
 							} //width: 50, height: 50
 							var yAltura = (alturaImagen <= 1.95) ? alturaImagen + 85 : ((alturaImagen > 2 && alturaImagen <= 80) ? 105 : 105);
-		
-		
+
+
 							doc.font('Helvetica-Bold', 8);
 							var longitudCaracteres = usuario.empresa.razon_social.length;
-		
+
 							var yDesc = (longitudCaracteres <= 35) ? yAltura + 11 : ((longitudCaracteres > 36 && longitudCaracteres <= 52) ? yAltura + 20 : yAltura + 20);
-		
+
 							doc.text(usuario.empresa.razon_social.toUpperCase(), 60, yAltura, { width: 170 });
 							doc.font('Helvetica', 7);
 							doc.text(venta.sucursal.nombre.toUpperCase(), 60, yDesc);
@@ -2132,9 +2132,9 @@ angular.module('agil.servicios')
 							doc.text("TELF.: " + telefono, 60, yDescDir + 5);
 							doc.text("COCHABAMBA - BOLIVIA", 60, yDescDir + 5);
 						}
-						
+
 					}
-					
+
 				}
 				doc.font('Helvetica-Bold', 16);
 				doc.text(venta.configuracion.tituloFactura.nombre.toUpperCase(), 250, 100);
@@ -2146,7 +2146,7 @@ angular.module('agil.servicios')
 						if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
 							doc.rect(380, 40, 190, 50).stroke();
 						} else {
-							
+
 							doc.rect(380, 40, 190, 50).fillAndStroke(venta.configuracion.color1, "black").fillColor('black').stroke();
 						}
 					}
@@ -2161,11 +2161,11 @@ angular.module('agil.servicios')
 				doc.text(venta.autorizacion, 500, 70);
 				if (completa || vacia) {
 					/* if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') { */
-						if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
-							doc.rect(50, 160, 520, 40).stroke();
-						} else {
-							doc.rect(50, 160, 520, 40).fillAndStroke(venta.configuracion.color1, "black").fillColor('black').stroke();
-						}
+					if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
+						doc.rect(50, 160, 520, 40).stroke();
+					} else {
+						doc.rect(50, 160, 520, 40).fillAndStroke(venta.configuracion.color1, "black").fillColor('black').stroke();
+					}
 					/* } */
 					doc.text("FECHA : ", 60, 165);
 					doc.text("SEÑOR(ES) : ", 60, 175);
@@ -2176,11 +2176,11 @@ angular.module('agil.servicios')
 				doc.text(venta.cliente.nit, 400, 165);
 				if (completa || vacia) {
 					/* if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') { */
-						if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
-							doc.rect(50, 200, 520, 25).stroke();
-						} else {
-							doc.rect(50, 200, 520, 25).fillAndStroke(venta.configuracion.color2, "black").fillColor('white').stroke();
-					/* 	} */
+					if (venta.configuracion.formatoColor.nombre_corto == "FORM_S_COL") {
+						doc.rect(50, 200, 520, 25).stroke();
+					} else {
+						doc.rect(50, 200, 520, 25).fillAndStroke(venta.configuracion.color2, "black").fillColor('white').stroke();
+						/* 	} */
 					}
 					//doc.rect(50,225,520,papel[1]-175-225).stroke();
 					var existenDescuentos = VerificarDescuentos(venta.detallesVenta);
@@ -2572,7 +2572,7 @@ angular.module('agil.servicios')
 				doc.text("CÓDIGO DE CONTROL: " + venta.codigo_control, { align: 'center' });
 				doc.moveDown(0.4);
 				venta.fecha_limite_emision = new Date(venta.fecha_limite_emision);
-				doc.text("FECHA LÍMITE DE EMISIÓN: " + venta.fecha_limite_emision.getDate() + "/" + (venta.fecha_limite_emision.getMonth() + 1) + "/" + venta.fecha_limite_emision.getFullYear(), { align: 'center' });
+				doc.text("FECHA LÍMITE DE EMISIÓN: " + ("0" + venta.fecha_limite_emision.getDate()).slice(-2) + "/" + ("0" + (venta.fecha_limite_emision.getMonth() + 1)).slice(-2) + "/" + venta.fecha_limite_emision.getFullYear(), 55, y + 60);
 				doc.moveDown(0.4);
 				qr.canvas({
 					canvas: canvas,
@@ -2599,11 +2599,11 @@ angular.module('agil.servicios')
 
 	.factory('ImprimirProforma', ['Diccionario', 'ImprimirProformaCartaOficio', 'ImprimirPedido', 'ImprimirProformaRollo', '$timeout',
 		function (Diccionario, ImprimirProformaCartaOficio, ImprimirPedido, ImprimirProformaRollo, $timeout) {
-			var res = function (venta, esAccionGuardar, usuario, llevar,mostrarMensaje) {
+			var res = function (venta, esAccionGuardar, usuario, llevar, mostrarMensaje) {
 				var papel, doc, stream;
 				if (venta.configuracion.tipoConfiguracionNotaVenta == null) {
 					mostrarMensaje("Se necesita configurar el tipo de factura nota de venta para continuar.");
-				}else{
+				} else {
 					if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 						papel = [612, 936];
 						if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
@@ -2699,19 +2699,42 @@ angular.module('agil.servicios')
 				for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
 					venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento)
 					if (existenDescuentos) {
-						doc.text(venta.detallesVenta[i].producto.codigo, 55, y, { width: 50 });
+						var ydesc = y
+						if (venta.detallesVenta[i].producto.codigo.length > 8 && venta.detallesVenta[i].producto.codigo.length <= 16) {
+							ydesc = y - 5
+						} else if (venta.detallesVenta[i].producto.codigo.length > 16) {
+							ydesc = y - 10
+						}
+
+						doc.text(venta.detallesVenta[i].producto.codigo, 55, ydesc, { width: 35 });
 						doc.text(venta.detallesVenta[i].cantidad, 95, y);
 						doc.text(venta.detallesVenta[i].producto.unidad_medida, 118, y, { width: 40 });
-						doc.text(venta.detallesVenta[i].producto.nombre, 155, y , { width: 80 });
+						ydesc = y
+						var cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 8
+						var posicionCuadro = cantidadlineas * 10
+						
+						if (venta.detallesVenta[i].producto.nombre.length > 20 && venta.detallesVenta[i].producto.nombre.length <= 40) {
+							ydesc = y - 5
+							cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 8
+							posicionCuadro = cantidadlineas * 10
+						} else if (venta.detallesVenta[i].producto.nombre.length > 40) {
+							ydesc = y - 10
+							cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 8
+							posicionCuadro = cantidadlineas * 5
+						}
+						if (posicionCuadro < 30) {
+							posicionCuadro = 30
+						}
+						doc.text(venta.detallesVenta[i].producto.nombre, 155, ydesc, { width: 80 });
 						if (usuario.empresa.usar_vencimientos) {
 							if (venta.con_vencimiento) {
 								if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
-									doc.text(venta.detallesVenta[i].lote, 279, y,{width:35});
-								}else{
+									doc.text(venta.detallesVenta[i].lote, 279, y, { width: 35 });
+								} else {
 									doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 240, y);
-									doc.text(venta.detallesVenta[i].lote, 279, y,{width:35});
+									doc.text(venta.detallesVenta[i].lote, 279, y, { width: 35 });
 								}
-								
+
 							}
 						}
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 315, y);
@@ -2729,11 +2752,11 @@ angular.module('agil.servicios')
 						if (usuario.empresa.usar_vencimientos) {
 							if (venta.con_vencimiento) {
 								if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
-									doc.text(venta.detallesVenta[i].lote, 415, y,{width: 35});
-								}else{
+									doc.text(venta.detallesVenta[i].lote, 415, y, { width: 35 });
+								} else {
 									doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 360, y);
-									doc.text(venta.detallesVenta[i].lote, 415, y,{width: 35});
-								}							
+									doc.text(venta.detallesVenta[i].lote, 415, y, { width: 35 });
+								}
 							}
 						}
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 460, y);
@@ -2741,19 +2764,21 @@ angular.module('agil.servicios')
 					}
 					if (completa || vacia) {
 						if (venta.configuracion.formatoPapelNotaVenta.nombre_corto == "FORM_C_MAR") {
-							doc.rect(50, y - 15, 520, 30).stroke();
+							doc.rect(50, y - 15, 520, posicionCuadro).stroke();
 						}
-						
+
 					}
-					y = y + 30;
+
+					y = y + posicionCuadro;
 					items++;
 
-					if (items == itemsPorPagina) {
+					if (items == itemsPorPagina ||y>650) {
 						doc.addPage({ size: papel, margin: 10 });
 						y = 240;
 						items = 0;
 						pagina = pagina + 1;
 						DibujarCabeceraProformaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario)
+						doc.font('Helvetica', 7);
 					}
 				}
 				if (completa || vacia) {
@@ -2819,11 +2844,11 @@ angular.module('agil.servicios')
 				if (completa || vacia) {
 					//doc.rect(50, 150, 520, 50).stroke();
 					//if (venta.configuracion.formatoPapel.nombre_corto == 'FORM_C_MAR') {
-						if (venta.configuracion.formatoColorNotaVenta.nombre_corto == "FORM_S_COL") {
-						   doc.rect(50, 150, 520, 50).stroke();
-						} else {
+					if (venta.configuracion.formatoColorNotaVenta.nombre_corto == "FORM_S_COL") {
+						doc.rect(50, 150, 520, 50).stroke();
+					} else {
 						doc.rect(50, 150, 520, 50).fillAndStroke(venta.configuracion.color_cabecera_nota_venta, "black").fillColor('black').stroke();
-						}
+					}
 					//}
 					doc.text("FECHA : ", 60, 165);
 					doc.text("SEÑOR(ES) : ", 60, 175);
@@ -2851,7 +2876,7 @@ angular.module('agil.servicios')
 							if (venta.con_vencimiento) {
 								if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
 									doc.text("SERIE.", 280, 210)
-								}else{
+								} else {
 									doc.text("VENC.", 240, 210)
 									doc.text("LOTE.", 278, 210)
 								}
@@ -2882,7 +2907,7 @@ angular.module('agil.servicios')
 							if (venta.con_vencimiento) {
 								if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
 									doc.text("SERIE", 415, 210);
-								}else{
+								} else {
 									doc.text("VENC.", 360, 210)
 									doc.text("LOTE.", 415, 210)
 								}
@@ -3015,7 +3040,7 @@ angular.module('agil.servicios')
 					itemsPorPagina = 20;
 					ImprimirNotaBajaCartaOficio(baja, papel, itemsPorPagina, usuario);
 				} else if (baja.configuracion.tamanoPapelNotaBaja.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
-					papel = [598,600]; /*[612, 468];*/
+					papel = [598, 600]; /*[612, 468];*/
 					itemsPorPagina = 10;
 					ImprimirNotaBajaCartaOficio(baja, papel, itemsPorPagina, usuario);
 				} else if (baja.configuracion.tamanoPapelNotaBaja.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
@@ -3068,16 +3093,16 @@ angular.module('agil.servicios')
 							doc.text(baja.detallesVenta[i].producto.nombre, 180, yDesc, { width: 160 });
 							var fecha_vencimiento = new Date(baja.detallesVenta[i].inventario.fecha_vencimiento);
 							doc.font('Helvetica', 7);
-							
+
 							if (baja.configuracion.tipoConfiguracionNotaBaja) {
 								if (baja.configuracion.tipoConfiguracionNotaBaja.nombre_corto == "LOTE") {
 									doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear(), 360, y);
-									doc.text(baja.detallesVenta[i].inventario.lote, 420, y,{width:40});	
-								}else{
-									doc.text(baja.detallesVenta[i].inventario.lote, 420, y,{width:40});
+									doc.text(baja.detallesVenta[i].inventario.lote, 420, y, { width: 40 });
+								} else {
+									doc.text(baja.detallesVenta[i].inventario.lote, 420, y, { width: 40 });
 								}
 							}
-							
+
 						} else {
 							doc.text(baja.detallesVenta[i].producto.nombre, 210, yDesc, { width: 250 });
 						}
@@ -3089,7 +3114,7 @@ angular.module('agil.servicios')
 							doc.rect(50, y - 15, 520, 30).stroke();
 						}
 					}
-					
+
 					y = y + 30;
 					items++;
 
@@ -3199,12 +3224,12 @@ angular.module('agil.servicios')
 					if (baja.configuracion.tipoConfiguracionNotaBaja) {
 						if (baja.configuracion.tipoConfiguracionNotaBaja.nombre_corto == "LOTE") {
 							doc.text("FECHA VENC.", 360, 110);
-							doc.text("LOTE", 420, 110);	
-						}else{
-							doc.text("SERIE", 420, 110);	
+							doc.text("LOTE", 420, 110);
+						} else {
+							doc.text("SERIE", 420, 110);
 						}
 					}
-					
+
 				} else {
 					doc.text("DETALLE", 210, 110);
 				}
@@ -3290,12 +3315,12 @@ angular.module('agil.servicios')
 
 	.factory('ImprimirNotaTraspaso', ['Diccionario', 'blockUI', 'ImprimirNotaTraspasoCartaOficio', 'ImprimirNotaTraspasoRollo',
 		function (Diccionario, blockUI, ImprimirNotaTraspasoCartaOficio, ImprimirNotaTraspasoRollo) {
-			var res = function (traspaso, usuario,mostrarMensaje) {
+			var res = function (traspaso, usuario, mostrarMensaje) {
 				blockUI.start();
 				if (traspaso.configuracion.tipoConfiguracionNotaTraspaso == null) {
 					mostrarMensaje("Se necesita configurar el tipo de factura nota de traspaso para continuar.");
 					blockUI.stop();
-				}else{
+				} else {
 					if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 						papel = [612, 936];
 						itemsPorPagina = 19;
@@ -3303,7 +3328,7 @@ angular.module('agil.servicios')
 					} else if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
 						papel = [612, 792];
 						itemsPorPagina = 16;
-						ImprimirNotaTraspasoCartaOficio(traspaso, papel, itemsPorPagina, usuario,mostrarMensaje);
+						ImprimirNotaTraspasoCartaOficio(traspaso, papel, itemsPorPagina, usuario, mostrarMensaje);
 					} else if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
 						papel = [598, 600];
 						itemsPorPagina = 5;
@@ -3326,7 +3351,7 @@ angular.module('agil.servicios')
 	.factory('ImprimirNotaTraspasoCartaOficio', ['blockUI', 'VerificarDescuentos', 'DibujarCabeceraPDFTraspaso',
 		function (blockUI, VerificarDescuentos, DibujarCabeceraPDFTraspaso) {
 			var res = function (traspaso, papel, itemsPorPagina, usuario) {
-				var doc = new PDFDocument({ compress: false, layout:'portrait', size: papel, margin: 0 });
+				var doc = new PDFDocument({ compress: false, layout: 'portrait', size: papel, margin: 0 });
 				var stream = doc.pipe(blobStream());
 				var existenDescuentos = VerificarDescuentos(traspaso.detallesVenta);
 				doc.font('Helvetica', 8);
@@ -3342,7 +3367,7 @@ angular.module('agil.servicios')
 						doc.text(traspaso.detallesVenta[i].producto.codigo, 55, yDesc, { width: 40 });
 						doc.text(traspaso.detallesVenta[i].cantidad, 110, y);
 						doc.text(traspaso.detallesVenta[i].producto.unidad_medida, 135, y);
-						doc.text(traspaso.detallesVenta[i].producto.nombre, 170, y , { width: 130 });
+						doc.text(traspaso.detallesVenta[i].producto.nombre, 170, y, { width: 130 });
 						doc.text(traspaso.detallesVenta[i].producto.precio_unitario.toFixed(2), 300, y);
 						doc.text(traspaso.detallesVenta[i].importe.toFixed(2), 335, y);
 						doc.text(traspaso.detallesVenta[i].descuento.toFixed(2), 385, y);
@@ -3362,23 +3387,23 @@ angular.module('agil.servicios')
 						longitudCaracteres = traspaso.detallesVenta[i].producto.nombre.length;
 						yDesc = (longitudCaracteres <= 25) ? y : ((longitudCaracteres > 25 && longitudCaracteres <= 40) ? y - 4 : y - 11);
 						//if (usuario.empresa.usar_vencimientos) {
-							doc.font('Helvetica', 6);
-							doc.text(traspaso.detallesVenta[i].producto.nombre, 210, yDesc + 5, { width: 175 });
-							doc.font('Helvetica', 7);
-							
-							if (traspaso.detallesVenta[i].inventario) {
-								if (traspaso.con_vencimiento) {									
-									if (traspaso.configuracion.tipoConfiguracionNotaTraspaso.nombre_corto == "LOTE") {
-										var fecha_vencimiento = new Date(traspaso.detallesVenta[i].inventario.fecha_vencimiento);
-										doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear(), 390, y);
-										doc.text(traspaso.detallesVenta[i].inventario.lote, 455, y);
-										
-									}else{
-										doc.text(traspaso.detallesVenta[i].inventario.lote, 455, y);
-									}
-								}	
+						doc.font('Helvetica', 6);
+						doc.text(traspaso.detallesVenta[i].producto.nombre, 210, yDesc + 5, { width: 175 });
+						doc.font('Helvetica', 7);
+
+						if (traspaso.detallesVenta[i].inventario) {
+							if (traspaso.con_vencimiento) {
+								if (traspaso.configuracion.tipoConfiguracionNotaTraspaso.nombre_corto == "LOTE") {
+									var fecha_vencimiento = new Date(traspaso.detallesVenta[i].inventario.fecha_vencimiento);
+									doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear(), 390, y);
+									doc.text(traspaso.detallesVenta[i].inventario.lote, 455, y);
+
+								} else {
+									doc.text(traspaso.detallesVenta[i].inventario.lote, 455, y);
+								}
 							}
-							
+						}
+
 						//} else {
 						//	doc.text(traspaso.detallesVenta[i].producto.nombre, 210, yDesc, { width: 250 });
 						//}
@@ -3388,7 +3413,7 @@ angular.module('agil.servicios')
 					if (traspaso.configuracion.formatoPapelNotaTraspaso.nombre_corto == "FORM_C_MAR") {
 						doc.rect(50, y - 15, 520, 30).stroke();
 					}
-	
+
 					y = y + 30;
 					items++;
 					if (items == itemsPorPagina) {
@@ -3447,9 +3472,9 @@ angular.module('agil.servicios')
 			//doc.rect(50, 40, 520, 70).stroke();
 			if (traspaso.configuracion.formatoColorNotaTraspaso.nombre_corto == "FORM_S_COL") {
 				doc.rect(50, 40, 520, 70).stroke();
-			  } else {
+			} else {
 				doc.rect(50, 40, 520, 70).fillAndStroke(traspaso.configuracion.color_cabecera_nota_traspaso, "black").fillColor('black').stroke();
-			  }
+			}
 
 			//doc.rect(50, 110, 520, 25).stroke();
 			if (traspaso.configuracion.formatoColorNotaTraspaso.nombre_corto == "FORM_S_COL") {
@@ -3457,7 +3482,7 @@ angular.module('agil.servicios')
 			} else {
 				doc.rect(50, 110, 520, 25).fillAndStroke(traspaso.configuracion.color_detalle_nota_traspaso, "black").fillColor('black').stroke();
 			}
-			
+
 			doc.font('Helvetica-Bold', 7);
 			doc.text(usuario.empresa.razon_social, 55, 55);
 			doc.text("SUCURSAL: ", 55, 65);
@@ -3494,15 +3519,15 @@ angular.module('agil.servicios')
 				doc.text("CANT.", 128, 120);
 				doc.text("UNID.", 165, 120);
 				//if (usuario.empresa.usar_vencimiento) {
-					doc.text("DETALLE", 210, 120, { width: 110 });
-					if (traspaso.con_vencimiento) {
-						if (traspaso.configuracion.tipoConfiguracionNotaTraspaso.nombre_corto == "LOTE") {
-							doc.text("FECHA VENC.", 380, 120);
-							doc.text("LOTE", 450, 120);
-						}else{
-							doc.text("SERIE", 450, 120);
-						}					
+				doc.text("DETALLE", 210, 120, { width: 110 });
+				if (traspaso.con_vencimiento) {
+					if (traspaso.configuracion.tipoConfiguracionNotaTraspaso.nombre_corto == "LOTE") {
+						doc.text("FECHA VENC.", 380, 120);
+						doc.text("LOTE", 450, 120);
+					} else {
+						doc.text("SERIE", 450, 120);
 					}
+				}
 				//} else {
 				//	doc.text("DETALLE", 190, 120, { width: 250 });
 				//}
