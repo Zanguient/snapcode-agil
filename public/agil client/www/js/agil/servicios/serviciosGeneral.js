@@ -2698,6 +2698,7 @@ angular.module('agil.servicios')
 
 				for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
 					venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento)
+					var posicionCuadro = 30
 					if (existenDescuentos) {
 						var ydesc=y
 						if(venta.detallesVenta[i].producto.codigo.length>8 && venta.detallesVenta[i].producto.codigo.length<=16){
@@ -2707,12 +2708,22 @@ angular.module('agil.servicios')
 						}
 						doc.text(venta.detallesVenta[i].producto.codigo, 55, ydesc, { width: 35 });
 						doc.text(venta.detallesVenta[i].cantidad, 95, y);
-						doc.text(venta.detallesVenta[i].producto.unidad_medida, 118, y, { width: 40 });
+						doc.text(venta.detallesVenta[i].producto.unidad_medida, 118, y, { width: 30 });
 						ydesc=y
+						venta.detallesVenta[i].producto.nombre=venta.detallesVenta[i].producto.nombre
+						var cantidadlineas = venta.detallesVenta[i].producto.nombre.length
+						
 						if(venta.detallesVenta[i].producto.nombre.length>20 && venta.detallesVenta[i].producto.nombre.length<=40){
-							ydesc=y-10
+							ydesc=y-7
+							cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 20
+							posicionCuadro = 25+cantidadlineas * 5
 						}else if(venta.detallesVenta[i].producto.nombre.length>40){
 							ydesc=y-10
+							cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 20
+							posicionCuadro = 30+cantidadlineas * 5
+						}
+						if (posicionCuadro < 30) {
+							posicionCuadro = 30
 						}
 						doc.text(venta.detallesVenta[i].producto.nombre, 155, ydesc , { width: 80 });
 						if (usuario.empresa.usar_vencimientos) {
@@ -2753,19 +2764,20 @@ angular.module('agil.servicios')
 					}
 					if (completa || vacia) {
 						if (venta.configuracion.formatoPapelNotaVenta.nombre_corto == "FORM_C_MAR") {
-							doc.rect(50, y - 15, 520, 30).stroke();
+							doc.rect(50, y - 15, 520, posicionCuadro).stroke();
 						}
 						
 					}
-					y = y + 30;
+					y = y + posicionCuadro;
 					items++;
 
-					if (items == itemsPorPagina) {
+					if (items == itemsPorPagina || doc.y>690) {
 						doc.addPage({ size: papel, margin: 10 });
 						y = 240;
 						items = 0;
 						pagina = pagina + 1;
 						DibujarCabeceraProformaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario)
+						doc.font('Helvetica', 7);
 					}
 				}
 				if (completa || vacia) {
