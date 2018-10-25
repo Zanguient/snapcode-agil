@@ -3489,12 +3489,17 @@ angular.module('agil.servicios')
 				//if (usuario.empresa.usar_vencimiento) {
 					doc.text("DETALLE", 210, 120, { width: 110 });
 					if (traspaso.con_vencimiento) {
-						if (traspaso.configuracion.tipoConfiguracionNotaTraspaso.nombre_corto == "LOTE") {
-							doc.text("FECHA VENC.", 380, 120);
-							doc.text("LOTE", 450, 120);
+						if (traspaso.configuracion.tipoConfiguracionNotaTraspaso != null) {
+							if (traspaso.configuracion.tipoConfiguracionNotaTraspaso.nombre_corto == "LOTE") {
+								doc.text("FECHA VENC.", 380, 120);
+								doc.text("LOTE", 450, 120);
+							}else{
+								doc.text("SERIE", 450, 120);
+							}
 						}else{
-							doc.text("SERIE", 450, 120);
+							$scope.mostrarMensaje("Porfavor configure el tipo de facturacion Nota Traspaso en Configuraciones");
 						}
+						
 					}
 				//} else {
 				//	doc.text("DETALLE", 190, 120, { width: 250 });
