@@ -2602,7 +2602,7 @@ angular.module('agil.servicios')
 			var res = function (venta, esAccionGuardar, usuario, llevar,mostrarMensaje) {
 				var papel, doc, stream;
 				if (venta.configuracion.tipoConfiguracionNotaVenta == null) {
-					mostrarMensaje("Configure la Nota de Venta en Configuraciones");
+					mostrarMensaje("Se necesita configurar el tipo de factura nota de venta para continuar.");
 				}else{
 					if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 						papel = [612, 936];
@@ -3293,7 +3293,8 @@ angular.module('agil.servicios')
 			var res = function (traspaso, usuario,mostrarMensaje) {
 				blockUI.start();
 				if (traspaso.configuracion.tipoConfiguracionNotaTraspaso == null) {
-					mostrarMensaje("Configure la Nota de Traspaso en Configuraciones");
+					mostrarMensaje("Se necesita configurar el tipo de factura nota de traspaso para continuar.");
+					blockUI.stop();
 				}else{
 					if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 						papel = [612, 936];
