@@ -321,7 +321,7 @@ function ejecutarScriptsPacientes(idModalDialogVacunas, idModalDialogConsulta, i
 	crearPopup(IdModalDialogLaboratorioExamenHistoricoResultado, "50%", 400);
 
 	crearPopup(idModalDialogPacienteNuevo, "50%", 'auto');
-	crearPopup(idModalDialogPrerequisitoNuevo, "50%", 'auto');
+	crearPopup(idModalDialogPrerequisitoNuevo, "z0%", 'auto');
 	crearPopup(idModalHistorialPrerequisito, "50%", 'auto');
 	crearPopup(idModalEditarPrerequisito, "40%", 'auto');
 	crearPopup(idModalDialogDiagnosticos, "80%", 'auto');
@@ -443,7 +443,7 @@ function ejecutarScriptsRecursosHumanos(idModalPrerequisitos, idModalEmpleado, i
 	crearPopup(idEliminarSeguroEmpleado, "auto", "auto");
 	crearPopup(idEliminarFamiliarEmpleado, "auto", "auto");
 	aplicarWizardFormulario(idModalWizardRhVista, idModalContenedorRhVista);
-	crearPopup(idModalDialogPrerequisitoNuevo, "auto", "auto");
+	crearPopup(idModalDialogPrerequisitoNuevo, "60%", "auto");
 	crearPopup(idModalNuevoFamiliar, "auto", "auto");
 	crearPopup(idModalHistorialPrerequisito, "auto", "auto");
 	crearPopup(idModalEditarPrerequisito, "auto", "auto");

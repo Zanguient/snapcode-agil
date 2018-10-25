@@ -712,7 +712,7 @@
     <!-- =========== panel Nuevo Pre-requisitos ==================== -->
     <div id="dialog-pre-requisito-nuevo" class="wizard-posicion ">
         <!-- TOPBAR -->
-        <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle">
+        <div class="modal-header ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle">
             <span id="ui-id-nuevo-prerequisito" class="ui-dialog-title">
                 <div>
                     <h4 class="smaller">
@@ -726,78 +726,113 @@
             </button>
         </div>
         <!-- TOPBAR -->
-        <div>
+        <div class="modal-body">
             <form name="nuevoPrerequisitoForm" id="nuevoPrerequisitoForm" ng-submit="saveFormPrerequisito(NuevoP)">
-                <table class="table table-striped table-bordered ">
-                    <tbody>
+
+                <div class="form-group row">
+                    <div class="col-sm-3 ">
+                        Prerequisito
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text" id="nombrePrerequisito" ng-update-hidden ng-model="NuevoP.nombre"
+                            placeholder="Nombre">
+                    </div>
+                    <div class="col-sm-3 ">
+                        Vencimiento Mes
+                    </div>
+                    <div class="col-sm-9">
+                        <input ng-update-hidden type="Number" id="vencimiento_mes" ng-model="NuevoP.vencimiento_mes"
+                            placeholder="Vencimiento Mes">
+                    </div>
+                    <div class="col-sm-3 ">
+                        Puede Modificar
+                        RRHH
+                    </div>
+                    <div class="col-sm-9">
+                        <input ng-update-hidden ng-model="NuevoP.puede_modificar_rrhh" name="switch-field-1" class="ace ace-switch ace-switch-5"
+                            type="checkbox">
+                        <span class="lbl check-descuento"></span>
+                    </div>
+                    <div class="col-sm-3 ">
+                        Observacion
+                    </div>
+                    <div class="col-sm-9">
+                        <input ng-update-hidden type="text" id="observacion" ng-model="NuevoP.observacion" placeholder="Observacion">
+                    </div>
+                    <div class="col-sm-3 ">
+                        Cargos
+                    </div>
+                    <div class="col-sm-9">
+                        <div id="cargos" isteven-multi-select required input-model="cargos" output-model="nuevoP.cargos"
+                            button-label="icon nombre" item-label="icon nombre maker" tick-property="ticked"
+                            translation="localLang">
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            <i class="ace-icon fa fa-plus align-top bigger-125"></i>
+                            Agregar
+                        </button>
+                    </div>
+                </div>
+
+
+
+            </form>
+            <div>
+                <table class="table table-bordered table-hover">
+                    <thead>
                         <tr>
-                            <div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-12 col-sm-3 no-padding-right">Prerequisito</label>
-
-                                    <div class="col-xs-12 col-sm-9">
-                                        <!-- <select required style="width:250px" ng-options="prerequisito as prerequisito.nombre for prerequisito in prerequisitos track by prerequisito.id"
-                                            ng-model="NuevoP.prerequisito"></select> -->
-                                        <input type="text" id="nombrePrerequisito" ng-update-hidden ng-model="NuevoP.nombre"
-                                            placeholder="Nombre" class="col-xs-10 col-sm-5">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right">Vencimiento Mes</label>
-                                    <div class="col-sm-8">
-                                        <input ng-update-hidden type="Number" id="vencimiento_mes" ng-model="NuevoP.vencimiento_mes"
-                                            placeholder="Vencimiento Mes" class="col-xs-10 col-sm-5">
-                                    </div>
-                                </div>
-                                <!-- <div class="form-group">
-                                    <label required class="col-sm-3 control-label no-padding-right">Fecha Inicio</label>
-
-                                    <div class="col-sm-8">
-                                        <input name="fecha" required ng-update-hidden class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy"
-                                            id="fecha" ng-model="NuevoP.fecha_inicio" placeholder="Ingrese la fecha" ng-change="calcularFechaVencimientoRequisito(NuevoP)" />
-
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label  class="col-sm-3 control-label no-padding-right">Fecha Vencimiento</label>
-
-                                    <div class="col-sm-8">
-                                        <input name="fecha" disabled ng-update-hidden class="form-control date-picker" autocomplete="off" type="text" data-date-format="dd/mm/yyyy"
-                                            id="fecha" ng-model="NuevoP.fechav_texto" placeholder="Fecha de vencimiento" />
-                                    </div>
-                                </div> -->
-
-                                <div class="form-group">
-                                    <label required class="col-sm-3 control-label no-padding-right">Puede Modificar
-                                        RRHH</label>
-
-                                    <div class="col-sm-8">
-                                        <input ng-update-hidden ng-model="NuevoP.puede_modificar_rrhh" name="switch-field-1"
-                                            class="ace ace-switch ace-switch-5" type="checkbox">
-                                        <span class="lbl check-descuento"></span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="observacion">Observacion</label>
-
-                                    <div class="col-sm-8">
-                                        <input ng-update-hidden type="text" id="observacion" ng-model="NuevoP.observacion"
-                                            placeholder="Observacion" class="col-xs-10 col-sm-5">
-                                    </div>
-                                </div>
-                            </div>
+                            <th>
+                                Nro
+                            </th>
+                            <th>
+                                Prerequisito
+                            </th>
+                            <th>
+                                Vencimiento Mes
+                            </th>
+                            <th>
+                                Cargos
+                            </th>                          
+                            <th>
+                                Acciones
+                            </th>
                         </tr>
-                        <tr>
-                            <td class="col-sm-12">
-                                <button type="submit" class="btn btn-sm btn-primary">
-                                    <i class="ace-icon fa fa-plus align-top bigger-125"></i>
-                                    Agregar
-                                </button>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="requisito in preRequisitos">
+                            <td>
+                                {{$index+1}}
+                            </td>
+                            <td>
+                                {{requisito.nombre}}
+                            </td>
+                            <td>
+                                {{requisito.vencimiento_mes}}
+                            </td>
+                            <td>
+                                <p ng-repeat="cargo in requisito.cargos">
+                                    {{cargo.nombre}}
+                                </p>
+                            </td>
+                            <td>
+                                    <a class="green" ng-disabled="!aplicacion.puede_modificar" href="javascript:void(0)"
+                                    ng-click="abrirDialogPrerequisitoEditar(requisito)">
+                                    <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                </a>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-            </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-sm btn-danger" ng-click="cerrarDialogPrerequisitoNuevo()">
+                <i class="ace-icon fa fa-plus align-top bigger-125"></i>
+                Cancelar
+            </button>
         </div>
     </div>
     <!-- ===== fin panel ============================= -->

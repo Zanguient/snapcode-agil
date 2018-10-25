@@ -1,4 +1,4 @@
-module.exports = function (router,sequelize,Sequelize, Cotizacion, DetalleCotizacion, Usuario, Producto, Diccionario, Clase, ConfiguracionGeneralFactura,ConfiguracionFactura, Sucursal, Cliente, Almacen, NumeroLiteral, Inventario, Movimiento, DetalleMovimiento, Tipo, ProductoBase) {
+module.exports = function (router,sequelize,Sequelize, Cotizacion, DetalleCotizacion, Usuario, Producto, Diccionario, Clase, ConfiguracionGeneralFactura,ConfiguracionFactura, Sucursal, Cliente, Almacen, NumeroLiteral, Inventario, Movimiento, DetalleMovimiento, Tipo, ProductoBase, Persona) {
 
 	router.route('/cotizaciones/empresa/:id_empresa')
 		.get(function (req, res) {
@@ -543,6 +543,9 @@ module.exports = function (router,sequelize,Sequelize, Cotizacion, DetalleCotiza
 					id: req.params.id
 				},
 				include: [
+					{ model: Usuario, as: 'usuario',
+						include: [{ model: Persona, as: 'persona' }]
+				 	},
 					{ model: Cliente, as: 'cliente' },
 					{
 						model: DetalleCotizacion, as: "detallesCotizacion",

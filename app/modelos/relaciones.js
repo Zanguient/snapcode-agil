@@ -18,7 +18,7 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoDotacionRopa, RrhhViajeDetalle, RrhhViaje, RrhhViajeDestino, RrhhViajeConductor, TransaccionSeguimiento, CuentaTransaccion, GtmDespachoDetalleResivo, RRHHPlanillaRcIva, RRHHDetallePlanillaRcIva, EmpresaAplicacion, Pedido, DetallesPedido, RrhhEmpleadoDescuentoVacacionHistorial, ActivosFijos, ActivosFijosValores, ActivosFijosConfiguracion,
 	EstadoFinancieroConfiguracionImpresion, EstadoFinancieroGestion, ClienteCentroCostos, CajaChica, SolicitudCajaChica, ConceptoMovimientoCajaChica, CierreCajaChica,
 	AliasClienteEmpresa, ComensalesClienteEmpresa, GerenciasClienteEmpresa, horarioComidasClienteEmpresa, PrecioComidasClienteEmpresa, HistorialComidaClienteEmpresa, ServicioVenta, ComensalesMarcacionesClienteEmpresa,DetalleVentaProductoFinal,ProductoTipoPrecio,ProveedorAnticipo,ClienteAnticipo,
-	ContabilidadConfiguracionGeneralTipoCuenta) {
+	ContabilidadConfiguracionGeneralTipoCuenta,RrhhEmpleadoPrerequisitoCargo) {
 	Persona.belongsTo(Clase, { foreignKey: 'id_lugar_nacimiento', as: 'lugar_nacimiento' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_genero', as: 'genero' });
 	Persona.belongsTo(Clase, { foreignKey: 'id_lenguaje', as: 'lenguaje' });
@@ -815,6 +815,11 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_lugar_seguro_largo_plazo', as: 'lugarSeguroLargoPlazo' });
 	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_banco', as: 'banco' });
 	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoCargo, { foreignKey: 'id_ficha', as: 'cargos' });
+
+	RrhhEmpleadoPrerequisitoCargo.belongsTo(RrhhEmpleadoCargo, { foreignKey: 'id_cargo', as: 'cargoPrerequisito' });
+	RrhhEmpleadoPrerequisitoCargo.belongsTo(MedicoPrerequisito, { foreignKey: 'id_prerequisito', as: 'cargoPrerequisito' });
+	RrhhEmpleadoCargo.hasMany(RrhhEmpleadoPrerequisitoCargo, { foreignKey: 'id_cargo', as: 'cargoPrerequisitos' });
+	MedicoPrerequisito.hasMany(RrhhEmpleadoPrerequisitoCargo, { foreignKey: 'id_prerequisito', as: 'prerequisitoCargos' });
 
 	//RrhhEmpleadoFichaOtrosSeguros.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'otroSeguro' });23/02/2018
 	RrhhEmpleadoFichaOtrosSeguros.belongsTo(RrhhEmpleadoFicha, { foreignKey: 'id_ficha', as: 'otroSeguro' });

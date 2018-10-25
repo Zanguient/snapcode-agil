@@ -514,7 +514,7 @@ angular.module('agil.controladores')
             }
             $scope.abrirDialogPrerequisitoNuevo = function () {
                 $scope.NuevoP = new Prerequisito({ puede_modificar_rrhh: false });
-
+                $scope.obtenerCargos()
                 $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
             }
 
@@ -2189,7 +2189,7 @@ angular.module('agil.controladores')
             }
 
             $scope.cerrarPopupPrerequisitoNuevo = function () {
-                $scope.obtenerAlertas()
+               // $scope.obtenerAlertas()
                 $scope.cerrarPopup($scope.idModalDialogPrerequisitoNuevo);
             }
 
