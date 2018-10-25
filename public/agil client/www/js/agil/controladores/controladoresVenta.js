@@ -2255,7 +2255,7 @@ angular.module('agil.controladores')
 					ventaConsultada.sucursalDestino = datos.sucursalDestino;
 					var fecha = new Date(ventaConsultada.fecha);
 					ventaConsultada.fechaTexto = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
-					ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false);
+					ImprimirSalida(ventaConsultada.movimiento.clase.nombre_corto, ventaConsultada, false, $scope.usuario, false,$scope.mostrarMensaje);
 				});
 			}
 

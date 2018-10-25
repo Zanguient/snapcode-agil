@@ -871,18 +871,18 @@ angular.module('agil.servicios')
 
 	.factory('ImprimirSalida', ['Diccionario', 'ImprimirFactura', 'ImprimirProforma', 'ImprimirNotaBaja', 'ImprimirNotaTraspaso', 'ImprimirServicio',
 		function (Diccionario, ImprimirFactura, ImprimirProforma, ImprimirNotaBaja, ImprimirNotaTraspaso, ImprimirServicio) {
-			var res = function (movimiento, salida, esAccionGuardar, usuario, llevar) {
+			var res = function (movimiento, salida, esAccionGuardar, usuario, llevar,mostrarMensaje) {
 
 				if (movimiento == Diccionario.EGRE_FACTURACION) {
 					ImprimirFactura(salida, esAccionGuardar, usuario);
 				} else if (movimiento == Diccionario.EGRE_PROFORMA) {
-					ImprimirProforma(salida, esAccionGuardar, usuario, llevar);
+					ImprimirProforma(salida, esAccionGuardar, usuario, llevar,mostrarMensaje);
 				}
 				else if (movimiento == Diccionario.EGRE_BAJA) {
 					ImprimirNotaBaja(salida, usuario);
 				}
 				else if (movimiento == Diccionario.EGRE_TRASPASO) {
-					ImprimirNotaTraspaso(salida, usuario);
+					ImprimirNotaTraspaso(salida, usuario,mostrarMensaje);
 				} else if (movimiento == Diccionario.EGRE_SERVICIO) {
 					ImprimirServicio(salida, esAccionGuardar, usuario);
 				}
@@ -2599,71 +2599,75 @@ angular.module('agil.servicios')
 
 	.factory('ImprimirProforma', ['Diccionario', 'ImprimirProformaCartaOficio', 'ImprimirPedido', 'ImprimirProformaRollo', '$timeout',
 		function (Diccionario, ImprimirProformaCartaOficio, ImprimirPedido, ImprimirProformaRollo, $timeout) {
-			var res = function (venta, esAccionGuardar, usuario, llevar) {
+			var res = function (venta, esAccionGuardar, usuario, llevar,mostrarMensaje) {
 				var papel, doc, stream;
-				if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
-					papel = [612, 936];
-					if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
-						ImprimirProformaCartaOficio(venta, papel, true, false, false, usuario);
-					} else if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
-						ImprimirProformaCartaOficio(venta, papel, false, true, false, usuario);
-					} else if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_SEMICOMPLETA) {
-						ImprimirProformaCartaOficio(venta, papel, false, false, true, usuario);
-					}
-				} else if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
-					papel = [612, 792];
-					if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
-						ImprimirProformaCartaOficio(venta, papel, true, false, false, usuario);
-					} else if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
-						ImprimirProformaCartaOficio(venta, papel, false, true, false, usuario);
-					} else if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_SEMICOMPLETA) {
-						ImprimirProformaCartaOficio(venta, papel, false, false, true, usuario);
-					}
-				} else if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
-					papel = [612, 468];
-					if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
-						ImprimirProformaCartaOficio(venta, papel, true, false, false, usuario);
-					} else if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
-						ImprimirProformaCartaOficio(venta, papel, false, true, false, usuario);
-					} else if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_SEMICOMPLETA) {
-						ImprimirProformaCartaOficio(venta, papel, false, false, true, usuario);
-					}
-				} else if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
-					var alto;
-					if (venta.detallesVenta.length <= 2) {
-						alto = 400;
-					} else {
-						alto = 400 + (20 * (venta.detallesVenta.length - 2))
-					}
-					papel = [227, alto];
+				if (venta.configuracion.tipoConfiguracionNotaVenta == null) {
+					mostrarMensaje("Configure la Nota de Venta en Configuraciones");
+				}else{
+					if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
+						papel = [612, 936];
+						if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
+							ImprimirProformaCartaOficio(venta, papel, true, false, false, usuario);
+						} else if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
+							ImprimirProformaCartaOficio(venta, papel, false, true, false, usuario);
+						} else if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_SEMICOMPLETA) {
+							ImprimirProformaCartaOficio(venta, papel, false, false, true, usuario);
+						}
+					} else if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
+						papel = [612, 792];
+						if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
+							ImprimirProformaCartaOficio(venta, papel, true, false, false, usuario);
+						} else if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
+							ImprimirProformaCartaOficio(venta, papel, false, true, false, usuario);
+						} else if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_SEMICOMPLETA) {
+							ImprimirProformaCartaOficio(venta, papel, false, false, true, usuario);
+						}
+					} else if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
+						papel = [612, 468];
+						if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_VACIA) {
+							ImprimirProformaCartaOficio(venta, papel, true, false, false, usuario);
+						} else if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_COMPLETA) {
+							ImprimirProformaCartaOficio(venta, papel, false, true, false, usuario);
+						} else if (venta.configuracion.impresionFactura.nombre_corto == Diccionario.FACT_IMPRESION_SEMICOMPLETA) {
+							ImprimirProformaCartaOficio(venta, papel, false, false, true, usuario);
+						}
+					} else if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
+						var alto;
+						if (venta.detallesVenta.length <= 2) {
+							alto = 400;
+						} else {
+							alto = 400 + (20 * (venta.detallesVenta.length - 2))
+						}
+						papel = [227, alto];
 
-					if (esAccionGuardar && !venta.configuracion.imprimir_al_guardar) {
-						if (usuario.empresa.usar_pedidos) {
-							var sizeY = 230 + (20 * venta.detallesVenta.length);
-							doc = new PDFDocument({ compress: false, size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
+						if (esAccionGuardar && !venta.configuracion.imprimir_al_guardar) {
+							if (usuario.empresa.usar_pedidos) {
+								var sizeY = 230 + (20 * venta.detallesVenta.length);
+								doc = new PDFDocument({ compress: false, size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
+								stream = doc.pipe(blobStream());
+								ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY, usuario, llevar);
+							}
+						} else {
+							doc = new PDFDocument({ compress: false, size: papel, margins: { top: 0, bottom: 0, left: 20, right: 20 } });
 							stream = doc.pipe(blobStream());
-							ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY, usuario, llevar);
+							ImprimirProformaRollo(venta, papel, doc, stream, usuario);
+							if (usuario.empresa.usar_pedidos) {
+								var sizeY = 230 + (20 * venta.detallesVenta.length);
+								doc.addPage({ size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
+								ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY, usuario, llevar);
+							}
 						}
-					} else {
-						doc = new PDFDocument({ compress: false, size: papel, margins: { top: 0, bottom: 0, left: 20, right: 20 } });
-						stream = doc.pipe(blobStream());
-						ImprimirProformaRollo(venta, papel, doc, stream, usuario);
-						if (usuario.empresa.usar_pedidos) {
-							var sizeY = 230 + (20 * venta.detallesVenta.length);
-							doc.addPage({ size: [227, sizeY], margins: { top: 10, bottom: 10, left: 20, right: 20 } });
-							ImprimirPedido(venta, esAccionGuardar, doc, stream, sizeY, usuario, llevar);
-						}
-					}
 
-					if (doc && stream) {
-						doc.end();
-						stream.on('finish', function () {
-							var fileURL = stream.toBlobURL('application/pdf');
-							var w = window.open(fileURL, '_blank', 'location=no');
-							$timeout(function () {
-								w.print();
-							}, 500);
-						});
+						if (doc && stream) {
+							doc.end();
+							stream.on('finish', function () {
+								var fileURL = stream.toBlobURL('application/pdf');
+								var w = window.open(fileURL, '_blank', 'location=no');
+								$timeout(function () {
+									w.print();
+								}, 500);
+							});
+						}
 					}
 				}
 			}
@@ -3286,29 +3290,33 @@ angular.module('agil.servicios')
 
 	.factory('ImprimirNotaTraspaso', ['Diccionario', 'blockUI', 'ImprimirNotaTraspasoCartaOficio', 'ImprimirNotaTraspasoRollo',
 		function (Diccionario, blockUI, ImprimirNotaTraspasoCartaOficio, ImprimirNotaTraspasoRollo) {
-			var res = function (traspaso, usuario) {
+			var res = function (traspaso, usuario,mostrarMensaje) {
 				blockUI.start();
-				if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
-					papel = [612, 936];
-					itemsPorPagina = 19;
-					ImprimirNotaTraspasoCartaOficio(traspaso, papel, itemsPorPagina, usuario);
-				} else if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
-					papel = [612, 792];
-					itemsPorPagina = 16;
-					ImprimirNotaTraspasoCartaOficio(traspaso, papel, itemsPorPagina, usuario);
-				} else if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
-					papel = [598, 600];
-					itemsPorPagina = 5;
-					ImprimirNotaTraspasoCartaOficio(traspaso, papel, itemsPorPagina, usuario);
-				} else if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
-					var alto, totalItems = traspaso.detallesVenta.length;
-					if (totalItems <= 2) {
-						alto = 440;
-					} else {
-						alto = 440 + (30 * (totalItems - 2))
+				if (traspaso.configuracion.tipoConfiguracionNotaTraspaso == null) {
+					mostrarMensaje("Configure la Nota de Traspaso en Configuraciones");
+				}else{
+					if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
+						papel = [612, 936];
+						itemsPorPagina = 19;
+						ImprimirNotaTraspasoCartaOficio(traspaso, papel, itemsPorPagina, usuario);
+					} else if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
+						papel = [612, 792];
+						itemsPorPagina = 16;
+						ImprimirNotaTraspasoCartaOficio(traspaso, papel, itemsPorPagina, usuario,mostrarMensaje);
+					} else if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
+						papel = [598, 600];
+						itemsPorPagina = 5;
+						ImprimirNotaTraspasoCartaOficio(traspaso, papel, itemsPorPagina, usuario);
+					} else if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_ROLLO) {
+						var alto, totalItems = traspaso.detallesVenta.length;
+						if (totalItems <= 2) {
+							alto = 440;
+						} else {
+							alto = 440 + (30 * (totalItems - 2))
+						}
+						papel = [227, alto];
+						ImprimirNotaTraspasoRollo(traspaso, papel, usuario);
 					}
-					papel = [227, alto];
-					ImprimirNotaTraspasoRollo(traspaso, papel, usuario);
 				}
 			}
 			return res;
@@ -3358,18 +3366,16 @@ angular.module('agil.servicios')
 							doc.font('Helvetica', 7);
 							
 							if (traspaso.detallesVenta[i].inventario) {
-								if (traspaso.con_vencimiento) {
+								if (traspaso.con_vencimiento) {									
 									if (traspaso.configuracion.tipoConfiguracionNotaTraspaso.nombre_corto == "LOTE") {
 										var fecha_vencimiento = new Date(traspaso.detallesVenta[i].inventario.fecha_vencimiento);
 										doc.text(fecha_vencimiento.getDate() + "/" + (fecha_vencimiento.getMonth() + 1) + "/" + fecha_vencimiento.getFullYear(), 390, y);
-
+										doc.text(traspaso.detallesVenta[i].inventario.lote, 455, y);
 										
 									}else{
 										doc.text(traspaso.detallesVenta[i].inventario.lote, 455, y);
 									}
-									
-								}
-								
+								}	
 							}
 							
 						//} else {
@@ -3489,17 +3495,12 @@ angular.module('agil.servicios')
 				//if (usuario.empresa.usar_vencimiento) {
 					doc.text("DETALLE", 210, 120, { width: 110 });
 					if (traspaso.con_vencimiento) {
-						if (traspaso.configuracion.tipoConfiguracionNotaTraspaso != null) {
-							if (traspaso.configuracion.tipoConfiguracionNotaTraspaso.nombre_corto == "LOTE") {
-								doc.text("FECHA VENC.", 380, 120);
-								doc.text("LOTE", 450, 120);
-							}else{
-								doc.text("SERIE", 450, 120);
-							}
+						if (traspaso.configuracion.tipoConfiguracionNotaTraspaso.nombre_corto == "LOTE") {
+							doc.text("FECHA VENC.", 380, 120);
+							doc.text("LOTE", 450, 120);
 						}else{
-							$scope.mostrarMensaje("Porfavor configure el tipo de facturacion Nota Traspaso en Configuraciones");
-						}
-						
+							doc.text("SERIE", 450, 120);
+						}					
 					}
 				//} else {
 				//	doc.text("DETALLE", 190, 120, { width: 250 });
