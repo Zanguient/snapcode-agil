@@ -727,7 +727,7 @@
         </div>
         <!-- TOPBAR -->
         <div class="modal-body">
-            <form name="nuevoPrerequisitoForm" id="nuevoPrerequisitoForm" ng-submit="saveFormPrerequisito(NuevoP)">
+            <form name="nuevoPrerequisitoForm" id="nuevoPrerequisitoForm" ng-submit="saveFormPrerequisito(NuevoP,cargosPre)">
 
                 <div class="form-group row">
                     <div class="col-sm-3 ">
@@ -763,7 +763,7 @@
                         Cargos
                     </div>
                     <div class="col-sm-9">
-                        <div id="cargos" isteven-multi-select required input-model="cargos" output-model="nuevoP.cargos"
+                        <div id="cargos" isteven-multi-select required input-model="cargos" output-model="cargosPre"
                             button-label="icon nombre" item-label="icon nombre maker" tick-property="ticked"
                             translation="localLang">
                         </div>
@@ -813,9 +813,18 @@
                                 {{requisito.vencimiento_mes}}
                             </td>
                             <td>
-                                <p ng-repeat="cargo in requisito.cargos">
-                                    {{cargo.nombre}}
-                                </p>
+                                    <a popover-placement="right" uib-popover-template="dynamicPopoverCargos.templateUrl"
+                                    popover-trigger="outsideClick: outsideClick" popover-title="Cargos" class="blue">
+                                    <i class="fa fa-list-ol bigger-200 orange" aria-hidden="true"></i>
+                                </a>
+                                <script type="text/ng-template" id="myPopoverTemplate.html">
+                                        <div class="form-group">                                              
+                                                <p ng-repeat="prerequisito in requisito.prerequisitoCargos">
+                                                        {{prerequisito.cargo.nombre}}
+                                                    </p>
+                                        </div>                                           
+                                    </script>
+                                
                             </td>
                             <td>
                                     <a class="green" ng-disabled="!aplicacion.puede_modificar" href="javascript:void(0)"

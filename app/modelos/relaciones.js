@@ -816,9 +816,9 @@ module.exports = function (sequelize, Usuario, Persona, Rol, UsuarioRol, Tipo, C
 	RrhhEmpleadoFicha.belongsTo(Clase, { foreignKey: 'id_banco', as: 'banco' });
 	RrhhEmpleadoFicha.hasMany(RrhhEmpleadoCargo, { foreignKey: 'id_ficha', as: 'cargos' });
 
-	RrhhEmpleadoPrerequisitoCargo.belongsTo(RrhhEmpleadoCargo, { foreignKey: 'id_cargo', as: 'cargoPrerequisito' });
+	RrhhEmpleadoPrerequisitoCargo.belongsTo(Clase, { foreignKey: 'id_cargo', as: 'cargo' });
 	RrhhEmpleadoPrerequisitoCargo.belongsTo(MedicoPrerequisito, { foreignKey: 'id_prerequisito', as: 'cargoPrerequisito' });
-	RrhhEmpleadoCargo.hasMany(RrhhEmpleadoPrerequisitoCargo, { foreignKey: 'id_cargo', as: 'cargoPrerequisitos' });
+	Clase.hasMany(RrhhEmpleadoPrerequisitoCargo, { foreignKey: 'id_cargo', as: 'cargoPrerequisitos' });
 	MedicoPrerequisito.hasMany(RrhhEmpleadoPrerequisitoCargo, { foreignKey: 'id_prerequisito', as: 'prerequisitoCargos' });
 
 	//RrhhEmpleadoFichaOtrosSeguros.belongsTo(MedicoPaciente, { foreignKey: 'id_empleado', as: 'otroSeguro' });23/02/2018

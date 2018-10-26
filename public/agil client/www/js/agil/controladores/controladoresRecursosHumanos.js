@@ -513,7 +513,7 @@ angular.module('agil.controladores')
                 $scope.cerrarPopup($scope.idModalEditarPrerequisito);
             }
             $scope.abrirDialogPrerequisitoNuevo = function () {
-                $scope.NuevoP = new Prerequisito({ puede_modificar_rrhh: false });
+                $scope.NuevoP = new Prerequisito({ puede_modificar_rrhh: false ,cargos:[]});
                 $scope.obtenerCargos()
                 $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
             }
@@ -2184,7 +2184,7 @@ angular.module('agil.controladores')
             }
             $scope.abrirDialogPrerequisitoEditar = function (prerequisito) {
 
-                $scope.NuevoP = new Prerequisito({ id: prerequisito.id, nombre: prerequisito.nombre, observacion: prerequisito.observacion, vencimiento_mes: prerequisito.vencimiento_mes, dias_activacion: prerequisito.dias_activacion, puede_modificar_rrhh: prerequisito.puede_modificar_rrhh })
+                $scope.NuevoP = new Prerequisito({ id: prerequisito.id, nombre: prerequisito.nombre, observacion: prerequisito.observacion, vencimiento_mes: prerequisito.vencimiento_mes, dias_activacion: prerequisito.dias_activacion, puede_modificar_rrhh: prerequisito.puede_modificar_rrhh,cargos:[] })
                 $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
             }
 
@@ -3278,8 +3278,9 @@ angular.module('agil.controladores')
                     blockUI.stop();
                 });
             }
-            $scope.saveFormPrerequisito = function (nuevoPrerequisito) {
+            $scope.saveFormPrerequisito = function (nuevoPrerequisito,cargosPre) {
                 blockUI.start();
+                nuevoPrerequisito.cargos=cargosPre
                 // nuevoPrerequisito.fecha_inicio = new Date($scope.convertirFecha(nuevoPrerequisito.fecha_inicio))
                 // nuevoPrerequisito.fecha_inicio = nuevoPrerequisito.fecha_inicio.setFullYear(nuevoPrerequisito.fecha_inicio.getFullYear(), nuevoPrerequisito.fecha_inicio.getMonth(), nuevoPrerequisito.fecha_inicio.getDate());
                 // nuevoPrerequisito.fecha_vencimiento = nuevoPrerequisito.fechav.setFullYear(nuevoPrerequisito.fechav.getFullYear(), nuevoPrerequisito.fechav.getMonth(), nuevoPrerequisito.fechav.getDate())

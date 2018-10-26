@@ -1,6 +1,6 @@
 module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Sucursal, MedicoPrerequisito, Clase, Diccionario, Tipo, decodeBase64Image, fs, MedicoVacuna, VacunaDosis,
 	MedicoPacienteVacuna, MedicoPacienteVacunaDosis, MedicoPacienteConsulta, MedicoPacienteFicha, sequelize, Sequelize, MedicoLaboratorioExamen, MedicoLaboratorio, MedicoLaboratorioPaciente, MedicoLaboratorioResultado,
-	MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado, MedicoPacientePreRequisito, RrhhEmpleadoCargo, RrhhEmpleadoFicha,RrhhEmpleadoPrerequisitoCargo) {
+	MedicoLaboratorioResultado, MedicoDiagnostico, MedicoDiagnosticoExamen, MedicoDiagnosticoPaciente, MedicoDiagnosticoResultado, MedicoPacientePreRequisito, RrhhEmpleadoCargo, RrhhEmpleadoFicha, RrhhEmpleadoPrerequisitoCargo) {
 
 	router.route('/paciente/:id_paciente')
 		.get(function (req, res) {
@@ -592,7 +592,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 																		id_empresa: req.body.id_empresa
 																	}
 																}).then(function (tipo) {
-																	 Clase.findOrCreate({
+																	Clase.findOrCreate({
 																		where: {
 																			nombre: pacienteActual.campamento,
 																			id_tipo: tipo.dataValues.id
@@ -1557,7 +1557,22 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 							id: req.body.id
 						}
 					}).then(function (prerequisitoCreado) {
-						res.json({ mensaje: "Pre-requisitos actualizado satisfactoriamente!" });
+						RrhhEmpleadoPrerequisitoCargo.destroy({
+							where: {
+								id_prerequisito: req.body.id
+							}
+						}).then(function (cargosPrerequisitosVacios) {
+							req.body.cargos.forEach(function (cargo, index, array) {
+								RrhhEmpleadoPrerequisitoCargo.create({
+									id_cargo: cargo.id,
+									id_prerequisito: req.body.id
+								}).then(function (creado) {
+									if (index === (array.length - 1)) {
+										res.json({ mensaje: "Pre-requisitos actualizado satisfactoriamente!" });
+									}
+								})
+							})
+						})
 					});
 
 			} else {
@@ -1590,7 +1605,16 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 						observacion: req.body.observacion,
 						puede_modificar_rrhh: req.body.puede_modificar_rrhh
 					}).then(function (prerequisitoCreado) {
-						res.json({ mensaje: "Pre-requisitos creados satisfactoriamente!" });
+						req.body.cargos.forEach(function (cargo, index, array) {
+							RrhhEmpleadoPrerequisitoCargo.create({
+								id_cargo: cargo.id,
+								id_prerequisito: prerequisitoCreado.id
+							}).then(function (creado) {
+								if (index === (array.length - 1)) {
+									res.json({ mensaje: "Pre-requisitos creados satisfactoriamente!" });
+								}
+							})
+						})
 					});
 				}
 			}
@@ -1613,7 +1637,13 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 		})
 		.get(function (req, res) {
 			MedicoPrerequisito.findAll({
-				// include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: Diccionario.PRE_REQUSITO } }]
+				include: [{
+					model: RrhhEmpleadoPrerequisitoCargo, as: 'prerequisitoCargos',
+					include: [{
+						model: Clase, as: 'cargo'/* ,
+						include: [{ model: Clase, as: 'cargo' }] */
+					}]
+				}]
 			}).then(function (prerequisitos) {
 				res.json({ prerequisitos: prerequisitos });
 			});
@@ -1825,80 +1855,80 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 			var requisitosPac = []
 			MedicoPrerequisito.findAll({
 			}).then(function (lstRequisitos) {
-				if(lstRequisitos.length>0){
-				lstRequisitos.forEach(function (requi, index, array) {
-					var condicionPreRequisito = { id_paciente: req.params.id_paciente, eliminado: false }
-					var desde = false
-					var hasta = false
-					if (req.params.inicio != 0) {
-						var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
-						desde = true
-					}
-					if (req.params.fin != 0) {
-						var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
-						hasta = true
-					}
-					if (desde && hasta) {
-						condicionPreRequisito = {
-							id_paciente: req.params.id_paciente,
-							eliminado: false,
-							id_prerequisito: requi.id,
-							fecha_vencimiento: {
-								$between: [inicio, fin]
+				if (lstRequisitos.length > 0) {
+					lstRequisitos.forEach(function (requi, index, array) {
+						var condicionPreRequisito = { id_paciente: req.params.id_paciente, eliminado: false }
+						var desde = false
+						var hasta = false
+						if (req.params.inicio != 0) {
+							var inicio = new Date(req.params.inicio); inicio.setHours(0, 0, 0, 0, 0);
+							desde = true
+						}
+						if (req.params.fin != 0) {
+							var fin = new Date(req.params.fin); fin.setHours(23, 0, 0, 0, 0);
+							hasta = true
+						}
+						if (desde && hasta) {
+							condicionPreRequisito = {
+								id_paciente: req.params.id_paciente,
+								eliminado: false,
+								id_prerequisito: requi.id,
+								fecha_vencimiento: {
+									$between: [inicio, fin]
+								}
+							}
+						} else if (desde && !hasta) {
+							condicionPreRequisito = {
+								id_paciente: req.params.id_paciente,
+								eliminado: false,
+								id_prerequisito: requi.id,
+								fecha_vencimiento: {
+									$gte: [inicio]
+								}
+							}
+						} else if (!desde && hasta) {
+							condicionPreRequisito = {
+								id_paciente: req.params.id_paciente,
+								eliminado: false,
+								id_prerequisito: requi.id,
+								fecha_vencimiento: {
+									$lte: [fin]
+								}
+							}
+						} else if (!desde && !hasta) {
+							var hoy = new Date()
+							// hoy.setHours(0,0,0,0)
+							condicionPreRequisito = {
+								id_paciente: req.params.id_paciente,
+								id_prerequisito: requi.id,
+								eliminado: false
+								// fecha_vencimiento: {
+								// 	$gte: hoy
+								// }
 							}
 						}
-					} else if (desde && !hasta) {
-						condicionPreRequisito = {
-							id_paciente: req.params.id_paciente,
-							eliminado: false,
-							id_prerequisito: requi.id,
-							fecha_vencimiento: {
-								$gte: [inicio]
+						MedicoPacientePreRequisito.findAll({
+							limit: 1,
+							where: condicionPreRequisito,
+							include: [{ model: MedicoPrerequisito, as: 'preRequisito' }, { model: MedicoPaciente, as: 'pacientePrerequisito' }
+							],
+							order: [['id', 'DESC']]
+						}).then(function (prerequisitos) {
+							if (prerequisitos[0] != undefined) {
+								requisitosPac.push(prerequisitos[0])
 							}
-						}
-					} else if (!desde && hasta) {
-						condicionPreRequisito = {
-							id_paciente: req.params.id_paciente,
-							eliminado: false,
-							id_prerequisito: requi.id,
-							fecha_vencimiento: {
-								$lte: [fin]
-							}
-						}
-					} else if (!desde && !hasta) {
-						var hoy = new Date()
-						// hoy.setHours(0,0,0,0)
-						condicionPreRequisito = {
-							id_paciente: req.params.id_paciente,
-							id_prerequisito: requi.id,
-							eliminado: false
-							// fecha_vencimiento: {
-							// 	$gte: hoy
-							// }
-						}
-					}
-					MedicoPacientePreRequisito.findAll({
-						limit: 1,
-						where: condicionPreRequisito,
-						include: [{ model: MedicoPrerequisito, as: 'preRequisito' }, { model: MedicoPaciente, as: 'pacientePrerequisito' }
-						],
-						order: [['id', 'DESC']]
-					}).then(function (prerequisitos) {
-						if (prerequisitos[0] != undefined) {
-							requisitosPac.push(prerequisitos[0])
-						}
 
-						// res.json({ Prerequisitos: prerequisitos });
-						if (index == array.length - 1) {
-							res.json({ Prerequisitos: requisitosPac });
-						}
+							// res.json({ Prerequisitos: prerequisitos });
+							if (index == array.length - 1) {
+								res.json({ Prerequisitos: requisitosPac });
+							}
+						});
 					});
-				});
-			}else{
-				res.json({ Prerequisitos: [] });
-			}
+				} else {
+					res.json({ Prerequisitos: [] });
+				}
 			})
-			
+
 		})
 	router.route('/medico-paciente-consulta')
 		.post(function (req, res) {
@@ -2317,7 +2347,7 @@ module.exports = function (router, Usuario, MedicoPaciente, Persona, Empresa, Su
 				} else {
 					MedicoPaciente.find({
 						where: { id: req.params.id_paciente },
-						include: [{ model: Clase, as: 'extension' },{ model: Clase, as: 'campo' },
+						include: [{ model: Clase, as: 'extension' }, { model: Clase, as: 'campo' },
 						{ model: Persona, as: 'persona', include: [{ model: Clase, as: 'genero' }] },
 						{ model: Empresa, as: 'empresa' }]
 					}).then(function (pacienteEncontrado) {
