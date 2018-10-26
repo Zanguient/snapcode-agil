@@ -2690,6 +2690,7 @@ angular.module('agil.servicios')
 		}])
 	.factory('DibujarDetalleCuerpoProformaNVmedioOficio', ['blockUI', function (blockUI) {
 		var res = function (i, y, doc, usuario, venta, tipo, texto1, texto2, texto3) {
+			var posicionCuadro = 30;
 			if (tipo == 1) {
 				var ydesc = y
 				venta.detallesVenta[i].producto.codigo = venta.detallesVenta[i].producto.codigo
