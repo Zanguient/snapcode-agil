@@ -2692,7 +2692,7 @@ angular.module('agil.servicios')
 		var res = function (i, y, doc, usuario, venta, tipo, texto1, texto2, texto3) {
 			if (tipo == 1) {
 				var ydesc = y
-				venta.detallesVenta[i].producto.codigo = venta.detallesVenta[i].producto.codigo + "ssssssssssssss"
+				venta.detallesVenta[i].producto.codigo = venta.detallesVenta[i].producto.codigo
 				if (venta.detallesVenta[i].producto.codigo.length > 14 && venta.detallesVenta[i].producto.codigo.length <= 28) {
 					ydesc = y - 5
 				} else if (venta.detallesVenta[i].producto.codigo.length > 28) {
