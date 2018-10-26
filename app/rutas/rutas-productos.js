@@ -1110,7 +1110,14 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 						}],
 					order: [[{ model: Inventario, as: 'inventarios' }, 'updatedAt', 'DESC']]
 				}).then(function (productos) {
-					res.json(productos);
+					Sucursal.findAll({
+						where:{id_empresa: req.params.id_empresa},
+						attributes:['id','nombre'],
+						include: [{model:Almacen, as: 'almacenes',attributes:['id','id_sucursal','nombre']}]
+					}).then(function(sucursales){
+						res.json([productos, sucursales]);
+					})
+					
 				}).catch(function (err) {
 					res.json([{ hasError: true, mensaje: err.stack + '---LN 523 rutas productos' }]);
 				});
