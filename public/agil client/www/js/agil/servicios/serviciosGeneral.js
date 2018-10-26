@@ -2933,7 +2933,7 @@ angular.module('agil.servicios')
 					} else {
 						doc.text(venta.detallesVenta[i].producto.codigo, 55, y);
 						doc.text(venta.detallesVenta[i].cantidad, 130, y);
-						doc.text(venta.detallesVenta[i].producto.unidad_medida, 166, y);
+						doc.text(venta.detallesVenta[i].producto.unidad_medida, 166, y,{ width: 30 });
 						doc.text(venta.detallesVenta[i].producto.nombre, 200, y, { width: 150 });
 						if (usuario.empresa.usar_vencimientos) {
 							if (venta.con_vencimiento) {
@@ -2960,7 +2960,7 @@ angular.module('agil.servicios')
 					y = y + posicionCuadro;
 					items++;
 
-					if (items == itemsPorPagina || doc.y > 690) {
+					if ((items == itemsPorPagina || doc.y > 690)&& (i!=venta.detallesVenta.length-1)) {
 						doc.addPage({ size: papel, margin: 10 });
 						y = 240;
 						items = 0;
