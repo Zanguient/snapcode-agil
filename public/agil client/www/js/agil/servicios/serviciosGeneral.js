@@ -2852,6 +2852,7 @@ angular.module('agil.servicios')
 				doc.font('Helvetica', 7);
 
 				for (var i = 0; i < venta.detallesVenta.length && items <= itemsPorPagina; i++) {
+
 					venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento)
 					var posicionCuadro = 30
 					if (existenDescuentos && existenRecargo && existenIce && existenExento) {
@@ -2898,7 +2899,8 @@ angular.module('agil.servicios')
 						doc.text(venta.detallesVenta[i].recargo.toFixed(2), 435, y);
 						doc.text(venta.detallesVenta[i].ice.toFixed(2), 470, y);
 						doc.text(venta.detallesVenta[i].excento.toFixed(2), 505, y);
-						doc.text(venta.detallesVenta[i].total.toFixed(2), 535, y);
+						doc.text(venta.detallesVenta[i].total.toFixed(2), 535, y);						
+						var variablesyp={y:y,posicionCuadro:posicionCuadro}
 					} else if (existenDescuentos && !existenRecargo && !existenIce && !existenExento) {						
 						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 1, venta.detallesVenta[i].descuento)
 					} else if (existenDescuentos && existenIce && !existenRecargo && !existenExento) {
@@ -2945,6 +2947,7 @@ angular.module('agil.servicios')
 						}
 						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 460, y);
 						doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+						var variablesyp={y:y,posicionCuadro:posicionCuadro}
 					}
 					y=variablesyp.y
 					posicionCuadro=variablesyp.posicionCuadro
