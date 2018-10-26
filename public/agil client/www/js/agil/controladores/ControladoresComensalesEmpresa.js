@@ -1417,7 +1417,7 @@ angular.module('agil.controladores')
                     prom.then(function (res) {
                         $scope.mostrarMensaje(res.mensaje)
                         if (!res.hasErr) {
-                            $scope.obtenerComidas()
+                            $scope.obtenerComidas(true)
                         }
                     }).catch(function (err) {
                         var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
@@ -1460,7 +1460,7 @@ angular.module('agil.controladores')
                     prom.then(function (res) {
                         $scope.mostrarMensaje(res.mensaje)
                         if (!res.hasErr) {
-                            $scope.obtenerPrecioComidas()
+                            $scope.obtenerPrecioComidas(true)
                         }
                     }).catch(function (err) {
                         var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
