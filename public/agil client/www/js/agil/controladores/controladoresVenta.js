@@ -412,12 +412,16 @@ angular.module('agil.controladores')
 					// === para colocar el costo unitario de inventario == 
 					$scope.precio_inventario;
 					if (producto.inventarios.length > 0) {
+						var pre = producto.inventarios.map(function (dato) {
+							
+							return dato.id
+						});
+						pre = pre.reduce(function(a, b) {
+							return Math.max(a, b);
+						});
 						var pre = producto.inventarios.find(function (dato) {
-							var inv = dato
-							if (inv.id <= dato.id) {
-								inv = dato
-							}
-							return dato
+							
+							return pre==dato.id
 						});
 						$scope.precio_inventario = pre.costo_unitario + " Bs";
 
@@ -487,12 +491,16 @@ angular.module('agil.controladores')
 					$scope.precio_inventario;
 
 					if (producto.inventarios.length > 0) {
+						var pre = producto.inventarios.map(function (dato) {
+							
+							return dato.id
+						});
+						pre = pre.reduce(function(a, b) {
+							return Math.max(a, b);
+						});
 						var pre = producto.inventarios.find(function (dato) {
-							var inv = dato
-							if (inv.id <= dato.id) {
-								inv = dato
-							}
-							return dato
+							
+							return pre==dato.id
 						});
 						$scope.precio_inventario = pre.costo_unitario + " Bs";
 

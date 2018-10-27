@@ -2690,7 +2690,26 @@ angular.module('agil.servicios')
 		}])
 	.factory('DibujarDetalleCuerpoProformaNVmedioOficio', ['blockUI', function (blockUI) {
 		var res = function (i, y, doc, usuario, venta, tipo, texto1, texto2, texto3) {
-			var posicionCuadro = 30;
+			var posicionCuadro = 30
+			if (tipo == 0) {
+				doc.text(venta.detallesVenta[i].producto.codigo, 55, y);
+				doc.text(venta.detallesVenta[i].cantidad, 130, y);
+				doc.text(venta.detallesVenta[i].producto.unidad_medida, 166, y, { width: 30 });
+				doc.text(venta.detallesVenta[i].producto.nombre, 200, y, { width: 150 });
+				if (usuario.empresa.usar_vencimientos) {
+					if (venta.con_vencimiento) {
+						if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
+							doc.text(venta.detallesVenta[i].lote, 350, y, { width: 35 });
+						} else {
+							doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 350, y);
+							doc.text(venta.detallesVenta[i].lote, 415, y, { width: 35 });
+						}
+					}
+				}
+				doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 460, y);
+				doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
+
+			}
 			if (tipo == 1) {
 				var ydesc = y
 				venta.detallesVenta[i].producto.codigo = venta.detallesVenta[i].producto.codigo
@@ -2821,8 +2840,54 @@ angular.module('agil.servicios')
 				doc.text(texto2 ? texto2.toFixed(2) : 0, 470, y);
 				doc.text(texto3 ? texto3.toFixed(2) : 0, 505, y);
 				doc.text(venta.detallesVenta[i].total.toFixed(2), 535, y);
+			} else if (tipo == 4) {
+				var ydesc = y
+				if (venta.detallesVenta[i].producto.codigo.length > 8 && venta.detallesVenta[i].producto.codigo.length <= 16) {
+					ydesc = y - 5
+				} else if (venta.detallesVenta[i].producto.codigo.length > 16) {
+					ydesc = y - 10
+				}
+				doc.text(venta.detallesVenta[i].producto.codigo, 55, ydesc, { width: 35 });
+				doc.text(venta.detallesVenta[i].cantidad, 95, y);
+				doc.text(venta.detallesVenta[i].producto.unidad_medida, 118, y, { width: 30 });
+				ydesc = y
+				venta.detallesVenta[i].producto.nombre = venta.detallesVenta[i].producto.nombre
+				var cantidadlineas = venta.detallesVenta[i].producto.nombre.length
+
+				if (venta.detallesVenta[i].producto.nombre.length > 20 && venta.detallesVenta[i].producto.nombre.length <= 40) {
+					ydesc = y - 7
+					cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 20
+					posicionCuadro = 25 + cantidadlineas * 5
+				} else if (venta.detallesVenta[i].producto.nombre.length > 40) {
+					ydesc = y - 10
+					cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 20
+					posicionCuadro = 30 + cantidadlineas * 5
+				}
+				if (posicionCuadro < 30) {
+					posicionCuadro = 30
+				}
+				doc.text(venta.detallesVenta[i].producto.nombre, 155, ydesc, { width: 80 });
+				if (usuario.empresa.usar_vencimientos) {
+					if (venta.con_vencimiento) {
+						if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
+							doc.text(venta.detallesVenta[i].lote, 279, y, { width: 30 });
+						} else {
+							doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 240, y);
+							doc.text(venta.detallesVenta[i].lote, 279, y, { width: 35 });
+						}
+
+					}
+				}
+				doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 315, y);
+				doc.text(venta.detallesVenta[i].importe.toFixed(2), 350, y);
+				doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : 0), 395, y);
+				doc.text(venta.detallesVenta[i].recargo.toFixed(2), 435, y);
+				doc.text(venta.detallesVenta[i].ice.toFixed(2), 470, y);
+				doc.text(venta.detallesVenta[i].excento.toFixed(2), 505, y);
+				doc.text(venta.detallesVenta[i].total.toFixed(2), 535, y);
+
 			}
-			var datos={y:y,posicionCuadro:posicionCuadro}
+			var datos = { y: y, posicionCuadro: posicionCuadro }
 			return datos
 		}
 		return res;
@@ -2834,19 +2899,23 @@ angular.module('agil.servicios')
 				var stream = doc.pipe(blobStream());
 				//var canvas=document.getElementById('qr-code');
 				// draw some text
+				var tamañoPapelComparacion = 0
 				var existencias = VerificarDescuentos(venta.detallesVenta);
 				var existenDescuentos = existencias.descuento
 				var existenRecargo = existencias.recargo
 				var existenIce = existencias.ice
-				var existenExento = existencias.exento
+				var existenExcento = existencias.excento
 				doc.font('Helvetica', 8);
 				var itemsPorPagina = 0;
 				if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
-					itemsPorPagina = 19;
+					tamañoPapelComparacion = 860
+					itemsPorPagina = 20;
 				} else if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_CARTA) {
+					tamañoPapelComparacion = 700
 					itemsPorPagina = 16;
 				} else if (venta.configuracion.tamanoPapelNotaVenta.nombre_corto == Diccionario.FACT_PAPEL_MEDIOOFICIO) {
-					itemsPorPagina = 3;
+					itemsPorPagina = 6;
+					tamañoPapelComparacion = 380
 				}
 				var y = 240, items = 0, pagina = 1, totalPaginas = Math.ceil(venta.detallesVenta.length / itemsPorPagina);
 				DibujarCabeceraProformaNVmedioOficio(doc, vacia, completa, venta, papel, pagina, totalPaginas, usuario);
@@ -2856,102 +2925,41 @@ angular.module('agil.servicios')
 
 					venta.detallesVenta[i].fecha_vencimiento = new Date(venta.detallesVenta[i].fecha_vencimiento)
 					var posicionCuadro = 30
-					if (existenDescuentos && existenRecargo && existenIce && existenExento) {
-						var ydesc = y
-						if (venta.detallesVenta[i].producto.codigo.length > 8 && venta.detallesVenta[i].producto.codigo.length <= 16) {
-							ydesc = y - 5
-						} else if (venta.detallesVenta[i].producto.codigo.length > 16) {
-							ydesc = y - 10
-						}
-						doc.text(venta.detallesVenta[i].producto.codigo, 55, ydesc, { width: 35 });
-						doc.text(venta.detallesVenta[i].cantidad, 95, y);
-						doc.text(venta.detallesVenta[i].producto.unidad_medida, 118, y, { width: 30 });
-						ydesc = y
-						venta.detallesVenta[i].producto.nombre = venta.detallesVenta[i].producto.nombre
-						var cantidadlineas = venta.detallesVenta[i].producto.nombre.length
-
-						if (venta.detallesVenta[i].producto.nombre.length > 20 && venta.detallesVenta[i].producto.nombre.length <= 40) {
-							ydesc = y - 7
-							cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 20
-							posicionCuadro = 25 + cantidadlineas * 5
-						} else if (venta.detallesVenta[i].producto.nombre.length > 40) {
-							ydesc = y - 10
-							cantidadlineas = venta.detallesVenta[i].producto.nombre.length / 20
-							posicionCuadro = 30 + cantidadlineas * 5
-						}
-						if (posicionCuadro < 30) {
-							posicionCuadro = 30
-						}
-						doc.text(venta.detallesVenta[i].producto.nombre, 155, ydesc, { width: 80 });
-						if (usuario.empresa.usar_vencimientos) {
-							if (venta.con_vencimiento) {
-								if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
-									doc.text(venta.detallesVenta[i].lote, 279, y, { width: 30 });
-								} else {
-									doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 240, y);
-									doc.text(venta.detallesVenta[i].lote, 279, y, { width: 35 });
-								}
-
-							}
-						}
-						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 315, y);
-						doc.text(venta.detallesVenta[i].importe.toFixed(2), 350, y);
-						doc.text((venta.detallesVenta[i].descuento ? venta.detallesVenta[i].descuento.toFixed(2) : 0), 395, y);
-						doc.text(venta.detallesVenta[i].recargo.toFixed(2), 435, y);
-						doc.text(venta.detallesVenta[i].ice.toFixed(2), 470, y);
-						doc.text(venta.detallesVenta[i].excento.toFixed(2), 505, y);
-						doc.text(venta.detallesVenta[i].total.toFixed(2), 535, y);						
-						var variablesyp={y:y,posicionCuadro:posicionCuadro}
-					} else if (existenDescuentos && !existenRecargo && !existenIce && !existenExento) {						
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 1, venta.detallesVenta[i].descuento)
-					} else if (existenDescuentos && existenIce && !existenRecargo && !existenExento) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 2, venta.detallesVenta[i].descuento, venta.detallesVenta[i].ice)
-					} else if (existenDescuentos && existenExento && !existenRecargo && !existenIce) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 2, venta.detallesVenta[i].descuento, venta.detallesVenta[i].excento)
-					} else if (existenRecargo && !existenDescuentos && !existenIce && !existenExento) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 1, venta.detallesVenta[i].recargo)
-					} else if (existenRecargo && existenDescuentos && !existenIce && !existenExento) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 2, venta.detallesVenta[i].descuento, venta.detallesVenta[i].recargo)
-					} else if (existenRecargo && existenIce && !existenDescuentos && !existenExento) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 2, venta.detallesVenta[i].descuento, venta.detallesVenta[i].ice)
-					} else if (existenRecargo && existenExento && !existenDescuentos && !existenIce) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 2, venta.detallesVenta[i].descuento, venta.detallesVenta[i].exento)
-					} else if (existenIce && !existenDescuentos && !existenRecargo && !existenExento) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 1, venta.detallesVenta[i].ice)
-					} else if (existenIce && existenExento && !existenDescuentos && !existenRecargo) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 2, venta.detallesVenta[i].ice, venta.detallesVenta[i].exento)
-					} else if (existenExento && !existenDescuentos && !existenRecargo && !existenIce) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 1, venta.detallesVenta[i].exento)
-					} else if (existenDescuentos && existenRecargo && existenIce && !existenExento) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 3, venta.detallesVenta[i].descuento, venta.detallesVenta[i].recargo, venta.detallesVenta[i].ice)
-					} else if (existenDescuentos && existenRecargo && !existenIce && existenExento) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 3, venta.detallesVenta[i].descuento, venta.detallesVenta[i].recargo, venta.detallesVenta[i].exento)
-					} else if (existenDescuentos && !existenRecargo && existenIce && existenExento) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 3, venta.detallesVenta[i].descuento, venta.detallesVenta[i].ice, venta.detallesVenta[i].exento)
-					} else if (!existenDescuentos && existenRecargo && existenIce && existenExento) {
-						var variablesyp= DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 3, venta.detallesVenta[i].recargo, venta.detallesVenta[i].ice, venta.detallesVenta[i].exento)
-
+					if (existenDescuentos && existenRecargo && existenIce && existenExcento) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 4)
+					} else if (existenDescuentos && !existenRecargo && !existenIce && !existenExcento) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 1, venta.detallesVenta[i].descuento)
+					} else if (existenDescuentos && existenIce && !existenRecargo && !existenExcento) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 2, venta.detallesVenta[i].descuento, venta.detallesVenta[i].ice)
+					} else if (existenDescuentos && existenExcento && !existenRecargo && !existenIce) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 2, venta.detallesVenta[i].descuento, venta.detallesVenta[i].excento)
+					} else if (existenRecargo && !existenDescuentos && !existenIce && !existenExcento) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 1, venta.detallesVenta[i].recargo)
+					} else if (existenRecargo && existenDescuentos && !existenIce && !existenExcento) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 2, venta.detallesVenta[i].descuento, venta.detallesVenta[i].recargo)
+					} else if (existenRecargo && existenIce && !existenDescuentos && !existenExcento) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 2, venta.detallesVenta[i].descuento, venta.detallesVenta[i].ice)
+					} else if (existenRecargo && existenExcento && !existenDescuentos && !existenIce) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 2, venta.detallesVenta[i].descuento, venta.detallesVenta[i].exento)
+					} else if (existenIce && !existenDescuentos && !existenRecargo && !existenExcento) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 1, venta.detallesVenta[i].ice)
+					} else if (existenIce && existenExcento && !existenDescuentos && !existenRecargo) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 2, venta.detallesVenta[i].ice, venta.detallesVenta[i].exento)
+					} else if (existenExcento && !existenDescuentos && !existenRecargo && !existenIce) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 1, venta.detallesVenta[i].exento)
+					} else if (existenDescuentos && existenRecargo && existenIce && !existenExcento) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 3, venta.detallesVenta[i].descuento, venta.detallesVenta[i].recargo, venta.detallesVenta[i].ice)
+					} else if (existenDescuentos && existenRecargo && !existenIce && existenExcento) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 3, venta.detallesVenta[i].descuento, venta.detallesVenta[i].recargo, venta.detallesVenta[i].exento)
+					} else if (existenDescuentos && !existenRecargo && existenIce && existenExcento) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 3, venta.detallesVenta[i].descuento, venta.detallesVenta[i].ice, venta.detallesVenta[i].exento)
+					} else if (!existenDescuentos && existenRecargo && existenIce && existenExcento) {
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 3, venta.detallesVenta[i].recargo, venta.detallesVenta[i].ice, venta.detallesVenta[i].exento)
 					} else {
-						doc.text(venta.detallesVenta[i].producto.codigo, 55, y);
-						doc.text(venta.detallesVenta[i].cantidad, 130, y);
-						doc.text(venta.detallesVenta[i].producto.unidad_medida, 166, y,{ width: 30 });
-						doc.text(venta.detallesVenta[i].producto.nombre, 200, y, { width: 150 });
-						if (usuario.empresa.usar_vencimientos) {
-							if (venta.con_vencimiento) {
-								if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
-									doc.text(venta.detallesVenta[i].lote, 350, y, { width: 35 });
-								} else {
-									doc.text(venta.detallesVenta[i].fecha_vencimiento.getDate() + "/" + (venta.detallesVenta[i].fecha_vencimiento.getMonth() + 1) + "/" + venta.detallesVenta[i].fecha_vencimiento.getFullYear(), 350, y);
-									doc.text(venta.detallesVenta[i].lote, 415, y, { width: 35 });
-								}
-							}
-						}
-						doc.text(venta.detallesVenta[i].precio_unitario.toFixed(2), 460, y);
-						doc.text(venta.detallesVenta[i].total.toFixed(2), 520, y);
-						var variablesyp={y:y,posicionCuadro:posicionCuadro}
+						var posicionYyTamañoCuadro = DibujarDetalleCuerpoProformaNVmedioOficio(i, y, doc, usuario, venta, 0)
 					}
-					y=variablesyp.y
-					posicionCuadro=variablesyp.posicionCuadro
+					y = posicionYyTamañoCuadro.y
+					posicionCuadro = posicionYyTamañoCuadro.posicionCuadro
 					if (completa || vacia) {
 						if (venta.configuracion.formatoPapelNotaVenta.nombre_corto == "FORM_C_MAR") {
 							doc.rect(50, y - 15, 520, posicionCuadro).stroke();
@@ -2961,7 +2969,7 @@ angular.module('agil.servicios')
 					y = y + posicionCuadro;
 					items++;
 
-					if ((items == itemsPorPagina || doc.y > 690)&& (i!=venta.detallesVenta.length-1)) {
+					if ((items == itemsPorPagina || doc.y > tamañoPapelComparacion) && (i != venta.detallesVenta.length - 1)) {
 						doc.addPage({ size: papel, margin: 10 });
 						y = 240;
 						items = 0;
@@ -3059,76 +3067,39 @@ angular.module('agil.servicios')
 					var existenDescuentos = existencias.descuento
 					var existenRecargo = existencias.recargo
 					var existenIce = existencias.ice
-					var existenExento = existencias.exento
-					if (existenDescuentos && existenRecargo && existenIce && existenExento) {
-						doc.text("CODIGO", 55, 210);
-						doc.text("CANT.", 90, 210);
-						doc.text("UNID.", 120, 210);
-						doc.text("DETALLE", 160, 210);
-						if (usuario.empresa.usar_vencimientos) {
-							if (venta.con_vencimiento) {
-								if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
-									doc.text("SERIE.", 240, 210)
-								} else {
-									doc.text("VENC.", 240, 210)
-									doc.text("LOTE.", 278, 210)
-								}
-							}
-						}
-						doc.text("P. UNIT.", 310, 210);
-						doc.text("IMPORTE", 345, 210);
-						doc.text("DESC.", 395, 210);
-						doc.text("REC.", 430, 210);
-						doc.text("ICE", 465, 210);
-						doc.text("EXC.", 505, 210);
-						doc.text("TOTAL", 530, 210);
-					} else if (existenDescuentos && !existenRecargo && !existenIce && !existenExento) {
+					var existenExcento = existencias.excento
+					if (existenDescuentos && existenRecargo && existenIce && existenExcento) {
+						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 4,'DESC.' ,"REC.", "ICE.", "EXC.")
+					} else if (existenDescuentos && !existenRecargo && !existenIce && !existenExcento) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 1, "DESC.")
-					} else if (existenDescuentos && existenIce && !existenRecargo && !existenExento) {
+					} else if (existenDescuentos && existenIce && !existenRecargo && !existenExcento) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 2, "DESC.", "ICE.")
-					} else if (existenDescuentos && existenExento && !existenRecargo && !existenIce) {
+					} else if (existenDescuentos && existenExcento && !existenRecargo && !existenIce) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 2, "DESC.", "EXC.")
-					} else if (existenRecargo && !existenDescuentos && !existenIce && !existenExento) {
+					} else if (existenRecargo && !existenDescuentos && !existenIce && !existenExcento) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 1, "REC.")
-					} else if (existenRecargo && existenDescuentos && !existenIce && !existenExento) {
+					} else if (existenRecargo && existenDescuentos && !existenIce && !existenExcento) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 2, "DESC.", "REC.")
-					} else if (existenRecargo && existenIce && !existenDescuentos && !existenExento) {
+					} else if (existenRecargo && existenIce && !existenDescuentos && !existenExcento) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 2, "REC.", "ICE.")
-					} else if (existenRecargo && existenExento && !existenDescuentos && !existenIce) {
+					} else if (existenRecargo && existenExcento && !existenDescuentos && !existenIce) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 2, "REC.", "EXC.")
-					} else if (existenIce && !existenDescuentos && !existenRecargo && !existenExento) {
+					} else if (existenIce && !existenDescuentos && !existenRecargo && !existenExcento) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 1, "ICE.")
-					} else if (existenIce && existenExento && !existenDescuentos && !existenRecargo) {
+					} else if (existenIce && existenExcento && !existenDescuentos && !existenRecargo) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 2, "ICE.", "EXC.")
-					} else if (existenExento && !existenDescuentos && !existenRecargo && !existenIce) {
+					} else if (existenExcento && !existenDescuentos && !existenRecargo && !existenIce) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 1, "EXC.")
-					} else if (existenDescuentos && existenRecargo && existenIce && !existenExento) {
+					} else if (existenDescuentos && existenRecargo && existenIce && !existenExcento) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 3, "DESC.", "REC.", "ICE.")
-					} else if (existenDescuentos && existenRecargo && !existenIce && existenExento) {
+					} else if (existenDescuentos && existenRecargo && !existenIce && existenExcento) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 3, "DESC.", "REC.", "EXC.")
-					} else if (existenDescuentos && !existenRecargo && existenIce && existenExento) {
+					} else if (existenDescuentos && !existenRecargo && existenIce && existenExcento) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 3, "DESC.", "ICE.", "EXC.")
-					} else if (!existenDescuentos && existenRecargo && existenIce && existenExento) {
+					} else if (!existenDescuentos && existenRecargo && existenIce && existenExcento) {
 						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta, 3, "REC.", "ICE.", "EXC.")
 					} else {
-						doc.text("CODIGO", 55, 210);
-						doc.text("CANTIDAD", 120, 210);
-						doc.text("UNIDAD", 165, 210);
-						doc.text("DETALLE", 200, 210);
-						if (usuario.empresa.usar_vencimientos) {
-							if (venta.con_vencimiento) {
-								if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
-									doc.text("SERIE", 415, 210);
-								} else {
-									doc.text("VENC.", 360, 210)
-									doc.text("LOTE.", 415, 210)
-								}
-								//doc.text("VENC.", 360, 210)
-								//doc.text("LOTE.", 415, 210)
-							}
-						}
-						doc.text("P.UNIT.", 460, 210);
-						doc.text("TOTAL", 520, 210);
+						DibujarDetalleCabeceraProformaNVmedioOficio(doc, usuario, venta,0)
 					}
 					doc.fillColor('black');
 				}
@@ -3137,7 +3108,26 @@ angular.module('agil.servicios')
 		}])
 	.factory('DibujarDetalleCabeceraProformaNVmedioOficio', ['blockUI', function (blockUI) {
 		var res = function (doc, usuario, venta, tipo, texto1, texto2, texto3) {
-			if (tipo == 1) {
+			if (tipo == 0) {
+				doc.text("CODIGO", 55, 210);
+				doc.text("CANTIDAD", 120, 210);
+				doc.text("UNIDAD", 165, 210);
+				doc.text("DETALLE", 200, 210);
+				if (usuario.empresa.usar_vencimientos) {
+					if (venta.con_vencimiento) {
+						if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
+							doc.text("SERIE", 415, 210);
+						} else {
+							doc.text("VENC.", 360, 210)
+							doc.text("LOTE.", 415, 210)
+						}
+						//doc.text("VENC.", 360, 210)
+						//doc.text("LOTE.", 415, 210)
+					}
+				}
+				doc.text("P.UNIT.", 460, 210);
+				doc.text("TOTAL", 520, 210);
+			} else if (tipo == 1) {
 				doc.text("CODIGO", 55, 210);
 				doc.text("CANT.", 120, 210);
 				doc.text("UNID.", 160, 210);
@@ -3196,6 +3186,28 @@ angular.module('agil.servicios')
 				doc.text(texto1, 430, 210);
 				doc.text(texto2, 465, 210);
 				doc.text(texto3, 505, 210);
+				doc.text("TOTAL", 530, 210);
+			} else if (tipo == 4) {
+				doc.text("CODIGO", 55, 210);
+				doc.text("CANT.", 90, 210);
+				doc.text("UNID.", 120, 210);
+				doc.text("DETALLE", 160, 210);
+				if (usuario.empresa.usar_vencimientos) {
+					if (venta.con_vencimiento) {
+						if (venta.configuracion.tipoConfiguracionNotaVenta.nombre_corto == "SERIE") {
+							doc.text("SERIE.", 240, 210)
+						} else {
+							doc.text("VENC.", 240, 210)
+							doc.text("LOTE.", 278, 210)
+						}
+					}
+				}
+				doc.text("P. UNIT.", 310, 210);
+				doc.text("IMPORTE", 345, 210);
+				doc.text("DESC.", 395, 210);
+				doc.text("REC.", 430, 210);
+				doc.text("ICE", 465, 210);
+				doc.text("EXC.", 505, 210);
 				doc.text("TOTAL", 530, 210);
 			}
 
