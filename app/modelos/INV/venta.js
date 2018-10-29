@@ -40,6 +40,10 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.DECIMAL(20, 4),
 			field: 'importe'
 		},
+		importe_dolares: {
+			type: Sequelize.DECIMAL(20, 4),
+			field: 'importe_dolares'
+		},
 		id_tipo_pago: {
 			type: Sequelize.INTEGER,
 			field: 'tipo_pago'
@@ -59,6 +63,10 @@ module.exports = function (sequelize, Sequelize) {
 		total: {
 			type: Sequelize.DECIMAL(20, 4),
 			field: 'total'
+		},
+		total_dolares: {
+			type: Sequelize.DECIMAL(20, 4),
+			field: 'total_dolares'
 		},
 		id_usuario: {
 			type: Sequelize.INTEGER,

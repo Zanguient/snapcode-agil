@@ -1,0 +1,1 @@
+ALTER TABLE agil_moneda_tipo_cambio ADD empresa INT(11);

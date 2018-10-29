@@ -11,7 +11,11 @@ module.exports=function(sequelize,Sequelize){
 	  precio_unitario: {
 		type: Sequelize.DECIMAL(20,4),
 		field: 'precio_unitario'
-	  },
+		},
+		precio_unitario_dolares: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'precio_unitario_dolares'
+			},
 	  cantidad: {
 		type: Sequelize.DECIMAL(20,4),
 		field: 'cantidad'
@@ -19,7 +23,11 @@ module.exports=function(sequelize,Sequelize){
 	  importe: {
 		type: Sequelize.DECIMAL(20,4),
 		field: 'importe'
-	  },
+		},
+		importe_dolares: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'importe_dolares'
+			},
 	  descuento: {
 		type: Sequelize.DECIMAL(20,4),
 		field: 'descuento'
@@ -47,7 +55,11 @@ module.exports=function(sequelize,Sequelize){
 	  total: {
 		type: Sequelize.DECIMAL(20,4),
 		field: 'total'
-	  },
+		},
+		total_dolares: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'total_dolares'
+			},
 	  fecha_vencimiento:{
 		type: Sequelize.DATE,
 		field: 'fecha_vencimiento'  

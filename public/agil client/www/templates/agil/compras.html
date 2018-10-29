@@ -756,15 +756,20 @@
 										</th>
 										<th ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
 											<label>LOTE</label>
+											<label uib-tooltip="Usar Producto">Carga Masiva (Serie)
+												<input ng-disabled="compra.movimiento.clase.nombre==diccionario.MOVING_POR_IMPORTACION||compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_SERVICIOS||compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES||compra.detallesCompra.length>0"
+												 ng-model="compra.carga_masiva_serie" checked="checked" type="checkbox" class="ace ace-switch ace-switch-5">
+												<span class="lbl" data-lbl="Si&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
+											</label>
 										</th>
 										<th>
-											<label>C. U. (Bs/u)</label>
+											<label>C. U. {{(usuario.empresa.ver_costos_dolares ? '($us/u)' : '(Bs/u)')}}</label>
 										</th>
 										<th>
 											<label>CANT. (u)</label>
 										</th>
 										<th>
-											<label>IMP. (Bs)</label>
+											<label>IMP. {{(usuario.empresa.ver_costos_dolares ? '$us' : 'Bs')}}</label>
 										</th>
 										<th>
 											<label>ACC.</label>
@@ -806,14 +811,22 @@
 											 type="text" data-date-format="dd/mm/yyyy" ng-model="detalleCompra.fechaVencimientoTexto" placeholder="Ingrese la fecha" />
 										</td>
 										<td ng-if="usuario.empresa.usar_vencimientos && usuario.empresa.usar_vencimiento_productos">
-											<input id="lote" ng-keypress="interceptarTecla($event,'costo_unitario',true)" type="text" ng-model="detalleCompra.lote"
+
+											<input id="lote" ng-if="!compra.carga_masiva_serie" ng-keypress="interceptarTecla($event,'costo_unitario',true)" type="text" ng-model="detalleCompra.lote"
+											 class="col-xs-12" />
+											 <input onfocus="this.select();"id="lote_masivo" ng-if="compra.carga_masiva_serie" uib-typeahead="lote for lote in establecerLote($viewValue)" typeahead-min-length="6" 
+											 typeahead-wait-ms="500" typeahead-select-on-exact="true" typeahead-template-url="templates/autocompletar.html" typeahead-show-hint="false" type="text" typeahead-on-select="agregarDetalleCompraMasiva(detalleCompra)" ng-model="detalleCompra.lote"
 											 class="col-xs-12" />
 
 										</td>
 										<td style="text-align:  center;">
-											<input onfocus="this.select();" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)"
+											<input onfocus="this.select();" ng-if="!usuario.empresa.ver_costos_dolares" id="costo_unitario" ng-keypress="interceptarTecla($event,'cantidad',true)"
 											 required class="col-xs-12" ng-change="calcularImporte()" step="0.001" ng-model="detalleCompra.costo_unitario"
 											 value="{{detalleCompra.producto.inventarios.length>0?detalleCompra.producto.nombre.inventarios[0].costo_unitario:0}}"
+											 type="number" />
+											 <input onfocus="this.select();" ng-if="usuario.empresa.ver_costos_dolares" id="costo_unitario_dolares" ng-keypress="interceptarTecla($event,'cantidad',true)"
+											 required class="col-xs-12" ng-change="calcularImporte()" step="0.001" ng-model="detalleCompra.costo_unitario_dolares"
+											 value="{{detalleCompra.producto.inventarios.length>0?detalleCompra.producto.nombre.inventarios[0].costo_unitario_dolares ? detalleCompra.producto.nombre.inventarios[0].costo_unitario_dolares : detalleCompra.producto.nombre.inventarios[0].costo_unitario * usuario.empresa.tipo_cambio_dolar :0}}"
 											 type="number" />
 
 											<span class="blue">
@@ -827,7 +840,7 @@
 											 required class="col-xs-12" ng-change="calcularImporte()" ng-model="detalleCompra.cantidad" type="number" />
 										</td>
 										<td>
-											{{detalleCompra.importe|number:2}}
+											{{ (usuario.empresa.ver_costos_dolares ? detalleCompra.importe_dolares  : detalleCompra.importe) | number:2}}
 										</td>
 										<td>
 											<button id="agregar_detalle_compra" type="button" ng-disabled="formularioBusquedaProducto.$invalid" ng-click="verificarProducto(detalleCompra)"
@@ -908,13 +921,13 @@
 
 										</th>
 										<th>
-											<label>C. U. (Bs/u)</label>
+											<label>C. U. {{usuario.empresa.ver_costos_dolares ? '($us/u)' : '(Bs/u)'}}</label>
 										</th>
 										<th>
 											<label>CANT. (u)</label>
 										</th>
 										<th>
-											<label>IMP. (Bs)</label>
+											<label>IMP. {{usuario.empresa.ver_costos_dolares ? '($us)' : '(Bs)'}}</label>
 										</th>
 										<th>
 											<label>ACC.</label>
@@ -946,7 +959,7 @@
 											 ng-change="calcularImporte()" ng-model="detalleCompra.cantidad" type="number" />
 										</td>
 										<td>
-											{{detalleCompra.importe|number:2}}
+											{{(usuario.empresa.usar_costos_dolares ? detalleCompra.importe_dolares : detalleCompra.importe )|number:2}}
 										</td>
 										<td>
 											<button id="agregar_detalle_compra" type="button" ng-disabled="formularioBusquedaServicio.$invalid" ng-click="verificarServicio(detalleCompra)"
@@ -1005,7 +1018,7 @@
 											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
-										<label>C.U. (Bs/u)</label>
+										<label>C.U. {{usuario.empresa.ver_costos_dolares ? '($us/u)' : '(Bs/u)'}}</label>
 									</li>
 									<li>
 										<label>
@@ -1037,7 +1050,7 @@
 											 ng-change="guardarConfiguracionCompraVista()" />
 											<span class="lbl check-descuento"></span>
 										</label>
-										<label>IMP. (Bs)</label>
+										<label>IMP. {{usuario.empresa.ver_costos_dolares ? '($us)' : '(Bs)'}}</label>
 									</li>
 									<li>
 										<label>
@@ -1127,7 +1140,7 @@
 										<label>UNID. MED.</label>
 									</th>
 									<th ng-if="configuracionCompraVista.mostrar_costo_unitario">
-										<label>C.U. (Bs/u)</label>
+										<label>C.U. {{usuario.empresa.ver_costos_dolares ? '($us/u)' : '(Bs/u)'}}</label>
 									</th>
 									<th ng-if="configuracionCompraVista.mostrar_cantidad">
 										<label>CANT. (u)</label>
@@ -1139,7 +1152,7 @@
 										<label>LOTE</label>
 									</th>
 									<th ng-if="configuracionCompraVista.mostrar_importe">
-										<label>IMP. (Bs)</label>
+										<label>IMP. {{usuario.empresa.ver_costos_dolares ? '($us)' : '(Bs)'}}</label>
 									</th>
 									<th ng-if="configuracionCompraVista.mostrar_descuento">
 										<label>DESC. (-)</label>
@@ -1184,16 +1197,23 @@
 									<td ng-if="configuracionCompraVista.mostrar_unidad_producto">
 										{{detalleCompra.producto.unidad_medida}}
 									</td>
-									<td ng-if="!compra.id && configuracionCompraVista.mostrar_costo_unitario">
+									<td ng-if="!compra.id && configuracionCompraVista.mostrar_costo_unitario && !usuario.empresa.ver_costos_dolares">
 										{{detalleCompra.costo_unitario}}
 									</td>
+									<td ng-if="!compra.id && configuracionCompraVista.mostrar_costo_unitario && usuario.empresa.ver_costos_dolares">
+											{{detalleCompra.costo_unitario_dolares}}
+										</td>
 									<td ng-if="!compra.id && configuracionCompraVista.mostrar_cantidad">
 										{{detalleCompra.cantidad}}
 									</td>
-									<td ng-if="compra.id && configuracionCompraVista.mostrar_costo_unitario">
+									<td ng-if="compra.id && configuracionCompraVista.mostrar_costo_unitario && !usuario.empresa.ver_costos_dolares">
 										<input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001"
 										 ng-model="detalleCompra.costo_unitario" type="number" min="0.001" />
 									</td>
+									<td ng-if="compra.id && configuracionCompraVista.mostrar_costo_unitario && usuario.empresa.ver_costos_dolares">
+											<input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001"
+											 ng-model="detalleCompra.costo_unitario" type="number" min="0.001" />
+										</td>
 									<td ng-if="compra.id && configuracionCompraVista.mostrar_cantidad">
 										<input required class="col-xs-12" ng-change="calcularImporteDetalleEdicion(detalleCompra)" step="0.001"
 										 ng-model="detalleCompra.cantidad" type="number" min="0.001" />
@@ -1212,9 +1232,12 @@
 										<input class="col-xs-12" type="text" ng-model="detalleCompra.inventario.lote" />
 									</td>
 									<!--compra.descuento_general &&-->
-									<td ng-if="configuracionCompraVista.mostrar_importe">
+									<td ng-if="configuracionCompraVista.mostrar_importe && !usuario.empresa.ver_costos_dolares">
 										{{detalleCompra.importe|number:2}}
 									</td>
+									<td ng-if="configuracionCompraVista.mostrar_importe && usuario.empresa.ver_costos_dolares">
+											{{detalleCompra.importe_dolares |number:2}}
+										</td>
 									<td ng-if="configuracionCompraVista.mostrar_descuento">
 										{{detalleCompra.descuento|number:2}}
 									</td>
@@ -1239,17 +1262,20 @@
 									<td ng-if="compra.descuento_general && configuracionCompraVista.mostrar_excento">
 										{{compra.excento|number:2}}
 									</td>-->
-									<td ng-if="configuracionCompraVista.mostrar_total && compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
+									<td ng-if="configuracionCompraVista.mostrar_total && compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES && !usuario.empresa.ver_costos_dolares">
 										{{detalleCompra.total|number:2}}
 									</td>
+									<td ng-if="configuracionCompraVista.mostrar_total && compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES && usuario.empresa.ver_costos_dolares">
+											{{detalleCompra.total_dolares|number:2}}
+										</td>
 									<td ng-if="configuracionCompraVista.mostrar_it_retencion && usuario.empresa.usar_funciones_erp && compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
 										<label>{{detalleCompra.it|number:2}}</label>
 									</td>
 									<td ng-if="configuracionCompraVista.mostrar_iue && usuario.empresa.usar_funciones_erp && compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
 										<label>{{detalleCompra.iue|number:2}}</label>
 									</td>
-									<td ng-if="configuracionCompraVista.mostrar_pagado && usuario.empresa.usar_funciones_erp && compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES">
-										<label>{{detalleCompra.total|number:2}}</label>
+									<td ng-if="configuracionCompraVista.mostrar_pagado && usuario.empresa.usar_funciones_erp && compra.movimiento.clase.nombre==diccionario.MOVING_POR_RETENCION_BIENES && !usuario.empresa.ver_costos_dolares">
+										<label>{{detalleCompra.total_dolares|number:2}}</label>
 									</td>
 									<td>
 										<a class="red" href="javascript:void(0)" ng-click="eliminarDetalleCompra(detalleCompra)">
@@ -1283,8 +1309,9 @@
 
 									</td>
 									<td ng-if="configuracionCompraVista.mostrar_importe">
-										{{compra.importe|number:2}}
+										{{(usuario.empresa.ver_costos_dolares ?compra.importe_dolares : compra.importe)|number:2}}
 									</td>
+									
 									<td ng-if="configuracionCompraVista.mostrar_descuento">
 
 									</td>
@@ -1298,7 +1325,7 @@
 
 									</td>
 									<td id="total_compra" ng-if="configuracionCompraVista.mostrar_total && compra.movimiento.clase.nombre!=diccionario.MOVING_POR_RETENCION_BIENES">
-										{{compra.total|number:2}}
+										{{(usuario.empresa.ver_costos_dolares ? compra.total_dolares : compra.total)|number:2}}
 									</td>
 									<td ng-if="configuracionCompraVista.mostrar_it_retencion">
 
@@ -1307,7 +1334,7 @@
 
 									</td>
 									<td ng-if="configuracionCompraVista.mostrar_pagado">
-										{{compra.total|number:2}}
+										{{(usuario.empresa.ver_costos_dolares ? compra.total_dolares : compra.total)|number:2}}
 									</td>
 									<td>
 									</td>

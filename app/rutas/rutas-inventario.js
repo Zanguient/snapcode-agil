@@ -450,7 +450,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						autorizacion: compra.autorizacion,
 						fecha: compra.fecha,
 						codigo_control: compra.codigo_control,
-						importe: compra.importe,
+						importe: compra.importe ? compra.importe : 0,
+						importe_dolares: compra.importe_dolares ? compra.importe_dolares : 0,
 						id_tipo_pago: compra.id_tipo_pago,
 						dias_credito: compra.dias_credito,
 						a_cuenta: compra.a_cuenta,
@@ -462,7 +463,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						excento: compra.excento,
 						tipo_descuento: compra.tipo_descuento,
 						tipo_recargo: compra.tipo_recargo,
-						total: compra.total,
+						total: compra.total ? compra.total : 0,
+						total_dolares: compra.total_dolares ? compra.total_dolares : 0,
 						usar_producto: compra.usar_producto,
 						observacion: compra.observacion,
 						dui: compra.dui,
@@ -486,9 +488,12 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 												if (detalleCompra.centroCosto.nombre_corto == "ALM") {
 													DetalleCompra.update({
 														cantidad: detalleCompra.cantidad,
-														costo_unitario: detalleCompra.costo_unitario,
-														importe: detalleCompra.importe,
+														costo_unitario: detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0,
+														costo_unitario_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0,
+														importe: detalleCompra.importe ? detalleCompra.importe : 0,
+														importe_dolares: detalleCompra.importe_dolares ? detalleCompra.importe_dolares : 0,
 														total: detalleCompra.total,
+														total_dolares: detalleCompra.total_dolares
 													}, {
 															where: {
 																id: detalleCompra.id
@@ -517,8 +522,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																	}
 																	Inventario.update({
 																		cantidad: cantidadInventario,
-																		costo_unitario: detalleCompra.costo_unitario,
+																		costo_unitario: detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0,
+																		costo_unitario_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0,
 																		costo_total: detalleCompra.costo_unitario * cantidadInventario,
+																		costo_total_dolares: (detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0) * cantidadInventario,
 																		fecha_vencimiento: (detalleCompra.inventario.fechaVencimientoTexto ? new Date(detalleCompra.inventario.fechaVencimientoTexto.split('/')[1] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[0] + "/" + detalleCompra.inventario.fechaVencimientoTexto.split('/')[2]) : null),
 																		lote: detalleCompra.inventario.lote
 																	}, {
@@ -528,9 +535,12 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																		}).then(function (inventarioActualizado) {
 																			DetalleMovimiento.update({
 																				cantidad: detalleCompra.cantidad,
-																				costo_unitario: detalleCompra.costo_unitario,
-																				importe: detalleCompra.importe,
-																				total: detalleCompra.total
+																				costo_unitario: detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0,
+																				costo_unitario_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0,
+																				importe: detalleCompra.importe ? detalleCompra.importe : 0,
+																				importe_dolares: detalleCompra.importe_dolares ? detalleCompra.importe_dolares : 0,
+																				total: detalleCompra.total ? detalleCompra.total : 0,
+																				total_dolares: detalleCompra.total_dolares ? detalleCompra.total_dolares : 0
 																			}, {
 																					where: {
 																						id: detalleMovimiento.id
@@ -546,9 +556,12 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 												} else {
 													DetalleCompra.update({
 														cantidad: detalleCompra.cantidad,
-														costo_unitario: detalleCompra.costo_unitario,
-														importe: detalleCompra.importe,
-														total: detalleCompra.total,
+														costo_unitario: detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0,
+														costo_unitario_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0,
+														importe: detalleCompra.importe ? detalleCompra.importe : 0,
+														importe_dolares: detalleCompra.importe_dolares ? detalleCompra.importe_dolares : 0,
+														total: detalleCompra.total ? detalleCompra.total : 0,
+														total_dolares: detalleCompra.total_dolares ? detalleCompra.total_dolares : 0
 													}, {
 															where: {
 																id: detalleCompra.id
@@ -651,7 +664,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						autorizacion: compra.autorizacion,
 						fecha: compra.fecha,
 						codigo_control: compra.codigo_control,
-						importe: compra.importe,
+						importe: compra.importe ? compra.importe : 0,
+						importe_dolares: compra.importe_dolares ? compra.importe_dolares : 0,
 						id_tipo_pago: compra.id_tipo_pago,
 						dias_credito: compra.dias_credito,
 						a_cuenta: compra.a_cuenta,
@@ -663,7 +677,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						excento: compra.excento,
 						tipo_descuento: compra.tipo_descuento,
 						tipo_recargo: compra.tipo_recargo,
-						total: compra.total,
+						total: compra.total ? compra.total : 0,
+						total_dolares: compra.total_dolares ? compra.total_dolares : 0,
 						id_usuario: compra.id_usuario,
 						usar_producto: compra.usar_producto,
 						observacion: compra.observacion,
@@ -681,8 +696,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										DetalleCompra.update({
 											cantidad: detalleCompra.cantidad,
 											costo_unitario: detalleCompra.costo_unitario,
-											importe: detalleCompra.importe,
-											total: detalleCompra.total,
+											costo_unitario_dolares: detalleCompra.costo_unitario_dolares,
+											importe: detalleCompra.importe ? detalleCompra.importe : 0,
+											importe_dolares: detalleCompra.importe_dolares ? detalleCompra.importe_dolares : 0,
+											total: detalleCompra.total ? detalleCompra.total : 0,
+											total_dolares: detalleCompra.total_dolares ? detalleCompra.total_dolares : 0
 										}, {
 												where: {
 													id: detalleCompra.id
@@ -1144,7 +1162,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			autorizacion: compra.autorizacion,
 			fecha: compra.fecha,
 			codigo_control: compra.codigo_control,
-			importe: compra.importe,
+			importe: compra.importe ? compra.importe : 0,
+			importe_dolares: compra.importe_dolares ? compra.importe_dolares : 0,
 			id_tipo_pago: compra.id_tipo_pago,
 			dias_credito: compra.dias_credito,
 			a_cuenta: compra.a_cuenta,
@@ -1156,7 +1175,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			excento: compra.excento,
 			tipo_descuento: compra.tipo_descuento,
 			tipo_recargo: compra.tipo_recargo,
-			total: compra.total,
+			total: compra.total ? compra.total : 0,
+			total_dolares: compra.total_dolares ? compra.total_dolares : 0,
 			id_usuario: compra.id_usuario,
 			usar_producto: compra.usar_producto,
 			observacion: compra.observacion,
@@ -1239,7 +1259,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										}, {
 												where: { id: compra.pedido.id }
 											}).then(function (productoEntregado) {
-												res.json({ compra: compra, mensaje: "creado satisfactoriamente!" });
+												res.json({ compra: compra, mensaje: "creado satisfactoriamente1!" });
 											})
 									}
 								} else {
@@ -1254,7 +1274,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										}, {
 												where: { id: compra.pedido.id }
 											}).then(function (productoEntregado) {
-												res.json({ compra: compra, mensaje: "creado satisfactoriamente!" });
+												res.json({ compra: compra, mensaje: "creado satisfactoriamente2!" });
 											})
 									}
 								}
@@ -1263,12 +1283,14 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							})
 
 						} else {
-							res.json({ compra: compra, mensaje: "creado satisfactoriamente!" });
+							res.json({ compra: compra, mensaje: "creado satisfactoriamente3!" });
 						}
 					}
 				});
 			})
-		});
+		}).catch(function (err) {
+			res.json({ hasErr: true, mensaje: err, compra: compra, mensaje: "creado satisfactoriamente2!" });
+		})
 	}
 
 	function crearDetalleCompraPonderado(detalleCompra, idMovimiento, idCompra, idAlmacen, idProducto, idCentroCosto, res, compra) {
@@ -1416,111 +1438,241 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				id_almacen: idAlmacen,
 				id_producto: idProducto,
 				cantidad: detalleCompra.cantidad,
-				costo_unitario: detalleCompra.costo_unitario,
-				costo_total: detalleCompra.costo_unitario * detalleCompra.cantidad,
+				costo_unitario: detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0,
+				costo_total: detalleCompra.costo_unitario ? detalleCompra.costo_unitario * detalleCompra.cantidad : 0,
+				costo_unitario_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0,
+				costo_total_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares * detalleCompra.cantidad : 0,
 				fecha_vencimiento: detalleCompra.fecha_vencimiento,
 				lote: detalleCompra.lote
 			}).then(function (inventarioCreado) {
 				DetalleCompra.create({
 					id_compra: idCompra,
 					id_producto: idProducto,
-					id_centro_costo: idCentroCosto,
-					costo_unitario: detalleCompra.costo_unitario,
+					id_centro_costo:idCentroCosto,
+					costo_unitario: detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0,
+					costo_unitario_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0,
 					cantidad: detalleCompra.cantidad,
-					importe: detalleCompra.importe,
+					importe: detalleCompra.importe ? detalleCompra.importe : 0,
+					importe_dolares: detalleCompra.importe_dolares ? detalleCompra.importe_dolares : 0,
 					descuento: detalleCompra.descuento,
 					recargo: detalleCompra.recargo,
 					ice: detalleCompra.ice,
 					excento: detalleCompra.excento,
-					tipo_descuento: detalleCompra.tipo_descuento,
-					tipo_recargo: detalleCompra.tipo_recargo,
-					total: detalleCompra.total,
+					tipo_descuento: detalleCompra.tipo_descuento ? detalleCompra.tipo_descuento : false,
+					tipo_recargo: detalleCompra.tipo_recargo ? detalleCompra.tipo_recargo : false,
+					total: detalleCompra.total? detalleCompra.total : 0,
+					total_dolares: detalleCompra.total_dolares ? detalleCompra.total_dolares : 0,
 					id_inventario: inventarioCreado.id,
-					it: detalleCompra.it,
-					iue: detalleCompra.iue
 				}).then(function (detalleCompraCreada) {
 					DetalleMovimiento.create({
 						id_movimiento: idMovimiento,
 						id_producto: idProducto,
-						costo_unitario: detalleCompra.costo_unitario,
+						costo_unitario: detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0,
+						costo_unitario_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0,
 						cantidad: detalleCompra.cantidad,
-						importe: (detalleCompra.costo_unitario * detalleCompra.cantidad),
+						importe: ((detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0) * detalleCompra.cantidad),
+						importe_dolares: ((detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0) * detalleCompra.cantidad),
 						descuento: detalleCompra.descuento,
 						recargo: detalleCompra.recargo,
 						ice: detalleCompra.ice,
 						excento: detalleCompra.excento,
-						tipo_descuento: detalleCompra.tipo_descuento,
-						tipo_recargo: detalleCompra.tipo_recargo,
-						total: detalleCompra.total,
+						tipo_descuento: detalleCompra.tipo_descuento ? detalleCompra.tipo_descuento : false,
+						tipo_recargo: detalleCompra.tipo_recargo ? detalleCompra.tipo_recargo : false,
+						total: detalleCompra.total? detalleCompra.total : 0,
+						total_dolares: detalleCompra.total_dolares ? detalleCompra.total_dolares : 0,
 						fecha_vencimiento: detalleCompra.fecha_vencimiento,
 						lote: detalleCompra.lote,
 						id_inventario: inventarioCreado.id
 					}).then(function (detalleMovimientoCreado) {
 						res.json({ mensaje: "creado satisfactoriamente" })
+					}).catch(function (err) {
+						res.json({ hasErr: true, mensaje: err.stack })
 					});
+				}).catch(function (err) {
+					res.json({ hasErr: true, mensaje: err.stack });
 				});
+			}).catch(function (err) {
+				res.json({ hasErr: true, mensaje: err.stack });
 			});
 		} else {
 			DetalleCompra.create({
 				id_compra: idCompra,
 				id_producto: idProducto,
-				id_centro_costo: idCentroCosto,
-				costo_unitario: detalleCompra.costo_unitario,
+				id_centro_costo: centroCosto.id,
+				costo_unitario: detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0,
+				costo_unitario_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0,
 				cantidad: detalleCompra.cantidad,
-				importe: detalleCompra.importe,
+				importe: detalleCompra.importe ? detalleCompra.importe : 0,
+				importe_dolares: detalleCompra.importe_dolares ? detalleCompra.importe_dolares : 0,
 				descuento: detalleCompra.descuento,
 				recargo: detalleCompra.recargo,
 				ice: detalleCompra.ice,
 				excento: detalleCompra.excento,
-				tipo_descuento: detalleCompra.tipo_descuento,
-				tipo_recargo: detalleCompra.tipo_recargo,
+				tipo_descuento: detalleCompra.tipo_descuento ? detalleCompra.tipo_descuento : false,
+				tipo_recargo: detalleCompra.tipo_recargo ? detalleCompra.tipo_recargo : false,
 				total: detalleCompra.total,
-				it: detalleCompra.it,
-				iue: detalleCompra.iue
+				total_dolares: detalleCompra.total_dolares ? detalleCompra.total_dolares : 0,
+				id_inventario: inventarioCreado.id,
 			}).then(function (detalleCompraCreada) {
 				res.json({ mensaje: "creado satisfactoriamente" })
+			}).catch(function (err) {
+				res.json({ hasErr: true, mensaje: err.stack })
 			});
 		}
+		// 	Inventario.create({
+		// 		id_almacen: idAlmacen,
+		// 		id_producto: idProducto,
+		// 		cantidad: detalleCompra.cantidad,
+		// 		costo_unitario: detalleCompra.costo_unitario,
+		// 		costo_total: detalleCompra.costo_unitario * detalleCompra.cantidad,
+		// 		fecha_vencimiento: detalleCompra.fecha_vencimiento,
+		// 		lote: detalleCompra.lote
+		// 	}).then(function (inventarioCreado) {
+		// 		DetalleCompra.create({
+		// 			id_compra: idCompra,
+		// 			id_producto: idProducto,
+		// 			id_centro_costo: idCentroCosto,
+		// 			costo_unitario: detalleCompra.costo_unitario,
+		// 			cantidad: detalleCompra.cantidad,
+		// 			importe: detalleCompra.importe,
+		// 			descuento: detalleCompra.descuento,
+		// 			recargo: detalleCompra.recargo,
+		// 			ice: detalleCompra.ice,
+		// 			excento: detalleCompra.excento,
+		// 			tipo_descuento: detalleCompra.tipo_descuento,
+		// 			tipo_recargo: detalleCompra.tipo_recargo,
+		// 			total: detalleCompra.total,
+		// 			id_inventario: inventarioCreado.id,
+		// 			it: detalleCompra.it,
+		// 			iue: detalleCompra.iue
+		// 		}).then(function (detalleCompraCreada) {
+		// 			DetalleMovimiento.create({
+		// 				id_movimiento: idMovimiento,
+		// 				id_producto: idProducto,
+		// 				costo_unitario: detalleCompra.costo_unitario,
+		// 				cantidad: detalleCompra.cantidad,
+		// 				importe: (detalleCompra.costo_unitario * detalleCompra.cantidad),
+		// 				descuento: detalleCompra.descuento,
+		// 				recargo: detalleCompra.recargo,
+		// 				ice: detalleCompra.ice,
+		// 				excento: detalleCompra.excento,
+		// 				tipo_descuento: detalleCompra.tipo_descuento,
+		// 				tipo_recargo: detalleCompra.tipo_recargo,
+		// 				total: detalleCompra.total,
+		// 				fecha_vencimiento: detalleCompra.fecha_vencimiento,
+		// 				lote: detalleCompra.lote,
+		// 				id_inventario: inventarioCreado.id
+		// 			}).then(function (detalleMovimientoCreado) {
+		// 				res.json({ mensaje: "creado satisfactoriamente" })
+		// 			}).catch(function (err) {
+		// 				res.json({ mensaje: err.stack })
+		// 			})
+		// 		}).catch(function (err) {
+		// 			res.json({ mensaje: err.stack })
+		// 		})
+		// 	});
+		// } else {
+		// 	DetalleCompra.create({
+		// 		id_compra: idCompra,
+		// 		id_producto: idProducto,
+		// 		id_centro_costo: idCentroCosto,
+		// 		costo_unitario: detalleCompra.costo_unitario,
+		// 		cantidad: detalleCompra.cantidad,
+		// 		importe: detalleCompra.importe,
+		// 		descuento: detalleCompra.descuento,
+		// 		recargo: detalleCompra.recargo,
+		// 		ice: detalleCompra.ice,
+		// 		excento: detalleCompra.excento,
+		// 		tipo_descuento: detalleCompra.tipo_descuento,
+		// 		tipo_recargo: detalleCompra.tipo_recargo,
+		// 		total: detalleCompra.total,
+		// 		it: detalleCompra.it,
+		// 		iue: detalleCompra.iue
+		// 	}).then(function (detalleCompraCreada) {
+		// 		res.json({ mensaje: "creado satisfactoriamente" })
+		// 	});
+		// }
 	}
 
 	function crearDetalleMovimientoIngresoYCrearInventario(idMovimiento, idAlmacen, idProducto,
-		costo_unitario, cantidad, descuento,
+		costo_unitario, costo_unitario_dolares, cantidad, descuento,
 		recargo, ice, excento,
 		tipo_descuento, tipo_recargo,
-		total, fecha_vencimiento, lote, traspaso, t) {
+		total, total_dolares, fecha_vencimiento, lote, traspaso, t) {
 		return Inventario.create({
 			id_almacen: idAlmacen,
 			id_producto: idProducto,
 			cantidad: cantidad,
 			costo_unitario: costo_unitario,
-			costo_total: total,
+			costo_total: total ? total : 0,
+			costo_unitario_dolares: costo_unitario_dolares ? costo_unitario_dolares : 0,
+			costo_total_dolares: total_dolares ? total_dolares : 0,
 			fecha_vencimiento: fecha_vencimiento,
 			lote: lote
 		}, { transaction: t }).then(function (inventarioCreado) {
 			return DetalleMovimiento.create({
 				id_movimiento: idMovimiento,
 				id_producto: idProducto,
-				costo_unitario: costo_unitario,
+				costo_unitario: costo_unitario ? costo_unitario : 0,
+				costo_unitario_dolares: costo_unitario_dolares ? costo_unitario_dolares : 0,
 				cantidad: cantidad,
 				importe: (costo_unitario * cantidad),
-				descuento: descuento,
+				importe_dolares: (costo_unitario_dolares ? costo_unitario_dolares : 0 * cantidad),
+				descuento: descuento ? descuento : 0,
 				recargo: recargo,
 				ice: ice,
 				excento: excento,
-				tipo_descuento: tipo_descuento,
-				tipo_recargo: tipo_recargo,
+				tipo_descuento: tipo_descuento ? tipo_descuento : false,
+				tipo_recargo: tipo_recargo ? tipo_recargo : false,
 				total: total,
+				total_dolares: total_dolares ? total_dolares : 0,
+				fecha_vencimiento: fecha_vencimiento,
+				lote: lote,
 				id_inventario: inventarioCreado.id
-			}, { transaction: t }).then(function (detCreado) {
+			}, { transaction: t }).then(function (detalleMovimientoCreado) {
 				return new Promise(function (fulfill, reject) {
 					fulfill(traspaso);
 				});
+			}).catch(function (err) {
+				return new Promise(function (fulfill, reject) {
+					reject(err);
+				});
 			});
 		});
+		// return Inventario.create({
+		// 	id_almacen: idAlmacen,
+		// 	id_producto: idProducto,
+		// 	cantidad: cantidad,
+		// 	costo_unitario: costo_unitario,
+		// 	costo_total: total,
+		// 	fecha_vencimiento: fecha_vencimiento,
+		// 	lote: lote
+		// }, { transaction: t }).then(function (inventarioCreado) {
+		// 	return DetalleMovimiento.create({
+		// 		id_movimiento: idMovimiento,
+		// 		id_producto: idProducto,
+		// 		costo_unitario: costo_unitario,
+		// 		cantidad: cantidad,
+		// 		importe: (costo_unitario * cantidad),
+		// 		descuento: descuento,
+		// 		recargo: recargo,
+		// 		ice: ice,
+		// 		excento: excento,
+		// 		tipo_descuento: tipo_descuento,
+		// 		tipo_recargo: tipo_recargo,
+		// 		total: total,
+		// 		id_inventario: inventarioCreado.id
+		// 	}, { transaction: t }).then(function (detCreado) {
+		// 		return new Promise(function (fulfill, reject) {
+		// 			fulfill(traspaso);
+		// 		});
+		// 	});
+		// });
 	}
 
 	router.route('/inventarios')
 		.post(function (req, res) {
+			var header_send_status = false
 			if (req.body.productos.length > 0) {
 				Tipo.find({
 					where: { nombre_corto: 'MOVING' }
@@ -1551,36 +1703,78 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 											id_almacen: req.body.id_almacen,
 											id_producto: productoEncontrado.id,
 											cantidad: producto.cantidad,
-											costo_unitario: producto.costo_unitario,
+											costo_unitario: producto.costo_unitario ? producto.costo_unitario : 0,
+											costo_total: producto.costo_unitario ? producto.costo_unitario * producto.cantidad : 0,
+											costo_unitario_dolares: producto.costo_unitario_dolares ? producto.costo_unitario_dolares : 0,
+											costo_total_dolares: producto.costo_unitario_dolares ? producto.costo_unitario_dolares * producto.cantidad : 0,
 											fecha_vencimiento: producto.fecha_vencimiento,
-											lote: producto.lote ? producto.lote.toString() : null,
-											costo_total: (producto.cantidad * producto.costo_unitario)
+											lote: producto.lote
 										}).then(function (inventarioCreado) {
 											DetalleMovimiento.create({
 												id_movimiento: movimientoCreado.id,
 												id_producto: productoEncontrado.id,
-												costo_unitario: producto.costo_unitario,
+												costo_unitario: producto.costo_unitario ? producto.costo_unitario : 0,
+												costo_unitario_dolares: producto.costo_unitario_dolares ? producto.costo_unitario_dolares : 0,
 												cantidad: producto.cantidad,
 												importe: (producto.costo_unitario * producto.cantidad),
-												descuento: 0,
-												recargo: 0,
-												ice: 0,
-												excento: 0,
-												tipo_descuento: 0,
-												tipo_recargo: 0,
-												total: (producto.costo_unitario * producto.cantidad),
+												importe_dolares: (producto.costo_unitario_dolares ? producto.costo_unitario_dolares : 0 * producto.cantidad),
+												descuento: producto.descuento ? producto.descuento : 0,
+												recargo: producto.recargo,
+												ice: producto.ice,
+												excento: producto.excento,
+												tipo_descuento: producto.tipo_descuento ? producto.tipo_descuento : false,
+												tipo_recargo: producto.tipo_recargo ? producto.tipo_recargo : false,
+												total: producto.total,
+												total_dolares: producto.total_dolares ? producto.total_dolares : 0,
+												fecha_vencimiento: producto.fecha_vencimiento,
+												lote: producto.lote,
 												id_inventario: inventarioCreado.id
 											}).then(function (detalleMovimientoCreado) {
 												mensajeRegistrados = mensajeRegistrados + " " + producto.codigo;
 												if (index == (array.length - 1)) {
 													res.json({ message: lenregistrados < mensajeRegistrados.length && lennoregistrados == mensajeNoRegistrados.length ? mensajeRegistrados : lennoregistrados < mensajeNoRegistrados.length && lenregistrados == mensajeRegistrados.length ? mensajeNoRegistrados : mensajeRegistrados + "<|||>." + mensajeNoRegistrados });
 												}
+											}).catch(function (err) {
+												mensajeRegistrados = mensajeRegistrados + " " + producto.codigo;
+												if (!header_send_status) {
+													header_send_status = true
+													res.json({ hasErr: true, message: lenregistrados < mensajeRegistrados.length && lennoregistrados == mensajeNoRegistrados.length ? mensajeRegistrados : lennoregistrados < mensajeNoRegistrados.length && lenregistrados == mensajeRegistrados.length ? mensajeNoRegistrados : mensajeRegistrados + "<|||>." + mensajeNoRegistrados + '<|||>' + err.stack });
+												}
 											});
 										});
+										// Inventario.create({
+										// 	id_almacen: req.body.id_almacen,
+										// 	id_producto: productoEncontrado.id,
+										// 	cantidad: producto.cantidad,
+										// 	costo_unitario: producto.costo_unitario,
+										// 	fecha_vencimiento: producto.fecha_vencimiento,
+										// 	lote: producto.lote ? producto.lote.toString() : null,
+										// 	costo_total: (producto.cantidad * producto.costo_unitario)
+										// }).then(function (inventarioCreado) {
+										// 	DetalleMovimiento.create({
+										// 		id_movimiento: movimientoCreado.id,
+										// 		id_producto: productoEncontrado.id,
+										// 		costo_unitario: producto.costo_unitario,
+										// 		cantidad: producto.cantidad,
+										// 		importe: (producto.costo_unitario * producto.cantidad),
+										// 		descuento: 0,
+										// 		recargo: 0,
+										// 		ice: 0,
+										// 		excento: 0,
+										// 		tipo_descuento: 0,
+										// 		tipo_recargo: 0,
+										// 		total: (producto.costo_unitario * producto.cantidad),
+										// 		id_inventario: inventarioCreado.id
+										// 	}).then(function (detalleMovimientoCreado) {
+										// 		mensajeRegistrados = mensajeRegistrados + " " + producto.codigo;
+										// 		if (index == (array.length - 1)) {
+										// 			res.json({ message: lenregistrados < mensajeRegistrados.length && lennoregistrados == mensajeNoRegistrados.length ? mensajeRegistrados : lennoregistrados < mensajeNoRegistrados.length && lenregistrados == mensajeRegistrados.length ? mensajeNoRegistrados : mensajeRegistrados + "<|||>." + mensajeNoRegistrados });
+										// 		}
+										// 	});
+										// });
 									} else {
 										mensajeNoRegistrados = mensajeNoRegistrados + " " + producto.codigo;
 									}
-
 								});
 							});
 						});
@@ -1789,15 +1983,15 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'formatoPapelFacturaServicio' },
 						{ model: Clase, as: 'formatoColorFacturaServicio' },
 						{ model: Clase, as: 'tipoConfiguracion' },
-						{ model: Clase, as: 'formatoPapelNotaVenta'},
-						{ model: Clase, as: 'formatoColorNotaVenta'},
-						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-						{ model: Clase, as: 'formatoColorNotaTraspaso'},
-						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-						{ model: Clase, as: 'formatoPapelNotaBaja'},
-						{ model: Clase, as: 'formatoColorNotaBaja'},
-						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+						{ model: Clase, as: 'formatoPapelNotaVenta' },
+						{ model: Clase, as: 'formatoColorNotaVenta' },
+						{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+						{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+						{ model: Clase, as: 'formatoColorNotaTraspaso' },
+						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+						{ model: Clase, as: 'formatoPapelNotaBaja' },
+						{ model: Clase, as: 'formatoColorNotaBaja' },
+						{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 					}).then(function (configuracionGeneralFactura) {
 						if (configuracionGeneralFactura.usar) {
 							var promises = [];
@@ -1829,15 +2023,15 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								{ model: Clase, as: 'formatoPapelFacturaServicio' },
 								{ model: Clase, as: 'formatoColorFacturaServicio' },
 								{ model: Clase, as: 'tipoConfiguracion' },
-								{ model: Clase, as: 'formatoPapelNotaVenta'},
-								{ model: Clase, as: 'formatoColorNotaVenta'},
-								{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-								{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-								{ model: Clase, as: 'formatoColorNotaTraspaso'},
-								{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-								{ model: Clase, as: 'formatoPapelNotaBaja'},
-								{ model: Clase, as: 'formatoColorNotaBaja'},
-								{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+								{ model: Clase, as: 'formatoPapelNotaVenta' },
+								{ model: Clase, as: 'formatoColorNotaVenta' },
+								{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+								{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+								{ model: Clase, as: 'formatoColorNotaTraspaso' },
+								{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+								{ model: Clase, as: 'formatoPapelNotaBaja' },
+								{ model: Clase, as: 'formatoColorNotaBaja' },
+								{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 							}).then(function (configuracionFactura) {
 								var promises = [];
 								venta.configuracion = configuracionFactura;
@@ -2074,21 +2268,21 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 													{ model: Clase, as: 'formatoPapelFacturaServicio' },
 													{ model: Clase, as: 'formatoColorFacturaServicio' },
 													{ model: Clase, as: 'tipoConfiguracion' },
-													{ model: Clase, as: 'formatoPapelNotaVenta'},
-													{ model: Clase, as: 'formatoColorNotaVenta'},
-													{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-													{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-													{ model: Clase, as: 'formatoColorNotaTraspaso'},
-													{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-													{ model: Clase, as: 'formatoPapelNotaBaja'},
-													{ model: Clase, as: 'formatoColorNotaBaja'},
-													{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+													{ model: Clase, as: 'formatoPapelNotaVenta' },
+													{ model: Clase, as: 'formatoColorNotaVenta' },
+													{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+													{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+													{ model: Clase, as: 'formatoColorNotaTraspaso' },
+													{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+													{ model: Clase, as: 'formatoPapelNotaBaja' },
+													{ model: Clase, as: 'formatoColorNotaBaja' },
+													{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 												}).then(function (configuracionGeneralFactura) {
 													if (configuracionGeneralFactura.usar) {
 														var promises = [];
 														venta.configuracion = configuracionGeneralFactura;
 														venta.detallesVenta.forEach(function (detalleVenta, index, array) {
-															promises.push(crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, -detalleVenta.precio_unitario, -detalleVenta.importe, -detalleVenta.total, index, array, res, venta, t, sucursal));
+															promises.push(crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, -detalleVenta.precio_unitario, -detalleVenta.importe,-detalleVenta.importe_dolares, -detalleVenta.total, -detalleVenta.total_dolares, index, array, res, venta, t, sucursal));
 														});
 														return Promise.all(promises);
 													} else {
@@ -2114,20 +2308,20 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 															{ model: Clase, as: 'formatoPapelFacturaServicio' },
 															{ model: Clase, as: 'formatoColorFacturaServicio' },
 															{ model: Clase, as: 'tipoConfiguracion' },
-															{ model: Clase, as: 'formatoPapelNotaVenta'},
-															{ model: Clase, as: 'formatoColorNotaVenta'},
-															{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-															{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-															{ model: Clase, as: 'formatoColorNotaTraspaso'},
-															{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-															{ model: Clase, as: 'formatoPapelNotaBaja'},
-															{ model: Clase, as: 'formatoColorNotaBaja'},
-															{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+															{ model: Clase, as: 'formatoPapelNotaVenta' },
+															{ model: Clase, as: 'formatoColorNotaVenta' },
+															{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+															{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+															{ model: Clase, as: 'formatoColorNotaTraspaso' },
+															{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+															{ model: Clase, as: 'formatoPapelNotaBaja' },
+															{ model: Clase, as: 'formatoColorNotaBaja' },
+															{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 														}).then(function (configuracionFactura) {
 															var promises = [];
 															venta.configuracion = configuracionFactura;
 															venta.detallesVenta.forEach(function (detalleVenta, index, array) {
-																promises.push(crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, -detalleVenta.precio_unitario, -detalleVenta.importe, -detalleVenta.total, index, array, res, venta, t, sucursal));
+																promises.push(crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, -detalleVenta.precio_unitario, -detalleVenta.importe,-detalleVenta.importe_dolares, -detalleVenta.total, -detalleVenta.total_dolares, index, array, res, venta, t, sucursal));
 															});
 															return Promise.all(promises);
 														});
@@ -2200,22 +2394,22 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																{ model: Clase, as: 'formatoPapelFacturaServicio' },
 																{ model: Clase, as: 'formatoColorFacturaServicio' },
 																{ model: Clase, as: 'tipoConfiguracion' },
-																{ model: Clase, as: 'formatoPapelNotaVenta'},
-																{ model: Clase, as: 'formatoColorNotaVenta'},
-																{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-																{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-																{ model: Clase, as: 'formatoColorNotaTraspaso'},
-																{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-																{ model: Clase, as: 'formatoPapelNotaBaja'},
-																{ model: Clase, as: 'formatoColorNotaBaja'},
-																{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+																{ model: Clase, as: 'formatoPapelNotaVenta' },
+																{ model: Clase, as: 'formatoColorNotaVenta' },
+																{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+																{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+																{ model: Clase, as: 'formatoColorNotaTraspaso' },
+																{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+																{ model: Clase, as: 'formatoPapelNotaBaja' },
+																{ model: Clase, as: 'formatoColorNotaBaja' },
+																{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 															}).then(function (configuracionGeneralFactura) {
 																if (configuracionGeneralFactura.usar) {
 																	var promises = [];
 																	venta.configuracion = configuracionGeneralFactura;
 																	venta.detallesVenta.forEach(function (detalleVenta, index, array) {
 																		promises.push(calcularCostosIngresos(detalleVenta, movimientoIngresoCreado, venta.almacenDestino.id, venta, t));
-																		promises.push(crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.total, index, array, res, venta, t, sucursal));
+																		promises.push(crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.importe_dolares, detalleVenta.total, detalleVenta.total_dolares, index, array, res, venta, t, sucursal));
 																	});
 																	return Promise.all(promises);
 																} else {
@@ -2241,21 +2435,21 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 																		{ model: Clase, as: 'formatoPapelFacturaServicio' },
 																		{ model: Clase, as: 'formatoColorFacturaServicio' },
 																		{ model: Clase, as: 'tipoConfiguracion' },
-																		{ model: Clase, as: 'formatoPapelNotaVenta'},
-																		{ model: Clase, as: 'formatoColorNotaVenta'},
-																		{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-																		{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-																		{ model: Clase, as: 'formatoColorNotaTraspaso'},
-																		{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-																		{ model: Clase, as: 'formatoPapelNotaBaja'},
-																		{ model: Clase, as: 'formatoColorNotaBaja'},
-																		{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+																		{ model: Clase, as: 'formatoPapelNotaVenta' },
+																		{ model: Clase, as: 'formatoColorNotaVenta' },
+																		{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+																		{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+																		{ model: Clase, as: 'formatoColorNotaTraspaso' },
+																		{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+																		{ model: Clase, as: 'formatoPapelNotaBaja' },
+																		{ model: Clase, as: 'formatoColorNotaBaja' },
+																		{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 																	}).then(function (configuracionFactura) {
 																		var promises = [];
 																		venta.configuracion = configuracionFactura;
 																		venta.detallesVenta.forEach(function (detalleVenta, index, array) {
 																			promises.push(calcularCostosIngresos(detalleVenta, movimientoIngresoCreado, venta.almacenDestino.id, venta, t));
-																			promises.push(crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.total, index, array, res, venta, t, sucursal));
+																			promises.push(crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.importe_dolares, detalleVenta.total, detalleVenta.total_dolares, index, array, res, venta, t, sucursal));
 																		});
 																		return Promise.all(promises);
 																	});
@@ -2283,12 +2477,14 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		});
 	function ActualizarVenta(venta, res, idCliente, movimientoCreado, dosificacion, esFactura, sucursal, t, empresaEncontrada) {
 		return Venta.update({
-			importe: venta.importe,
+			importe: venta.importe ? venta.importe : 0,
+			importe: venta.importe_dolares ? venta.importe_dolares : 0,
 			id_tipo_pago: venta.tipoPago.id,
 			dias_credito: (venta.tipoPago.nombre_corto = Diccionario.TIPO_PAGO_CREDITO) ? venta.dias_credito : null,
 			a_cuenta: (venta.tipoPago.nombre_corto = Diccionario.TIPO_PAGO_CREDITO) ? venta.a_cuenta : null,
 			saldo: venta.saldo,
 			total: venta.total,
+			total_dolares: venta.total_dolares ? venta.total_dolares : 0,
 			//id_usuario: venta.id_usuario,
 			activa: true,
 			pagado: venta.pagado,
@@ -2319,22 +2515,22 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ model: Clase, as: 'formatoPapelFacturaServicio' },
 				{ model: Clase, as: 'formatoColorFacturaServicio' },
 				{ model: Clase, as: 'tipoConfiguracion' },
-				{ model: Clase, as: 'formatoPapelNotaVenta'},
-				{ model: Clase, as: 'formatoColorNotaVenta'},
-				{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-				{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-				{ model: Clase, as: 'formatoColorNotaTraspaso'},
-				{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-				{ model: Clase, as: 'formatoPapelNotaBaja'},
-				{ model: Clase, as: 'formatoColorNotaBaja'},
-				{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+				{ model: Clase, as: 'formatoPapelNotaVenta' },
+				{ model: Clase, as: 'formatoColorNotaVenta' },
+				{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+				{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+				{ model: Clase, as: 'formatoColorNotaTraspaso' },
+				{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+				{ model: Clase, as: 'formatoPapelNotaBaja' },
+				{ model: Clase, as: 'formatoColorNotaBaja' },
+				{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 			}).then(function (configuracionGeneralFactura) {
 
 				if (configuracionGeneralFactura.usar) {
 					var promises = [];
 					venta.configuracion = configuracionGeneralFactura;
 					venta.detallesVenta.forEach(function (detalleVenta, index, array) {
-						promises.push(actualizarDetalleVenta(movimientoCreado, venta, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.total, index, array, res, venta, t, sucursal, empresaEncontrada));
+						promises.push(actualizarDetalleVenta(movimientoCreado, venta, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.importe_dolares, detalleVenta.total, detalleVenta.total_dolares, index, array, res, venta, t, sucursal, empresaEncontrada));
 					});
 					return Promise.all(promises)
 				} else {
@@ -2360,20 +2556,20 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'formatoPapelFacturaServicio' },
 						{ model: Clase, as: 'formatoColorFacturaServicio' },
 						{ model: Clase, as: 'tipoConfiguracion' },
-						{ model: Clase, as: 'formatoPapelNotaVenta'},
-						{ model: Clase, as: 'formatoColorNotaVenta'},
-						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-						{ model: Clase, as: 'formatoColorNotaTraspaso'},
-						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-						{ model: Clase, as: 'formatoPapelNotaBaja'},
-						{ model: Clase, as: 'formatoColorNotaBaja'},
-						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+						{ model: Clase, as: 'formatoPapelNotaVenta' },
+						{ model: Clase, as: 'formatoColorNotaVenta' },
+						{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+						{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+						{ model: Clase, as: 'formatoColorNotaTraspaso' },
+						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+						{ model: Clase, as: 'formatoPapelNotaBaja' },
+						{ model: Clase, as: 'formatoColorNotaBaja' },
+						{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 					}).then(function (configuracionFactura) {
 						var promises = [];
 						venta.configuracion = configuracionFactura;
 						venta.detallesVenta.forEach(function (detalleVenta, index, array) {
-							promises.push(actualizarDetalleVenta(movimientoCreado, venta, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.total, index, array, res, venta, t, sucursal, empresaEncontrada));
+							promises.push(actualizarDetalleVenta(movimientoCreado, venta, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.importe_dolares, detalleVenta.total, detalleVenta.total_dolares, index, array, res, venta, t, sucursal, empresaEncontrada));
 						});
 						return Promise.all(promises)
 					}).catch(function (err) {
@@ -2394,7 +2590,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			});
 		});
 	}
-	function actualizarDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, precio_unitario, importe, total, index, array, res, venta, t, sucursal, empresaEncontrada) {
+	function actualizarDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, precio_unitario, importe, importe_dolares, total, total_dolares, index, array, res, venta, t, sucursal, empresaEncontrada) {
 
 		if (detalleVenta.eliminado) {
 			return DetalleMovimiento.destroy({
@@ -2449,16 +2645,19 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			return DetalleVenta.create({
 				id_venta: ventaCreada.id,
 				id_producto: detalleVenta.producto.id,
-				precio_unitario: detalleVenta.precio_unitario,
+				precio_unitario: detalleVenta.precio_unitario ? detalleVenta.precio_unitario : 0,
+				precio_unitario_dolares: detalleVenta.precio_unitario_dolares ? detalleVenta.precio_unitario_dolares : 0,
 				cantidad: detalleVenta.cantidad,
-				importe: importe,
+				importe: importe ? importe : 0,
+				importe_dolares: importe_dolares ? importe_dolares : 0,
 				descuento: detalleVenta.descuento,
 				recargo: detalleVenta.recargo,
 				ice: detalleVenta.ice,
 				excento: detalleVenta.excento,
 				tipo_descuento: detalleVenta.tipo_descuento,
 				tipo_recargo: detalleVenta.tipo_recargo,
-				total: total,
+				total: total ? total : 0,
+				total_dolares: total_dolares ? total_dolares : 0,
 				fecha_vencimiento: detalleVenta.fecha_vencimiento,
 				lote: detalleVenta.lote,
 				id_inventario: (detalleVenta.costos.length > 0) ? detalleVenta.costos[0].id : null
@@ -2573,12 +2772,14 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			fecha: venta.fecha,
 			codigo_control: venta.codigo_control,
 			fecha_limite_emision: venta.fecha_limite_emision,
-			importe: venta.importe,
+			importe: venta.importe ? venta.importe : 0,
+			importe_dolares: venta.importe_dolares ? venta.importe_dolares : 0,
 			id_tipo_pago: venta.tipoPago.id,
 			dias_credito: venta.dias_credito,
 			a_cuenta: venta.a_cuenta,
 			saldo: venta.saldo,
-			total: venta.total,
+			total: venta.total ? venta.total : 0,
+			total_dolares: venta.total_dolares ? venta.total_dolares : 0,
 			id_usuario: venta.id_usuario,
 			activa: true,
 			pagado: venta.pagado,
@@ -2589,8 +2790,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			observacion: venta.observacion,
 			total_descuento: venta.total_descuento_general,
 			total_ice: venta.total_ice,
-			total_recargo : venta.total_recargo_general,
-			total_exento : venta.total_exento
+			total_recargo: venta.total_recargo_general,
+			total_exento: venta.total_exento
 		}, { transaction: t }).then(function (ventaCreada) {
 			var promisesVenta = [];
 			if (esFactura) {
@@ -2643,15 +2844,15 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				{ model: Clase, as: 'formatoPapelFacturaServicio' },
 				{ model: Clase, as: 'formatoColorFacturaServicio' },
 				{ model: Clase, as: 'tipoConfiguracion' },
-				{ model: Clase, as: 'formatoPapelNotaVenta'},
-				{ model: Clase, as: 'formatoColorNotaVenta'},
-				{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-				{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-				{ model: Clase, as: 'formatoColorNotaTraspaso'},
-				{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-				{ model: Clase, as: 'formatoPapelNotaBaja'},
-				{ model: Clase, as: 'formatoColorNotaBaja'},
-				{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+				{ model: Clase, as: 'formatoPapelNotaVenta' },
+				{ model: Clase, as: 'formatoColorNotaVenta' },
+				{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+				{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+				{ model: Clase, as: 'formatoColorNotaTraspaso' },
+				{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+				{ model: Clase, as: 'formatoPapelNotaBaja' },
+				{ model: Clase, as: 'formatoColorNotaBaja' },
+				{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 			}).then(function (configuracionGeneralFactura) {
 				venta.detallesVentaNoConsolidadas.forEach(function (detalleVentaNoConsolidada, index, array) {
 					//crearDetalleVentaNoConsolidada(ventaCreada.id, detalleVentaNoConsolidada.producto.id, null, detalleVentaNoConsolidada);
@@ -2660,7 +2861,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 					var promises = [];
 					venta.configuracion = configuracionGeneralFactura;
 					venta.detallesVenta.forEach(function (detalleVenta, index, array) {
-						promises.push(crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.total, index, array, res, venta, t, sucursal));
+						promises.push(crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.importe_dolares, detalleVenta.total, detalleVenta.total_dolares, index, array, res, venta, t, sucursal));
 					});
 					return Promise.all(promises)
 				} else {
@@ -2686,20 +2887,20 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'formatoPapelFacturaServicio' },
 						{ model: Clase, as: 'formatoColorFacturaServicio' },
 						{ model: Clase, as: 'tipoConfiguracion' },
-						{ model: Clase, as: 'formatoPapelNotaVenta'},
-						{ model: Clase, as: 'formatoColorNotaVenta'},
-						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-						{ model: Clase, as: 'formatoColorNotaTraspaso'},
-						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-						{ model: Clase, as: 'formatoPapelNotaBaja'},
-						{ model: Clase, as: 'formatoColorNotaBaja'},
-						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+						{ model: Clase, as: 'formatoPapelNotaVenta' },
+						{ model: Clase, as: 'formatoColorNotaVenta' },
+						{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+						{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+						{ model: Clase, as: 'formatoColorNotaTraspaso' },
+						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+						{ model: Clase, as: 'formatoPapelNotaBaja' },
+						{ model: Clase, as: 'formatoColorNotaBaja' },
+						{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 					}).then(function (configuracionFactura) {
 						var promises = [];
 						venta.configuracion = configuracionFactura;
 						venta.detallesVenta.forEach(function (detalleVenta, index, array) {
-							promises.push(crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.total, index, array, res, venta, t, sucursal));
+							promises.push(crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, detalleVenta.precio_unitario, detalleVenta.importe, detalleVenta.importe_dolares, detalleVenta.total, detalleVenta.total_dolares, index, array, res, venta, t, sucursal));
 						});
 						return Promise.all(promises)
 					});
@@ -2763,9 +2964,12 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			id_movimiento: movimientoCreado.id,
 			id_producto: producto.id,
 			cantidad: cantidadParcial,
-			costo_unitario: costo.costo_unitario,
-			importe: (cantidadParcial * costo.costo_unitario),
-			total: (cantidadParcial * costo.costo_unitario),
+			costo_unitario: costo.costo_unitario ? costo.costo_unitario : 0,
+			costo_unitario_dolares: costo.costo_unitario_dolares ? costo.costo_unitario_dolares : 0,
+			importe: (cantidadParcial * (costo.costo_unitario ? costo.costo_unitario : 0)),
+			importe_dolares: (cantidadParcial * (costo.costo_unitario_dolares ? costo.costo_unitario_dolares : 0)),
+			total: (cantidadParcial * (costo.costo_unitario ? costo.costo_unitario : 0)),
+			total_dolares: (cantidadParcial * (costo.costo_unitario_dolares ? costo.costo_unitario_dolares : 0)),
 			descuento: ((detalleVenta.descuento / cantidad) * cantidadParcial),
 			recargo: ((detalleVenta.recargo / cantidad) * cantidadParcial),
 			ice: ((detalleVenta.ice / cantidad) * cantidadParcial),
@@ -2791,7 +2995,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						}).then(function (inventario) {
 							return Inventario.update({
 								cantidad: inventario.cantidad - cantidadParcial,
-								costo_total: ((inventario.cantidad - cantidadParcial) * costo.costo_unitario)
+								costo_total: ((inventario.cantidad - cantidadParcial) * costo.costo_unitario),
+								costo_total_dolares: ((inventario.cantidad - cantidadParcial) * (costo.costo_unitario_dolares ? costo.costo_unitario_dolares : 0))
 							}, {
 									where: {
 										id: inventario.id
@@ -2874,7 +3079,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		}).then(function (inventario) {
 			Inventario.update({
 				cantidad: inventario.cantidad - cantidadParcial,
-				costo_total: ((inventario.cantidad - cantidadParcial) * inventario.costo_unitario)
+				costo_total: ((inventario.cantidad - cantidadParcial) * (inventario.costo_unitario ? inventario.costo_unitario : 0)),
+				costo_total_dolares: ((inventario.cantidad - cantidadParcial) * (inventario.costo_unitario_dolares ? inventario.costo_unitario_dolares : 0))
 			}, {
 					where: {
 						id: inventario.id
@@ -3133,13 +3339,15 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		}
 	}
 
-	function crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, precio_unitario, importe, total, index, array, res, venta, t, sucursal) {
+	function crearDetalleVenta(movimientoCreado, ventaCreada, detalleVenta, precio_unitario, importe, importe_dolares, total, total_dolares, index, array, res, venta, t, sucursal) {
 		return DetalleVenta.create({
 			id_venta: ventaCreada.id,
 			id_producto: detalleVenta.producto.id,
-			precio_unitario: detalleVenta.precio_unitario,
+			precio_unitario: detalleVenta.precio_unitario ? detalleVenta.precio_unitario : 0,
+			precio_unitario_dolares: detalleVenta.precio_unitario_dolares ? detalleVenta.precio_unitario_dolares : 0,
 			cantidad: detalleVenta.cantidad,
-			importe: importe,
+			importe: importe ? importe : 0,
+			importe_dolares: importe_dolares ? importe_dolares : 0,
 			descuento: (detalleVenta.descuento !== detalleVenta.total_descuento ? detalleVenta.total_descuento ? detalleVenta.total_descuento : detalleVenta.descuento ? detalleVenta.descuento : 0 : detalleVenta.descuento ? detalleVenta.descuento : 0),
 			recargo: (detalleVenta.recargo !== detalleVenta.total_recargo ? detalleVenta.total_recargo ? detalleVenta.total_recargo : detalleVenta.recargo ? detalleVenta.recargo : 0 : detalleVenta.recargo ? detalleVenta.recargo : 0),
 			ice: detalleVenta.ice,
@@ -3147,6 +3355,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			tipo_descuento: detalleVenta.tipo_descuento,
 			tipo_recargo: detalleVenta.tipo_recargo,
 			total: total,
+			total_dolares: total_dolares,
 			fecha_vencimiento: detalleVenta.fecha_vencimiento,
 			lote: detalleVenta.lote,
 			id_inventario: (detalleVenta.costos.length > 0) ? detalleVenta.costos[0].id : null
@@ -3250,16 +3459,19 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		return DetalleMovimiento.create({
 			id_movimiento: movimiento.id,
 			id_producto: detalleMovimiento.id_producto,
-			costo_unitario: detalleMovimiento.costo_unitario,
+			costo_unitario: detalleMovimiento.costo_unitario ? detalleMovimiento.costo_unitario : 0,
+			costo_unitario_dolares: detalleMovimiento.costo_unitario_dolares ? detalleMovimiento.costo_unitario_dolares : 0,
 			cantidad: detalleMovimiento.cantidad,
-			importe: (detalleMovimiento.costo_unitario * detalleMovimiento.cantidad),
+			importe: ((detalleMovimiento.costo_unitario ? detalleMovimiento.costo_unitario : 0) * detalleMovimiento.cantidad),
+			importe_dolares: ((detalleMovimiento.costo_unitario_dolares ? detalleMovimiento.costo_unitario_dolares : 0) * detalleMovimiento.cantidad),
 			descuento: detalleMovimiento.descuento,
 			recargo: detalleMovimiento.recargo,
 			ice: detalleMovimiento.ice,
 			excento: detalleMovimiento.excento,
 			tipo_descuento: detalleMovimiento.tipo_descuento,
 			tipo_recargo: detalleMovimiento.tipo_recargo,
-			total: detalleMovimiento.total,
+			total: detalleMovimiento.total ? detalleMovimiento.total : 0,
+			total_dolares: detalleMovimiento.total_dolares ? detalleMovimiento.total_dolares : 0,
 			id_inventario: detalleMovimiento.id_inventario
 		}, { transaction: t }).then(function (detalleMovimientoCreado) {
 			sequelize.transaction({ isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED }, function (tu) {
@@ -3272,7 +3484,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				}).then(function (inventarioEncontrado) {
 					return Inventario.update({
 						cantidad: inventarioEncontrado.cantidad + detalleMovimientoCreado.cantidad,
-						costo_total: inventarioEncontrado.costo_unitario * (inventarioEncontrado.cantidad + detalleMovimientoCreado.cantidad)
+						costo_total: (inventarioEncontrado.costo_unitario ? inventarioEncontrado.costo_unitario : 0) * (inventarioEncontrado.cantidad + detalleMovimientoCreado.cantidad),
+						costo_total_dolares: (inventarioEncontrado.costo_unitario_dolares ? inventarioEncontrado.costo_unitario_dolares : 0) * (inventarioEncontrado.cantidad + detalleMovimientoCreado.cantidad)
 					}, {
 							where: {
 								id: detalleMovimiento.id_inventario
@@ -3604,15 +3817,15 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						{ model: Clase, as: 'formatoPapelFacturaServicio' },
 						{ model: Clase, as: 'formatoColorFacturaServicio' },
 						{ model: Clase, as: 'tipoConfiguracion' },
-						{ model: Clase, as: 'formatoPapelNotaVenta'},
-						{ model: Clase, as: 'formatoColorNotaVenta'},
-						{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-						{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-						{ model: Clase, as: 'formatoColorNotaTraspaso'},
-						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-						{ model: Clase, as: 'formatoPapelNotaBaja'},
-						{ model: Clase, as: 'formatoColorNotaBaja'},
-						{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+						{ model: Clase, as: 'formatoPapelNotaVenta' },
+						{ model: Clase, as: 'formatoColorNotaVenta' },
+						{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+						{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+						{ model: Clase, as: 'formatoColorNotaTraspaso' },
+						{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+						{ model: Clase, as: 'formatoPapelNotaBaja' },
+						{ model: Clase, as: 'formatoColorNotaBaja' },
+						{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 					}).then(function (configuracionGeneralFactura) {
 						if (venta.movimiento) {
 							if (venta.movimiento.clase.nombre_corto == Diccionario.EGRE_FACTURACION) {
@@ -3652,15 +3865,15 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 											{ model: Clase, as: 'formatoPapelFacturaServicio' },
 											{ model: Clase, as: 'formatoColorFacturaServicio' },
 											{ model: Clase, as: 'tipoConfiguracion' },
-											{ model: Clase, as: 'formatoPapelNotaVenta'},
-											{ model: Clase, as: 'formatoColorNotaVenta'},
-											{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-											{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-											{ model: Clase, as: 'formatoColorNotaTraspaso'},
-											{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-											{ model: Clase, as: 'formatoPapelNotaBaja'},
-											{ model: Clase, as: 'formatoColorNotaBaja'},
-											{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+											{ model: Clase, as: 'formatoPapelNotaVenta' },
+											{ model: Clase, as: 'formatoColorNotaVenta' },
+											{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+											{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+											{ model: Clase, as: 'formatoColorNotaTraspaso' },
+											{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+											{ model: Clase, as: 'formatoPapelNotaBaja' },
+											{ model: Clase, as: 'formatoColorNotaBaja' },
+											{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 										}).then(function (configuracionFactura) {
 											res.json({
 												sucursalPrincipal: sucursalPrincipalEncontrada,
@@ -3740,15 +3953,15 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										{ model: Clase, as: 'formatoPapelFacturaServicio' },
 										{ model: Clase, as: 'formatoColorFacturaServicio' },
 										{ model: Clase, as: 'tipoConfiguracion' },
-										{ model: Clase, as: 'formatoPapelNotaVenta'},
-										{ model: Clase, as: 'formatoColorNotaVenta'},
-										{ model: Clase, as: 'tipoConfiguracionNotaVenta'},
-										{ model: Clase, as: 'formatoPapelNotaTraspaso'},
-										{ model: Clase, as: 'formatoColorNotaTraspaso'},
-										{ model: Clase, as: 'tipoConfiguracionNotaTraspaso'},
-										{ model: Clase, as: 'formatoPapelNotaBaja'},
-										{ model: Clase, as: 'formatoColorNotaBaja'},
-										{ model: Clase, as: 'tipoConfiguracionNotaBaja'}]
+										{ model: Clase, as: 'formatoPapelNotaVenta' },
+										{ model: Clase, as: 'formatoColorNotaVenta' },
+										{ model: Clase, as: 'tipoConfiguracionNotaVenta' },
+										{ model: Clase, as: 'formatoPapelNotaTraspaso' },
+										{ model: Clase, as: 'formatoColorNotaTraspaso' },
+										{ model: Clase, as: 'tipoConfiguracionNotaTraspaso' },
+										{ model: Clase, as: 'formatoPapelNotaBaja' },
+										{ model: Clase, as: 'formatoColorNotaBaja' },
+										{ model: Clase, as: 'tipoConfiguracionNotaBaja' }]
 									}).then(function (configuracionFactura) {
 										res.json({
 											sucursalPrincipal: sucursalPrincipalEncontrada,
@@ -4356,23 +4569,31 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 		});
 	router.route('/actualizar-movimiento-detalle/:id')
 		.put(function (req, res) {
-			var imp = req.body.cantidad * req.body.costo_unitario
+			var imp = req.body.cantidad * req.body.costo_unitario ? req.body.costo_unitario : 0
+			var imp_dolares = req.body.cantidad * req.body.costo_unitario_dolares ? req.body.costo_unitario_dolares : 0
 			var total = imp - req.body.descuento + req.body.recargo - req.body.ice - req.body.excento
+			var total_dolares = imp_dolares - req.body.descuento + req.body.recargo - req.body.ice - req.body.excento
+
 			DetalleMovimiento.update({
 				cantidad: req.body.cantidad,
-				costo_unitario: req.body.costo_unitario,
+				costo_unitario: req.body.costo_unitario ? req.body.costo_unitario : 0,
+				costo_unitario_dolares: req.body.costo_unitario_dolares ? req.body.costo_unitario_dolares : 0,
 				importe: imp,
-				total: total
+				importe_dolares: imp_dolares,
+				total: total,
+				total_dolares: total_dolares
 			}, {
 					where: { id: req.params.id }
 
 				}).then(function (detalleMovimientoActualizado) {
 					Inventario.update({
 						cantidad: req.body.cantidad,
-						costo_unitario: req.body.costo_unitario,
+						costo_unitario: req.body.costo_unitario ? req.body.costo_unitario : 0,
+						costo_unitario_dolares: req.body.costo_unitario_dolares ? req.body.costo_unitario_dolares : 0,
 						lote: req.body.inventario.lote,
 						fecha_vencimiento: req.body.inventario.fecha_vencimiento,
-						costo_total: total
+						costo_total: total,
+						costo_total_dolares: total_dolares
 					}, {
 							where: {
 								id: req.body.id_inventario
@@ -5081,7 +5302,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			autorizacion: compra.autorizacion,
 			fecha: compra.fecha,
 			codigo_control: compra.codigo_control,
-			importe: compra.importe,
+			importe: compra.importe ? compra.importe : 0,
+			importe_dolares: compra.importe_dolares ? compra.importe_dolares : 0,
 			id_tipo_pago: compra.tipoPago.id,
 			dias_credito: compra.dias_credito,
 			a_cuenta: compra.a_cuenta,
@@ -5093,7 +5315,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			excento: compra.excento,
 			tipo_descuento: compra.tipo_descuento,
 			tipo_recargo: compra.tipo_recargo,
-			total: compra.total,
+			total: compra.total ? compra.total : 0,
+			total_dolares: compra.total_dolares ? compra.total_dolares : 0,
 			id_usuario: compra.id_usuario,
 			usar_producto: compra.usar_producto,
 			observacion: compra.observacion,
@@ -5145,8 +5368,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				id_almacen: idAlmacen,
 				id_producto: idProducto,
 				cantidad: detalleCompra.cantidad,
-				costo_unitario: detalleCompra.costo_unitario,
-				costo_total: detalleCompra.costo_unitario * detalleCompra.cantidad,
+				costo_unitario: detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0,
+				costo_total: detalleCompra.costo_unitario ? detalleCompra.costo_unitario * detalleCompra.cantidad : 0,
+				costo_unitario_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0,
+				costo_total_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares * detalleCompra.cantidad : 0,
 				fecha_vencimiento: detalleCompra.fecha_vencimiento,
 				lote: detalleCompra.lote
 			}, {
@@ -5156,9 +5381,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						id_compra: idCompra,
 						id_producto: idProducto,
 						id_centro_costo: centroCosto.id,
-						costo_unitario: detalleCompra.costo_unitario,
+						costo_unitario: detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0,
+						costo_unitario_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0,
 						cantidad: detalleCompra.cantidad,
-						importe: detalleCompra.importe,
+						importe: detalleCompra.importe ? detalleCompra.importe : 0,
+						importe_dolares: detalleCompra.importe_dolares ? detalleCompra.importe_dolares : 0,
 						descuento: detalleCompra.descuento,
 						recargo: detalleCompra.recargo,
 						ice: detalleCompra.ice,
@@ -5166,6 +5393,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						tipo_descuento: detalleCompra.tipo_descuento.toUpperCase() == "%" ? true : false,
 						tipo_recargo: detalleCompra.tipo_recargo.toUpperCase() == "%" ? true : false,
 						total: detalleCompra.total,
+						total_dolares: detalleCompra.total_dolares ? detalleCompra.total_dolares : 0,
 						id_inventario: inventarioCreado.id,
 					}, {
 							transaction: t
@@ -5173,9 +5401,11 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							return DetalleMovimiento.create({
 								id_movimiento: idMovimiento,
 								id_producto: idProducto,
-								costo_unitario: detalleCompra.costo_unitario,
+								costo_unitario: detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0,
+								costo_unitario_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0,
 								cantidad: detalleCompra.cantidad,
 								importe: (detalleCompra.costo_unitario * detalleCompra.cantidad),
+								importe_dolares: (detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0 * detalleCompra.cantidad),
 								descuento: detalleCompra.descuento,
 								recargo: detalleCompra.recargo,
 								ice: detalleCompra.ice,
@@ -5183,6 +5413,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								tipo_descuento: detalleCompra.tipo_descuento.toUpperCase() == "%" ? true : false,
 								tipo_recargo: detalleCompra.tipo_recargo.toUpperCase() == "%" ? true : false,
 								total: detalleCompra.total,
+								total_dolares: detalleCompra.total_dolares ? detalleCompra.total_dolares : 0,
 								fecha_vencimiento: detalleCompra.fecha_vencimiento,
 								lote: detalleCompra.lote,
 								id_inventario: inventarioCreado.id
@@ -5212,18 +5443,20 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				id_compra: idCompra,
 				id_producto: idProducto,
 				id_centro_costo: centroCosto.id,
-				costo_unitario: detalleCompra.costo_unitario,
+				costo_unitario: detalleCompra.costo_unitario ? detalleCompra.costo_unitario : 0,
+				costo_unitario_dolares: detalleCompra.costo_unitario_dolares ? detalleCompra.costo_unitario_dolares : 0,
 				cantidad: detalleCompra.cantidad,
-				importe: detalleCompra.importe,
+				importe: detalleCompra.importe ? detalleCompra.importe : 0,
+				importe_dolares: detalleCompra.importe_dolares ? detalleCompra.importe_dolares : 0,
 				descuento: detalleCompra.descuento,
 				recargo: detalleCompra.recargo,
 				ice: detalleCompra.ice,
 				excento: detalleCompra.excento,
-				tipo_descuento: detalleCompra.tipo_descuento,
-				tipo_recargo: detalleCompra.tipo_recargo,
+				tipo_descuento: detalleCompra.tipo_descuento.toUpperCase() == "%" ? true : false,
+				tipo_recargo: detalleCompra.tipo_recargo.toUpperCase() == "%" ? true : false,
 				total: detalleCompra.total,
-				it: detalleCompra.it,
-				iue: detalleCompra.iue
+				total_dolares: detalleCompra.total_dolares ? detalleCompra.total_dolares : 0,
+				id_inventario: inventarioCreado.id,
 			}).then(function (detalleCompraCreada) {
 				return new Promise(function (fulfill, reject) {
 					fulfill();
@@ -5359,12 +5592,14 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			fecha: venta.fecha,
 			codigo_control: venta.codigo_control,
 			fecha_limite_emision: venta.fecha_limite_emision,
-			importe: venta.importe,
+			importe: venta.importe ? venta.importe : 0,
+			importe_dolares: venta.importe_dolares ? venta.importe_dolares : 0,
 			id_tipo_pago: venta.tipoPago.id,
 			dias_credito: venta.dias_credito,
 			a_cuenta: venta.a_cuenta,
 			saldo: venta.saldo,
-			total: venta.total,
+			total: venta.total ? venta.total : 0,
+			total_dolares: venta.total_dolares ? venta.total_dolares : 0,
 			id_usuario: venta.id_usuario,
 			activa: true,
 			pagado: venta.pagado,
@@ -5375,8 +5610,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			observacion: venta.observacion,
 			total_descuento: venta.total_descuento_general,
 			total_ice: venta.total_ice,
-			total_recargo : venta.total_recargo_general,
-			total_exento : venta.total_exento
+			total_recargo: venta.total_recargo_general,
+			total_exento: venta.total_exento
 		}, { transaction: t }).then(function (ventaCreada) {
 			venta.ventaCreada = ventaCreada
 			return Dosificacion.update({
@@ -5578,20 +5813,36 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 
 	}
-	function calcularImporte(detalleVenta, ice, excento) {
-		detalleVenta.importe = Math.round((detalleVenta.cantidad * detalleVenta.precio_unitario) * 1000) / 1000;
-		var descuento, recargo;
-		if (detalleVenta.tipo_descuento) {
-			descuento = detalleVenta.importe * (detalleVenta.descuento / 100);
+	function calcularImporte(detalleVenta, ice, excento, dolares) {
+		if (dolares) {
+			detalleVenta.importe_dolares = Math.round((detalleVenta.cantidad * detalleVenta.precio_unitario_dolares) * 1000) / 1000;
+			var descuento, recargo;
+			if (detalleVenta.tipo_descuento) {
+				descuento = detalleVenta.importe_dolares * (detalleVenta.descuento / 100);
+			} else {
+				descuento = detalleVenta.descuento;
+			}
+			if (detalleVenta.tipo_recargo) {
+				recargo = detalleVenta.importe_dolares * (detalleVenta.recargo / 100);
+			} else {
+				recargo = detalleVenta.recargo;
+			}
+			detalleVenta.total = Math.round((detalleVenta.importe_dolares - descuento + recargo - ice - excento) * 1000) / 1000;
 		} else {
-			descuento = detalleVenta.descuento;
+			detalleVenta.importe = Math.round((detalleVenta.cantidad * detalleVenta.precio_unitario) * 1000) / 1000;
+			var descuento, recargo;
+			if (detalleVenta.tipo_descuento) {
+				descuento = detalleVenta.importe * (detalleVenta.descuento / 100);
+			} else {
+				descuento = detalleVenta.descuento;
+			}
+			if (detalleVenta.tipo_recargo) {
+				recargo = detalleVenta.importe * (detalleVenta.recargo / 100);
+			} else {
+				recargo = detalleVenta.recargo;
+			}
+			detalleVenta.total = Math.round((detalleVenta.importe - descuento + recargo - ice - excento) * 1000) / 1000;
 		}
-		if (detalleVenta.tipo_recargo) {
-			recargo = detalleVenta.importe * (detalleVenta.recargo / 100);
-		} else {
-			recargo = detalleVenta.recargo;
-		}
-		detalleVenta.total = Math.round((detalleVenta.importe - descuento + recargo - ice - excento) * 1000) / 1000;
 		return detalleVenta
 	}
 	function crearDetalleVentaImportacion(movimientoCreado, ventaCreada, detalleVenta, precio_unitario, importe, total, index, array, req, venta, t, sucursal) {
@@ -5679,15 +5930,18 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 								id_venta: venta.ventaCreada.id,
 								id_producto: detalleVenta.producto.id,
 								precio_unitario: detalleVenta.precio_unitario,
+								precio_unitario_dolares: detalleVenta.precio_unitario_dolares,
 								cantidad: detalleVenta.cantidad,
-								importe: importe,
+								importe: detalleVenta.importe ? detalleVenta.importe : 0,
+								importe_dolares: detalleVenta.importe_dolares ? detalleVenta.importe_dolares : 0,
 								descuento: detalleVenta.descuento,
 								recargo: detalleVenta.recargo,
 								ice: detalleVenta.ice,
 								excento: detalleVenta.excento,
 								tipo_descuento: detalleVenta.tipo_descuento.toUpperCase() == "%" ? true : false,
 								tipo_recargo: detalleVenta.tipo_recargo.toUpperCase() == "%" ? true : false,
-								total: total,
+								total: detalleVenta.total ? detalleVenta.total : 0,
+								total_dolares: detalleVenta.total_dolares ? detalleVenta.total_dolares : 0,
 								fecha_vencimiento: detalleVenta.fecha_vencimiento,
 								lote: detalleVenta.lote,
 								id_inventario: (detalleVenta.costos.length > 0) ? detalleVenta.costos[0].id : null
@@ -5721,9 +5975,12 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 			id_movimiento: movimientoCreado.id,
 			id_producto: producto.id,
 			cantidad: cantidadParcial,
-			costo_unitario: costo.costo_unitario,
-			importe: (cantidadParcial * costo.costo_unitario),
-			total: (cantidadParcial * costo.costo_unitario),
+			costo_unitario: costo.costo_unitario ? costo.costo_unitario : 0,
+			costo_unitario_dolares: costo.costo_unitario_dolares ? costo.costo_unitario_dolares : 0,
+			importe: (cantidadParcial * (costo.costo_unitario ? costo.costo_unitario : 0)),
+			importe_dolares: (cantidadParcial * (costo.costo_unitario_dolares ? costo.costo_unitario_dolares : 0)),
+			total: (cantidadParcial * (costo.costo_unitario ? costo.costo_unitario : 0)),
+			total_dolares: (cantidadParcial * (costo.costo_unitario_dolares ? costo.costo_unitario_dolares : 0)),
 			descuento: ((detalleVenta.descuento / cantidad) * cantidadParcial),
 			recargo: ((detalleVenta.recargo / cantidad) * cantidadParcial),
 			ice: ((detalleVenta.ice / cantidad) * cantidadParcial),
@@ -5749,7 +6006,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 						}).then(function (inventario) {
 							return Inventario.update({
 								cantidad: inventario.cantidad - cantidadParcial,
-								costo_total: ((inventario.cantidad - cantidadParcial) * costo.costo_unitario)
+								costo_total: ((inventario.cantidad - cantidadParcial) * (costo.costo_unitario ? costo.costo_unitario : 0)),
+								costo_total_dolares: ((inventario.cantidad - cantidadParcial) * (costo.costo_unitario_dolares ? costo.costo_unitario_dolares : 0))
 							}, {
 									where: {
 										id: inventario.id
@@ -5892,10 +6150,10 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				})
 			})
 		})
-		router.route('/importar-pagos-ventas/empresa/:id_empresa')
+	router.route('/importar-pagos-ventas/empresa/:id_empresa')
 		.post(function (req, res) {
 			Clase.find({
-				where: { nombre_corto:Diccionario.EGRE_FACTURACION }
+				where: { nombre_corto: Diccionario.EGRE_FACTURACION }
 			}).then(function (conceptoMovimiento) {
 				var promises = []
 				var a_cuenta = 0
@@ -5903,13 +6161,13 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 				sequelize.transaction(function (t) {
 					req.body.pagos.forEach(function (pago, index, array) {
 						promises.push(Venta.find({
-							where: { factura: pago.factura,autorizacion:pago.autorizacion },
+							where: { factura: pago.factura, autorizacion: pago.autorizacion },
 							include: [{
 								model: Almacen, as: 'almacen',
-								include: [{ model: Sucursal, as: 'sucursal',where:{id_empresa:req.params.id_empresa} },
+								include: [{ model: Sucursal, as: 'sucursal', where: { id_empresa: req.params.id_empresa } },
 								]
 							}, {
-								model: Movimiento, as: 'movimiento' ,where: { id_clase: conceptoMovimiento.id },
+								model: Movimiento, as: 'movimiento', where: { id_clase: conceptoMovimiento.id },
 								include: [{ model: Clase, as: 'clase' }]
 							}],
 							transaction: t

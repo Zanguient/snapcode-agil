@@ -1,0 +1,1 @@
+ALTER TABLE agil_empresa drop ver_costos_dolares;

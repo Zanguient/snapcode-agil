@@ -336,6 +336,108 @@ angular.module('agil.controladores')
 				$scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
 				$scope.enfocar('centro_costo');
 			}
+
+			$scope.establecerLote = function name(lote) {
+				$scope.detalleCompra.lote = lote
+				$scope.agregarDetalleCompraMasiva($scope.detalleCompra)
+				return [lote]
+			}
+			$scope.agregarDetalleCompraMasiva = function (detalleCompra) {
+				if ($scope.usuario.empresa.ver_costos_dolares) {
+					if (detalleCompra && detalleCompra.costo_unitario_dolares && detalleCompra.cantidad) {
+						if (detalleCompra.producto.nombre.id) {
+							detalleCompra.producto = detalleCompra.producto.nombre;
+						}
+						if (detalleCompra.centroCosto.nombre.id) {
+							detalleCompra.centroCosto = detalleCompra.centroCosto.nombre;
+						} else {
+							if (detalleCompra.centroCosto.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN) {
+								var centroCostoAlmacen = $.grep($scope.centrosCosto, function (e) { return e.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN; })[0];
+								detalleCompra.centroCosto = centroCostoAlmacen;
+							}
+						}
+						if (detalleCompra.fechaVencimientoTexto) {
+							detalleCompra.fecha_vencimiento = new Date($scope.convertirFecha(detalleCompra.fechaVencimientoTexto));
+						}
+						$scope.sumarTotal();
+						$scope.sumarTotalImporte();
+						// var noKeyDuplicado = Object.assign({ detalleCompra })
+						var noKeyDuplicado = { producto: detalleCompra.producto, centroCosto: detalleCompra.centroCosto, cantidad: detalleCompra.cantidad, costo_unitario_dolares: detalleCompra.costo_unitario_dolares ,importe_dolares:detalleCompra.importe_dolares, precio_unitario_dolares: detalleCompra.precio_unitario_dolares, total_dolares: detalleCompra.total_dolares, descuento: detalleCompra.descuento, recargo: detalleCompra.recargo, ice: detalleCompra.ice, excento: 0, tipo_descuento: detalleCompra.tipo_descuento, tipo_recargo: detalleCompra.tipo_recargo, lote: detalleCompra.lote }
+						if (!$scope.compra.detallesCompra.some(function (detalle) {
+							return detalle.lote == detalleCompra.lote
+						})) {
+							$scope.compra.detallesCompra.push(noKeyDuplicado);
+						}
+						// $scope.compra.detallesCompra.push(noKeyDuplicado);
+						// $scope.sumarTotal();
+						// $scope.sumarTotalImporte();
+						$scope.sumarTotal();
+						$scope.sumarTotalImporte();
+						if ($scope.compra.descuento_general) {
+							$scope.calcularImporteGeneral();
+						}
+						if ($scope.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
+							$scope.calcularSaldo();
+						} else {
+							$scope.compra.a_cuenta = null
+							$scope.compra.saldo = null
+							$scope.compra.dias_credito = null
+						}
+						// $scope.enfocar('lote_masivo');
+					} else {
+						$scope.mostrarMensaje('Faltan datos de costo unitario o cantidad.')
+	
+					}
+				} else {
+					if (detalleCompra && detalleCompra.costo_unitario && detalleCompra.cantidad) {
+						if (detalleCompra.producto.nombre.id) {
+							detalleCompra.producto = detalleCompra.producto.nombre;
+						}
+						if (detalleCompra.centroCosto.nombre.id) {
+							detalleCompra.centroCosto = detalleCompra.centroCosto.nombre;
+						} else {
+							if (detalleCompra.centroCosto.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN) {
+								var centroCostoAlmacen = $.grep($scope.centrosCosto, function (e) { return e.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN; })[0];
+								detalleCompra.centroCosto = centroCostoAlmacen;
+							}
+						}
+						if (detalleCompra.fechaVencimientoTexto) {
+							detalleCompra.fecha_vencimiento = new Date($scope.convertirFecha(detalleCompra.fechaVencimientoTexto));
+						}
+						// var noKeyDuplicado = Object.assign({ detalleCompra })
+						var noKeyDuplicado = { producto: detalleCompra.producto, centroCosto: detalleCompra.centroCosto, cantidad: detalleCompra.cantidad, costo_unitario: detalleCompra.costo_unitario, descuento: detalleCompra.descuento, recargo: detalleCompra.recargo, ice: detalleCompra.ice, excento: 0, tipo_descuento: detalleCompra.tipo_descuento, tipo_recargo: detalleCompra.tipo_recargo, lote: detalleCompra.lote }
+						if (!$scope.compra.detallesCompra.some(function (detalle) {
+							return detalle.lote == detalleCompra.lote
+						})) {
+							$scope.compra.detallesCompra.push(noKeyDuplicado);
+						}
+						// $scope.compra.detallesCompra.push(noKeyDuplicado);
+						$scope.sumarTotal();
+						$scope.sumarTotalImporte();
+						if ($scope.compra.descuento_general) {
+							$scope.calcularImporteGeneral();
+						}
+						if ($scope.compra.tipoPago.nombre == $scope.diccionario.TIPO_PAGO_CREDITO) {
+							$scope.calcularSaldo();
+						} else {
+							$scope.compra.a_cuenta = null
+							$scope.compra.saldo = null
+							$scope.compra.dias_credito = null
+						}
+						// $scope.enfocar('lote_masivo');
+					} else {
+						$scope.mostrarMensaje('Faltan datos de costo unitario o cantidad.')
+	
+					}
+				}
+				
+				$timeout(function () {
+					$scope.enfocar('lote_masivo');
+				}, 200)
+
+				// $scope.detalleCompra = { producto: {}, centroCosto: {}, cantidad: 1, descuento: 0, recargo: 0, ice: 0, excento: 0, tipo_descuento: false, tipo_recargo: false }
+
+			}
 			$scope.agregarDetalleCompraServicio = function (detalleCompra) {
 
 				$scope.compra.detallesCompra.push(detalleCompra);
@@ -395,17 +497,32 @@ angular.module('agil.controladores')
 
 			$scope.calcularImporteGeneral = function () {
 				var descuento, recargo;
-				if ($scope.compra.tipo_descuento) {
-					descuento = $scope.compra.importe * ($scope.compra.descuento / 100);
+				if ($scope.usuario.empresa.ver_costos_dolares) {
+					if ($scope.compra.tipo_descuento) {
+						descuento = $scope.compra.importe_dolares * ($scope.compra.descuento / 100);
+					} else {
+						descuento = $scope.compra.descuento;
+					}
+					if ($scope.compra.tipo_recargo) {
+						recargo = $scope.compra.importe_dolares * ($scope.compra.recargo / 100);
+					} else {
+						recargo = $scope.compra.recargo;
+					}
+					$scope.compra.total_dolares = Math.round(($scope.compra.importe - descuento + recargo - $scope.compra.ice - $scope.compra.excento) * 1000) / 1000;
 				} else {
-					descuento = $scope.compra.descuento;
+					if ($scope.compra.tipo_descuento) {
+						descuento = $scope.compra.importe * ($scope.compra.descuento / 100);
+					} else {
+						descuento = $scope.compra.descuento;
+					}
+					if ($scope.compra.tipo_recargo) {
+						recargo = $scope.compra.importe * ($scope.compra.recargo / 100);
+					} else {
+						recargo = $scope.compra.recargo;
+					}
+					$scope.compra.total = Math.round(($scope.compra.importe - descuento + recargo - $scope.compra.ice - $scope.compra.excento) * 1000) / 1000;
 				}
-				if ($scope.compra.tipo_recargo) {
-					recargo = $scope.compra.importe * ($scope.compra.recargo / 100);
-				} else {
-					recargo = $scope.compra.recargo;
-				}
-				$scope.compra.total = Math.round(($scope.compra.importe - descuento + recargo - $scope.compra.ice - $scope.compra.excento) * 1000) / 1000;
+				
 			}
 			$scope.calcularImportePedido = function (detalleCompra) {
 				detalleCompra.importe = Math.round((detalleCompra.cantidad * detalleCompra.costo_unitario) * 1000) / 1000;
@@ -485,104 +602,205 @@ angular.module('agil.controladores')
 					}
 				}
 			}
-			$scope.calcularImporte = function () {
-				$scope.detalleCompra.importe = Math.round(($scope.detalleCompra.cantidad * $scope.detalleCompra.costo_unitario) * 1000) / 1000;
+			$scope.calcularImporte = function () {				
 				var descuento, recargo, impTotal;
-				if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
-					if ($scope.compra.tipo_retencion) {
-						if ($scope.detalleCompra.centroCosto.nombre.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN) {
-							$scope.detalleCompra.total = $scope.detalleCompra.importe
-							$scope.detalleCompra.importe = ($scope.detalleCompra.total * ($scope.plantilla.retencionBienes.it.porsentaje + $scope.plantilla.retencionBienes.iue.porsentaje) / (100 - ($scope.plantilla.retencionBienes.it.porsentaje + $scope.plantilla.retencionBienes.iue.porsentaje))) + $scope.detalleCompra.total
-							$scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienes.it.porsentaje) / 100
-							$scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienes.iue.porsentaje) / 100
+				if ($scope.usuario.empresa.ver_costos_dolares) {
+					$scope.detalleCompra.importe_dolares = Math.round(($scope.detalleCompra.cantidad * $scope.detalleCompra.costo_unitario_dolares) * 1000) / 1000;
+					if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
+						if ($scope.compra.tipo_retencion) {
+							if ($scope.detalleCompra.centroCosto.nombre.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN) {
+								$scope.detalleCompra.total_dolares = $scope.detalleCompra.importe_dolares
+								$scope.detalleCompra.importe_dolares = ($scope.detalleCompra.total_dolares * ($scope.plantilla.retencionBienes.it.porsentaje + $scope.plantilla.retencionBienes.iue.porsentaje) / (100 - ($scope.plantilla.retencionBienes.it.porsentaje + $scope.plantilla.retencionBienes.iue.porsentaje))) + $scope.detalleCompra.total_dolares
+								$scope.detalleCompra.it = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionBienes.it.porsentaje) / 100
+								$scope.detalleCompra.iue = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionBienes.iue.porsentaje) / 100
+							} else {
+								$scope.detalleCompra.total_dolares = $scope.detalleCompra.importe_dolares
+								$scope.detalleCompra.importe_dolares = ($scope.detalleCompra.total_dolares * ($scope.plantilla.retencionBienesGasto.it.porsentaje + $scope.plantilla.retencionBienesGasto.iue.porsentaje) / (100 - ($scope.plantilla.retencionBienesGasto.it.porsentaje + $scope.plantilla.retencionBienesGasto.iue.porsentaje))) + $scope.detalleCompra.total_dolares
+								$scope.detalleCompra.it = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionBienesGasto.it.porsentaje) / 100
+								$scope.detalleCompra.iue = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionBienesGasto.iue.porsentaje) / 100
+								//$scope.detalleCompra.total_dolares =($scope.detalleCompra.importe_dolares *$scope.plantilla.retencionBienesGasto.gasto.porsentaje)/100
+							}
 						} else {
-							$scope.detalleCompra.total = $scope.detalleCompra.importe
-							$scope.detalleCompra.importe = ($scope.detalleCompra.total * ($scope.plantilla.retencionBienesGasto.it.porsentaje + $scope.plantilla.retencionBienesGasto.iue.porsentaje) / (100 - ($scope.plantilla.retencionBienesGasto.it.porsentaje + $scope.plantilla.retencionBienesGasto.iue.porsentaje))) + $scope.detalleCompra.total
-							$scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.it.porsentaje) / 100
-							$scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.iue.porsentaje) / 100
-							//$scope.detalleCompra.total =($scope.detalleCompra.importe *$scope.plantilla.retencionBienesGasto.gasto.porsentaje)/100
+							if ($scope.detalleCompra.centroCosto.nombre.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN) {
+								$scope.detalleCompra.it = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionBienes.it.porsentaje) / 100
+								$scope.detalleCompra.iue = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionBienes.iue.porsentaje) / 100
+								$scope.detalleCompra.total_dolares = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionBienes.almacen.porsentaje) / 100
+							} else {
+								$scope.detalleCompra.it = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionBienesGasto.it.porsentaje) / 100
+								$scope.detalleCompra.iue = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionBienesGasto.iue.porsentaje) / 100
+								$scope.detalleCompra.total_dolares = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionBienesGasto.gasto.porsentaje) / 100
+							}
+	
+						}
+						/* $scope.detalleCompra.total_dolares = $scope.detalleCompra.importe_dolares */
+					} else if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_IMPORTACION) {
+						$scope.detalleCompra.total_dolares = $scope.detalleCompra.importe_dolares
+					} else if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_SERVICIOS) {
+						if ($scope.compra.tipo_retencion) {
+	
+							$scope.detalleCompra.total_dolares = $scope.detalleCompra.importe_dolares
+							$scope.detalleCompra.importe_dolares = ($scope.detalleCompra.total_dolares * ($scope.plantilla.retencionServicios.it.porsentaje + $scope.plantilla.retencionServicios.iue.porsentaje) / (100 - ($scope.plantilla.retencionServicios.it.porsentaje + $scope.plantilla.retencionServicios.iue.porsentaje))) + $scope.detalleCompra.total_dolares
+							$scope.detalleCompra.it = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionServicios.it.porsentaje) / 100
+							$scope.detalleCompra.iue = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionServicios.iue.porsentaje) / 100
+	
+						} else {
+	
+							$scope.detalleCompra.it = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionServicios.it.porsentaje) / 100
+							$scope.detalleCompra.iue = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionServicios.iue.porsentaje) / 100
+							$scope.detalleCompra.total_dolares = ($scope.detalleCompra.importe_dolares * $scope.plantilla.retencionServicios.servicio.porsentaje) / 100
+	
+	
 						}
 					} else {
-						if ($scope.detalleCompra.centroCosto.nombre.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN) {
-							$scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienes.it.porsentaje) / 100
-							$scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienes.iue.porsentaje) / 100
-							$scope.detalleCompra.total = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienes.almacen.porsentaje) / 100
+						if (!$scope.compra.descuento_general) {
+							if ($scope.detalleCompra.tipo_descuento) {
+								descuento = $scope.detalleCompra.importe_dolares * ($scope.detalleCompra.descuento / 100);
+							} else {
+								descuento = $scope.detalleCompra.descuento;
+							}
+							if ($scope.detalleCompra.tipo_recargo) {
+								recargo = $scope.detalleCompra.importe_dolares * ($scope.detalleCompra.recargo / 100);
+							} else {
+								recargo = $scope.detalleCompra.recargo;
+							}
+	
+							$scope.detalleCompra.total_dolares = $scope.detalleCompra.importe_dolares - descuento + recargo - $scope.detalleCompra.ice - $scope.detalleCompra.excento;
 						} else {
-							$scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.it.porsentaje) / 100
-							$scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.iue.porsentaje) / 100
-							$scope.detalleCompra.total = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.gasto.porsentaje) / 100
+	
+	
+							if ($scope.compra.tipo_descuento) {
+								descuento = $scope.detalleCompra.importe_dolares * ($scope.compra.descuento / 100);
+							} else {
+								if ($scope.compra.detallesCompra.length == 0) {
+									descuento = $scope.compra.descuento;
+									$scope.cambioDescuento = descuento;
+									$scope.impTotal = 0;
+								} else {
+									$scope.impTotal = $scope.compra.importe_dolares + $scope.detalleCompra.importe_dolares;
+									descuento = ($scope.detalleCompra.importe_dolares / $scope.impTotal) * $scope.compra.descuento;
+									$scope.cambioDescuento = descuento;
+	
+									if ($scope.compra.tipo_recargo) {
+										recargo = $scope.detalleCompra.importe_dolares * ($scope.compra.recargo / 100);
+									} else {
+										recargo = $scope.compra.recargo;
+									}
+									$scope.compra.detallesCompra.forEach(function (dato) {
+										dato.descuento = (dato.importe_dolares / $scope.impTotal) * $scope.compra.descuento;
+										dato.total_dolares = dato.importe_dolares - dato.descuento + recargo - $scope.compra.ice - $scope.compra.excento;
+										$scope.cambioDescuento = dato.descuento;
+									})
+	
+								}
+	
+							}
+							if ($scope.compra.tipo_recargo) {
+								recargo = $scope.detalleCompra.importe_dolares * ($scope.compra.recargo / 100);
+							} else {
+								recargo = $scope.compra.recargo;
+							}
+							$scope.detalleCompra.descuento = descuento;
+							$scope.detalleCompra.total_dolares = $scope.detalleCompra.importe_dolares - descuento + recargo - $scope.compra.ice - $scope.compra.excento;
 						}
-
-					}
-					/* $scope.detalleCompra.total = $scope.detalleCompra.importe */
-				} else if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_IMPORTACION) {
-					$scope.detalleCompra.total = $scope.detalleCompra.importe
-				} else if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_SERVICIOS) {
-					if ($scope.compra.tipo_retencion) {
-
-						$scope.detalleCompra.total = $scope.detalleCompra.importe
-						$scope.detalleCompra.importe = ($scope.detalleCompra.total * ($scope.plantilla.retencionServicios.it.porsentaje + $scope.plantilla.retencionServicios.iue.porsentaje) / (100 - ($scope.plantilla.retencionServicios.it.porsentaje + $scope.plantilla.retencionServicios.iue.porsentaje))) + $scope.detalleCompra.total
-						$scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.it.porsentaje) / 100
-						$scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.iue.porsentaje) / 100
-
-					} else {
-
-						$scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.it.porsentaje) / 100
-						$scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.iue.porsentaje) / 100
-						$scope.detalleCompra.total = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.servicio.porsentaje) / 100
-
-
 					}
 				} else {
-					if (!$scope.compra.descuento_general) {
-						if ($scope.detalleCompra.tipo_descuento) {
-							descuento = $scope.detalleCompra.importe * ($scope.detalleCompra.descuento / 100);
-						} else {
-							descuento = $scope.detalleCompra.descuento;
-						}
-						if ($scope.detalleCompra.tipo_recargo) {
-							recargo = $scope.detalleCompra.importe * ($scope.detalleCompra.recargo / 100);
-						} else {
-							recargo = $scope.detalleCompra.recargo;
-						}
-
-						$scope.detalleCompra.total = $scope.detalleCompra.importe - descuento + recargo - $scope.detalleCompra.ice - $scope.detalleCompra.excento;
-					} else {
-
-
-						if ($scope.compra.tipo_descuento) {
-							descuento = $scope.detalleCompra.importe * ($scope.compra.descuento / 100);
-						} else {
-							if ($scope.compra.detallesCompra.length == 0) {
-								descuento = $scope.compra.descuento;
-								$scope.cambioDescuento = descuento;
-								$scope.impTotal = 0;
+					$scope.detalleCompra.importe = Math.round(($scope.detalleCompra.cantidad * $scope.detalleCompra.costo_unitario) * 1000) / 1000;
+					if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_BIENES) {
+						if ($scope.compra.tipo_retencion) {
+							if ($scope.detalleCompra.centroCosto.nombre.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN) {
+								$scope.detalleCompra.total = $scope.detalleCompra.importe
+								$scope.detalleCompra.importe = ($scope.detalleCompra.total * ($scope.plantilla.retencionBienes.it.porsentaje + $scope.plantilla.retencionBienes.iue.porsentaje) / (100 - ($scope.plantilla.retencionBienes.it.porsentaje + $scope.plantilla.retencionBienes.iue.porsentaje))) + $scope.detalleCompra.total
+								$scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienes.it.porsentaje) / 100
+								$scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienes.iue.porsentaje) / 100
 							} else {
-								$scope.impTotal = $scope.compra.importe + $scope.detalleCompra.importe;
-								descuento = ($scope.detalleCompra.importe / $scope.impTotal) * $scope.compra.descuento;
-								$scope.cambioDescuento = descuento;
-
-								if ($scope.compra.tipo_recargo) {
-									recargo = $scope.detalleCompra.importe * ($scope.compra.recargo / 100);
-								} else {
-									recargo = $scope.compra.recargo;
-								}
-								$scope.compra.detallesCompra.forEach(function (dato) {
-									dato.descuento = (dato.importe / $scope.impTotal) * $scope.compra.descuento;
-									dato.total = dato.importe - dato.descuento + recargo - $scope.compra.ice - $scope.compra.excento;
-									$scope.cambioDescuento = dato.descuento;
-								})
-
+								$scope.detalleCompra.total = $scope.detalleCompra.importe
+								$scope.detalleCompra.importe = ($scope.detalleCompra.total * ($scope.plantilla.retencionBienesGasto.it.porsentaje + $scope.plantilla.retencionBienesGasto.iue.porsentaje) / (100 - ($scope.plantilla.retencionBienesGasto.it.porsentaje + $scope.plantilla.retencionBienesGasto.iue.porsentaje))) + $scope.detalleCompra.total
+								$scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.it.porsentaje) / 100
+								$scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.iue.porsentaje) / 100
+								//$scope.detalleCompra.total =($scope.detalleCompra.importe *$scope.plantilla.retencionBienesGasto.gasto.porsentaje)/100
 							}
-
-						}
-						if ($scope.compra.tipo_recargo) {
-							recargo = $scope.detalleCompra.importe * ($scope.compra.recargo / 100);
 						} else {
-							recargo = $scope.compra.recargo;
+							if ($scope.detalleCompra.centroCosto.nombre.nombre == $scope.diccionario.CENTRO_COSTO_ALMACEN) {
+								$scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienes.it.porsentaje) / 100
+								$scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienes.iue.porsentaje) / 100
+								$scope.detalleCompra.total = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienes.almacen.porsentaje) / 100
+							} else {
+								$scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.it.porsentaje) / 100
+								$scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.iue.porsentaje) / 100
+								$scope.detalleCompra.total = ($scope.detalleCompra.importe * $scope.plantilla.retencionBienesGasto.gasto.porsentaje) / 100
+							}
+	
 						}
-						$scope.detalleCompra.descuento = descuento;
-						$scope.detalleCompra.total = $scope.detalleCompra.importe - descuento + recargo - $scope.compra.ice - $scope.compra.excento;
+						/* $scope.detalleCompra.total = $scope.detalleCompra.importe */
+					} else if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_IMPORTACION) {
+						$scope.detalleCompra.total = $scope.detalleCompra.importe
+					} else if ($scope.compra.movimiento.clase.nombre == $scope.diccionario.MOVING_POR_RETENCION_SERVICIOS) {
+						if ($scope.compra.tipo_retencion) {
+	
+							$scope.detalleCompra.total = $scope.detalleCompra.importe
+							$scope.detalleCompra.importe = ($scope.detalleCompra.total * ($scope.plantilla.retencionServicios.it.porsentaje + $scope.plantilla.retencionServicios.iue.porsentaje) / (100 - ($scope.plantilla.retencionServicios.it.porsentaje + $scope.plantilla.retencionServicios.iue.porsentaje))) + $scope.detalleCompra.total
+							$scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.it.porsentaje) / 100
+							$scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.iue.porsentaje) / 100
+	
+						} else {
+	
+							$scope.detalleCompra.it = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.it.porsentaje) / 100
+							$scope.detalleCompra.iue = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.iue.porsentaje) / 100
+							$scope.detalleCompra.total = ($scope.detalleCompra.importe * $scope.plantilla.retencionServicios.servicio.porsentaje) / 100
+	
+	
+						}
+					} else {
+						if (!$scope.compra.descuento_general) {
+							if ($scope.detalleCompra.tipo_descuento) {
+								descuento = $scope.detalleCompra.importe * ($scope.detalleCompra.descuento / 100);
+							} else {
+								descuento = $scope.detalleCompra.descuento;
+							}
+							if ($scope.detalleCompra.tipo_recargo) {
+								recargo = $scope.detalleCompra.importe * ($scope.detalleCompra.recargo / 100);
+							} else {
+								recargo = $scope.detalleCompra.recargo;
+							}
+	
+							$scope.detalleCompra.total = $scope.detalleCompra.importe - descuento + recargo - $scope.detalleCompra.ice - $scope.detalleCompra.excento;
+						} else {
+	
+	
+							if ($scope.compra.tipo_descuento) {
+								descuento = $scope.detalleCompra.importe * ($scope.compra.descuento / 100);
+							} else {
+								if ($scope.compra.detallesCompra.length == 0) {
+									descuento = $scope.compra.descuento;
+									$scope.cambioDescuento = descuento;
+									$scope.impTotal = 0;
+								} else {
+									$scope.impTotal = $scope.compra.importe + $scope.detalleCompra.importe;
+									descuento = ($scope.detalleCompra.importe / $scope.impTotal) * $scope.compra.descuento;
+									$scope.cambioDescuento = descuento;
+	
+									if ($scope.compra.tipo_recargo) {
+										recargo = $scope.detalleCompra.importe * ($scope.compra.recargo / 100);
+									} else {
+										recargo = $scope.compra.recargo;
+									}
+									$scope.compra.detallesCompra.forEach(function (dato) {
+										dato.descuento = (dato.importe / $scope.impTotal) * $scope.compra.descuento;
+										dato.total = dato.importe - dato.descuento + recargo - $scope.compra.ice - $scope.compra.excento;
+										$scope.cambioDescuento = dato.descuento;
+									})
+	
+								}
+	
+							}
+							if ($scope.compra.tipo_recargo) {
+								recargo = $scope.detalleCompra.importe * ($scope.compra.recargo / 100);
+							} else {
+								recargo = $scope.compra.recargo;
+							}
+							$scope.detalleCompra.descuento = descuento;
+							$scope.detalleCompra.total = $scope.detalleCompra.importe - descuento + recargo - $scope.compra.ice - $scope.compra.excento;
+						}
 					}
 				}
 			}
@@ -628,20 +846,36 @@ angular.module('agil.controladores')
 				var sumaImporte = 0;
 				for (var i = 0; i < $scope.compra.detallesCompra.length; i++) {
 					if (!$scope.compra.detallesCompra[i].eliminado) {
-						sumaImporte = sumaImporte + $scope.compra.detallesCompra[i].importe;
+						if ($scope.usuario.empresa.ver_costos_dolares) {
+							sumaImporte = sumaImporte + $scope.compra.detallesCompra[i].importe_dolares;
+							$scope.compra.importe_dolares = Math.round((sumaImporte) * 1000) / 1000;
+						}else{
+							sumaImporte = sumaImporte + $scope.compra.detallesCompra[i].importe;
+							$scope.compra.importe = Math.round((sumaImporte) * 1000) / 1000;
+						}
 					}
 				}
-				$scope.compra.importe = Math.round((sumaImporte) * 1000) / 1000;
 			}
 
 			$scope.sumarTotal = function () {
-				var sumaTotal = 0;
-				for (var i = 0; i < $scope.compra.detallesCompra.length; i++) {
-					if (!$scope.compra.detallesCompra[i].eliminado) {
-						sumaTotal = sumaTotal + $scope.compra.detallesCompra[i].total;
+				if ($scope.usuario.empresa.ver_costos_dolares) {
+					var sumaTotal = 0;
+					for (var i = 0; i < $scope.compra.detallesCompra.length; i++) {
+						if (!$scope.compra.detallesCompra[i].eliminado) {
+							sumaTotal = sumaTotal + $scope.compra.detallesCompra[i].total_dolares;
+						}
 					}
+					$scope.compra.total_dolares = Math.round((sumaTotal) * 1000) / 1000;
+				} else {
+					var sumaTotal = 0;
+					for (var i = 0; i < $scope.compra.detallesCompra.length; i++) {
+						if (!$scope.compra.detallesCompra[i].eliminado) {
+							sumaTotal = sumaTotal + $scope.compra.detallesCompra[i].total;
+						}
+					}
+					$scope.compra.total = Math.round((sumaTotal) * 1000) / 1000;
 				}
-				$scope.compra.total = Math.round((sumaTotal) * 1000) / 1000;
+
 			}
 
 			$scope.calcularSaldo = function () {
@@ -1226,7 +1460,7 @@ angular.module('agil.controladores')
 					usar_producto: true, movimiento: { clase: {} }, tipo_retencion: true,
 					id_empresa: $scope.usuario.id_empresa, id_usuario: $scope.usuario.id, proveedor: {}, id_tipo_pago: $scope.tiposPago[0].id, tipoPago: $scope.tiposPago[0],
 					detallesCompra: [], descuento_general: false, tipo_descuento: false, codigo_control: 0, autorizacion: 0,
-					tipo_recargo: false, descuento: 0, recargo: 0, ice: 0, excento: 0
+					tipo_recargo: false, descuento: 0, recargo: 0, ice: 0, excento: 0, carga_masiva_serie: false
 				});
 
 				$scope.cambiarTipoPago($scope.tiposPago[0]);
@@ -1247,6 +1481,7 @@ angular.module('agil.controladores')
 
 			$scope.verCompra = function (compra) {
 				$scope.compra = compra;
+				$scope.carga_masiva_serie = false
 				$scope.abrirPopup($scope.idModalWizardCompraVista);
 			}
 
@@ -1363,7 +1598,12 @@ angular.module('agil.controladores')
 				promesa.then(function (datos) {
 					compra = datos.compra;
 					compra.sucursal = datos.sucursal;
-					compra.numero_literal = datos.numero_literal;
+					if ($scope.usuario.empresa.ver_costos_dolares) {
+						compra.numero_literal = ConvertirALiteral(compra.total_dolares.toFixed(2), 'Dolares Americanos');
+					} else {
+						compra.numero_literal = datos.numero_literal;
+					}
+
 					compra.fecha = new Date(compra.fecha);
 					compra.fechaTexto = compra.fecha.getDate() + "/" + (compra.fecha.getMonth() + 1) + "/" + compra.fecha.getFullYear();
 					compra.configuracion = datos.configuracion;
@@ -1377,98 +1617,191 @@ angular.module('agil.controladores')
 
 					var y = 240;
 					for (var i = 0; i < compra.detallesCompra.length; i++) {
+						if ($scope.usuario.empresa.ver_costos_dolares) {
+							if (existenDescuentos) {
 
-						if (existenDescuentos) {
-
-							if ($scope.usuario.empresa.usar_vencimientos) {
-								doc.font('Helvetica', 7);
-								var longitudCaracteres = compra.detallesCompra[i].producto.codigo.length;
-								var yDesc = (longitudCaracteres <= 11) ? y : ((longitudCaracteres > 11 && longitudCaracteres <= 22) ? y - 4 : y - 11);
-								if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, yDesc, { width: 50 });
-								doc.text(compra.detallesCompra[i].cantidad, 110, y);
-								if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 135, y);
-
-								if (compra.detallesCompra[i].producto) {
-									doc.text(compra.detallesCompra[i].producto.nombre, 170, y, { width: 130 });
+								if ($scope.usuario.empresa.usar_vencimientos) {
+									doc.font('Helvetica', 7);
+									var longitudCaracteres = compra.detallesCompra[i].producto.codigo.length;
+									var yDesc = (longitudCaracteres <= 11) ? y : ((longitudCaracteres > 11 && longitudCaracteres <= 22) ? y - 4 : y - 11);
+									if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, yDesc, { width: 50 });
+									doc.text(compra.detallesCompra[i].cantidad, 110, y);
+									if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 135, y);
+	
+									if (compra.detallesCompra[i].producto) {
+										doc.text(compra.detallesCompra[i].producto.nombre, 170, y, { width: 130 });
+									} else {
+										doc.text(compra.detallesCompra[i].servicio.nombre, 170, y, { width: 130 });
+									}
+	
+									doc.text(compra.detallesCompra[i].costo_unitario_dolares.toFixed(2), 280, y);
+									doc.text(compra.detallesCompra[i].importe_dolares.toFixed(2), 315, y);
+									doc.text(compra.descuento_general ? compra.tipo_descuento ? "%" : "Bs" : compra.detallesVenta[i].tipo_descuento ? "%" : "Bs", 365, y - 10);
+									doc.text(compra.detallesCompra[i].descuento.toFixed(2), 365, y);
+									doc.text(compra.descuento_general ? compra.tipo_recargo ? "%" : "Bs" : compra.detallesVenta[i].tipo_recargo ? "%" : "Bs", 395, y - 10);
+									doc.text(compra.detallesCompra[i].recargo.toFixed(2), 395, y);
+									doc.text(compra.detallesCompra[i].ice.toFixed(2), 425, y);
+									doc.text(compra.detallesCompra[i].excento.toFixed(2), 455, y);
+									doc.text(compra.detallesCompra[i].total_dolares.toFixed(2), 555, y);
+	
+									if (compra.detallesCompra[i].inventario) {
+										compra.detallesCompra[i].inventario.fecha_vencimiento = new Date(compra.detallesCompra[i].inventario.fecha_vencimiento);
+										compra.detallesCompra[i].inventario.fechaVencimientoTexto = compra.detallesCompra[i].inventario.fecha_vencimiento.getDate() + "/" + (compra.detallesCompra[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + compra.detallesCompra[i].inventario.fecha_vencimiento.getYear();
+										doc.text(compra.detallesCompra[i].inventario.fechaVencimientoTexto, 485, y);
+										doc.text((compra.detallesCompra[i].inventario.lote) ? compra.detallesCompra[i].inventario.lote : "", 525, y);
+									}
 								} else {
-									doc.text(compra.detallesCompra[i].servicio.nombre, 170, y, { width: 130 });
-								}
-
-								doc.text(compra.detallesCompra[i].costo_unitario.toFixed(2), 280, y);
-								doc.text(compra.detallesCompra[i].importe.toFixed(2), 315, y);
-								doc.text(compra.descuento_general?compra.tipo_descuento? "%" : "Bs":compra.detallesVenta[i].tipo_descuento ? "%" : "Bs", 365, y - 10);
-								doc.text(compra.detallesCompra[i].descuento.toFixed(2), 365, y);
-								doc.text(compra.descuento_general?compra.tipo_recargo? "%" : "Bs":compra.detallesVenta[i].tipo_recargo ? "%" : "Bs", 395, y - 10);
-								doc.text(compra.detallesCompra[i].recargo.toFixed(2), 395, y);
-								doc.text(compra.detallesCompra[i].ice.toFixed(2), 425, y);
-								doc.text(compra.detallesCompra[i].excento.toFixed(2), 455, y);
-								doc.text(compra.detallesCompra[i].total.toFixed(2), 555, y);
-
-								if (compra.detallesCompra[i].inventario) {
-									compra.detallesCompra[i].inventario.fecha_vencimiento = new Date(compra.detallesCompra[i].inventario.fecha_vencimiento);
-									compra.detallesCompra[i].inventario.fechaVencimientoTexto = compra.detallesCompra[i].inventario.fecha_vencimiento.getDate() + "/" + (compra.detallesCompra[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + compra.detallesCompra[i].inventario.fecha_vencimiento.getYear();
-									doc.text(compra.detallesCompra[i].inventario.fechaVencimientoTexto, 485, y);
-									doc.text((compra.detallesCompra[i].inventario.lote) ? compra.detallesCompra[i].inventario.lote : "", 525, y);
+									doc.font('Helvetica', 8);
+									var longitudCaracteres = compra.detallesCompra[i].producto.codigo.length;
+									var yDesc = (longitudCaracteres <= 11) ? y : ((longitudCaracteres > 11 && longitudCaracteres <= 22) ? y - 4 : y - 11);
+									if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, yDesc, { width: 70 });
+									doc.text(compra.detallesCompra[i].cantidad, 110, y);
+									if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 135, y);
+	
+									if (compra.detallesCompra[i].producto) {
+										doc.text(compra.detallesCompra[i].producto.nombre, 170, y - 6, { width: 130 });
+									} else {
+										doc.text(compra.detallesCompra[i].servicio.nombre, 170, y - 6, { width: 130 });
+									}
+	
+									doc.text(compra.detallesCompra[i].costo_unitario_dolares.toFixed(2), 300, y);
+									doc.text(compra.detallesCompra[i].importe_dolares.toFixed(2), 335, y);
+	
+									doc.text(compra.descuento_general ? compra.tipo_descuento ? "%" : "Bs" : compra.detallesVenta[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
+									doc.text(compra.detallesCompra[i].descuento.toFixed(2), 385, y);
+									doc.text(compra.descuento_general ? compra.tipo_recargo ? "%" : "Bs" : compra.detallesVenta[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
+									doc.text(compra.detallesCompra[i].recargo.toFixed(2), 420, y);
+									doc.text(compra.detallesCompra[i].ice.toFixed(2), 455, y);
+									doc.text(compra.detallesCompra[i].excento.toFixed(2), 490, y);
+									doc.text(compra.detallesCompra[i].total_dolares.toFixed(2), 520, y);
 								}
 							} else {
 								doc.font('Helvetica', 8);
-								var longitudCaracteres = compra.detallesCompra[i].producto.codigo.length;
-								var yDesc = (longitudCaracteres <= 11) ? y : ((longitudCaracteres > 11 && longitudCaracteres <= 22) ? y - 4 : y - 11);
-								if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, yDesc, { width: 70 });
-								doc.text(compra.detallesCompra[i].cantidad, 110, y);
-								if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 135, y);
-
+								if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, y, { width: 70 });
+								doc.text(compra.detallesCompra[i].cantidad, 140, y);
+								if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 160, y);
 								if (compra.detallesCompra[i].producto) {
-									doc.text(compra.detallesCompra[i].producto.nombre, 170, y - 6, { width: 130 });
+									var longitudCaracteres = compra.detallesCompra[i].producto.nombre.length;
+									var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
 								} else {
-									doc.text(compra.detallesCompra[i].servicio.nombre, 170, y - 6, { width: 130 });
+									var longitudCaracteres = compra.detallesCompra[i].servicio.nombre.length;
+									var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
 								}
-
-								doc.text(compra.detallesCompra[i].costo_unitario.toFixed(2), 300, y);
-								doc.text(compra.detallesCompra[i].importe.toFixed(2), 335, y);
-								
-								doc.text(compra.descuento_general?compra.tipo_descuento? "%" : "Bs":compra.detallesVenta[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
-								doc.text(compra.detallesCompra[i].descuento.toFixed(2), 385, y);
-								doc.text(compra.descuento_general?compra.tipo_recargo? "%" : "Bs":compra.detallesVenta[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
-								doc.text(compra.detallesCompra[i].recargo.toFixed(2), 420, y);
-								doc.text(compra.detallesCompra[i].ice.toFixed(2), 455, y);
-								doc.text(compra.detallesCompra[i].excento.toFixed(2), 490, y);
-								doc.text(compra.detallesCompra[i].total.toFixed(2), 520, y);
+								if ($scope.usuario.empresa.usar_vencimientos) {
+									if (compra.detallesCompra[i].inventario) {
+										compra.detallesCompra[i].inventario.fecha_vencimiento = new Date(compra.detallesCompra[i].inventario.fecha_vencimiento);
+										compra.detallesCompra[i].inventario.fechaVencimientoTexto = compra.detallesCompra[i].inventario.fecha_vencimiento.getDate() + "/" + (compra.detallesCompra[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + compra.detallesCompra[i].inventario.fecha_vencimiento.getFullYear();
+										doc.text(compra.detallesCompra[i].inventario.fechaVencimientoTexto, 400, y);
+										doc.text(compra.detallesCompra[i].inventario.lote, 460, y);
+									}
+									if (compra.detallesCompra[i].producto) {
+										doc.text(compra.detallesCompra[i].producto.nombre, 210, yDesc - 11.5, { width: 185 });
+									} else {
+										doc.text(compra.detallesCompra[i].servicio.nombre, 210, yDesc - 11.5, { width: 185 });
+									}
+								} else {
+									if (compra.detallesCompra[i].producto) {
+										doc.text(compra.detallesCompra[i].producto.nombre, 210, yDesc - 11.5, { width: 225 });
+									} else {
+										doc.text(compra.detallesCompra[i].servicio.nombre, 210, yDesc - 11.5, { width: 185 });
+									}
+								}
+								doc.text(compra.detallesCompra[i].costo_unitario_dolares.toFixed(2), 500, y);
+								doc.text(compra.detallesCompra[i].total_dolares.toFixed(2), 540, y);
 							}
 						} else {
-							doc.font('Helvetica', 8);
-							if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, y, { width: 70 });
-							doc.text(compra.detallesCompra[i].cantidad, 140, y);
-							if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 160, y);
-							if (compra.detallesCompra[i].producto) {
-								var longitudCaracteres = compra.detallesCompra[i].producto.nombre.length;
-								var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
-							} else {
-								var longitudCaracteres = compra.detallesCompra[i].servicio.nombre.length;
-								var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
-							}
-							if ($scope.usuario.empresa.usar_vencimientos) {
-								if (compra.detallesCompra[i].inventario) {
-									compra.detallesCompra[i].inventario.fecha_vencimiento = new Date(compra.detallesCompra[i].inventario.fecha_vencimiento);
-									compra.detallesCompra[i].inventario.fechaVencimientoTexto = compra.detallesCompra[i].inventario.fecha_vencimiento.getDate() + "/" + (compra.detallesCompra[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + compra.detallesCompra[i].inventario.fecha_vencimiento.getFullYear();
-									doc.text(compra.detallesCompra[i].inventario.fechaVencimientoTexto, 400, y);
-									doc.text(compra.detallesCompra[i].inventario.lote, 460, y);
-								}
-								if (compra.detallesCompra[i].producto) {
-									doc.text(compra.detallesCompra[i].producto.nombre, 210, yDesc - 11.5, { width: 185 });
+							if (existenDescuentos) {
+								if ($scope.usuario.empresa.usar_vencimientos) {
+									doc.font('Helvetica', 7);
+									var longitudCaracteres = compra.detallesCompra[i].producto.codigo.length;
+									var yDesc = (longitudCaracteres <= 11) ? y : ((longitudCaracteres > 11 && longitudCaracteres <= 22) ? y - 4 : y - 11);
+									if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, yDesc, { width: 50 });
+									doc.text(compra.detallesCompra[i].cantidad, 110, y);
+									if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 135, y);
+	
+									if (compra.detallesCompra[i].producto) {
+										doc.text(compra.detallesCompra[i].producto.nombre, 170, y, { width: 130 });
+									} else {
+										doc.text(compra.detallesCompra[i].servicio.nombre, 170, y, { width: 130 });
+									}
+	
+									doc.text(compra.detallesCompra[i].costo_unitario.toFixed(2), 280, y);
+									doc.text(compra.detallesCompra[i].importe.toFixed(2), 315, y);
+									doc.text(compra.descuento_general ? compra.tipo_descuento ? "%" : "Bs" : compra.detallesVenta[i].tipo_descuento ? "%" : "Bs", 365, y - 10);
+									doc.text(compra.detallesCompra[i].descuento.toFixed(2), 365, y);
+									doc.text(compra.descuento_general ? compra.tipo_recargo ? "%" : "Bs" : compra.detallesVenta[i].tipo_recargo ? "%" : "Bs", 395, y - 10);
+									doc.text(compra.detallesCompra[i].recargo.toFixed(2), 395, y);
+									doc.text(compra.detallesCompra[i].ice.toFixed(2), 425, y);
+									doc.text(compra.detallesCompra[i].excento.toFixed(2), 455, y);
+									doc.text(compra.detallesCompra[i].total.toFixed(2), 555, y);
+	
+									if (compra.detallesCompra[i].inventario) {
+										compra.detallesCompra[i].inventario.fecha_vencimiento = new Date(compra.detallesCompra[i].inventario.fecha_vencimiento);
+										compra.detallesCompra[i].inventario.fechaVencimientoTexto = compra.detallesCompra[i].inventario.fecha_vencimiento.getDate() + "/" + (compra.detallesCompra[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + compra.detallesCompra[i].inventario.fecha_vencimiento.getYear();
+										doc.text(compra.detallesCompra[i].inventario.fechaVencimientoTexto, 485, y);
+										doc.text((compra.detallesCompra[i].inventario.lote) ? compra.detallesCompra[i].inventario.lote : "", 525, y);
+									}
 								} else {
-									doc.text(compra.detallesCompra[i].servicio.nombre, 210, yDesc - 11.5, { width: 185 });
+									doc.font('Helvetica', 8);
+									var longitudCaracteres = compra.detallesCompra[i].producto.codigo.length;
+									var yDesc = (longitudCaracteres <= 11) ? y : ((longitudCaracteres > 11 && longitudCaracteres <= 22) ? y - 4 : y - 11);
+									if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, yDesc, { width: 70 });
+									doc.text(compra.detallesCompra[i].cantidad, 110, y);
+									if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 135, y);
+	
+									if (compra.detallesCompra[i].producto) {
+										doc.text(compra.detallesCompra[i].producto.nombre, 170, y - 6, { width: 130 });
+									} else {
+										doc.text(compra.detallesCompra[i].servicio.nombre, 170, y - 6, { width: 130 });
+									}
+	
+									doc.text(compra.detallesCompra[i].costo_unitario.toFixed(2), 300, y);
+									doc.text(compra.detallesCompra[i].importe.toFixed(2), 335, y);
+	
+									doc.text(compra.descuento_general ? compra.tipo_descuento ? "%" : "Bs" : compra.detallesVenta[i].tipo_descuento ? "%" : "Bs", 385, y - 10);
+									doc.text(compra.detallesCompra[i].descuento.toFixed(2), 385, y);
+									doc.text(compra.descuento_general ? compra.tipo_recargo ? "%" : "Bs" : compra.detallesVenta[i].tipo_recargo ? "%" : "Bs", 420, y - 10);
+									doc.text(compra.detallesCompra[i].recargo.toFixed(2), 420, y);
+									doc.text(compra.detallesCompra[i].ice.toFixed(2), 455, y);
+									doc.text(compra.detallesCompra[i].excento.toFixed(2), 490, y);
+									doc.text(compra.detallesCompra[i].total.toFixed(2), 520, y);
 								}
 							} else {
+								doc.font('Helvetica', 8);
+								if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.codigo, 55, y, { width: 70 });
+								doc.text(compra.detallesCompra[i].cantidad, 140, y);
+								if (compra.detallesCompra[i].producto) doc.text(compra.detallesCompra[i].producto.unidad_medida, 160, y);
 								if (compra.detallesCompra[i].producto) {
-									doc.text(compra.detallesCompra[i].producto.nombre, 210, yDesc - 11.5, { width: 225 });
+									var longitudCaracteres = compra.detallesCompra[i].producto.nombre.length;
+									var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
 								} else {
-									doc.text(compra.detallesCompra[i].servicio.nombre, 210, yDesc - 11.5, { width: 185 });
+									var longitudCaracteres = compra.detallesCompra[i].servicio.nombre.length;
+									var yDesc = (longitudCaracteres <= 45) ? y : ((longitudCaracteres > 45 && longitudCaracteres <= 90) ? y - 4 : y - 11);
 								}
+								if ($scope.usuario.empresa.usar_vencimientos) {
+									if (compra.detallesCompra[i].inventario) {
+										compra.detallesCompra[i].inventario.fecha_vencimiento = new Date(compra.detallesCompra[i].inventario.fecha_vencimiento);
+										compra.detallesCompra[i].inventario.fechaVencimientoTexto = compra.detallesCompra[i].inventario.fecha_vencimiento.getDate() + "/" + (compra.detallesCompra[i].inventario.fecha_vencimiento.getMonth() + 1) + "/" + compra.detallesCompra[i].inventario.fecha_vencimiento.getFullYear();
+										doc.text(compra.detallesCompra[i].inventario.fechaVencimientoTexto, 400, y);
+										doc.text(compra.detallesCompra[i].inventario.lote, 460, y);
+									}
+									if (compra.detallesCompra[i].producto) {
+										doc.text(compra.detallesCompra[i].producto.nombre, 210, yDesc - 11.5, { width: 185 });
+									} else {
+										doc.text(compra.detallesCompra[i].servicio.nombre, 210, yDesc - 11.5, { width: 185 });
+									}
+								} else {
+									if (compra.detallesCompra[i].producto) {
+										doc.text(compra.detallesCompra[i].producto.nombre, 210, yDesc - 11.5, { width: 225 });
+									} else {
+										doc.text(compra.detallesCompra[i].servicio.nombre, 210, yDesc - 11.5, { width: 185 });
+									}
+								}
+								doc.text(compra.detallesCompra[i].costo_unitario.toFixed(2), 500, y);
+								doc.text(compra.detallesCompra[i].total.toFixed(2), 540, y);
 							}
-							doc.text(compra.detallesCompra[i].costo_unitario.toFixed(2), 500, y);
-							doc.text(compra.detallesCompra[i].total.toFixed(2), 540, y);
 						}
+						
 
 						doc.rect(50, y - 15, 540, 30).stroke();
 
@@ -1495,7 +1828,12 @@ angular.module('agil.controladores')
 					doc.text("TOTAL", 455, 792 - 97);
 
 					doc.font('Helvetica', 8);
-					doc.text(compra.total.toFixed(2), 520, 792 - 97);
+					if ($scope.usuario.empresa.ver_costos_dolares) {
+						doc.text(compra.total_dolares.toFixed(2), 520, 792 - 97);
+					} else {
+						doc.text(compra.total.toFixed(2), 520, 792 - 97);
+					}
+					
 
 					doc.text("SON : " + compra.numero_literal, 55, 792 - 97);
 
@@ -1758,6 +2096,13 @@ angular.module('agil.controladores')
 									}
 									detalleCompra.fecha_vencimiento = worksheet['P' + row2] != undefined && worksheet['P' + row2] != "" ? new Date($scope.fecha_excel_angular(worksheet['P' + row2].v.toString())) : null;
 									detalleCompra.lote = worksheet['Q' + row2] != undefined && worksheet['Q' + row2] != "" ? worksheet['Q' + row2].v.toString() : null;
+									if ($scope.usuario.empresa.ver_costos_dolares) {
+										detalleCompra.costo_unitario = 0;
+										detalleCompra.costo_unitario_dolares = worksheet['R' + row2] != undefined && worksheet['R' + row2] != "" ? parseFloat(worksheet['R' + row2].v.toString()) : null;
+									} else {
+										detalleCompra.costo_unitario_dolares = 0;
+										detalleCompra.costo_unitario = worksheet['R' + row2] != undefined && worksheet['R' + row2] != "" ? parseFloat(worksheet['R' + row2].v.toString()) : null;
+									}
 									detalleCompra.costo_unitario = worksheet['R' + row2] != undefined && worksheet['R' + row2] != "" ? parseFloat(worksheet['R' + row2].v.toString()) : null;
 									detalleCompra.cantidad = worksheet['S' + row2] != undefined && worksheet['S' + row2] != "" ? parseFloat(worksheet['S' + row2].v.toString()) : null;
 									detalleCompra.importe = detalleCompra.costo_unitario * detalleCompra.cantidad
@@ -1767,17 +2112,29 @@ angular.module('agil.controladores')
 									detalleCompra.recargo = worksheet['W' + row2] != undefined && worksheet['W' + row2] != "" ? parseFloat(worksheet['W' + row2].v.toString()) : null;
 									detalleCompra.ice = worksheet['X' + row2] != undefined && worksheet['X' + row2] != "" ? parseFloat(worksheet['X' + row2].v.toString()) : null;
 									detalleCompra.excento = worksheet['Y' + row2] != undefined && worksheet['Y' + row2] != "" ? parseFloat(worksheet['Y' + row2].v.toString()) : null;
+									detalleCompra.importe_dolares = detalleCompra.costo_unitario_dolares * detalleCompra.cantidad
 									var recargo = detalleCompra.recargo
 									if (detalleCompra.tipo_recargo == "%") {
-										recargo = detalleCompra.importe * (detalleCompra.recargo / 100);
+										if ($scope.usuario.empresa.ver_costos_dolares) {
+											recargo = detalleCompra.importe_dolares * (detalleCompra.recargo / 100);
+										} else {
+											recargo = detalleCompra.importe * (detalleCompra.recargo / 100);
+										}
 									}
 									var descuento = detalleCompra.descuento
 									if (detalleCompra.tipo_descuento == "%") {
-										descuento = detalleCompra.importe * (detalleCompra.descuento / 100);
+										if ($scope.usuario.empresa.ver_costos_dolares) {
+											descuento = detalleCompra.importe_dolares * (detalleCompra.descuento / 100);
+										} else {
+											descuento = detalleCompra.importe * (detalleCompra.descuento / 100);
+										}
 									}
-									detalleCompra.total = Math.round((detalleCompra.importe - descuento + recargo - detalleCompra.ice - detalleCompra.excento) * 1000) / 1000;
-
-
+									if ($scope.usuario.empresa.ver_costos_dolares) {
+										detalleCompra.total_dolares = Math.round((detalleCompra.importe_dolares - descuento + recargo - detalleCompra.ice - detalleCompra.excento) * 1000) / 1000;
+									} else {
+										detalleCompra.total = Math.round((detalleCompra.importe - descuento + recargo - detalleCompra.ice - detalleCompra.excento) * 1000) / 1000;
+									}
+									// detalleCompra.total = Math.round((detalleCompra.importe - descuento + recargo - detalleCompra.ice - detalleCompra.excento) * 1000) / 1000;
 									compra.detallesCompra.push(detalleCompra);
 									row2++;
 								}
@@ -1788,21 +2145,30 @@ angular.module('agil.controladores')
 
 							/* if (NumeroVenta != NumeroVentaComparacion || row == 2)  {*/
 							var sumaImporte = 0;
+							var sumaImporte_dolares = 0;
 							for (var i = 0; i < compra.detallesCompra.length; i++) {
 								sumaImporte = sumaImporte + compra.detallesCompra[i].importe;
+								sumaImporte_dolares = sumaImporte_dolares + compra.detallesCompra[i].importe_dolares;
 							}
 							compra.importe = Math.round((sumaImporte) * 1000) / 1000;
 							var sumaTotal = 0;
+							var sumaTotal_dolares = 0;
 							for (var i = 0; i < compra.detallesCompra.length; i++) {
 								sumaTotal = sumaTotal + compra.detallesCompra[i].total;
+								sumaTotal_dolares = sumaTotal_dolares + compra.detallesCompra[i].total_dolares;
 							}
 							compra.total = Math.round((sumaTotal) * 1000) / 1000;
+							compra.total_dolares = Math.round((sumaTotal_dolares) * 1000) / 1000;
 							var tipo_pago = $scope.tiposPago.filter(function (dato) {
 								return dato.nombre == compra.tipoPago.nombre
 							})
 							compra.tipoPago = tipo_pago[0]
 							if (compra.tipoPago.nombre == "CREDITO") {
-								compra.saldo = compra.total - compra.a_cuenta;
+								if ($scope.usuario.empresa.ver_costos_dolares) {
+									compra.saldo = compra.total_dolares - compra.a_cuenta;
+								} else {
+									compra.saldo = compra.total - compra.a_cuenta;
+								}
 							} else {
 								compra.saldo = null
 							}
@@ -1855,11 +2221,11 @@ angular.module('agil.controladores')
 							pago.factura = worksheet['A' + row] != undefined && worksheet['A' + row] != "" ? worksheet['A' + row].v.toString() : null;
 							pago.fecha = worksheet['B' + row] != undefined && worksheet['B' + row] != "" ? worksheet['B' + row].v.toString() : null;
 							pago.monto = worksheet['C' + row] != undefined && worksheet['C' + row] != "" ? parseFloat(worksheet['C' + row].v.toString()) : null;
-							pago.sucursal = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ?worksheet['D' + row].v.toString() : null;
-							var sucursalEncontrada = $scope.sucursales.find(function(sucursal){
-								return  sucursal.nombre.toUpperCase()==pago.sucursal.toUpperCase()
+							pago.sucursal = worksheet['D' + row] != undefined && worksheet['D' + row] != "" ? worksheet['D' + row].v.toString() : null;
+							var sucursalEncontrada = $scope.sucursales.find(function (sucursal) {
+								return sucursal.nombre.toUpperCase() == pago.sucursal.toUpperCase()
 							})
-							pago.sucursal=sucursalEncontrada
+							pago.sucursal = sucursalEncontrada
 							pago.total = 0
 							do {
 								var NumeroCompraA = worksheet['A' + row2] != undefined && worksheet['A' + row2] != "" ? worksheet['A' + row2].v.toString() : null;

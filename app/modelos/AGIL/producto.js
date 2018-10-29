@@ -23,7 +23,11 @@ module.exports=function(sequelize,Sequelize){
 	  precio_unitario: {
 		type: Sequelize.DECIMAL(20,4),
 		field: 'precio_unitario'
-	  },
+		},
+		precio_unitario_dolares: {
+			type: Sequelize.DECIMAL(20,4),
+			field: 'precio_unitario_dolares'
+			},
 	  utilidad_esperada: {
 		type: Sequelize.DECIMAL(20,4),
 		field: 'utilidad_esperada'

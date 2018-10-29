@@ -188,6 +188,16 @@ module.exports = function (sequelize, Sequelize) {
 			type: Sequelize.BOOLEAN,
 			field: 'usar_filtro_lote',
 			defaultValue: 0
+		},
+		ver_costos_dolares:{
+			type: Sequelize.BOOLEAN,
+			field: 'ver_costos_dolares',
+			defaultValue: 0
+		},
+		tipo_cambio_dolar:{
+			type: Sequelize.DECIMAL(20,4),
+			field: 'tipo_cambio_dolar',
+			defaultValue: 0
 		}
 	}, {
 			freezeTableName: true

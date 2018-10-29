@@ -32,7 +32,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				id_cuenta: (req.body.cuenta ? req.body.cuenta.id : null),
 				rango_positivo: req.body.rango_positivo,
 				rango_negativo: req.body.rango_negativo,
-				activo_fijo: req.body.activo_fijo
+				activo_fijo: req.body.activo_fijo,
+				precio_unitario_dolares: req.body.precio_unitario_dolares
 			}).then(function (productoCreado) {
 				req.body.productosBase.forEach(function (productoBase, index, array) {
 					if (!productoBase.eliminado) {
@@ -474,7 +475,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 								limit = "";
 								paginas = 1;
 							}
-							sequelize.query("select producto.id,producto.caracteristica_especial1,producto.caracteristica_especial2,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.inventario_minimo,producto.descripcion,tipoProducto.nombre as tipoProducto,grupo.nombre as grupo,subgrupo.nombre as subgrupo\
+							sequelize.query("select producto.id,producto.caracteristica_especial1,producto.caracteristica_especial2,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.precio_unitario_dolares,producto.inventario_minimo,producto.descripcion,tipoProducto.nombre as tipoProducto,grupo.nombre as grupo,subgrupo.nombre as subgrupo\
 						from agil_producto as producto\
 						LEFT OUTER JOIN gl_clase AS tipoProducto ON (producto.tipo_producto = tipoProducto.id)\
 						LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id)\
@@ -629,7 +630,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													marca: producto.marca,
 													id_tipo_producto: tipo_producto ? tipo_producto : producto_base,
 													activo_fijo: req.body.activo_fijo,
-													activar_inventario: producto.activar_inventario
+													activar_inventario: producto.activar_inventario,
+													precio_unitario_dolares: req.body.precio_unitario_dolares
 												}, {
 														where: {
 															id: productoEncontrado.id
@@ -667,7 +669,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 													id_tipo_producto: tipo_producto ? tipo_producto : producto_base,
 													marca: producto.marca,
 													activo_fijo: producto.activo_fijo,
-													activar_inventario: producto.activar_inventario
+													activar_inventario: producto.activar_inventario,
+													precio_unitario_dolares: producto.precio_unitario_dolares
 												}, { transaction: t }).then(function (creado) {
 													return new Promise(function (fulfill, reject) {
 														fulfill(creado)
@@ -841,7 +844,8 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				id_cuenta: (req.body.cuenta ? req.body.cuenta.id : null),
 				rango_positivo: req.body.rango_positivo,
 				rango_negativo: req.body.rango_negativo,
-				activo_fijo: req.body.activo_fijo
+				activo_fijo: req.body.activo_fijo,
+				precio_unitario_dolares: req.body.precio_unitario_dolares
 			}, {
 					where: {
 						id: req.params.id_producto
@@ -1396,7 +1400,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 								limit = "";
 								paginas = 1;
 							}
-							sequelize.query("select producto.id,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.inventario_minimo,producto.descripcion,tipoProducto.nombre as tipoProducto,grupo.nombre as grupo, grupo.id as id_grupo,subgrupo.nombre as subgrupo, subgrupo.id as id_subgrupo\
+							sequelize.query("select producto.id,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.precio_unitario_dolares,producto.inventario_minimo,producto.descripcion,tipoProducto.nombre as tipoProducto,grupo.nombre as grupo, grupo.id as id_grupo,subgrupo.nombre as subgrupo, subgrupo.id as id_subgrupo\
 						from agil_producto as producto\
 						LEFT OUTER JOIN gl_clase AS tipoProducto ON (producto.tipo_producto = tipoProducto.id)\
 						LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id)\
@@ -1460,7 +1464,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 								limit = "";
 								paginas = 1;
 							}
-							sequelize.query("select producto.id,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.inventario_minimo,producto.descripcion,tipoProducto.nombre as tipoProducto,grupo.nombre as grupo, grupo.id as id_grupo,subgrupo.nombre as subgrupo, subgrupo.id as id_subgrupo\
+							sequelize.query("select producto.id,producto.publicar_panel,producto.activar_inventario,producto.codigo,producto.nombre as nombre,producto.imagen,producto.unidad_medida,producto.precio_unitario,producto.precio_unitario_dolares,producto.inventario_minimo,producto.descripcion,tipoProducto.nombre as tipoProducto,grupo.nombre as grupo, grupo.id as id_grupo,subgrupo.nombre as subgrupo, subgrupo.id as id_subgrupo\
 						from agil_producto as producto\
 						LEFT OUTER JOIN gl_clase AS tipoProducto ON (producto.tipo_producto = tipoProducto.id)\
 						LEFT OUTER JOIN gl_clase AS grupo ON (producto.grupo = grupo.id)\
