@@ -132,9 +132,9 @@ angular.module('agil.servicios')
     }])
 
     .factory('GuardarComensales', ['Comensal', '$q', function (Comensal, $q) {
-        var res = function (idEmpresa, gerencia, usuario) {
+        var res = function (idEmpresa, datos, usuario, cliente) {
             var delay = $q.defer();
-            Comensal.save({ id_empresa: idEmpresa, id_usuario: usuario }, gerencia, function (entidades) {
+            Comensal.save({ id_empresa: idEmpresa, id_usuario: usuario, id_cliente: cliente }, datos, function (entidades) {
                 delay.resolve(entidades);
             }, function (error) {
                 delay.reject(error);

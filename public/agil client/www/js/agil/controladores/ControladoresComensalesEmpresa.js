@@ -1347,7 +1347,7 @@ angular.module('agil.controladores')
                     })
                 }
                 if (datos.length > 0) {
-                    var prom = GuardarComensales($scope.usuario.id_empresa, datos, $scope.usuario.id)
+                    var prom = GuardarComensales($scope.usuario.id_empresa, datos, $scope.usuario.id, $scope.empresaExternaSeleccionada.id)
                     prom.then(function (res) {
                         $scope.mostrarMensaje(res.mensaje)
                         if (!res.hasErr) {
