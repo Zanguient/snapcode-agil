@@ -1259,7 +1259,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										}, {
 												where: { id: compra.pedido.id }
 											}).then(function (productoEntregado) {
-												res.json({ compra: compra, mensaje: "creado satisfactoriamente1!" });
+												res.json({ compra: compra, mensaje: "creado satisfactoriamente!" });
 											})
 									}
 								} else {
@@ -1274,7 +1274,7 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 										}, {
 												where: { id: compra.pedido.id }
 											}).then(function (productoEntregado) {
-												res.json({ compra: compra, mensaje: "creado satisfactoriamente2!" });
+												res.json({ compra: compra, mensaje: "creado satisfactoriamente!" });
 											})
 									}
 								}
@@ -1283,13 +1283,13 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 							})
 
 						} else {
-							res.json({ compra: compra, mensaje: "creado satisfactoriamente3!" });
+							res.json({ compra: compra, mensaje: "creado satisfactoriamente!" });
 						}
 					}
 				});
 			})
 		}).catch(function (err) {
-			res.json({ hasErr: true, mensaje: err, compra: compra, mensaje: "creado satisfactoriamente2!" });
+			res.json({ hasErr: true, mensaje: err, compra: compra, mensaje: "creado satisfactoriamente!" });
 		})
 	}
 
@@ -2926,8 +2926,8 @@ module.exports = function (router, ensureAuthorized, forEach, Compra, DetalleCom
 
 				if (cantidadParcial > 0) {
 					promises.push(crearDetalleMovimientoIngresoYCrearInventario(movimientoCreado.id, idAlmacen, detalleVenta.producto.id,
-						detalleVenta.costos[i].costo_unitario, cantidadParcial, 0,
-						0, 0, 0, 0, 0, detalleVenta.costos[i].costo_unitario * cantidadParcial,
+						detalleVenta.costos[i].costo_unitario, detalleVenta.costos[i].costo_unitario_dolares, cantidadParcial, 0,
+						0, 0, 0, 0, 0, (detalleVenta.costos[i].costo_unitario * cantidadParcial), (detalleVenta.costos[i].costo_unitario_dolares * cantidadParcial),
 						detalleVenta.costos[i].fecha_vencimiento, detalleVenta.costos[i].lote, traspaso, t));
 				}
 			}

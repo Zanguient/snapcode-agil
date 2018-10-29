@@ -3611,7 +3611,8 @@ angular.module('agil.servicios')
 			var res = function (traspaso, usuario, mostrarMensaje) {
 				blockUI.start();
 				if (traspaso.configuracion.tipoConfiguracionNotaTraspaso == null) {
-					mostrarMensaje("Configure la Nota de Traspaso en Configuraciones");
+					mostrarMensaje("Configure la Nota de Traspaso en Configuraciones antes de continuar.");
+					blockUI.stop();
 				} else {
 					if (traspaso.configuracion.tamanoPapelNotaTraspaso.nombre_corto == Diccionario.FACT_PAPEL_OFICIO) {
 						papel = [612, 936];
