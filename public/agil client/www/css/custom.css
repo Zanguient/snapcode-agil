@@ -1100,3 +1100,8 @@ background-color:white !important;
 #signature-pad {
     border: 1px dashed #428bca;
 }
+
+#dialog-detalle-cotizaciones {
+    /* overflow: hidden !important; */
+    border: 2px solid #ffb752 !important;
+}

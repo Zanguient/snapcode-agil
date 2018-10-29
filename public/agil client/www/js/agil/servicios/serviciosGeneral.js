@@ -3645,7 +3645,7 @@ angular.module('agil.servicios')
 			var res = function (traspaso, papel, itemsPorPagina, usuario) {
 				var doc = new PDFDocument({ compress: false, layout: 'portrait', size: papel, margin: 0 });
 				var stream = doc.pipe(blobStream());
-				var existencias = VerificarDescuentos(venta.detallesVenta);
+				var existencias = VerificarDescuentos(traspaso.detallesVenta);
 				var existenDescuentos = existencias.descuento
 				doc.font('Helvetica', 8);
 				var y = 150, items = 0, pagina = 1, totalPaginas = Math.ceil(traspaso.detallesVenta.length / itemsPorPagina);

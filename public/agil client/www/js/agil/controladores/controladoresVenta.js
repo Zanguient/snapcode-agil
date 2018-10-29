@@ -4250,10 +4250,20 @@ angular.module('agil.controladores')
 				console.log("datos usuarioooooooo ", $scope.usuario);
 
 				for (var i = 0; i < cotizacion.detallesCotizacion.length; i++) {
-					var productoC = cotizacion.detallesCotizacion[i].producto;
+					$scope.productoC = cotizacion.detallesCotizacion[i].producto;
 
-
-					var inventarioDisponible = $scope.obtenerInventarioTotal(productoC);
+					// agregar optencion de los inventarios de los productos ===============
+					// var promesa = ListaInventariosProducto($scope.productoC.id, cotizacion.id_almacen, null);
+					// promesa.then(function (inventarios) {
+					// 	console.log("disponibleeeeee ", inventarios);
+					// 	$scope.productoC.inventarios = inventarios;
+					// });
+					$scope.ListInvetarioALmacen = $scope.productoC.inventarios.filter(function (inv) {
+						return (inv.id_almacen == cotizacion.id_almacen);
+					});
+					
+					$scope.productoC.inventarios = $scope.ListInvetarioALmacen;
+					var inventarioDisponible = $scope.obtenerInventarioTotal($scope.productoC);
 					cotizacion.detallesCotizacion[i].disponible = inventarioDisponible;
 					cotizacion.detallesCotizacion[i].aceptar = false;
 

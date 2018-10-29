@@ -3429,7 +3429,7 @@
 	<div class="row">
 
 		<div class="col-xs-10">
-			<h5 class="blue titulo-pre-requisito ng-binding">
+			<!-- <h5 class="blue titulo-pre-requisito ng-binding">
 				{{cotizacion.cliente.razon_social}}
 			</h5>
 			<h5 class="blue titulo-pre-requisito ng-binding">
@@ -3437,7 +3437,70 @@
 			</h5>
 			<h5 class="blue titulo-pre-requisito ng-binding">
 				FECHA {{cotizacion.fecha | date:"dd/MM/yyyy"}}
-			</h5>
+			</h5> -->
+			<div class="widget-box transparent">
+					<div class="widget-header widget-header-large">
+						<h3 class="widget-title grey lighter">
+							<i class="ace-icon fa fa-user blue"></i>
+							{{cotizacion.cliente.razon_social}}
+						</h3>
+
+						<div class="widget-toolbar no-border invoice-info">
+							<span class="invoice-info-label">Cotizacion:</span>
+							<span class="red">#{{cotizacion.numero_documento}}</span>
+
+							<br>
+							<span class="invoice-info-label">Fecha:</span>
+							<span class="blue">{{cotizacion.fecha | date:"dd/MM/yyyy"}}</span>
+						</div>
+
+						<div class="widget-toolbar hidden-480">
+							<span>
+								<i class="ace-icon fa fa-file"></i>
+							</span>
+						</div>
+					</div>
+
+					<div class="widget-body">
+						<div class="widget-main padding-15">
+							<div class="">
+								<div class="col-sm-6">
+									<div class="row">
+										<div class="col-xs-11 label label-lg label-info arrowed-in arrowed-right">
+											<b>Sucursal</b>
+										</div>
+									</div>
+
+									<div>
+										<ul class="list-unstyled spaced">
+											<li>
+												<i class="ace-icon fa fa-caret-right blue"></i>
+												{{cotizacion.sucursal.nombre}}
+											</li>
+										</ul>
+									</div>
+								</div><!-- /.col -->
+
+								<div class="col-sm-6">
+									<div class="row">
+										<div class="col-xs-11 label label-lg label-success arrowed-in arrowed-right">
+											<b>Almacen</b>
+										</div>
+									</div>
+
+									<div>
+										<ul class="list-unstyled  spaced">
+											<li>
+												<i class="ace-icon fa fa-caret-right green"></i>
+												{{cotizacion.almacen.nombre}}
+											</li>
+										</ul>
+									</div>
+								</div><!-- /.col -->
+							</div><!-- /.row -->
+						</div>
+					</div>
+				</div>
 		</div>
 		<div class="col-xs-2">
 			<button type="button" ng-if="editCoticacion" ng-disabled="isCheckedCotizacion(cotizacion)" ng-click="agregarVentaCotizacion(cotizacion)"

@@ -431,6 +431,16 @@ module.exports = function (router,sequelize,Sequelize, Cotizacion, DetalleCotiza
 								{ model: Clase, as: 'tipoProducto' },
 								{
 									model: Inventario, as: 'inventarios', required: false,
+									where: { cantidad: { $gt: 0 } },
+									include: [{
+										model: DetalleMovimiento, as: "detallesMovimiento",
+										include: [{
+											model: Movimiento, as: 'movimiento',
+											include: [{ model: Tipo, as: 'tipo', where: { nombre_corto: 'MOVING' } },
+											{ model: Clase, as: 'clase' }]
+										}]
+									}],
+									order: [['fecha_vencimiento', 'ASC']]
 									// include: [{
 									// 	model: DetalleMovimiento, as: "detallesMovimiento", required: false,
 									// 	include: [{
