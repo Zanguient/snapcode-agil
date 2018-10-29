@@ -654,9 +654,9 @@ angular.module('agil.controladores')
 			}
 			$scope.agregarDetalleVenta = function (detalleVenta) {
 				// detalleVenta = Object.assign({},detalleVenta)
-				var ultimoInventario = detalleVenta.producto.inventarios[detalleVenta.producto.inventarios.length - 1];
+				/* var ultimoInventario = detalleVenta.producto.inventarios[detalleVenta.producto.inventarios.length - 1];
 				var ultimoIngreso = ultimoInventario.detallesMovimiento[ultimoInventario.detallesMovimiento.length - 1];
-				var movimientoFecha = ultimoIngreso.movimiento.fecha;
+				var movimientoFecha = ultimoIngreso.movimiento.fecha; */
 				if (detalleVenta.producto.id) {
 					if (detalleVenta.producto.activar_inventario) {
 						if ($scope.usuario.empresa.usar_peps) {
