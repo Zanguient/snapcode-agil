@@ -181,6 +181,24 @@ angular.module('agil.servicios')
         };
         return res;
     }])
+    .factory('PrerequisitosEmpleado',  ['$resource',function ($resource) {
+        return $resource(restServer + "prerequisitos/cargos/:id_cargos?",
+            {
+                'update': { method: 'PUT' }
+            });
+    }])
+    .factory('ListaPrerequisitosEmpleado', ['PrerequisitosEmpleado', '$q', function (PrerequisitosEmpleado, $q) {
+        var res = function (cargosIds) {
+            var delay = $q.defer();
+            PrerequisitosEmpleado.get({id_cargos:cargosIds},function (entidades) {
+                delay.resolve(entidades);
+            }, function (error) {
+                delay.reject(error);
+            });
+            return delay.promise;
+        };
+        return res;
+    }])
     .factory('PrerequisitosSave', ['Prerequisito', '$q', function (Prerequisito, $q) {
         var res = function (prerequisito) {
             var delay = $q.defer();

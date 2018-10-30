@@ -427,7 +427,7 @@
                                     </a>
                                     <script type="text/ng-template" id="myPopoverTemplate.html">
                                             <div class="form-group">                                              
-                                              <p>{{empleado.cargos}}</p>
+                                            <p ng-repeat="cargos in empleado.cargos">{{cargos}}</p>
                                             </div>                                           
                                         </script>
                                 </td>
@@ -632,7 +632,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="prerequisito in prerequisitosPaciente">
+                <tr ng-repeat="prerequisito in prerequisitosPaciente | filter:{eliminado:false}">
                     <!--ng-if="prerequisito.asignado"-->
                     <td>
                         {{$index+1}}
@@ -802,7 +802,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="requisito in preRequisitos">
+                        <tr ng-repeat="requisito in preRequisitosEmpresa">
                             <td>
                                 {{$index+1}}
                             </td>
@@ -813,11 +813,11 @@
                                 {{requisito.vencimiento_mes}}
                             </td>
                             <td>
-                                    <a popover-placement="right" uib-popover-template="dynamicPopoverCargos.templateUrl"
-                                    popover-trigger="outsideClick: outsideClick" popover-title="Cargos" class="blue">
+                                    <a popover-placement="right" uib-popover-template="dynamicPopoverCargosPre.templateUrl"
+                                    popover-trigger="outsideClick" popover-title="Cargos" class="blue">
                                     <i class="fa fa-list-ol bigger-200 orange" aria-hidden="true"></i>
                                 </a>
-                                <script type="text/ng-template" id="myPopoverTemplate.html">
+                                <script type="text/ng-template" id="myPopoverTemplatePreCargos.html">
                                         <div class="form-group">                                              
                                                 <p ng-repeat="prerequisito in requisito.prerequisitoCargos">
                                                         {{prerequisito.cargo.nombre}}

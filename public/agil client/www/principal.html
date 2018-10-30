@@ -2101,7 +2101,7 @@
 					<div class="row" class="col-sm-12">
 						<div class="col-sm-2">
 							<label>TIPO COMPROBANTE:</label>
-							<select enter autofocus ng-change="ultimaFechaTipoComprobante(nuevoComprobante)" ng-disabled="verComprobante" id='id_tipo'
+							<select autofocus ng-change="ultimaFechaTipoComprobante(nuevoComprobante)" ng-disabled="verComprobante" id='id_tipo'
 							 required ng-model='nuevoComprobante.tipoComprobante' id="tipoComprobante" name="tipoComprobante" data-placeholder="Click para escoger"
 							 class="form-control" ng-options="cuentaTipo as cuentaTipo.nombre for cuentaTipo in tiposComprobantes track by cuentaTipo.id">
 
@@ -2114,7 +2114,7 @@
 						</div>
 						<div class="col-sm-2">
 							<label>SUCURSAL:</label>
-							<select enter class="form-control" ng-disabled="verComprobante" required data-validate="validate(required)" id="sucursalOrigen"
+							<select class="form-control" ng-disabled="verComprobante" required data-validate="validate(required)" id="sucursalOrigen"
 							 name="sucursalOrigen" required ng-options="sucursal as sucursal.nombre for sucursal in sucursales track by sucursal.id"
 							 ng-model="nuevoComprobante.id_sucursal">
 

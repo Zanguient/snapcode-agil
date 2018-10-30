@@ -7,7 +7,7 @@ angular.module('agil.controladores')
         'ListaFeriados', 'GuardarClasesAusencias', 'Tipos', 'ListaBancos', 'ConfiguracionesVacacion', 'HistorialGestionesVacacion', 'GuardarTr3', 'ListaTr3Empresa', 'GuardarHistorialVacacion', 'CrearBeneficioSocial', 'ListaBeneficiosEmpleado', 'GuardarBitacoraFicha', 'VerBitacoraFicha', 'ObtenerFiniquitoEmpleado',
         'ClasesTipoEmpresa', 'GuardarConfiguracionRopaCargo', 'ListaConfiguracionRopaCargo', 'DatosReporteConfiguracionRopa', 'FichasEmpleadoEmpresa', 'ListaCargosEmpleado', 'ListaRopaTrabajoProductos', 'GuardarDotacionRopa', 'ListaDotacionRopa', 'EliminarDotacionRopa', 'ListaDotacionRopaEmpresa', 'ActualizarDotacionRopa',
         'FamiliaresEmpleadoEmpresa', 'ListaRolTurnosEmpresa', 'ClasesEmpresa', 'ListaChoferesViaje', 'GuardarViajeRrhh', 'ListaViajeRrhh', 'ListaRolTurnosCalendario', 'ViajeRrhhLista', 'BeneficioEmpresa', 'GuardarConductoresEmpresa', 'ListaHijosEmpleadosEmpresa', 'GuardarImportacionFichaEmpleados', 'GuardarImportacionRolTurnoEmpleados', 'PrerequisitosSave',
-        'GuardarEmpleadoEmpresaI', function ($scope, $sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
+        'GuardarEmpleadoEmpresaI', 'ListaPrerequisitosEmpleado', function ($scope, $sce, $localStorage, $location, $templateCache, $route, blockUI, ListaDatosGenero, NuevoRecursoHumano, RecursosHumanosPaginador, Paginator,
             FieldViewer, EmpleadoEmpresa, obtenerEmpleadoRh, UsuarioRecursosHUmanosActivo, Prerequisito, ListaDatosPrerequisito, Prerequisitos, ListaPrerequisitosPaciente, ActualizarPrerequisito, UsuarioRecursosHumanosFicha,
             ClasesTipo, Clases, Paises, CrearEmpleadoFicha, EliminarOtroSeguroRh, EliminarFamiliarRh, PrerequisitoPaciente, PrerequisitosHistorial, UsuarioRhHistorialFicha, ObtenerEmpleadoHojaVida, GuardarEmpleadoHojaVida, CrearPrestamo,
             ObtenerListaPrestamo, CrearRolTurno, CrearPagoPrestamo, VerificarUsuarioEmpresa, EditarPrestamo, ListaEmpleadosRrhh, CrearHorasExtra, HistorialHorasExtra, ListaRolTurnos, ValidarCodigoCuentaEmpleado, $timeout, DatosCapacidadesImpresion, NuevoAnticipoEmpleado,
@@ -15,7 +15,7 @@ angular.module('agil.controladores')
             ListaFeriados, GuardarClasesAusencias, Tipos, ListaBancos, ConfiguracionesVacacion, HistorialGestionesVacacion, GuardarTr3, ListaTr3Empresa, GuardarHistorialVacacion, CrearBeneficioSocial, ListaBeneficiosEmpleado, GuardarBitacoraFicha, VerBitacoraFicha, ObtenerFiniquitoEmpleado,
             ClasesTipoEmpresa, GuardarConfiguracionRopaCargo, ListaConfiguracionRopaCargo, DatosReporteConfiguracionRopa, FichasEmpleadoEmpresa, ListaCargosEmpleado, ListaRopaTrabajoProductos, GuardarDotacionRopa, ListaDotacionRopa, EliminarDotacionRopa, ListaDotacionRopaEmpresa, ActualizarDotacionRopa,
             FamiliaresEmpleadoEmpresa, ListaRolTurnosEmpresa, ClasesEmpresa, ListaChoferesViaje, GuardarViajeRrhh, ListaViajeRrhh, ListaRolTurnosCalendario, ViajeRrhhLista, BeneficioEmpresa, GuardarConductoresEmpresa, ListaHijosEmpleadosEmpresa, GuardarImportacionFichaEmpleados, GuardarImportacionRolTurnoEmpleados, PrerequisitosSave,
-            GuardarEmpleadoEmpresaI) {
+            GuardarEmpleadoEmpresaI, ListaPrerequisitosEmpleado) {
             $scope.usuario = JSON.parse($localStorage.usuario);
             $scope.idModalPrerequisitos = 'dialog-pre-requisitos';
             $scope.idModalEmpleado = 'dialog-empleado';
@@ -513,8 +513,10 @@ angular.module('agil.controladores')
                 $scope.cerrarPopup($scope.idModalEditarPrerequisito);
             }
             $scope.abrirDialogPrerequisitoNuevo = function () {
-                $scope.NuevoP = new Prerequisito({ puede_modificar_rrhh: false ,cargos:[]});
+                $scope.cargosPre=[]
+                $scope.NuevoP = new Prerequisito({ puede_modificar_rrhh: false, cargos: [] });
                 $scope.obtenerCargos()
+                $scope.obtenertodoslosPrerequisitos()
                 $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
             }
 
@@ -677,10 +679,13 @@ angular.module('agil.controladores')
             }
 
             $scope.abrirIdModalDialogPreRequisitos = function (empleado) {
+                $scope.dynamicPopoverCargosPre = {
+                    templateUrl: 'myPopoverTemplatePreCargos.html',
+                };
                 if (empleado.activo) {
                     $scope.empleado = empleado;
-                    $scope.verificarAsignacionPrerequisitos()
-
+                    $scope.verificarAsignacionPrerequisitos(empleado)
+                    $scope.obtenertodoslosPrerequisitos()
                     $scope.abrirPopup($scope.idModalPrerequisitos);
                 }
             }
@@ -2183,13 +2188,14 @@ angular.module('agil.controladores')
                 });
             }
             $scope.abrirDialogPrerequisitoEditar = function (prerequisito) {
-
-                $scope.NuevoP = new Prerequisito({ id: prerequisito.id, nombre: prerequisito.nombre, observacion: prerequisito.observacion, vencimiento_mes: prerequisito.vencimiento_mes, dias_activacion: prerequisito.dias_activacion, puede_modificar_rrhh: prerequisito.puede_modificar_rrhh,cargos:[] })
+                $scope.seleccionarCargosPrerequisito(prerequisito.prerequisitoCargos)
+                
+                $scope.NuevoP = new Prerequisito({ id: prerequisito.id, nombre: prerequisito.nombre, observacion: prerequisito.observacion, vencimiento_mes: prerequisito.vencimiento_mes, dias_activacion: prerequisito.dias_activacion, puede_modificar_rrhh: prerequisito.puede_modificar_rrhh, cargos: [] })
                 $scope.abrirPopup($scope.idModalDialogPrerequisitoNuevo);
             }
 
             $scope.cerrarPopupPrerequisitoNuevo = function () {
-               // $scope.obtenerAlertas()
+                // $scope.obtenerAlertas()
                 $scope.cerrarPopup($scope.idModalDialogPrerequisitoNuevo);
             }
 
@@ -2260,6 +2266,8 @@ angular.module('agil.controladores')
 
                     $scope.RecursosHumanosEmpleados.forEach(function (empleado) {
                         empleado.activo = (empleado.activo == 0) ? true : false
+                        empleado.cargos = empleado.cargos.split(",")
+                        //empleado.cargosIds = empleado.cargosIds.split(",")
                     });
                     if (seleccionar) {
                         if (todos) {
@@ -2268,12 +2276,10 @@ angular.module('agil.controladores')
                                     empleado.select = false
                                     $scope.empleadosSeleccionados = []
                                 } else {
-
                                     empleado.select = true
                                     $scope.empleadosSeleccionados.push(empleado)
-
-
                                 }
+
                             });
                         }
                     }
@@ -3196,7 +3202,15 @@ angular.module('agil.controladores')
                     }
                 }
             }
-
+            $scope.seleccionarCargosPrerequisito = function (cargosPrerequisito) {
+                for (var i = 0; i < $scope.cargos.length; i++) {
+                    for (var j = 0; j < cargosPrerequisito.length; j++) {
+                        if ($scope.cargos[i].id == cargosPrerequisito[j].id_cargo) {
+                            $scope.cargos[i].ticked = true;
+                        }
+                    }
+                }
+            }
             $scope.llenarCargos = function (cargos) {
                 $scope.cargos = [];
                 for (var i = 0; i < cargos.length; i++) {
@@ -3278,120 +3292,78 @@ angular.module('agil.controladores')
                     blockUI.stop();
                 });
             }
-            $scope.saveFormPrerequisito = function (nuevoPrerequisito,cargosPre) {
+            $scope.saveFormPrerequisito = function (nuevoPrerequisito, cargosPre) {
                 blockUI.start();
-                nuevoPrerequisito.cargos=cargosPre
-                // nuevoPrerequisito.fecha_inicio = new Date($scope.convertirFecha(nuevoPrerequisito.fecha_inicio))
-                // nuevoPrerequisito.fecha_inicio = nuevoPrerequisito.fecha_inicio.setFullYear(nuevoPrerequisito.fecha_inicio.getFullYear(), nuevoPrerequisito.fecha_inicio.getMonth(), nuevoPrerequisito.fecha_inicio.getDate());
-                // nuevoPrerequisito.fecha_vencimiento = nuevoPrerequisito.fechav.setFullYear(nuevoPrerequisito.fechav.getFullYear(), nuevoPrerequisito.fechav.getMonth(), nuevoPrerequisito.fechav.getDate())
+                nuevoPrerequisito.cargos = cargosPre
                 if (nuevoPrerequisito.nombre != undefined && nuevoPrerequisito.vencimiento_mes != undefined) {
                     var prom = PrerequisitosSave(nuevoPrerequisito)
                     prom.then(function (res) {
                         $scope.mostrarMensaje(res.mensaje);
+                        $scope.cargosPre=[]
                         $scope.cerrarPopupPrerequisitoNuevo();
                         blockUI.stop();
-                        $scope.verificarAsignacionPrerequisitos()
+                        $scope.verificarAsignacionPrerequisitos($scope.empleado)
                     }).catch(function (err) {
                         blockUI.stop()
                         var msg = (err.stack !== undefined && err.stack !== null) ? err.stack : (err.message !== undefined && err.message !== null) ? err.message : 'Se perdió la conexión.'
                         $scope.mostrarMensaje(msg)
                     })
-                    // if (nuevoPrerequisito.id != undefined) {
-                    //     nuevoPrerequisito.$save(nuevoPrerequisito, function (res) {
-
-                    //         $scope.mostrarMensaje(res.mensaje);
-                    //         $scope.cerrarDialogPrerequisitoNuevo();
-                    //         blockUI.stop();
-                    //         $scope.verificarAsignacionPrerequisitos()
-                    //     }, function (error) {
-                    //         $scope.cerrarDialogPrerequisitoNuevo();
-                    //         $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-                    //         blockUI.stop();
-                    //     });
-                    // } else {
-                    //     nuevoPrerequisito.$save({ nuevoPrerequisito }, function (res) {
-                    //         $scope.mostrarMensaje(res.mensaje);
-                    //         $scope.cerrarDialogPrerequisitoNuevo();
-                    //         blockUI.stop();
-                    //         $scope.verificarAsignacionPrerequisitos()
-                    //     }, function (error) {
-                    //         $scope.cerrarDialogPrerequisitoNuevo();
-                    //         $scope.mostrarMensaje('Ocurrio un problema al momento de guardar!');
-                    //         blockUI.stop();
-                    //     });
-                    // }
                 } else {
                     $scope.mostrarMensaje('Los campos Prerequisito Nombre y vencimiento mes son requeridos.')
                     blockUI.stop();
                 }
 
             }
-            $scope.verificarAsignacionPrerequisitos = function () {
-                blockUI.start();
+            $scope.obtenertodoslosPrerequisitos = function () {
                 var requisitos = Prerequisitos()
+                requisitos.then(function (prerequisitos) {
+                    $scope.preRequisitosEmpresa = prerequisitos.prerequisitos
+                })
+            }
+            $scope.verificarAsignacionPrerequisitos = function (empleado) {
+                blockUI.start();
+                var requisitos = ListaPrerequisitosEmpleado(empleado.cargosids)
                 requisitos.then(function (prerequisitos) {
                     $scope.preRequisitos = prerequisitos.prerequisitos
                     filtro = { inicio: 0, fin: 0 }
                     var promesa = ListaPrerequisitosPaciente($scope.empleado.id, filtro);
                     promesa.then(function (preRequisitos) {
                         $scope.prerequisitosPaciente = preRequisitos.Prerequisitos;
-                        $scope.preRequisitos.forEach(function (requisito, index, array) {
+                        if ($scope.preRequisitos.length > 0) {
+                            var requisitosRestantes=[]
+                            $scope.preRequisitos.forEach(function (requisito, index, array) {
+                                if ($scope.prerequisitosPaciente.length > 0) {
+                                    var requisitoFueAsignado = $scope.prerequisitosPaciente.find(function(dato,index,array){
+                                        return dato.id_prerequisito==requisito.id
+                                    })
+                                    if(!requisitoFueAsignado){                                        
+                                        requisitosRestantes.push(requisito)
+                                    }
+                                    $scope.prerequisitosPaciente.forEach(function (preRe) {
+                                        if (requisito.id == preRe.id_prerequisito) {
+                                            requisito.asignado = true
+                                        }
+                                        if (preRe.fecha_entrega != null) {
+                                            preRe.entregado = true
+                                        }
+                                    });
 
-                            $scope.prerequisitosPaciente.forEach(function (preRe) {
-
-                                if (requisito.id == preRe.id_prerequisito) {
+                                } else {    
                                     requisito.asignado = true
+                                    $scope.asignarPrerequisito(requisito,$scope.empleado)                           
+                                    
                                 }
-
-                                if (preRe.fecha_entrega != null) {
-                                    preRe.entregado = true
+                                if(index===(array.length-1)){
+                                    if(requisitosRestantes.length>0){
+                                        requisitosRestantes.forEach(function (requisito, index, array) {
+                                            requisito.asignado = true
+                                            $scope.asignarPrerequisito(requisito,$scope.empleado)    
+                                        })
+                                    }
                                 }
-
-                                //Re asignar la fecha de vencimiento si la fecha de inicio cambia.
-                                // var fechaContro = new Date(preRe.fecha_vencimiento)
-                                // var calculoFechaVencimiento = $scope.calcularFechaVencimientoRequisito(preRe)
-                                // fechaContro.setHours(0,0,0,0)
-                                // calculoFechaVencimiento.setHours(0,0,0,0)
-                                // var a = $scope.fechaATexto(fechaContro)
-                                // var b = $scope.fechaATexto(calculoFechaVencimiento)
-                                // if(a != b){
-                                //     preRe.asignado = true
-                                //     preRe.fecha_vencimiento = calculoFechaVencimiento
-                                //     PrerequisitoPaciente.save(preRe,function (res) {
-                                //         $scope.verificarAsignacionPrerequisitos()
-                                //     })
-                                // }
-
                             });
-
-                            if ($scope.prerequisitosPaciente.length == 0) {
-                                requisito.asignado = false
-                            }
-
-                            if (index == array.length - 1) {
-                                blockUI.stop();
-                            }
-
-                            // var reducido = $scope.prerequisitosPaciente.reduce(function (anterior,actual,index,array) {
-                            //     if(anterior == 0) return actual
-                            //     if(anterior.id_prerequisito == actual.id_prerequisito){
-                            //         if(anterior.id < actual.id){
-                            //             return actual
-                            //         }
-                            //     }
-                            // })
-                            // console.log(reducido)
-                        });
-
-                        if ($scope.preRequisitos.length == 0) {
-                            blockUI.stop();
                         }
-
-                        // var found = $.map(xtra, function(val) {
-                        //     if(val.id == 'C' ){
-
-                        //     }
-                        // });​
+                        blockUI.stop();
                     });
                 })
             }
@@ -3428,8 +3400,6 @@ angular.module('agil.controladores')
             $scope.actualizarPreRequisitoPaciente = function (prerequisito) {
                 blockUI.start()
                 var prerequisito_ = prerequisito
-                // prerequisito.fecha_inicio = new Date($scope.convertirFecha(prerequisito.fecha_inicio_texto))
-                // prerequisito.fecha_vencimiento = $scope.calcularFechaVencimientoRequisito(prerequisito)
                 prerequisito_.fecha_vencimiento = new Date($scope.convertirFecha(prerequisito_.fecha_vencimiento_texto))
                 prerequisito_.fecha_inicio = new Date()
                 prerequisito_.fecha_entrega = null
@@ -3438,7 +3408,7 @@ angular.module('agil.controladores')
 
                     $scope.mostrarMensaje(res.mensaje)
                     $scope.cerrarDialogEditarPreRequisito()
-                    $scope.verificarAsignacionPrerequisitos()
+                    $scope.verificarAsignacionPrerequisitos($scope.empleado)
                     blockUI.stop()
                 }, function (error) {
                     $scope.mostrarMensaje('Ocurrio un problema al asignar el prerequisito')
@@ -3455,7 +3425,7 @@ angular.module('agil.controladores')
                 prerequisito.fecha_vencimiento = $scope.calcularFechaVencimientoRequisito(prerequisito)
                 prerequisito.paraAsignar = true
                 PrerequisitoPaciente.save(prerequisito, function (res) {
-                    $scope.verificarAsignacionPrerequisitos()
+                    $scope.verificarAsignacionPrerequisitos(paciente)
                     $scope.mostrarMensaje(res.mensaje)
                     blockUI.stop()
                 }, function (error) {
