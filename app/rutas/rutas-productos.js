@@ -111,30 +111,30 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 				res.json(resp);
 			});
 		});
+
 	router.route('/productos/kardex/empresa/:id_empresa/almacen/:id_almacen/grupo/:grupo')
+	//saldo por producto
 		.get(function (req, res) {
 
-			var condicion = { id_empresa: req.params.id_empresa, codigo: { $not: null } }
+			var condicion = { id_empresa: req.params.id_empresa, activar_inventario: true}
 			if (req.params.grupo != 0) {
-				condicion = { id_grupo: req.params.grupo, id_empresa: req.params.id_empresa, codigo: { $not: null } }
+				condicion = { id_grupo: req.params.grupo, id_empresa: req.params.id_empresa, activar_inventario: true}
 			}
 
-			var fechaInicial = new Date(2016, 1, 0);
-			var fechaFinal = new Date();
-			var condicionMovimiento = { id_almacen: req.params.id_almacen }
-			condicionMovimiento.fecha = { $between: [fechaInicial, fechaFinal] }
-
+			// var fechaInicial = new Date(2016, 1, 0);
+			// var fechaFinal = new Date();
+			// var condicionMovimiento = { id_almacen: req.params.id_almacen }
+			// condicionMovimiento.fecha = { $between: [fechaInicial, fechaFinal]
 
 			Producto.findAll({
+				attributes:['id', 'nombre', 'codigo', 'unidad_medida' ],
 				where: condicion,
-				include: [{ model: Empresa, as: 'empresa' },
+				include: [{ model: Empresa, as: 'empresa', attributes:['id', 'razon_social'] }, 
 				{
-					model: DetalleMovimiento, as: "detallesMovimiento",
-
+					model: DetalleMovimiento, as: "detallesMovimiento", required: true,
 					include: [{ model: Inventario, as: 'inventario' },
 					{
 						model: Movimiento, as: 'movimiento',
-						where: condicionMovimiento,
 						include: [{
 							model: Compra, as: 'compra', required: false,
 							include: [{ model: Proveedor, as: 'proveedor' }]
@@ -144,17 +144,17 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 							include: [{ model: Cliente, as: 'cliente' }]
 						},
 						{
-							model: Almacen, as: 'almacen', required: false,
+							model: Almacen, as: 'almacen', where:{id: req.params.id_almacen}, required: false,
 							include: [{ model: Sucursal, as: 'sucursal' }]
 						},
 						{ model: Tipo, as: 'tipo' },
 						{ model: Clase, as: 'clase' }]
 					}
 					],
-					order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
+					// order: [[{ model: Movimiento, as: 'movimiento' }, 'fecha', 'ASC']]
 				}],
 
-				order: [['id', 'ASC']]
+				order: [[{raw:'`detallesMovimiento`.`createdAt` DESC'}]]
 
 			}).then(function (resp) {
 				res.json(resp);
