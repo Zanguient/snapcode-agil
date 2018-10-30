@@ -134,7 +134,7 @@ module.exports = function (router, forEach, decodeBase64Image, fs, Empresa, Prod
 					model: DetalleMovimiento, as: "detallesMovimiento", required: true,
 					include: [{ model: Inventario, as: 'inventario' },
 					{
-						model: Movimiento, as: 'movimiento',
+						model: Movimiento, as: 'movimiento', required: true,
 						include: [{
 							model: Compra, as: 'compra', required: false,
 							include: [{ model: Proveedor, as: 'proveedor' }]
